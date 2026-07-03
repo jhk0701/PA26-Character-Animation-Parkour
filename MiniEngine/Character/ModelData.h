@@ -21,6 +21,8 @@ public:
         DirectX::XMFLOAT3 normal;
     };
 
+    struct Impl;
+
     ModelData();
     ~ModelData();
 
@@ -33,8 +35,6 @@ public:
 
     const Math::BoundingSphere& GetBoundingSphere() const { return m_boundingSphere; }
     void Shutdown();
-    struct Impl; 
-
     void SetAnim(const ModelData& animModel);
 
 private:

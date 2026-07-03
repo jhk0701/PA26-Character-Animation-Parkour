@@ -120,12 +120,24 @@ namespace
 struct Influence 
 { 
     int bone; 
-    float weight; 
+    float nrmTime; // 애니메이션 시간 정규화값
     XMFLOAT3 localPos; 
-    XMFLOAT3 localNrm; 
+    XMFLOAT3 localNrm;
 };
 
 struct MeshSkin
+struct AnimationClip 
+{
+    
+};
+
+struct Mesh
+{
+    std::vector<XMFLOAT3> meshPos; // 버텍스 위치
+    std::vector<XMFLOAT3> meshNrm; // 노멀
+};
+
+struct MeshSkin : public Mesh
 {
     std::vector<FbxNode*> bones;                      
     std::vector<FbxNode*> animBones;                  
@@ -134,8 +146,6 @@ struct MeshSkin
     uint32_t pvBase = 0; // 전역 스킨드 배열 시작 오프셋
      
     std::vector<FbxAMatrix> boneGlobal; // 본 트랜스폼
-    std::vector<XMFLOAT3> skinnedPos; // 스킨 버텍스 
-    std::vector<XMFLOAT3> skinnedNrm; // 스킨 노멀
 };
 
 struct ModelData::Impl
@@ -191,16 +201,16 @@ static void SkinAtTime(ModelData::Impl& impl, double timeSec)
                     nn = TransformDirRaw(ms.boneGlobal[in.bone], in.localNrm);
                 }
 
-                p.x += pp.x * in.weight; 
-                p.y += pp.y * in.weight; 
-                p.z += pp.z * in.weight;
+                p.x += pp.x * in.nrmTime;
+                p.y += pp.y * in.nrmTime;
+                p.z += pp.z * in.nrmTime;
 
-                n.x += nn.x * in.weight; 
-                n.y += nn.y * in.weight; 
-                n.z += nn.z * in.weight;
+                n.x += nn.x * in.nrmTime;
+                n.y += nn.y * in.nrmTime;
+                n.z += nn.z * in.nrmTime;
             }
-            ms.skinnedPos[cp] = p;
-            XMStoreFloat3(&ms.skinnedNrm[cp], XMVector3Normalize(XMLoadFloat3(&n)));
+            ms.meshPos[cp] = p;
+            XMStoreFloat3(&ms.meshNrm[cp], XMVector3Normalize(XMLoadFloat3(&n)));
         }
 
         const uint32_t pvCount = (uint32_t)ms.pvCP.size();
@@ -208,8 +218,8 @@ static void SkinAtTime(ModelData::Impl& impl, double timeSec)
         {
             const int cp = ms.pvCP[i];
             ModelData::Vertex& out = impl.skinned[ms.pvBase + i];
-            const XMFLOAT3& p = ms.skinnedPos[cp];
-            const XMFLOAT3& n = ms.skinnedNrm[cp];
+            const XMFLOAT3& p = ms.meshPos[cp];
+            const XMFLOAT3& n = ms.meshNrm[cp];
             out.pos = XMFLOAT3(p.x, p.y, -p.z);
             out.normal = XMFLOAT3(n.x, n.y, -n.z);
         }
@@ -248,7 +258,6 @@ bool ModelData::Load(const std::wstring& filePath)
     geomConv.Triangulate(scene, true);
 
     m_impl->scene = scene;   
-
 
     // 스킨 메시 수집. DFS
     uint32_t totalPV = 0;
@@ -292,7 +301,7 @@ bool ModelData::Load(const std::wstring& filePath)
         const FbxVector4* bindCP = mesh->GetControlPoints();
 
         MeshSkin ms;
-        // 클러스터 -> 본 + 바인드 행렬(M, L^-1) + 원시 영향(cp,weight).
+        // 클러스터 -> 본 + 바인드 행렬(M, L^-1) + 원시 영향(cp,nrmTime).
         FbxSkin* skin = (FbxSkin*)mesh->GetDeformer(0, FbxDeformer::eSkin);
         const int clusterCount = skin->GetClusterCount();
         ms.bones.resize(clusterCount);
@@ -370,8 +379,8 @@ bool ModelData::Load(const std::wstring& filePath)
             }
         }
 
-        ms.skinnedPos.resize(cpCount);
-        ms.skinnedNrm.resize(cpCount);
+        ms.meshPos.resize(cpCount);
+        ms.meshNrm.resize(cpCount);
         ms.pvBase = totalPV;
         totalPV += (uint32_t)ms.pvCP.size();
         m_impl->meshes.push_back(std::move(ms));
@@ -385,16 +394,6 @@ bool ModelData::Load(const std::wstring& filePath)
 
     // 애니메이션 스택 선택
     {
-        //FbxAnimStack* animStack = FbxAnimStack::Create(scene, "Default Stack");
-        //animStack->LocalStop = FBXSDK_TIME_ONE_SECOND;
-        //animStack->Description = "Default animation stack";
-
-        //FbxAnimLayer* animLayer = FbxAnimLayer::Create(scene, "Base Layer");
-        //animStack->AddMember(animStack);
-        //// 블랜드 모드 설정
-        //bool val;
-        //animLayer->SetBlendModeBypass(EFbxType::eFbxBool, true);
-
         const int stackCount = scene->GetSrcObjectCount<FbxAnimStack>();
         const std::vector<FbxNode*>& bones = m_impl->meshes[0].bones;
         FbxAnimStack* chosen = nullptr;
@@ -504,18 +503,18 @@ void ModelData::SetAnim(const ModelData& animModel)
 
     // animModel 씬의 모든 노드를 이름 -> 노드로 매핑.
     std::unordered_map<std::string, FbxNode*> nameToNode;
+
+    std::stack<FbxNode*> stk;
+    if (FbxNode* root = animScene->GetRootNode())
+        for (int i = 0; i < root->GetChildCount(); ++i)
+            stk.push(root->GetChild(i));
+
+    while (!stk.empty())
     {
-        std::stack<FbxNode*> stk;
-        if (FbxNode* root = animScene->GetRootNode())
-            for (int i = 0; i < root->GetChildCount(); ++i)
-                stk.push(root->GetChild(i));
-        while (!stk.empty())
-        {
-            FbxNode* n = stk.top(); stk.pop();
-            nameToNode.emplace(n->GetName(), n);
-            for (int i = 0; i < n->GetChildCount(); ++i)
-                stk.push(n->GetChild(i));
-        }
+        FbxNode* n = stk.top(); stk.pop();
+        nameToNode.emplace(n->GetName(), n);
+        for (int i = 0; i < n->GetChildCount(); ++i)
+            stk.push(n->GetChild(i));
     }
 
     // 각 메시의 본을 이름으로 매칭.
