@@ -70,17 +70,19 @@ void Character::Startup( void )
     // 기본 메시: X Bot(애니메이션 없음). 애님 소스: Walking. 이름 기반으로 리타게팅.
     if (!m_Model.Load(L"Assets/X Bot.fbx"))
         Utility::Printf("[Character] Failed to load Assets/X Bot.fbx\n");
-    if (!m_Anim1.Load(L"Assets/Walking.fbx"))
-        Utility::Printf("[Character] Failed to load Assets/Walking.fbx\n");
-
+    if (!m_Anim1.Load(L"Assets/Capoeira.fbx"))
+        Utility::Printf("[Character] Failed to load Assets/Capoeira.fbx\n");
     m_Model.SetAnim(m_Anim1);
 
     m_Camera.SetZRange(1.0f, 10000.0f);
-    m_CameraController.reset(new OrbitCamera(
+
+    std::unique_ptr<OrbitCamera> camCon = std::make_unique<OrbitCamera>(
         m_Camera,
         m_Model.IsLoaded() ? m_Model.GetBoundingSphere()
-                              : Math::BoundingSphere(Math::Vector3(Math::kZero), 5.0f),
-        Math::Vector3(Math::kYUnitVector)));
+        : Math::BoundingSphere(Math::Vector3(Math::kZero), 5.0f),
+        Math::Vector3(Math::kYUnitVector));
+    camCon->EnableMomentum(false);
+    m_CameraController = std::move(camCon);
 
     GUIManager::GetInstance()->Init(
         g_hWnd,

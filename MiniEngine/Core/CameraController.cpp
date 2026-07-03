@@ -185,6 +185,15 @@ void OrbitCamera::Update( float deltaTime )
         ApplyMomentum(m_LastYaw, yaw, deltaTime);
         ApplyMomentum(m_LastPitch, pitch, deltaTime);
     }
+    else {
+
+        Matrix3 orientation = Matrix3::MakeYRotation(m_CurrentHeading) * Matrix3::MakeXRotation(m_CurrentPitch);
+        Vector3 position = orientation.GetZ() * (m_ModelBounds.GetRadius() * Lerp(3.0f, 1.0f, m_CurrentCloseness) + m_TargetCamera.GetNearClip());
+        m_TargetCamera.SetTransform(AffineTransform(orientation, position + m_ModelBounds.GetCenter()));
+        m_TargetCamera.Update();
+
+        return;
+    }
 
     // don't apply momentum to mouse inputs
     yaw += GameInput::GetAnalogInput(GameInput::kAnalogMouseX) * m_MouseSensitivityX;

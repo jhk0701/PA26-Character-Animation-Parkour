@@ -35,14 +35,15 @@ void Renderer::Initialize()
 
     const D3D12_INPUT_ELEMENT_DESC inputLayout[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }, // float3 3 * 4 byte (0~12)
+        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }, // float3  (13 ~ 24)
     };
 
     m_PSO.SetRootSignature(m_RootSig);
     m_PSO.SetInputLayout(_countof(inputLayout), inputLayout);
     m_PSO.SetVertexShader(g_pSimpleVS, sizeof(g_pSimpleVS));
     m_PSO.SetPixelShader(g_pSimplePS, sizeof(g_pSimplePS));
+
     // 최소 뷰어: FBX->DirectX 축 변환에 따른 와인딩 반전과 무관하게 항상 보이도록 컬링 해제.
     m_PSO.SetRasterizerState(RasterizerTwoSided);
     m_PSO.SetBlendState(BlendDisable);

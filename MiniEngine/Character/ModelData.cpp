@@ -49,6 +49,72 @@ namespace
     }
     XMFLOAT3 TransformDirRaw(const FbxAMatrix& m, const FbxVector4& v) { return TransformDirRaw(m, v[0], v[1], v[2]); }
     XMFLOAT3 TransformDirRaw(const FbxAMatrix& m, const XMFLOAT3& v) { return TransformDirRaw(m, v.x, v.y, v.z); }
+
+    XMFLOAT3 TransformDir(const FbxAMatrix& m, const FbxVector4& v)
+    {
+        const double x = v[0], y = v[1], z = v[2];
+        XMFLOAT3 r(
+            (float)(x * m.Get(0, 0) + y * m.Get(1, 0) + z * m.Get(2, 0)),
+            (float)(x * m.Get(0, 1) + y * m.Get(1, 1) + z * m.Get(2, 1)),
+            (float)(x * m.Get(0, 2) + y * m.Get(1, 2) + z * m.Get(2, 2)));
+        XMStoreFloat3(&r, XMVector3Normalize(XMLoadFloat3(&r)));
+        return r;
+    }
+
+    // 노드의 지오메트리 오프셋(피벗)까지 포함한 최종 월드 변환.
+    FbxAMatrix GetNodeWorldTransform(FbxNode* node)
+    {
+        FbxAMatrix world = node->EvaluateGlobalTransform();
+        FbxVector4 gT = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+        FbxVector4 gR = node->GetGeometricRotation(FbxNode::eSourcePivot);
+        FbxVector4 gS = node->GetGeometricScaling(FbxNode::eSourcePivot);
+        FbxAMatrix geom(gT, gR, gS);
+        return world * geom;
+    }
+
+    // 하나의 FbxMesh를 정점/인덱스로 전개(월드 공간 베이크).
+    void ExtractMesh(FbxNode* node, FbxMesh* mesh,
+        std::vector<ModelData::Vertex>& outVerts,
+        std::vector<uint32_t>& outIndices,
+        XMFLOAT3& minPos, XMFLOAT3& maxPos)
+    {
+        if (mesh->GetElementNormalCount() == 0)
+            mesh->GenerateNormals();
+
+        const FbxAMatrix world = GetNodeWorldTransform(node);
+        const FbxVector4* controlPoints = mesh->GetControlPoints();
+        const int polyCount = mesh->GetPolygonCount();
+
+        for (int pi = 0; pi < polyCount; ++pi)
+        {
+            // 삼각화된 상태를 가정 (Load에서 Triangulate 수행).
+            const int polySize = mesh->GetPolygonSize(pi);
+            if (polySize != 3)
+                continue;
+
+            for (int vi = 0; vi < 3; ++vi)
+            {
+                const int cpIdx = mesh->GetPolygonVertex(pi, vi);
+
+                ModelData::Vertex vtx;
+                vtx.pos = TransformPoint(world, controlPoints[cpIdx]);
+
+                FbxVector4 n(0, 1, 0, 0);
+                mesh->GetPolygonVertexNormal(pi, vi, n);
+                vtx.normal = TransformDir(world, n);
+
+                minPos.x = min(minPos.x, vtx.pos.x);
+                minPos.y = min(minPos.y, vtx.pos.y);
+                minPos.z = min(minPos.z, vtx.pos.z);
+                maxPos.x = max(maxPos.x, vtx.pos.x);
+                maxPos.y = max(maxPos.y, vtx.pos.y);
+                maxPos.z = max(maxPos.z, vtx.pos.z);
+
+                outIndices.push_back((uint32_t)outVerts.size());
+                outVerts.push_back(vtx);
+            }
+        }
+    }
 }
 
 struct Influence 
@@ -81,7 +147,7 @@ struct ModelData::Impl
     double time = 0.0;
 
     std::vector<MeshSkin> meshes;
-    std::vector<ModelData::Vertex> skinned; 
+    std::vector<ModelData::Vertex> skinned;
 };
 
 ModelData::ModelData() : m_impl(std::make_unique<Impl>()) {}
@@ -181,7 +247,8 @@ bool ModelData::Load(const std::wstring& filePath)
     FbxGeometryConverter geomConv(manager);
     geomConv.Triangulate(scene, true);
 
-    m_impl->scene = scene;   // 보관(런타임 본 평가). 소유는 FbxManager.
+    m_impl->scene = scene;   
+
 
     // 스킨 메시 수집. DFS
     uint32_t totalPV = 0;
@@ -198,13 +265,26 @@ bool ModelData::Load(const std::wstring& filePath)
             stack.push(node->GetChild(i));
 
         FbxMesh* mesh = node->GetMesh();
+        
         if (!mesh)
             continue;
+
+        // 일반 메시
         if (mesh->GetDeformerCount(FbxDeformer::eSkin) == 0)
         {
-            Utility::Printf("[Mesh] skip non-skinned mesh: %s\n", node->GetName());
+            std::vector<Vertex> verts;
+            std::vector<uint32_t> indices;
+            XMFLOAT3 minPos(FLT_MAX, FLT_MAX, FLT_MAX);
+            XMFLOAT3 maxPos(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+            ExtractMesh(node, mesh, verts, indices, minPos, maxPos);
+
+            for (int i = 0; i < node->GetChildCount(); ++i)
+                stack.push(node->GetChild(i));
+
             continue;
         }
+
         if (mesh->GetElementNormalCount() == 0)
             mesh->GenerateNormals();
 
@@ -212,7 +292,6 @@ bool ModelData::Load(const std::wstring& filePath)
         const FbxVector4* bindCP = mesh->GetControlPoints();
 
         MeshSkin ms;
-
         // 클러스터 -> 본 + 바인드 행렬(M, L^-1) + 원시 영향(cp,weight).
         FbxSkin* skin = (FbxSkin*)mesh->GetDeformer(0, FbxDeformer::eSkin);
         const int clusterCount = skin->GetClusterCount();
