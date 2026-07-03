@@ -125,12 +125,6 @@ struct Influence
     XMFLOAT3 localNrm;
 };
 
-struct MeshSkin
-struct AnimationClip 
-{
-    
-};
-
 struct Mesh
 {
     std::vector<XMFLOAT3> meshPos; // 버텍스 위치
