@@ -62,6 +62,11 @@ namespace GameCore
 
     bool UpdateApplication( IGameApp& game )
     {
+#ifdef _EDITOR
+        // 에디터 모드 실행 중
+        return false; // 종료
+#endif
+
         EngineProfiling::Update();
 
         float DeltaTime = Graphics::GetFrameTime();
@@ -136,7 +141,15 @@ namespace GameCore
 
         ASSERT(g_hWnd != 0);
 
+
+#ifdef _EDITOR
+        // 에디터 모드일 때, 시작 시 빌드된 Asset 경로에 3d 오브젝트 변환 파일 확인
+        // 없다면 이 시점에서 빌드
+        Utility::Printf("[Editor] This Is Editor Mode");
+        return 1;
+#else
         InitializeApplication(app);
+#endif
 
         ShowWindow( g_hWnd, nCmdShow/*SW_SHOWDEFAULT*/ );
 

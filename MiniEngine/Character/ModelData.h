@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 #include <DirectXMath.h>
-#include <fbxsdk.h> // TOOD : FBX 모델에 국한된 사용 -> Assimp로 바꿀 것
+#include <fbxsdk.h> // TOOD : FBX 모델에 국한된 사용 -> 에디터에서만 사용하고, 본 프로젝트에선 빌드된 .mini 파일 사용할 것
 
 #include "Math/BoundingSphere.h"
 

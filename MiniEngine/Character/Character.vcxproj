@@ -5,6 +5,10 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Editor|x64">
+      <Configuration>Editor</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Profile|x64">
       <Configuration>Profile</Configuration>
       <Platform>x64</Platform>
@@ -42,6 +46,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="..\PropertySheets\FbxSdk.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'" Label="PropertySheets">
+    <Import Project="..\PropertySheets\FbxSdk.props" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <Import Project="..\PropertySheets\FbxSdk.props" />
   </ImportGroup>
@@ -66,6 +73,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:MSVCRT %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Editor'">/nodefaultlib:MSVCRT %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)
 	  </AdditionalDependencies>
     </Link>
@@ -151,6 +159,7 @@ xcopy /y /d /e /i "$(ProjectDir)..\..\Assets" "$(OutDir)Assets\"</Command>
     <ClCompile />
     <ClCompile>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">FBXSDK_SHARED;_EDITOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ImportGroup Label="ExtensionTargets">

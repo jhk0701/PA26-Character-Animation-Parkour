@@ -19,6 +19,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Windows = Debug|Windows
 		Debug|x64 = Debug|x64
+		Editor|Windows = Editor|Windows
+		Editor|x64 = Editor|x64
 		Profile|Windows = Profile|Windows
 		Profile|x64 = Profile|x64
 		Release|Windows = Release|Windows
@@ -29,6 +31,9 @@ Global
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Debug|Windows.Build.0 = Debug|x64
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Debug|x64.ActiveCfg = Debug|x64
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Debug|x64.Build.0 = Debug|x64
+		{11693050-9F9F-46D2-8148-73F8595D6764}.Editor|Windows.ActiveCfg = Editor|x64
+		{11693050-9F9F-46D2-8148-73F8595D6764}.Editor|x64.ActiveCfg = Editor|x64
+		{11693050-9F9F-46D2-8148-73F8595D6764}.Editor|x64.Build.0 = Editor|x64
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Profile|Windows.ActiveCfg = Profile|x64
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Profile|Windows.Build.0 = Profile|x64
 		{11693050-9F9F-46D2-8148-73F8595D6764}.Profile|x64.ActiveCfg = Profile|x64
@@ -41,6 +46,9 @@ Global
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Debug|Windows.Build.0 = Debug|x64
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Debug|x64.ActiveCfg = Debug|x64
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Debug|x64.Build.0 = Debug|x64
+		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Editor|Windows.ActiveCfg = Editor|x64
+		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Editor|x64.ActiveCfg = Editor|x64
+		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Editor|x64.Build.0 = Editor|x64
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Profile|Windows.ActiveCfg = Profile|x64
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Profile|Windows.Build.0 = Profile|x64
 		{86A58508-0D6A-4786-A32F-01A301FDC6F3}.Profile|x64.ActiveCfg = Profile|x64
@@ -53,6 +61,9 @@ Global
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Debug|Windows.Build.0 = Debug|x64
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Debug|x64.ActiveCfg = Debug|x64
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Debug|x64.Build.0 = Debug|x64
+		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Editor|Windows.ActiveCfg = Editor|x64
+		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Editor|x64.ActiveCfg = Editor|x64
+		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Editor|x64.Build.0 = Editor|x64
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Profile|Windows.ActiveCfg = Profile|x64
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Profile|Windows.Build.0 = Profile|x64
 		{5D3AEEFB-8789-48E5-9BD9-09C667052D09}.Profile|x64.ActiveCfg = Profile|x64

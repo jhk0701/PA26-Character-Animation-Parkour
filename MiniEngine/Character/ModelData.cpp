@@ -496,7 +496,6 @@ void ModelData::SetAnim(const ModelData& animModel)
 
     FbxScene* animScene = animModel.m_impl->scene;
 
-    // animModel 씬이 선택한 애님 스택을 유지하고 평가기를 리셋(로드 시 이미 선택됨).
     if (FbxAnimStack* st = animScene->GetCurrentAnimationStack())
     {
         animScene->SetCurrentAnimationStack(st);
@@ -541,7 +540,4 @@ void ModelData::SetAnim(const ModelData& animModel)
     m_impl->animStart = animModel.m_impl->animStart;
     m_impl->animDuration = animModel.m_impl->animDuration;
     m_impl->time = 0.0;
-
-    Utility::Printf("[Set Animation] retarget bones matched %d/%d, dur=%.2fs\n",
-        matched, total, (float)m_impl->animDuration);
 }

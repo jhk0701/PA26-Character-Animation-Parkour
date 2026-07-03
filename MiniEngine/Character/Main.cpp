@@ -27,7 +27,6 @@ using namespace Graphics;
 class Character : public GameCore::IGameApp
 {
 public:
-
     Character() {}
 
     virtual void Startup( void ) override;
@@ -47,11 +46,13 @@ private:
 
     // TODO : 기능 구현용 임시 모델 데이터 -> MeshComponent로 이전해야함
     ModelData   m_Model;
-    // TODO : 애니메이션 클립만 따로 분리하면 좋을 듯
     ModelData   m_Anim1; 
     ModelData   m_Anim2;
 
     Renderer    m_Renderer;
+
+    float m_animBlend{ 0.0f };
+    std::weak_ptr<UITestInstance> m_pTestUI;
 };
 
 CREATE_APPLICATION( Character )
@@ -67,7 +68,6 @@ void Character::Startup( void )
 
     m_Renderer.Initialize();
 
-    // 기본 메시: X Bot(애니메이션 없음). 애님 소스: Walking. 이름 기반으로 리타게팅.
     if (!m_Model.Load(L"Assets/X Bot.fbx"))
         Utility::Printf("[Character] Failed to load Assets/X Bot.fbx\n");
     if (!m_Anim1.Load(L"Assets/Capoeira.fbx"))
@@ -75,12 +75,12 @@ void Character::Startup( void )
     m_Model.SetAnim(m_Anim1);
 
     m_Camera.SetZRange(1.0f, 10000.0f);
-
-    std::unique_ptr<OrbitCamera> camCon = std::make_unique<OrbitCamera>(
-        m_Camera,
-        m_Model.IsLoaded() ? m_Model.GetBoundingSphere()
-        : Math::BoundingSphere(Math::Vector3(Math::kZero), 5.0f),
-        Math::Vector3(Math::kYUnitVector));
+    std::unique_ptr<OrbitCamera> camCon = 
+        std::make_unique<OrbitCamera>(
+            m_Camera,
+            m_Model.IsLoaded() ? m_Model.GetBoundingSphere()
+            : Math::BoundingSphere(Math::Vector3(Math::kZero), 5.0f),
+            Math::Vector3(Math::kYUnitVector));
     camCon->EnableMomentum(false);
     m_CameraController = std::move(camCon);
 
@@ -91,10 +91,11 @@ void Character::Startup( void )
         g_SceneColorBuffer.GetWidth(),
         g_SceneColorBuffer.GetHeight());
 
-    std::weak_ptr<UITestInstance> pTestUI = GUIManager::GetInstance()->CreateUI<UITestInstance>();
-    if (!pTestUI.expired())
+    m_pTestUI = GUIManager::GetInstance()->CreateUI<UITestInstance>();
+    if (!m_pTestUI.expired())
     {
-        pTestUI.lock()->SetText("Test");
+        m_pTestUI.lock()->SetText("Test");
+        m_pTestUI.lock()->BindBlendValue(&m_animBlend);
     }
 }
 
@@ -152,6 +153,5 @@ void Character::RenderScene( void )
 void Character::RenderUI(GraphicsContext& context)
 {
     GameCore::IGameApp::RenderUI(context);
-
     GUIManager::GetInstance()->RenderGUI(context);
 }

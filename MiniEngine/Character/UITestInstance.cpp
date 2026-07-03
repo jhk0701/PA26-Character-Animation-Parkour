@@ -5,5 +5,8 @@ void UITestInstance::ConstructUI()
 {
 	ImGui::NewFrame();
 	ImGui::Begin("Test GUI");
-	ImGui::Text(curText.c_str());
+	ImGui::Text(m_curText.c_str());
+
+	if (m_pBlendVal)
+		ImGui::SliderFloat("Blend", m_pBlendVal, 0, 1);
 }
