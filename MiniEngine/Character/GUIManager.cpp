@@ -2,6 +2,7 @@
 #include "GUIManager.h"
 #include "CommandContext.h"
 #include "Display.h"
+#include "UIBase.h"
 
 GUIManager::GUIManager() {};
 GUIManager::~GUIManager() {};
@@ -15,15 +16,15 @@ bool GUIManager::Init(HWND hWnd, ID3D12Device* pDevice, ID3D12CommandQueue* pCom
 	io.DisplaySize = ImVec2(w, h);
 	ImGui::StyleColorsDark();
 
-	InitGuiDesc(pDevice); // imgui�� SrvDescHeap �ʱ�ȭ
+	InitGuiDesc(pDevice);
 
 	ImGui_ImplDX12_InitInfo initInfo = {};
 	initInfo.Device = pDevice;
 	initInfo.CommandQueue = pCommandQueue;
 	initInfo.NumFramesInFlight = 3; //  Display::SWAP_CHAIN_BUFFER_COUNT
-	initInfo.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM; // g_OverlayBuffer 포맷과 일치해야 함
+	initInfo.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM; // g_OverlayBuffer 포맷
 	initInfo.SrvDescriptorHeap = m_pGuiDesc;
-	// 단일 디스크립터 힙(레거시) 경로: 폰트 아틀라스 SRV용 CPU/GPU 핸들 지정
+
 	initInfo.LegacySingleSrvCpuDescriptor = m_pGuiDesc->GetCPUDescriptorHandleForHeapStart();
 	initInfo.LegacySingleSrvGpuDescriptor = m_pGuiDesc->GetGPUDescriptorHandleForHeapStart();
 
@@ -56,17 +57,8 @@ void GUIManager::Clear()
 
 void GUIManager::UpdateGUI()
 {
-	ImGui_ImplDX12_NewFrame(); // GUI ������ ����
-	ImGui_ImplWin32_NewFrame();
-
-	// �׽�Ʈ
-	ImGui::NewFrame();
-
-	ImGui::Begin("Test GUI");
-	ImGui::Text("Hello World");
-
-	ImGui::End();
-	ImGui::Render();
+	for (std::shared_ptr<UIBase>& inst : m_UIInstances)
+		inst->Update();
 }
 
 void GUIManager::RenderGUI(GraphicsContext& gfxContext)

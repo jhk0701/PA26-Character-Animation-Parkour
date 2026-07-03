@@ -39,6 +39,12 @@
     <Filter Include="Source Files\Engine\Model">
       <UniqueIdentifier>{ccce10cb-702e-4a9c-b977-4b256c1ecd70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\UI">
+      <UniqueIdentifier>{49dec0ab-da12-4ce4-ae09-278deb0f1f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\UI\Test">
+      <UniqueIdentifier>{4b3b0452-dd9e-40b5-b957-1a8bd086d241}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -78,6 +84,12 @@
     <ClCompile Include="GUIManager.cpp">
       <Filter>Source Files\Engine\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="UIBase.cpp">
+      <Filter>Source Files\Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UITestInstance.cpp">
+      <Filter>Source Files\Engine\UI\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,6 +125,12 @@
     </ClInclude>
     <ClInclude Include="GUIManager.h">
       <Filter>Source Files\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBase.h">
+      <Filter>Source Files\Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UITestInstance.h">
+      <Filter>Source Files\Engine\UI\Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

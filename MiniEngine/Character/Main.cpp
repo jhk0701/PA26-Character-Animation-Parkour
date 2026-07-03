@@ -15,6 +15,7 @@
 
 #include "EngineCore.h"
 #include "GUIManager.h"
+#include "UITestInstance.h"
 
 // Character 자체 FBX 직접 렌더 경로 (Model/Renderer 파이프라인 미사용)
 #include "ModelData.h"
@@ -60,9 +61,8 @@ void Character::Startup( void )
     EngineCore::GetInstance()->Init();
 
     // 테스트 세팅
-    // 후처리 설정. TAA는 사용하지 않으므로 resolve 불필요.
-    PostEffects::EnableHDR = true;
-    PostEffects::EnableAdaptation = true;
+    PostEffects::EnableHDR = false;
+    PostEffects::EnableAdaptation = false;
     TemporalEffects::EnableTAA = false;
 
     m_Renderer.Initialize();
@@ -90,6 +90,12 @@ void Character::Startup( void )
         g_CommandManager.GetCommandQueue(),
         g_SceneColorBuffer.GetWidth(),
         g_SceneColorBuffer.GetHeight());
+
+    std::weak_ptr<UITestInstance> pTestUI = GUIManager::GetInstance()->CreateUI<UITestInstance>();
+    if (!pTestUI.expired())
+    {
+        pTestUI.lock()->SetText("Test");
+    }
 }
 
 void Character::Cleanup( void )
