@@ -131,6 +131,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     // 창이 표시(WindowInit)되어 메시지를 받기 전에 Keyboard/Mouse 싱글턴을 먼저 생성해야
     // WndProc의 ProcessMessage가 예외 없이 동작한다.
     m_input.Initialize(_hWnd);
+    InitDefaultInput();
 
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
         return false;
@@ -150,8 +151,8 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     auto camera = m_cameraActor->AddComponent<CameraComponent>();
     camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
     m_camera = camera; // 비소유 캐시
-
     m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 6.0f);
+
     m_world.BeginPlay();
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
@@ -408,16 +409,6 @@ void GameCore::Update(float _dt)
 {
     m_input.Update();
 
-    using Keys = MiniEngine::Input::Keys;
-
-    // ESC → 종료.
-    if (m_input.IsKeyDown(Keys::Escape))
-    {
-        MG_LOG_INFO("Escape pressed - quitting");
-        PostQuitMessage(0);
-        return;
-    }
-
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
 
@@ -662,6 +653,11 @@ int GameCore::PickActor(const CameraComponent& _camera) const
     return bestIndex;
 }
 
+void GameCore::InitDefaultInput()
+{
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
+}
+
 void GameCore::UpdateGUI()
 {
     // ImGui NewFrame + 패널(Hierarchy/Inspector) + 기즈모. Render()에서 draw data를 실제로 그린다.
@@ -679,4 +675,10 @@ void GameCore::UpdateGUI()
     const std::wstring pending = m_editor.ConsumePendingLoadMini();
     if (!pending.empty())
         SpawnMeshFromMini(pending);
+}
+
+void GameCore::QuitGame()
+{
+    MG_LOG_INFO("Escape pressed - quitting");
+    PostQuitMessage(0);
 }

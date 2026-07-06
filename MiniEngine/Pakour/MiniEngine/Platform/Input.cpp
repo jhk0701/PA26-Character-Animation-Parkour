@@ -33,7 +33,7 @@ namespace MiniEngine
                 it->second.bIsPressed = true;
                 it->second.OnPressed();
             }
-            else if(it->second.bIsPressed && m_keyTracker.IsKeyPressed(it->first)) 
+            else if (it->second.bIsPressed && m_keyTracker.IsKeyPressed(it->first))
             {
                 // Pressing 필요하면 추가
                 // 자리만 마련
@@ -46,3 +46,4 @@ namespace MiniEngine
             }
         }
     }
+}

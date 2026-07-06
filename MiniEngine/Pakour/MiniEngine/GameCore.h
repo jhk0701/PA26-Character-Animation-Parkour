@@ -22,6 +22,8 @@ public:
 	void Render() override;
 	void UpdateGUI() override;
 
+	void QuitGame();
+
 private:
 	// Lambert 셰이더 + 상수버퍼 생성.
 	bool InitRenderResources();
@@ -37,6 +39,8 @@ private:
 	void DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp);
 	// 마우스 위치 → 월드 레이 → StaticMesh AABB 교차. 히트 Actor 인덱스(World::GetActors 기준), 미스는 -1.
 	int  PickActor(const MiniEngine::CameraComponent& _camera) const;
+	// 기본 공통사항 인풋 바인딩
+	void InitDefaultInput();
 
 	MiniEngine::Input m_input;
 
@@ -66,4 +70,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>  m_skinnedPixelShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>  m_skinnedInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>       m_boneCB;      // b2: 본 최종 행렬 128개 (DYNAMIC)
+
+	
 };
