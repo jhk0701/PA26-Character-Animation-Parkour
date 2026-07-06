@@ -21,4 +21,5 @@ Packages
 /ModelConverter/assimp.dll
 Packages
 
-./MiniEngine/Pakour/Assets/Mixamo
+## 테스트용 mixamo asset ignore 라이센스에 따른 재배포 방지
+Pakour/Assets/Mixamo/*.fbx
