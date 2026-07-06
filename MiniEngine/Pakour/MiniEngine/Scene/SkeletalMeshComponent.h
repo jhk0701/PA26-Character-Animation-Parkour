@@ -15,7 +15,7 @@ namespace MiniEngine
     {
     public:
         void SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh);
-        const std::shared_ptr<SkinnedMesh>& GetMesh() const { return m_mesh; }
+        const std::weak_ptr<SkinnedMesh> GetMesh() const { return m_mesh; }
 
         // 클립 재생/전환. _clipIndex 범위 밖(-1 포함) = 정지(바인드 포즈).
         // _fadeSec>0 이고 현재 재생 중이면 크로스페이드, 아니면 즉시 전환.
@@ -25,6 +25,7 @@ namespace MiniEngine
         // 재생할 클립 인덱스(-1 = 정지, 바인드 포즈 유지). 즉시 전환 = PlayClip(i, 0).
         void SetActiveClip(int _clipIndex) { PlayClip(_clipIndex, 0.0f); }
         int  GetActiveClip() const { return m_activeClip; }
+        const int GetClipCount() const { return m_mesh->GetClips().size(); }
 
         // 크로스페이드 진행 중인지(에디터 UI 표시용).
         bool IsFading() const { return m_fadeDuration > 0.0f; }

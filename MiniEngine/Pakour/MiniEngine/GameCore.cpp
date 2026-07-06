@@ -233,6 +233,23 @@ void GameCore::InitDefaultInput()
             inputDir.x = 0.0f;
             m_TmpChar.lock()->SetInputDir(inputDir);
         });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::NumPad0).OnPressed = std::bind(
+        [this]()
+        {
+            std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->GetComponent<SkeletalMeshComponent>();
+            if (!skinComp)
+                return;
+
+            const int clipCount = skinComp->GetClipCount();
+            int curClip = skinComp->GetActiveClip();
+
+            curClip++;
+            if (curClip >= clipCount)
+                curClip = 0;
+
+            skinComp->PlayClip(curClip, 1.0f);
+        });
 }
 
 bool GameCore::InitTempChar()
@@ -363,6 +380,272 @@ bool GameCore::InitRenderResources()
     return true;
 }
 
+void GameCore::Update(float _dt)
+{
+    m_input.Update(_dt);
+
+    // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
+    const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
+
+    // 카메라 조작 (입력 → 카메라 트랜스폼).
+    if (!uiGate)
+    {
+        if (auto camera = m_camera.lock())
+            m_camController.Update(_dt, m_input, *camera);
+    }
+
+    // 좌클릭 피킹. 미스는 -1로 선택 해제.
+    if (!uiGate && m_input.LeftPressed())
+    {
+        if (auto camera = m_camera.lock())
+            m_editor.SetSelectedIndex(PickActor(*camera));
+    }
+
+    // Actor/컴포넌트 Tick 전파.
+    m_world.Tick(_dt);
+}
+
+void GameCore::Render()
+{
+    constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
+    RenderBegin(clearColor);
+
+    // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
+    // 베이크로 스폰된 메시도 포함.
+    if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
+    {
+        for (const auto& actor : m_world.GetActors())
+        {
+            if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
+            {
+                auto mesh = meshComp->GetMesh();
+                if (mesh && mesh->HasGpuResources())
+                    DrawMesh(*camera, *meshComp);
+            }
+
+            if (auto skelComp = actor->GetComponent<SkeletalMeshComponent>())
+            {
+                auto mesh = skelComp->GetMesh();
+                if (!mesh.expired() && mesh.lock()->HasGpuResources())
+                    DrawSkinnedMesh(*camera, *skelComp);
+            }
+        }
+    }
+
+    // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
+    m_editor.Render();
+    RenderEnd();
+}
+
+// 선택된 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
+void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp)
+{
+    auto mesh = _meshComp.GetMesh();
+
+    // MVP = world * view * proj (row-vector, 전치 없음 — 셰이더 cbuffer는 row_major).
+    const Matrix world = _meshComp.GetWorldMatrix();
+    const Matrix view  = _camera.GetViewMatrix();
+    const Matrix proj  = _camera.GetProjectionMatrix();
+
+    PerObjectCB perObject = {};
+    perObject.mvp   = world * view * proj;
+    perObject.world = world;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perObject, sizeof(perObject));
+        m_context->Unmap(m_perObjectCB.Get(), 0);
+    }
+
+    // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
+    PerFrameCB perFrame = {};
+    Vector3 dir(-0.4f, -1.0f, -0.6f);
+    dir.Normalize();
+    perFrame.lightDir   = dir;
+    perFrame.ambient    = 0.15f;
+    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
+    perFrame.albedo     = Vector3(0.85f, 0.78f, 0.70f);
+
+    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
+        m_context->Unmap(m_perFrameCB.Get(), 0);
+    }
+
+    UINT stride = mesh->GetVertexStride();
+    UINT offset = 0;
+    ID3D11Buffer* vb        = mesh->GetVertexBuffer();
+    ID3D11Buffer* objectCB  = m_perObjectCB.Get();
+    ID3D11Buffer* frameCB   = m_perFrameCB.Get();
+
+    m_context->IASetInputLayout(m_inputLayout.Get());
+    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+    m_context->VSSetConstantBuffers(0, 1, &objectCB);
+    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
+    m_context->PSSetConstantBuffers(1, 1, &frameCB);
+    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
+}
+
+// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
+void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
+{
+    auto mesh = _meshComp.GetMesh();
+
+    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
+    const Matrix world = _meshComp.GetWorldMatrix();
+    const Matrix view  = _camera.GetViewMatrix();
+    const Matrix proj  = _camera.GetProjectionMatrix();
+
+    PerObjectCB perObject = {};
+    perObject.mvp   = world * view * proj;
+    perObject.world = world;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perObject, sizeof(perObject));
+        m_context->Unmap(m_perObjectCB.Get(), 0);
+    }
+
+    PerFrameCB perFrame = {};
+    Vector3 dir(-0.4f, -1.0f, -0.6f);
+    dir.Normalize();
+    perFrame.lightDir   = dir;
+    perFrame.ambient    = 0.15f;
+    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
+    perFrame.albedo     = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
+
+    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
+        m_context->Unmap(m_perFrameCB.Get(), 0);
+    }
+
+    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
+    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
+    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
+        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
+        for (size_t i = 0; i < count; ++i)
+            boneCB->boneMatrices[i] = bones[i];
+        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
+            boneCB->boneMatrices[i] = Matrix(); // identity
+        m_context->Unmap(m_boneCB.Get(), 0);
+    }
+
+    UINT stride = mesh.lock()->GetVertexStride();
+    UINT offset = 0;
+    ID3D11Buffer* vb       = mesh.lock()->GetVertexBuffer();
+    ID3D11Buffer* objectCB = m_perObjectCB.Get();
+    ID3D11Buffer* frameCB  = m_perFrameCB.Get();
+    ID3D11Buffer* boneCB   = m_boneCB.Get();
+
+    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
+    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
+    m_context->VSSetConstantBuffers(0, 1, &objectCB);
+    m_context->VSSetConstantBuffers(2, 1, &boneCB);
+    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
+    m_context->PSSetConstantBuffers(1, 1, &frameCB);
+    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
+}
+
+int GameCore::PickActor(const CameraComponent& _camera) const
+{
+    if (m_iWindowWidth <= 0 || m_iWindowHeight <= 0)
+        return -1;
+
+    // 마우스 픽셀 → NDC(-1..1, y 반전).
+    const float ndcX = 2.0f * static_cast<float>(m_input.MouseX()) / static_cast<float>(m_iWindowWidth) - 1.0f;
+    const float ndcY = 1.0f - 2.0f * static_cast<float>(m_input.MouseY()) / static_cast<float>(m_iWindowHeight);
+
+    // 뷰·프로젝션 역행렬로 NDC 근/원점을 월드로 언프로젝트(DX NDC z ∈ [0,1]).
+    const Matrix invVP = (_camera.GetViewMatrix() * _camera.GetProjectionMatrix()).Invert();
+    const Vector3 nearW = Vector3::Transform(Vector3(ndcX, ndcY, 0.0f), invVP);
+    const Vector3 farW  = Vector3::Transform(Vector3(ndcX, ndcY, 1.0f), invVP);
+    Vector3 rayO = nearW;
+    Vector3 rayD = farW - nearW;
+    rayD.Normalize();
+
+    int   bestIndex = -1;
+    float bestT     = FLT_MAX;
+
+    const auto& actors = m_world.GetActors();
+    for (int i = 0; i < static_cast<int>(actors.size()); ++i)
+    {
+        auto meshComp = actors[i]->GetComponent<StaticMeshComponent>();
+        if (!meshComp)
+            continue;
+        auto mesh = meshComp->GetMesh();
+        if (!mesh)
+            continue;
+
+        const auto& verts = mesh->GetVertices();
+        if (verts.empty())
+            continue;
+
+        // 레이를 메시 로컬 공간으로 변환(아핀 선형성으로 로컬 t == 월드 거리).
+        const Matrix invW = meshComp->GetWorldMatrix().Invert();
+        const Vector3 localO = Vector3::Transform(rayO, invW);
+        const Vector3 localD = Vector3::TransformNormal(rayD, invW);
+
+        // 로컬 AABB(정점 min/max).
+        Vector3 aabbMin(FLT_MAX, FLT_MAX, FLT_MAX);
+        Vector3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+        for (const auto& v : verts)
+        {
+            aabbMin.x = Minf(aabbMin.x, v.position[0]); aabbMin.y = Minf(aabbMin.y, v.position[1]); aabbMin.z = Minf(aabbMin.z, v.position[2]);
+            aabbMax.x = Maxf(aabbMax.x, v.position[0]); aabbMax.y = Maxf(aabbMax.y, v.position[1]); aabbMax.z = Maxf(aabbMax.z, v.position[2]);
+        }
+
+        float t;
+        if (RayIntersectsAABB(localO, localD, aabbMin, aabbMax, t))
+        {
+            const float hitT = Maxf(0.0f, t);
+            if (hitT < bestT)
+            {
+                bestT     = hitT;
+                bestIndex = i;
+            }
+        }
+    }
+
+    return bestIndex;
+}
+
+void GameCore::UpdateGUI()
+{
+    // ImGui NewFrame + 패널(Hierarchy/Inspector) + 기즈모. Render()에서 draw data를 실제로 그린다.
+    // 기즈모용 view/proj 전달(카메라 없으면 기본 생성자 = identity — Matrix::Identity 정적상수 LNK2001 회피).
+    // (Editor 외 구성은 no-op)
+    Matrix view, proj;
+    if (auto camera = m_camera.lock())
+    {
+        view = camera->GetViewMatrix();
+        proj = camera->GetProjectionMatrix();
+    }
+    m_editor.BuildUI(m_world, view, proj);
+
+    // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
+    const std::wstring pending = m_editor.ConsumePendingLoadMini();
+    if (!pending.empty())
+        SpawnMeshFromMini(pending);
+}
+
+void GameCore::QuitGame()
+{
+    MG_LOG_INFO("Escape pressed - quitting");
+    PostQuitMessage(0);
+}
+
+
 bool GameCore::InitMeshScene()
 {
     // exe 옆 Assets\ 폴더에 큐브 .mini 를 (없으면) 절차적으로 생성 후 로드.
@@ -490,10 +773,10 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         float scale = 1.0f;
         if (maxDim > 1e-4f)
             scale = 4.0f / maxDim;
-        meshComp->localTransform.scale    = Vector3(scale, scale, scale);
+        meshComp->localTransform.scale = Vector3(scale, scale, scale);
         meshComp->localTransform.position = Vector3(-3.0f, -2.0f, 0.0f);
         MG_LOG_INFO("GameCore: spawned baked skinned actor ({} bones, {} clips, maxDim {:.1f}, scale {:.4f})",
-                    mesh->GetSkeleton().bones.size(), mesh->GetClips().size(), maxDim, scale);
+            mesh->GetSkeleton().bones.size(), mesh->GetClips().size(), maxDim, scale);
         return true;
     }
 
@@ -510,269 +793,4 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
     meshComp->SetMesh(mesh);
     MG_LOG_INFO("GameCore: spawned baked mesh actor into scene");
     return true;
-}
-
-void GameCore::Update(float _dt)
-{
-    m_input.Update(_dt);
-
-    // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
-    const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
-
-    // 카메라 조작 (입력 → 카메라 트랜스폼).
-    if (!uiGate)
-    {
-        if (auto camera = m_camera.lock())
-            m_camController.Update(_dt, m_input, *camera);
-    }
-
-    // 좌클릭 피킹. 미스는 -1로 선택 해제.
-    if (!uiGate && m_input.LeftPressed())
-    {
-        if (auto camera = m_camera.lock())
-            m_editor.SetSelectedIndex(PickActor(*camera));
-    }
-
-    // Actor/컴포넌트 Tick 전파.
-    m_world.Tick(_dt);
-}
-
-void GameCore::Render()
-{
-    constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
-    RenderBegin(clearColor);
-
-    // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
-    // 베이크로 스폰된 메시도 포함.
-    if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
-    {
-        for (const auto& actor : m_world.GetActors())
-        {
-            if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
-            {
-                auto mesh = meshComp->GetMesh();
-                if (mesh && mesh->HasGpuResources())
-                    DrawMesh(*camera, *meshComp);
-            }
-
-            if (auto skelComp = actor->GetComponent<SkeletalMeshComponent>())
-            {
-                auto mesh = skelComp->GetMesh();
-                if (mesh && mesh->HasGpuResources())
-                    DrawSkinnedMesh(*camera, *skelComp);
-            }
-        }
-    }
-
-    // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
-    m_editor.Render();
-    RenderEnd();
-}
-
-// 선택된 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
-void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // MVP = world * view * proj (row-vector, 전치 없음 — 셰이더 cbuffer는 row_major).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view  = _camera.GetViewMatrix();
-    const Matrix proj  = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp   = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
-    PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
-    dir.Normalize();
-    perFrame.lightDir   = dir;
-    perFrame.ambient    = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo     = Vector3(0.85f, 0.78f, 0.70f);
-
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    UINT stride = mesh->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb        = mesh->GetVertexBuffer();
-    ID3D11Buffer* objectCB  = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB   = m_perFrameCB.Get();
-
-    m_context->IASetInputLayout(m_inputLayout.Get());
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
-}
-
-// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
-void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view  = _camera.GetViewMatrix();
-    const Matrix proj  = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp   = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
-    dir.Normalize();
-    perFrame.lightDir   = dir;
-    perFrame.ambient    = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo     = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
-
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
-    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
-    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
-        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
-        for (size_t i = 0; i < count; ++i)
-            boneCB->boneMatrices[i] = bones[i];
-        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
-            boneCB->boneMatrices[i] = Matrix(); // identity
-        m_context->Unmap(m_boneCB.Get(), 0);
-    }
-
-    UINT stride = mesh->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb       = mesh->GetVertexBuffer();
-    ID3D11Buffer* objectCB = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB  = m_perFrameCB.Get();
-    ID3D11Buffer* boneCB   = m_boneCB.Get();
-
-    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->VSSetConstantBuffers(2, 1, &boneCB);
-    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
-}
-
-int GameCore::PickActor(const CameraComponent& _camera) const
-{
-    if (m_iWindowWidth <= 0 || m_iWindowHeight <= 0)
-        return -1;
-
-    // 마우스 픽셀 → NDC(-1..1, y 반전).
-    const float ndcX = 2.0f * static_cast<float>(m_input.MouseX()) / static_cast<float>(m_iWindowWidth) - 1.0f;
-    const float ndcY = 1.0f - 2.0f * static_cast<float>(m_input.MouseY()) / static_cast<float>(m_iWindowHeight);
-
-    // 뷰·프로젝션 역행렬로 NDC 근/원점을 월드로 언프로젝트(DX NDC z ∈ [0,1]).
-    const Matrix invVP = (_camera.GetViewMatrix() * _camera.GetProjectionMatrix()).Invert();
-    const Vector3 nearW = Vector3::Transform(Vector3(ndcX, ndcY, 0.0f), invVP);
-    const Vector3 farW  = Vector3::Transform(Vector3(ndcX, ndcY, 1.0f), invVP);
-    Vector3 rayO = nearW;
-    Vector3 rayD = farW - nearW;
-    rayD.Normalize();
-
-    int   bestIndex = -1;
-    float bestT     = FLT_MAX;
-
-    const auto& actors = m_world.GetActors();
-    for (int i = 0; i < static_cast<int>(actors.size()); ++i)
-    {
-        auto meshComp = actors[i]->GetComponent<StaticMeshComponent>();
-        if (!meshComp)
-            continue;
-        auto mesh = meshComp->GetMesh();
-        if (!mesh)
-            continue;
-
-        const auto& verts = mesh->GetVertices();
-        if (verts.empty())
-            continue;
-
-        // 레이를 메시 로컬 공간으로 변환(아핀 선형성으로 로컬 t == 월드 거리).
-        const Matrix invW = meshComp->GetWorldMatrix().Invert();
-        const Vector3 localO = Vector3::Transform(rayO, invW);
-        const Vector3 localD = Vector3::TransformNormal(rayD, invW);
-
-        // 로컬 AABB(정점 min/max).
-        Vector3 aabbMin(FLT_MAX, FLT_MAX, FLT_MAX);
-        Vector3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-        for (const auto& v : verts)
-        {
-            aabbMin.x = Minf(aabbMin.x, v.position[0]); aabbMin.y = Minf(aabbMin.y, v.position[1]); aabbMin.z = Minf(aabbMin.z, v.position[2]);
-            aabbMax.x = Maxf(aabbMax.x, v.position[0]); aabbMax.y = Maxf(aabbMax.y, v.position[1]); aabbMax.z = Maxf(aabbMax.z, v.position[2]);
-        }
-
-        float t;
-        if (RayIntersectsAABB(localO, localD, aabbMin, aabbMax, t))
-        {
-            const float hitT = Maxf(0.0f, t);
-            if (hitT < bestT)
-            {
-                bestT     = hitT;
-                bestIndex = i;
-            }
-        }
-    }
-
-    return bestIndex;
-}
-
-void GameCore::UpdateGUI()
-{
-    // ImGui NewFrame + 패널(Hierarchy/Inspector) + 기즈모. Render()에서 draw data를 실제로 그린다.
-    // 기즈모용 view/proj 전달(카메라 없으면 기본 생성자 = identity — Matrix::Identity 정적상수 LNK2001 회피).
-    // (Editor 외 구성은 no-op)
-    Matrix view, proj;
-    if (auto camera = m_camera.lock())
-    {
-        view = camera->GetViewMatrix();
-        proj = camera->GetProjectionMatrix();
-    }
-    m_editor.BuildUI(m_world, view, proj);
-
-    // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
-    const std::wstring pending = m_editor.ConsumePendingLoadMini();
-    if (!pending.empty())
-        SpawnMeshFromMini(pending);
-}
-
-void GameCore::QuitGame()
-{
-    MG_LOG_INFO("Escape pressed - quitting");
-    PostQuitMessage(0);
 }
