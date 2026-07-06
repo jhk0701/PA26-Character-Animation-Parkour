@@ -3,10 +3,6 @@
 
 namespace MiniEngine
 {
-    void World::Construct()
-    {
-    }
-
     void World::BeginPlay()
     {
         for (std::shared_ptr<Actor>& actor : m_actors)

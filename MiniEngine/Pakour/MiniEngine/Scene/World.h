@@ -23,7 +23,7 @@ namespace MiniEngine
             return actor;
         }
 
-        virtual void Construct();
+        virtual void Construct() = 0;
         virtual void BeginPlay();
         virtual void Tick(float _dt);
 

@@ -5,11 +5,11 @@ class TestScene : public MiniEngine::World
 {
 public:
 	TestScene();
-	~TestScene();
+	virtual ~TestScene();
 
-	void Construct() override;
+	virtual void Construct() override;
 
 private:
-	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const std::wstring& _path);
-
+	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const wchar_t* _path);
+	
 };

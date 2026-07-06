@@ -47,16 +47,14 @@ private:
 
 	MiniEngine::Input m_input;
 
-	// 테스트용 임시 씬
+	// 테스트용 임시 변수들
 	// 씬. 소유자는 World(m_actors). 메시 핸들은 비소유(weak) 캐시.
 	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
-	MiniEngine::World                              m_world;
+	std::shared_ptr<MiniEngine::World> m_pWorld;
 
 	bool InitTempChar();
 	std::weak_ptr<Character> m_TmpChar;
 
-	std::weak_ptr<MiniEngine::Actor>               m_meshActor;
-	std::weak_ptr<MiniEngine::StaticMeshComponent> m_meshComponent;
 	std::shared_ptr<MiniEngine::Actor>             m_cameraActor;
 	std::weak_ptr<MiniEngine::CameraComponent>     m_camera;
 	MiniEngine::CameraController                   m_camController;
@@ -76,6 +74,4 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>  m_skinnedPixelShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>  m_skinnedInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>       m_boneCB;      // b2: 본 최종 행렬 128개 (DYNAMIC)
-
-	
 };

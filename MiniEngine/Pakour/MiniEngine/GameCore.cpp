@@ -13,6 +13,7 @@
 
 // 테스트용 추가
 #include "Content/Character.h"
+#include "Content/TestScene.h"
 
 using namespace MiniEngine;
 
@@ -119,23 +120,25 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
         return false;
 
     PathManager::GetInstance()->Init();
+    AssetManager::GetInstance()->Init(m_device.Get());
 
     if (InitRenderResources() == false)
         return false;
 
-    InitTempChar();
-    InitDefaultInput();
+    // InitTempChar();
+    // InitDefaultInput();
+        
+    m_pWorld = std::make_shared<TestScene>();
+    m_pWorld->Construct();
+    m_pWorld->BeginPlay();
 
-    // 카메라 Actor.
-    m_cameraActor = m_world.SpawnActor<Actor>();
+    // 카메라 Actor. 임시
+    m_cameraActor = m_pWorld->SpawnActor<Actor>();
     m_cameraActor->SetName("Camera");
     auto camera = m_cameraActor->AddComponent<CameraComponent>();
     camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
     m_camera = camera; // 비소유 캐시
     m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
-
-    m_world.Construct();
-    m_world.BeginPlay();
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
@@ -143,119 +146,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
     return true;
 }
-
-void GameCore::InitDefaultInput()
-{
-#if WITH_EDITOR
-    return;
-#endif 
-
-    // 바인딩 하드코딩
-    // TODO : 쓰기 편한 형태로 정리할 것
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = -1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
-        [this]() 
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
-        [this]() 
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
-        [this]() 
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = -1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::NumPad0).OnPressed = std::bind(
-        [this]()
-        {
-            std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->GetComponent<SkeletalMeshComponent>();
-            if (!skinComp)
-                return;
-
-            const int clipCount = skinComp->GetClipCount();
-            int curClip = skinComp->GetActiveClip();
-
-            curClip++;
-            if (curClip >= clipCount)
-                curClip = 0;
-
-            skinComp->PlayClip(curClip, 1.0f);
-        });
-}
-
-bool GameCore::InitTempChar()
-{
-    PathManager* pathMgr = PathManager::GetInstance();
-
-    std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
-    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath, m_device.Get());
-
-    if (!skinnedMesh)
-        return false;
-
-    m_TmpChar = m_world.SpawnActor<Character>();
-    std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
-    skinComp->SetMesh(skinnedMesh);
-    
-    skinComp->SetActiveClip(2);
-
-    std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
-    charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
-    charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
-    charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
-
-    return true;
-}
-
 
 bool GameCore::InitRenderResources()
 {
@@ -375,7 +265,9 @@ void GameCore::Update(float _dt)
     }
 
     // Actor/컴포넌트 Tick 전파.
-    m_world.Tick(_dt);
+
+    if (m_pWorld)
+        m_pWorld->Tick(_dt);
 }
 
 void GameCore::Render()
@@ -383,11 +275,14 @@ void GameCore::Render()
     constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
     RenderBegin(clearColor);
 
+    if (m_pWorld == nullptr)
+        return;
+
     // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
     // 베이크로 스폰된 메시도 포함.
     if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
     {
-        for (const auto& actor : m_world.GetActors())
+        for (const auto& actor : m_pWorld->GetActors())
         {
             if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
             {
@@ -551,7 +446,7 @@ int GameCore::PickActor(const CameraComponent& _camera) const
     int   bestIndex = -1;
     float bestT     = FLT_MAX;
 
-    const auto& actors = m_world.GetActors();
+    const auto& actors = m_pWorld->GetActors();
     for (int i = 0; i < static_cast<int>(actors.size()); ++i)
     {
         auto meshComp = actors[i]->GetComponent<StaticMeshComponent>();
@@ -605,7 +500,7 @@ void GameCore::UpdateGUI()
         view = camera->GetViewMatrix();
         proj = camera->GetProjectionMatrix();
     }
-    m_editor.BuildUI(m_world, view, proj);
+    m_editor.BuildUI(*m_pWorld, view, proj);
 
     // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
     const std::wstring pending = m_editor.ConsumePendingLoadMini();
@@ -625,7 +520,7 @@ bool GameCore::InitMeshScene()
 
     // exe 옆 Assets\ 폴더에 큐브 .mini 를 (없으면) 절차적으로 생성 후 로드.
     const std::wstring assetPath = pathMgr->ResolveAssetPath(L"Cube.mini");
-    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath, m_device.Get());
+    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load Cube.mini");
@@ -633,12 +528,10 @@ bool GameCore::InitMeshScene()
     }
 
     // 메시 Actor 스폰 (루트를 StaticMeshComponent 로). 소유는 World, GameCore는 비소유 캐시.
-    auto actor = m_world.SpawnActor<Actor>();
+    auto actor = m_pWorld->SpawnActor<Actor>();
     actor->SetName("Cube");
     auto meshComp = actor->AddComponent<StaticMeshComponent>();
     meshComp->SetMesh(mesh);
-    m_meshActor = actor;
-    m_meshComponent = meshComp;
 
     return true;
 }
@@ -649,7 +542,7 @@ bool GameCore::InitSkinnedScene()
 
     // exe 옆 Assets\ 폴더에 스키닝 테스트 박스 .mini 를 (없으면) 절차적으로 생성 후 로드.
     const std::wstring assetPath = pathMgr->ResolveAssetPath(L"SkinnedTest.mini");
-    auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(assetPath, m_device.Get());
+    auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(assetPath);
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load SkinnedTest.mini");
@@ -657,7 +550,7 @@ bool GameCore::InitSkinnedScene()
     }
 
     // 스키닝 Actor 스폰(큐브 옆 +X 오프셋). 소유는 World.
-    auto actor = m_world.SpawnActor<Actor>();
+    auto actor = m_pWorld->SpawnActor<Actor>();
     actor->SetName("SkinnedTest");
     auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
     meshComp->SetMesh(mesh);
@@ -694,14 +587,14 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
 
     if (header.assetType == static_cast<uint32_t>(MiniEngine::MiniAssetType::SkinnedMesh))
     {
-        auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(_miniPath, m_device.Get());
+        auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(_miniPath);
         if (!mesh)
         {
             MG_LOG_ERROR("GameCore: failed to load baked skinned .mini into scene");
             return false;
         }
 
-        auto actor = m_world.SpawnActor<Actor>();
+        auto actor = m_pWorld->SpawnActor<Actor>();
         actor->SetName(name);
         auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
         meshComp->SetMesh(mesh);
@@ -729,17 +622,131 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         return true;
     }
 
-    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(_miniPath, m_device.Get());
+    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(_miniPath);
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load baked .mini into scene");
         return false;
     }
 
-    auto actor = m_world.SpawnActor<Actor>();
+    auto actor = m_pWorld->SpawnActor<Actor>();
     actor->SetName(name);
     auto meshComp = actor->AddComponent<StaticMeshComponent>();
     meshComp->SetMesh(mesh);
     MG_LOG_INFO("GameCore: spawned baked mesh actor into scene");
     return true;
 }
+
+
+void GameCore::InitDefaultInput()
+{
+#if WITH_EDITOR
+    return;
+#endif 
+
+    // 바인딩 하드코딩
+    // TODO : 쓰기 편한 형태로 정리할 것
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.y = -1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.y = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.y = 1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.y = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = -1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::NumPad0).OnPressed = std::bind(
+        [this]()
+        {
+            std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->GetComponent<SkeletalMeshComponent>();
+            if (!skinComp)
+                return;
+
+            const int clipCount = skinComp->GetClipCount();
+            int curClip = skinComp->GetActiveClip();
+
+            curClip++;
+            if (curClip >= clipCount)
+                curClip = 0;
+
+            skinComp->PlayClip(curClip, 1.0f);
+        });
+}
+
+bool GameCore::InitTempChar()
+{
+    PathManager* pathMgr = PathManager::GetInstance();
+
+    std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
+    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
+
+    if (!skinnedMesh)
+        return false;
+
+    m_TmpChar = m_pWorld->SpawnActor<Character>();
+    std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
+    skinComp->SetMesh(skinnedMesh);
+
+    skinComp->SetActiveClip(2);
+
+    std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
+    charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
+    charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
+    charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+
+    return true;
+}
+

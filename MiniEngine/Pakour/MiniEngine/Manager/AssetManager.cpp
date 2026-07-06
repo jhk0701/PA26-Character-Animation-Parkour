@@ -10,7 +10,11 @@ namespace MiniEngine
     AssetManager::AssetManager() {};
     AssetManager::~AssetManager() {};
 
-    bool AssetManager::IsValid(const std::wstring& _path) const
+    void AssetManager::Init(ID3D11Device* _device) 
+    {
+        m_pDevice = _device;
+    };
+    bool AssetManager::IsValidPath(const std::wstring& _path) const
     {
         std::ifstream probe(_path, std::ios::binary);
         const bool exists = probe.is_open();
@@ -26,9 +30,9 @@ namespace MiniEngine
         return false;
     }
 
-    std::shared_ptr<StaticMesh> AssetManager::LoadStaticMesh(const std::wstring& _path, ID3D11Device* _device)
+    std::shared_ptr<StaticMesh> AssetManager::LoadStaticMesh(const std::wstring& _path)
     {
-        if (IsValid(_path) == false)
+        if (IsInitialized() == false || IsValidPath(_path) == false)
             return nullptr;
 
         // 캐시 히트: 아직 살아있는 핸들이 있으면 그대로 공유.
@@ -44,7 +48,7 @@ namespace MiniEngine
         if (!mesh)
             return nullptr;
 
-        if (!mesh->CreateGpuResources(_device))
+        if (!mesh->CreateGpuResources(m_pDevice))
         {
             MG_LOG_ERROR("AssetManager: CreateGpuResources failed");
             return nullptr;
@@ -54,9 +58,9 @@ namespace MiniEngine
         return mesh;
     }
 
-    std::shared_ptr<SkinnedMesh> AssetManager::LoadSkinnedMesh(const std::wstring& _path, ID3D11Device* _device)
+    std::shared_ptr<SkinnedMesh> AssetManager::LoadSkinnedMesh(const std::wstring& _path)
     {
-        if (IsValid(_path) == false)
+        if (IsInitialized() == false || IsValidPath(_path) == false)
             return nullptr;
 
         // 캐시 히트: 아직 살아있는 핸들이 있으면 그대로 공유.
@@ -67,12 +71,13 @@ namespace MiniEngine
                 return cached;
         }
 
-        // 로드(CPU 데이터) → GPU 리소스 생성.
+        // 로드(CPU 데이터)
         auto mesh = MiniLoader::LoadSkinnedMesh(_path);
         if (!mesh)
             return nullptr;
 
-        if (!mesh->CreateGpuResources(_device))
+        //  → GPU 리소스 생성.
+        if (!mesh->CreateGpuResources(m_pDevice))
         {
             MG_LOG_ERROR("AssetManager: CreateGpuResources failed (SkinnedMesh)");
             return nullptr;
