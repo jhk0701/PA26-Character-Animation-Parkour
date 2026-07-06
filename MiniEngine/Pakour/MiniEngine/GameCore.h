@@ -10,6 +10,8 @@
 #include "Asset/AssetManager.h"
 #include "Editor/EditorUI.h"
 
+class Character; // 테스트용
+
 class GameCore : public DirectXBase
 {
 public:
@@ -44,17 +46,20 @@ private:
 
 	MiniEngine::Input m_input;
 
+	// 테스트용 임시 씬
 	// 씬. 소유자는 World(m_actors). 메시 핸들은 비소유(weak) 캐시.
 	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
 	MiniEngine::World                              m_world;
 	MiniEngine::AssetManager                       m_assets;
+
+	bool InitTempChar();
+	std::weak_ptr<Character> m_TmpChar;
 
 	std::weak_ptr<MiniEngine::Actor>               m_meshActor;
 	std::weak_ptr<MiniEngine::StaticMeshComponent> m_meshComponent;
 	std::shared_ptr<MiniEngine::Actor>             m_cameraActor;
 	std::weak_ptr<MiniEngine::CameraComponent>     m_camera;
 	MiniEngine::CameraController                   m_camController;
-	float                                          m_meshAngle = 0.0f;
 
 	// 에디터 UI (Editor 구성 전용 동작, 그 외 no-op). §4/§14.2
 	MiniEngine::Editor::EditorUI                   m_editor;

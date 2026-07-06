@@ -10,6 +10,9 @@
 #include <cmath>
 #include <directxtk/SimpleMath.h>
 
+// 테스트용 추가
+#include "Content/Character.h"
+
 using namespace MiniEngine;
 
 namespace
@@ -134,17 +137,14 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     // WndProc의 ProcessMessage가 예외 없이 동작한다.
     m_input.Initialize(_hWnd);
 
-    InitDefaultInput();
-
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
         return false;
 
     if (InitRenderResources() == false)
         return false;
-    if (InitMeshScene() == false)
-        return false;
-    if (InitSkinnedScene() == false)
-        return false;
+
+    InitTempChar();
+    InitDefaultInput();
 
     // 카메라 Actor.
     m_cameraActor = m_world.SpawnActor<Actor>();
@@ -167,10 +167,65 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 void GameCore::InitDefaultInput()
 {
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).Pressing = std::bind([this](float _dt) 
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
+        [this]()
         {
-            m_meshComponent.lock()->localTransform.position.y += 1.0f * _dt;
-        }, std::placeholders::_1);
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
+        [this]() 
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = -1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
+        [this]() 
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+}
+
+bool GameCore::InitTempChar()
+{
+    // TODO : AssetManager-PathManager 통합
+    std::wstring miniPath = ResolveAssetPath(L"Walking.mini");
+    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // 이미 있으면 무시됨
+
+    std::ifstream probe(miniPath, std::ios::binary);
+    const bool exists = probe.is_open();
+    probe.close();
+
+    if (exists == false) 
+        return false;
+
+    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = m_assets.LoadSkinnedMesh(miniPath, m_device.Get());
+
+    if (!skinnedMesh)
+        return false;
+
+    m_TmpChar = m_world.SpawnActor<Character>();
+    std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
+    skinComp->SetMesh(skinnedMesh);
+    skinComp->SetActiveClip(0);
+
+    std::shared_ptr<SceneComponent> charScene = m_TmpChar.lock()->GetRoot();
+    charScene->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
+    charScene->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
+
+    return true;
 }
 
 
@@ -337,6 +392,7 @@ bool GameCore::InitSkinnedScene()
     meshComp->SetMesh(mesh);
     meshComp->localTransform.position = Vector3(3.0f, -1.5f, 0.0f);
     meshComp->SetActiveClip(0); // "wave" 재생
+
     return true;
 }
 
@@ -436,15 +492,6 @@ void GameCore::Update(float _dt)
     {
         if (auto camera = m_camera.lock())
             m_editor.SetSelectedIndex(PickActor(*camera));
-    }
-
-    // 메시 자전 데모: Editor 구성(기즈모 조작 대상)은 정지, 그 외(스텁 IsInitialized=false)만 자전.
-    if (!m_editor.IsInitialized())
-    {
-        /*m_meshAngle += _dt * 0.5f;
-        if (auto meshComp = m_meshComponent.lock())
-            meshComp->localTransform.rotation =
-                Quaternion::CreateFromYawPitchRoll(m_meshAngle, m_meshAngle * 0.6f, 0.0f);*/
     }
 
     // Actor/컴포넌트 Tick 전파.

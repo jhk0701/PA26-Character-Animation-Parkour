@@ -120,7 +120,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h" />
+    <ClInclude Include="Content\Character.h" />
+    <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXBase.h" />
     <ClInclude Include="framework.h" />
@@ -149,10 +150,10 @@
     <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\AssimpBaker.h" />
-    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Content\Character.cpp" />
+    <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -176,7 +177,6 @@
     <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\AssimpBaker.cpp" />
-    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Mecro.hlsli" />

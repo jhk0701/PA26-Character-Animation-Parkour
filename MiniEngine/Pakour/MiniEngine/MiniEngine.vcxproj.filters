@@ -145,10 +145,10 @@
     <ClInclude Include="Scene\StaticMeshComponent.h">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="Content\TestScene.h">
       <Filter>Content\01.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
+    <ClInclude Include="Content\Character.h">
       <Filter>Content\02.Character</Filter>
     </ClInclude>
   </ItemGroup>
@@ -216,10 +216,10 @@
     <ClCompile Include="Scene\StaticMeshComponent.cpp">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
+    <ClCompile Include="Content\TestScene.cpp">
       <Filter>Content\01.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp">
+    <ClCompile Include="Content\Character.cpp">
       <Filter>Content\02.Character</Filter>
     </ClCompile>
   </ItemGroup>
