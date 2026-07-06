@@ -6,6 +6,8 @@ namespace MiniEngine
     class Input;
     class CameraComponent;
 
+    // 임시 테스트용 카메라 조작 (삭제할 것)
+    // 
     // 카메라 조작 헬퍼(컴포넌트 아님 — GameCore가 소유해 Input 접근을 깔끔히 유지).
     // Orbit: 우클릭 드래그로 공전, 휠로 거리. FPS: 우클릭 홀드+마우스로 시야 회전 + WASD/QE 이동.
     // Tab 으로 모드 전환. 매 프레임 카메라 Actor의 트랜스폼(위치/회전)을 갱신한다.

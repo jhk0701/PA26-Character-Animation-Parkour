@@ -4,6 +4,8 @@
 #include <wrl.h> // ComPtr
 #include "Core/Timer.h"
 
+struct RenderContext {};
+
 // direct X를 사용하기 위해서 초기 설정 작업이 있음
 // 그러므로 이를 수행할 클래스를 만들어서 담당시켜 작업을 해줄 것
 // 필요한 곳에서는 상속해서 사용
@@ -45,7 +47,6 @@ protected:
 
 	// 백버퍼+깊이버퍼를 렌더 타깃으로 바인딩하고 컬러/깊이를 클리어.
 	void RenderBegin(const float _clearColor[4]);
-
 	// 백버퍼를 화면에 표시.
 	void RenderEnd();
 

@@ -3,7 +3,6 @@
 #include "DirectXBase.h"
 #include "Platform/Input.h"
 
-// #include "Scene/World.h"
 #include "Scene/CameraComponent.h"
 #include "Scene/CameraController.h"
 #include "Scene/StaticMeshComponent.h"
@@ -32,10 +31,6 @@ public:
 private:
 	// Lambert 셰이더 + 상수버퍼 생성.
 	bool InitRenderResources();
-	// .mini StaticMesh(없으면 절차 생성) 로드 → 메시 Actor 스폰.
-	bool InitMeshScene();
-	// .mini SkinnedMesh(없으면 절차적 2-본 박스 생성) 로드 → 스키닝 Actor 스폰.
-	bool InitSkinnedScene();
 	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
 	bool SpawnMeshFromMini(const std::wstring& _miniPath);
 

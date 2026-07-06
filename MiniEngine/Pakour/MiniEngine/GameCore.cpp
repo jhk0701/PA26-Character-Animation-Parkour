@@ -130,7 +130,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     // InitDefaultInput();
 
     SceneManager::GetInstance()->Init();
-
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
 
     // 카메라 Actor. 임시
@@ -250,6 +249,7 @@ bool GameCore::InitRenderResources()
 
 void GameCore::BeginPlay()
 {
+    // BeginPlay 전파
     SceneManager::GetInstance()->BeginPlay();
 }
 
@@ -263,7 +263,6 @@ void GameCore::Update(float _dt)
     std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
     if (pWorld.expired())
         return;
-
 
     // 카메라 조작 (입력 → 카메라 트랜스폼).
     if (!uiGate)
@@ -287,6 +286,9 @@ void GameCore::Render()
 {
     constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
     RenderBegin(clearColor);
+
+    // 이걸로 호출을 다 해야함
+    // SceneManager::GetInstance()->Render(); // Actor/컴포넌트 Render 전파
 
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
 
@@ -535,55 +537,6 @@ void GameCore::QuitGame()
     PostQuitMessage(0);
 }
 
-bool GameCore::InitMeshScene()
-{
-    PathManager* pathMgr = PathManager::GetInstance();
-
-    // exe 옆 Assets\ 폴더에 큐브 .mini 를 (없으면) 절차적으로 생성 후 로드.
-    const std::wstring assetPath = pathMgr->ResolveAssetPath(L"Cube.mini");
-    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
-    if (!mesh)
-    {
-        MG_LOG_ERROR("GameCore: failed to load Cube.mini");
-        return false;
-    }
-
-    // 메시 Actor 스폰 (루트를 StaticMeshComponent 로). 소유는 World, GameCore는 비소유 캐시.
-
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    auto actor = pWorld->SpawnActor<Actor>();
-    actor->SetName("Cube");
-    auto meshComp = actor->AddComponent<StaticMeshComponent>();
-    meshComp->SetMesh(mesh);
-
-    return true;
-}
-
-bool GameCore::InitSkinnedScene()
-{
-    PathManager* pathMgr = PathManager::GetInstance();
-
-    // exe 옆 Assets\ 폴더에 스키닝 테스트 박스 .mini 를 (없으면) 절차적으로 생성 후 로드.
-    const std::wstring assetPath = pathMgr->ResolveAssetPath(L"SkinnedTest.mini");
-    auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(assetPath);
-    if (!mesh)
-    {
-        MG_LOG_ERROR("GameCore: failed to load SkinnedTest.mini");
-        return false;
-    }
-
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    // 스키닝 Actor 스폰(큐브 옆 +X 오프셋). 소유는 World.
-    auto actor = pWorld->SpawnActor<Actor>();
-    actor->SetName("SkinnedTest");
-    auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
-    meshComp->SetMesh(mesh);
-    meshComp->localTransform.position = Vector3(3.0f, -1.5f, 0.0f);
-    meshComp->SetActiveClip(0); // "wave" 재생
-
-    return true;
-}
-
 bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
 {
     // 헤더(16B)만 피크해 assetType 판별 → Static/Skinned 스폰 분기.
@@ -662,7 +615,6 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
     MG_LOG_INFO("GameCore: spawned baked mesh actor into scene");
     return true;
 }
-
 
 void GameCore::InitDefaultInput()
 {
