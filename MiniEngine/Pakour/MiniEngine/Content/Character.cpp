@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Character.h"
+#include "Core/Math.h"
 
 Character::Character()
 {
@@ -18,9 +19,18 @@ void Character::Tick(float _dt)
 {
 	Actor::Tick(_dt);
 
-	float deltaSpeed = _dt * m_moveSpeed;
-	Vector3 moveVec = Vector3(deltaSpeed * m_inputDir.y, 0.0f, deltaSpeed * m_inputDir.x);
-	std::shared_ptr<SceneComponent> root = GetRoot();
-	root->localTransform.position += moveVec;
+	if (m_inputDir.LengthSquared() > 0) 
+	{
+		// 임시 이동 코드
+		const float deltaSpeed = _dt * m_moveSpeed;
+		std::shared_ptr<SceneComponent> root = GetRoot();
 
+		// 캐릭터 정면 기준 이동
+		const Vector3& fwd = root->localTransform.GetMatrix().Forward();
+		const Vector3& rht = root->localTransform.GetMatrix().Right();
+
+		root->localTransform.position +=
+			deltaSpeed * m_inputDir.y * fwd +
+			deltaSpeed * m_inputDir.x * rht;
+	}
 }

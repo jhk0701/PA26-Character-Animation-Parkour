@@ -152,7 +152,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     auto camera = m_cameraActor->AddComponent<CameraComponent>();
     camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
     m_camera = camera; // 비소유 캐시
-    m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 6.0f);
+    m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
 
     m_world.Construct();
     m_world.BeginPlay();
@@ -166,19 +166,22 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
 void GameCore::InitDefaultInput()
 {
+    // 바인딩 하드코딩
+    // TODO : 쓰기 편한 형태로 정리할 것
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
+
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
         [this]()
         {
             Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 1.0f;
+            inputDir.y = -1.0f;
             m_TmpChar.lock()->SetInputDir(inputDir);
         });
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
         [this]()
         {
             Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 0.0f;
+            inputDir.y = 0.0f;
             m_TmpChar.lock()->SetInputDir(inputDir);
         });
 
@@ -186,11 +189,41 @@ void GameCore::InitDefaultInput()
         [this]() 
         {
             Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = -1.0f;
+            inputDir.y = 1.0f;
             m_TmpChar.lock()->SetInputDir(inputDir);
         });
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
         [this]() 
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.y = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
+        [this]() 
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = -1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 0.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
+        [this]()
+        {
+            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
+            inputDir.x = 1.0f;
+            m_TmpChar.lock()->SetInputDir(inputDir);
+        });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
+        [this]()
         {
             Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
             inputDir.x = 0.0f;
@@ -221,9 +254,10 @@ bool GameCore::InitTempChar()
     skinComp->SetMesh(skinnedMesh);
     skinComp->SetActiveClip(0);
 
-    std::shared_ptr<SceneComponent> charScene = m_TmpChar.lock()->GetRoot();
-    charScene->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
-    charScene->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
+    std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
+    charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
+    charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
+    charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
     return true;
 }

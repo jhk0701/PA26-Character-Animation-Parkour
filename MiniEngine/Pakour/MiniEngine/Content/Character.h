@@ -19,6 +19,6 @@ public:
 private:
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
-	float m_moveSpeed{ 3.0f };
+	float m_moveSpeed{ 100.0f };
 };
 
