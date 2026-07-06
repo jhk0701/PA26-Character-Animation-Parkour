@@ -5,6 +5,7 @@
 #include "Scene/SceneComponent.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
+#include "Manager/SceneManager.h"
 
 #include <fstream>
 #include <cfloat>
@@ -13,7 +14,7 @@
 
 // 테스트용 추가
 #include "Content/Character.h"
-#include "Content/TestScene.h"
+#include "Scene/World.h"
 
 using namespace MiniEngine;
 
@@ -127,13 +128,13 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     // InitTempChar();
     // InitDefaultInput();
-        
-    m_pWorld = std::make_shared<TestScene>();
-    m_pWorld->Construct();
-    m_pWorld->BeginPlay();
+
+    SceneManager::GetInstance()->Init();
+
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
 
     // 카메라 Actor. 임시
-    m_cameraActor = m_pWorld->SpawnActor<Actor>();
+    m_cameraActor = pWorld->SpawnActor<Actor>();
     m_cameraActor->SetName("Camera");
     auto camera = m_cameraActor->AddComponent<CameraComponent>();
     camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
@@ -144,6 +145,10 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
+
+    // GameCore 초기화 완료. Play 시작
+    BeginPlay();
+
     return true;
 }
 
@@ -243,6 +248,11 @@ bool GameCore::InitRenderResources()
     return true;
 }
 
+void GameCore::BeginPlay()
+{
+    SceneManager::GetInstance()->BeginPlay();
+}
+
 void GameCore::Update(float _dt)
 {
     m_input.Update(_dt);
@@ -265,9 +275,7 @@ void GameCore::Update(float _dt)
     }
 
     // Actor/컴포넌트 Tick 전파.
-
-    if (m_pWorld)
-        m_pWorld->Tick(_dt);
+    SceneManager::GetInstance()->Update(_dt);
 }
 
 void GameCore::Render()
@@ -275,14 +283,16 @@ void GameCore::Render()
     constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
     RenderBegin(clearColor);
 
-    if (m_pWorld == nullptr)
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+
+    if (pWorld == nullptr)
         return;
 
     // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
     // 베이크로 스폰된 메시도 포함.
     if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
     {
-        for (const auto& actor : m_pWorld->GetActors())
+        for (const auto& actor : pWorld->GetActors())
         {
             if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
             {
@@ -425,7 +435,6 @@ void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine:
     m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
 }
 
-
 int GameCore::PickActor(const CameraComponent& _camera) const
 {
     if (m_iWindowWidth <= 0 || m_iWindowHeight <= 0)
@@ -446,7 +455,9 @@ int GameCore::PickActor(const CameraComponent& _camera) const
     int   bestIndex = -1;
     float bestT     = FLT_MAX;
 
-    const auto& actors = m_pWorld->GetActors();
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+
+    const auto& actors = pWorld->GetActors();
     for (int i = 0; i < static_cast<int>(actors.size()); ++i)
     {
         auto meshComp = actors[i]->GetComponent<StaticMeshComponent>();
@@ -500,7 +511,9 @@ void GameCore::UpdateGUI()
         view = camera->GetViewMatrix();
         proj = camera->GetProjectionMatrix();
     }
-    m_editor.BuildUI(*m_pWorld, view, proj);
+
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+    m_editor.BuildUI(*pWorld, view, proj);
 
     // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
     const std::wstring pending = m_editor.ConsumePendingLoadMini();
@@ -528,7 +541,9 @@ bool GameCore::InitMeshScene()
     }
 
     // 메시 Actor 스폰 (루트를 StaticMeshComponent 로). 소유는 World, GameCore는 비소유 캐시.
-    auto actor = m_pWorld->SpawnActor<Actor>();
+
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+    auto actor = pWorld->SpawnActor<Actor>();
     actor->SetName("Cube");
     auto meshComp = actor->AddComponent<StaticMeshComponent>();
     meshComp->SetMesh(mesh);
@@ -549,8 +564,9 @@ bool GameCore::InitSkinnedScene()
         return false;
     }
 
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
     // 스키닝 Actor 스폰(큐브 옆 +X 오프셋). 소유는 World.
-    auto actor = m_pWorld->SpawnActor<Actor>();
+    auto actor = pWorld->SpawnActor<Actor>();
     actor->SetName("SkinnedTest");
     auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
     meshComp->SetMesh(mesh);
@@ -594,7 +610,8 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
             return false;
         }
 
-        auto actor = m_pWorld->SpawnActor<Actor>();
+        std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+        auto actor = pWorld->SpawnActor<Actor>();
         actor->SetName(name);
         auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
         meshComp->SetMesh(mesh);
@@ -629,7 +646,8 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         return false;
     }
 
-    auto actor = m_pWorld->SpawnActor<Actor>();
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+    auto actor = pWorld->SpawnActor<Actor>();
     actor->SetName(name);
     auto meshComp = actor->AddComponent<StaticMeshComponent>();
     meshComp->SetMesh(mesh);
@@ -736,7 +754,8 @@ bool GameCore::InitTempChar()
     if (!skinnedMesh)
         return false;
 
-    m_TmpChar = m_pWorld->SpawnActor<Character>();
+    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+    m_TmpChar = pWorld->SpawnActor<Character>();
     std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
     skinComp->SetMesh(skinnedMesh);
 

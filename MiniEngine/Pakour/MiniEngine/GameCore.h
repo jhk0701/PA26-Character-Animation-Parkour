@@ -2,11 +2,13 @@
 #include <string>
 #include "DirectXBase.h"
 #include "Platform/Input.h"
-#include "Scene/World.h"
+
+// #include "Scene/World.h"
 #include "Scene/CameraComponent.h"
 #include "Scene/CameraController.h"
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
+
 #include "Editor/EditorUI.h"
 
 class Character; // 테스트용
@@ -19,6 +21,8 @@ public:
 
 	// DirectXBase을(를) 통해 상속됨
 	bool Init(HWND _hWnd, int _iWidth, int _iHeight) override;
+
+	void BeginPlay();
 	void Update(float _dt) override;
 	void Render() override;
 	void UpdateGUI() override;
@@ -50,7 +54,7 @@ private:
 	// 테스트용 임시 변수들
 	// 씬. 소유자는 World(m_actors). 메시 핸들은 비소유(weak) 캐시.
 	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
-	std::shared_ptr<MiniEngine::World> m_pWorld;
+	// std::shared_ptr<MiniEngine::World> m_pWorld;
 
 	bool InitTempChar();
 	std::weak_ptr<Character> m_TmpChar;

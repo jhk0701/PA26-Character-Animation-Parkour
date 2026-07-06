@@ -11,6 +11,7 @@ namespace MiniEngine
 
         virtual void OnAttach() {}
         virtual void Tick(float /*dt*/) {}
+        virtual void Render() {}
     
         std::weak_ptr<Actor> owner;
     };

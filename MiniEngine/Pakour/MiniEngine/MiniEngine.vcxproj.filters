@@ -157,6 +157,9 @@
     <ClInclude Include="Manager\AssetManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Manager\SceneManager.h">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -229,6 +232,9 @@
       <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Manager\AssetManager.cpp">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\SceneManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
   </ItemGroup>

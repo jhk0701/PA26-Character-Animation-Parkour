@@ -14,4 +14,10 @@ namespace MiniEngine
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Tick(_dt);
     }
+
+    void World::Render()
+    {
+        for (std::shared_ptr<Actor>& actor : m_actors)
+            actor->Render();
+    }
 }

@@ -8,4 +8,10 @@ namespace MiniEngine
         for (std::shared_ptr<Component>& comp : m_components)
             comp->Tick(_dt);
     }
+
+    void Actor::Render()
+    {
+        for (std::shared_ptr<Component>& comp : m_components)
+            comp->Render();
+    }
 }

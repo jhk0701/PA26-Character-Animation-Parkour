@@ -26,6 +26,7 @@ namespace MiniEngine
         virtual void Construct() = 0;
         virtual void BeginPlay();
         virtual void Tick(float _dt);
+        virtual void Render();
 
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
 

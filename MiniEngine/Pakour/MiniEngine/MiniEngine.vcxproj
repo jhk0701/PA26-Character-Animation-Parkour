@@ -128,6 +128,7 @@
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="Manager\AssetManager.h" />
     <ClInclude Include="Manager\PathManager.h" />
+    <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Core\Log.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
     <ClCompile Include="Manager\PathManager.cpp" />
+    <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
