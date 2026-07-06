@@ -17,14 +17,25 @@ void TestScene::Construct()
 {
 	// 바닥
 	std::shared_ptr<Actor> pFloor = BuildObstacle(L"floor.mini");
-	if (pFloor == nullptr)
-		return;
 
+	// TODO: 메쉬 unit 확인 필요
 	// 중간 장애물
+	std::shared_ptr<Actor> pObsMid = BuildObstacle(L"obstacle_mid.mini");
+	std::shared_ptr<SceneComponent> pObsMidRoot = pObsMid->GetRoot();
+	pObsMidRoot->localTransform.position = Vector3(0.0f, 0.0f, -10.0f);
+	pObsMidRoot->localTransform.scale = Vector3(0.1f);
 
 	// 사람 크기 장애물
+	std::shared_ptr<Actor> pObsTop = BuildObstacle(L"obstacle_top.mini");
+	std::shared_ptr<SceneComponent> pObsTopRoot = pObsTop->GetRoot();
+	pObsTopRoot->localTransform.position = Vector3(0.0f, 0.0f, -20.0f);
+	pObsTopRoot->localTransform.scale = Vector3(0.1f);
 
 	// 사람보다 큰 장애물
+	std::shared_ptr<Actor> pObsHigh = BuildObstacle(L"obstacle_high.mini");
+	std::shared_ptr<SceneComponent> pObsHighRoot = pObsHigh->GetRoot();
+	pObsHighRoot->localTransform.position = Vector3(0.0f, 0.0f, -50.0f);
+	pObsHighRoot->localTransform.scale = Vector3(0.1f);
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
