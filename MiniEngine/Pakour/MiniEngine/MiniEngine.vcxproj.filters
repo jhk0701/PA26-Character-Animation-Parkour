@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{8390dc55-c591-4fee-83c2-032e7e786f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{47ecca41-a87c-4e54-a120-c9a135ce53a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\01.Header">
+      <UniqueIdentifier>{cd17bf08-9672-46b6-a349-5871db47bca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\02.Core">
+      <UniqueIdentifier>{a317e025-5ad5-425a-8625-a28441184cdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\02.Core\GameCore">
+      <UniqueIdentifier>{fffe0e20-a428-461d-81a4-8fba16d76d80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\02.Core\DirectXBase">
+      <UniqueIdentifier>{9ce60032-0618-4522-bcff-fc9645eb822e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WindowsDefault">
+      <UniqueIdentifier>{ec97b58c-4708-470b-8a16-42b8ff4e0edc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{3a1e9d44-6b2c-4f18-9d0a-7c5e2b8f1a90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Platform">
+      <UniqueIdentifier>{5c7b2e91-8d34-4a26-b1f7-0e93a4d6c218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{7d9f4a12-3b6e-4c58-9a21-e4c8b7f2d503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Asset">
+      <UniqueIdentifier>{9b2c6f37-1a48-4e5d-b0c3-2f7a9d84e611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Editor">
+      <UniqueIdentifier>{a3e8d15c-6f92-4b70-8d24-c1b5f9a7e402}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DirectXBase.h">
+      <Filter>Engine\02.Core\DirectXBase</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore.h">
+      <Filter>Engine\02.Core\GameCore</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Engine\01.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>Engine\01.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>WindowsDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>WindowsDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Log.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Timer.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Input.h">
+      <Filter>Engine\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Transform.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Component.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneComponent.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Actor.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\World.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\CameraComponent.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\CameraController.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\StaticMeshComponent.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\MiniFormat.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\StaticMesh.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\MiniLoader.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\EditorUI.h">
+      <Filter>Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\AssimpBaker.h">
+      <Filter>Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\AssetManager.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SkeletalMeshComponent.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Skeleton.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\AnimClip.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\SkinnedMesh.h">
+      <Filter>Engine\Asset</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DirectXBase.cpp">
+      <Filter>Engine\02.Core\DirectXBase</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore.cpp">
+      <Filter>Engine\02.Core\GameCore</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Engine\01.Header</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Log.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Timer.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Input.cpp">
+      <Filter>Engine\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneComponent.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Actor.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\World.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\CameraComponent.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\CameraController.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\StaticMeshComponent.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\StaticMesh.cpp">
+      <Filter>Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\MiniLoader.cpp">
+      <Filter>Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\EditorUI.cpp">
+      <Filter>Engine\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\AssimpBaker.cpp">
+      <Filter>Engine\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\AssetManager.cpp">
+      <Filter>Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SkeletalMeshComponent.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\AnimClip.cpp">
+      <Filter>Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\SkinnedMesh.cpp">
+      <Filter>Engine\Asset</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Mecro.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\CanvasVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\CanvasPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Triangle.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SceneColor.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\StaticMeshLambert.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkinnedMeshLambert.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Assets\pyramid.obj">
+      <Filter>Engine\Asset</Filter>
+    </None>
+  </ItemGroup>
+</Project>

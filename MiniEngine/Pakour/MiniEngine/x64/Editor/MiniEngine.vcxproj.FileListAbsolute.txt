@@ -1,0 +1,6 @@
+D:\work\pa\MiniEngine\Build\x64\Editor\Shaders\Triangle.hlsl
+D:\work\pa\MiniEngine\Build\x64\Editor\Shaders\SceneColor.hlsl
+D:\work\pa\MiniEngine\Build\x64\Editor\Shaders\StaticMeshLambert.hlsl
+D:\work\pa\MiniEngine\Build\x64\Editor\Assets\pyramid.obj
+D:\work\pa\MiniEngine\Build\x64\Editor\Shaders\SkinnedMeshLambert.hlsl
+D:\work\pa\MiniEngine\MiniEngine\x64\Editor\MiniEngi.25EFF4BB.Up2Date
