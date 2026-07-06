@@ -7,7 +7,6 @@
 #include "Scene/CameraController.h"
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
-#include "Asset/AssetManager.h"
 #include "Editor/EditorUI.h"
 
 class Character; // 테스트용
@@ -35,10 +34,12 @@ private:
 	bool InitSkinnedScene();
 	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
 	bool SpawnMeshFromMini(const std::wstring& _miniPath);
+
 	// 선택 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
 	void DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp);
 	// 선택 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다(본 행렬 b2 업로드).
 	void DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp);
+
 	// 마우스 위치 → 월드 레이 → StaticMesh AABB 교차. 히트 Actor 인덱스(World::GetActors 기준), 미스는 -1.
 	int  PickActor(const MiniEngine::CameraComponent& _camera) const;
 	// 기본 공통사항 인풋 바인딩
@@ -50,7 +51,6 @@ private:
 	// 씬. 소유자는 World(m_actors). 메시 핸들은 비소유(weak) 캐시.
 	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
 	MiniEngine::World                              m_world;
-	MiniEngine::AssetManager                       m_assets;
 
 	bool InitTempChar();
 	std::weak_ptr<Character> m_TmpChar;

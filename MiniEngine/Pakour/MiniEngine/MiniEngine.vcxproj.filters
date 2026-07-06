@@ -59,6 +59,9 @@
     <Filter Include="Content\02.Character">
       <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Core\Manager">
+      <UniqueIdentifier>{57601918-3ea5-4870-9ee7-ec9c86eb78ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -106,9 +109,6 @@
     <ClInclude Include="Editor\AssimpBaker.h">
       <Filter>Engine\04.Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Asset\AssetManager.h">
-      <Filter>Engine\03.Asset</Filter>
-    </ClInclude>
     <ClInclude Include="Asset\Skeleton.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
@@ -151,6 +151,12 @@
     <ClInclude Include="Content\Character.h">
       <Filter>Content\02.Character</Filter>
     </ClInclude>
+    <ClInclude Include="Manager\PathManager.h">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\AssetManager.h">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -186,9 +192,6 @@
     <ClCompile Include="Editor\AssimpBaker.cpp">
       <Filter>Engine\04.Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Asset\AssetManager.cpp">
-      <Filter>Engine\03.Asset</Filter>
-    </ClCompile>
     <ClCompile Include="Asset\AnimClip.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
@@ -221,6 +224,12 @@
     </ClCompile>
     <ClCompile Include="Content\Character.cpp">
       <Filter>Content\02.Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\PathManager.cpp">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\AssetManager.cpp">
+      <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

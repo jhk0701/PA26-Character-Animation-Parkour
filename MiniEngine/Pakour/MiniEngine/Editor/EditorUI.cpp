@@ -201,13 +201,13 @@ namespace MiniEngine
                 // ── Animation: SkeletalMeshComponent 클립 목록 + 크로스페이드 재생 ──
                 if (auto skeletal = actor->GetComponent<SkeletalMeshComponent>())
                 {
-                    if (skeletal->GetMesh())
+                    if (skeletal->GetMesh().expired() == false)
                     {
                         ImGui::Separator();
                         ImGui::Text("Animation");
                         ImGui::DragFloat("Fade (s)", &m_animFadeSec, 0.05f, 0.0f, 10.0f);
 
-                        const auto& clips = skeletal->GetMesh()->GetClips();
+                        const auto& clips = skeletal->GetMesh().lock()->GetClips();
                         for (int c = 0; c < static_cast<int>(clips.size()); ++c)
                         {
                             const std::string label = clips[c].name + "##clip" + std::to_string(c);

@@ -126,6 +126,8 @@
     <ClInclude Include="DirectXBase.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameCore.h" />
+    <ClInclude Include="Manager\AssetManager.h" />
+    <ClInclude Include="Manager\PathManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Core\Log.h" />
@@ -147,13 +149,14 @@
     <ClInclude Include="Asset\AnimClip.h" />
     <ClInclude Include="Asset\SkinnedMesh.h" />
     <ClInclude Include="Asset\MiniLoader.h" />
-    <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\AssimpBaker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
+    <ClCompile Include="Manager\AssetManager.cpp" />
+    <ClCompile Include="Manager\PathManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -174,7 +177,6 @@
     <ClCompile Include="Asset\AnimClip.cpp" />
     <ClCompile Include="Asset\SkinnedMesh.cpp" />
     <ClCompile Include="Asset\MiniLoader.cpp" />
-    <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\AssimpBaker.cpp" />
   </ItemGroup>

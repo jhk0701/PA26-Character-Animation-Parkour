@@ -3,7 +3,8 @@
 #include "Core/Log.h"
 #include "Scene/Actor.h"
 #include "Scene/SceneComponent.h"
-#include "Asset/MiniLoader.h"
+#include "Manager/PathManager.h"
+#include "Manager/AssetManager.h"
 
 #include <fstream>
 #include <cfloat>
@@ -96,29 +97,6 @@ namespace
         return hr;
     }
 
-    // 실행 파일 위치 기준 디렉터리(작업 디렉터리 무관).
-    std::wstring ExeDir()
-    {
-        wchar_t exePath[MAX_PATH] = {};
-        GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-        std::wstring dir(exePath);
-        const size_t slash = dir.find_last_of(L"\\/");
-        if (slash != std::wstring::npos)
-            dir.resize(slash);
-        return dir;
-    }
-
-    // exe 기준 Shaders\<name> 절대 경로.
-    std::wstring ResolveShaderPath(const wchar_t* _fileName)
-    {
-        return ExeDir() + L"\\Shaders\\" + _fileName;
-    }
-
-    // exe 기준 Assets\<name> 절대 경로.
-    std::wstring ResolveAssetPath(const wchar_t* _fileName)
-    {
-        return ExeDir() + L"\\Assets\\" + _fileName;
-    }
 }
 
 GameCore::GameCore()
@@ -139,6 +117,8 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
         return false;
+
+    PathManager::GetInstance()->Init();
 
     if (InitRenderResources() == false)
         return false;
@@ -254,18 +234,10 @@ void GameCore::InitDefaultInput()
 
 bool GameCore::InitTempChar()
 {
-    // TODO : AssetManager-PathManager 통합
-    std::wstring miniPath = ResolveAssetPath(L"YBot.mini");
-    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // 이미 있으면 무시됨
+    PathManager* pathMgr = PathManager::GetInstance();
 
-    std::ifstream probe(miniPath, std::ios::binary);
-    const bool exists = probe.is_open();
-    probe.close();
-
-    if (exists == false) 
-        return false;
-
-    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = m_assets.LoadSkinnedMesh(miniPath, m_device.Get());
+    std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
+    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath, m_device.Get());
 
     if (!skinnedMesh)
         return false;
@@ -287,7 +259,8 @@ bool GameCore::InitTempChar()
 
 bool GameCore::InitRenderResources()
 {
-    const std::wstring shaderPath = ResolveShaderPath(L"StaticMeshLambert.hlsl");
+    PathManager* pathMgr = PathManager::GetInstance();
+    const std::wstring shaderPath = pathMgr->ResolveShaderPath(L"StaticMeshLambert.hlsl");
 
     // Vertex Shader.
     Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
@@ -337,7 +310,7 @@ bool GameCore::InitRenderResources()
     if (FAILED(hr)) return false;
 
     // ---- GPU 스키닝 리소스 (SkinnedMeshLambert.hlsl) ----
-    const std::wstring skinnedPath = ResolveShaderPath(L"SkinnedMeshLambert.hlsl");
+    const std::wstring skinnedPath = pathMgr->ResolveShaderPath(L"SkinnedMeshLambert.hlsl");
 
     Microsoft::WRL::ComPtr<ID3DBlob> skinnedVsBlob;
     hr = CompileShaderFromFile(skinnedPath, "VSMain", "vs_5_0", &skinnedVsBlob);
@@ -557,6 +530,7 @@ void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine:
     m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
 }
 
+
 int GameCore::PickActor(const CameraComponent& _camera) const
 {
     if (m_iWindowWidth <= 0 || m_iWindowHeight <= 0)
@@ -645,26 +619,13 @@ void GameCore::QuitGame()
     PostQuitMessage(0);
 }
 
-
 bool GameCore::InitMeshScene()
 {
+    PathManager* pathMgr = PathManager::GetInstance();
+
     // exe 옆 Assets\ 폴더에 큐브 .mini 를 (없으면) 절차적으로 생성 후 로드.
-    const std::wstring assetPath = ResolveAssetPath(L"Cube.mini");
-    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // 이미 있으면 무시됨
-
-    std::ifstream probe(assetPath, std::ios::binary);
-    const bool exists = probe.is_open();
-    probe.close();
-    if (!exists)
-    {
-        if (!MiniLoader::WriteCubeMini(assetPath))
-        {
-            MG_LOG_ERROR("GameCore: failed to write Cube.mini");
-            return false;
-        }
-    }
-
-    auto mesh = m_assets.LoadStaticMesh(assetPath, m_device.Get());
+    const std::wstring assetPath = pathMgr->ResolveAssetPath(L"Cube.mini");
+    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath, m_device.Get());
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load Cube.mini");
@@ -684,23 +645,11 @@ bool GameCore::InitMeshScene()
 
 bool GameCore::InitSkinnedScene()
 {
+    PathManager* pathMgr = PathManager::GetInstance();
+
     // exe 옆 Assets\ 폴더에 스키닝 테스트 박스 .mini 를 (없으면) 절차적으로 생성 후 로드.
-    const std::wstring assetPath = ResolveAssetPath(L"SkinnedTest.mini");
-    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // 이미 있으면 무시됨
-
-    std::ifstream probe(assetPath, std::ios::binary);
-    const bool exists = probe.is_open();
-    probe.close();
-    if (!exists)
-    {
-        if (!MiniLoader::WriteSkinnedTest(assetPath))
-        {
-            MG_LOG_ERROR("GameCore: failed to write SkinnedTest.mini");
-            return false;
-        }
-    }
-
-    auto mesh = m_assets.LoadSkinnedMesh(assetPath, m_device.Get());
+    const std::wstring assetPath = pathMgr->ResolveAssetPath(L"SkinnedTest.mini");
+    auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(assetPath, m_device.Get());
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load SkinnedTest.mini");
@@ -745,7 +694,7 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
 
     if (header.assetType == static_cast<uint32_t>(MiniEngine::MiniAssetType::SkinnedMesh))
     {
-        auto mesh = m_assets.LoadSkinnedMesh(_miniPath, m_device.Get());
+        auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(_miniPath, m_device.Get());
         if (!mesh)
         {
             MG_LOG_ERROR("GameCore: failed to load baked skinned .mini into scene");
@@ -780,7 +729,7 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         return true;
     }
 
-    auto mesh = m_assets.LoadStaticMesh(_miniPath, m_device.Get());
+    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(_miniPath, m_device.Get());
     if (!mesh)
     {
         MG_LOG_ERROR("GameCore: failed to load baked .mini into scene");
