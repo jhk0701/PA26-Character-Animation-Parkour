@@ -116,7 +116,7 @@ namespace MiniEngine
             _indices.clear();
 
             // 가중치는 높이 비례 — 하단 bone0, 상단 bone1 로 선형 블렌드.
-            auto pushVertex = [&_vertices](float _x, float _y, float _z,
+            auto pushVertex = [&_vertices, &HEIGHT](float _x, float _y, float _z,
                                            float _nx, float _ny, float _nz, float _u, float _v)
             {
                 MiniSkinnedVertex vert = {};

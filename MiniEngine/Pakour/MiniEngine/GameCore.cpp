@@ -288,6 +288,7 @@ bool GameCore::InitMeshScene()
     meshComp->SetMesh(mesh);
     m_meshActor = actor;
     m_meshComponent = meshComp;
+
     return true;
 }
 

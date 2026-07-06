@@ -41,6 +41,12 @@
     <Filter Include="Engine\Editor">
       <UniqueIdentifier>{a3e8d15c-6f92-4b70-8d24-c1b5f9a7e402}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{665a63f7-0c3e-42a8-b682-a9096a4a8a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\01.Level">
+      <UniqueIdentifier>{ea37ff1a-673e-4bc4-8f6e-1eabd05eed50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">

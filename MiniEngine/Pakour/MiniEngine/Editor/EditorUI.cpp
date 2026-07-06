@@ -290,6 +290,7 @@ namespace MiniEngine
         {
             if (!m_initialized)
                 return;
+
             ImGui::Render();
             ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
         }
