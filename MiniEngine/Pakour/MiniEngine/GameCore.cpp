@@ -138,12 +138,11 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     if (InitRenderResources() == false)
         return false;
-
     if (InitMeshScene() == false)
         return false;
-
     if (InitSkinnedScene() == false)
         return false;
+    
 
     // 카메라 Actor.
     m_cameraActor = m_world.SpawnActor<Actor>();
@@ -153,6 +152,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     m_camera = camera; // 비소유 캐시
     m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 6.0f);
 
+    m_world.Construct();
     m_world.BeginPlay();
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
@@ -161,6 +161,12 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
     return true;
 }
+
+void GameCore::InitDefaultInput()
+{
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
+}
+
 
 bool GameCore::InitRenderResources()
 {
@@ -441,12 +447,12 @@ void GameCore::Update(float _dt)
 
 void GameCore::Render()
 {
-    const float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
+    constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
     RenderBegin(clearColor);
 
     // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
     // 베이크로 스폰된 메시도 포함.
-    if (auto camera = m_camera.lock())
+    if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
     {
         for (const auto& actor : m_world.GetActors())
         {
@@ -456,6 +462,7 @@ void GameCore::Render()
                 if (mesh && mesh->HasGpuResources())
                     DrawMesh(*camera, *meshComp);
             }
+
             if (auto skelComp = actor->GetComponent<SkeletalMeshComponent>())
             {
                 auto mesh = skelComp->GetMesh();
@@ -651,11 +658,6 @@ int GameCore::PickActor(const CameraComponent& _camera) const
     }
 
     return bestIndex;
-}
-
-void GameCore::InitDefaultInput()
-{
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
 }
 
 void GameCore::UpdateGUI()

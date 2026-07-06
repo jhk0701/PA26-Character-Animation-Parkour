@@ -3,15 +3,19 @@
 
 namespace MiniEngine
 {
+    void World::Construct()
+    {
+    }
+
     void World::BeginPlay()
     {
-        for (auto& actor : m_actors)
+        for (std::shared_ptr<Actor>& actor : m_actors)
             actor->BeginPlay();
     }
 
     void World::Tick(float _dt)
     {
-        for (auto& actor : m_actors)
+        for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Tick(_dt);
     }
 }

@@ -48,6 +48,7 @@ private:
 	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
 	MiniEngine::World                              m_world;
 	MiniEngine::AssetManager                       m_assets;
+
 	std::weak_ptr<MiniEngine::Actor>               m_meshActor;
 	std::weak_ptr<MiniEngine::StaticMeshComponent> m_meshComponent;
 	std::shared_ptr<MiniEngine::Actor>             m_cameraActor;

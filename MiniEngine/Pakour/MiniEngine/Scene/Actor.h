@@ -8,9 +8,6 @@
 
 namespace MiniEngine
 {
-    // 씬에 배치되는 기본 오브젝트. 루트 트랜스폼(root) + 여러 Component 소유. (CLAUDE.md §6)
-    // Actor가 컴포넌트의 단독 소유자(shared_ptr). 상향 참조(owner/parent/root)는 weak. (§12)
-    // 주의: 반드시 World::SpawnActor(=make_shared)로만 생성해야 weak_from_this()가 유효하다.
     class Actor : public std::enable_shared_from_this<Actor>
     {
     public:
