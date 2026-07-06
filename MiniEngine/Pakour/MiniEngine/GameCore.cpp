@@ -166,6 +166,10 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
 void GameCore::InitDefaultInput()
 {
+#if WITH_EDITOR
+    return;
+#endif 
+
     // 바인딩 하드코딩
     // TODO : 쓰기 편한 형태로 정리할 것
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
@@ -234,7 +238,7 @@ void GameCore::InitDefaultInput()
 bool GameCore::InitTempChar()
 {
     // TODO : AssetManager-PathManager 통합
-    std::wstring miniPath = ResolveAssetPath(L"Walking.mini");
+    std::wstring miniPath = ResolveAssetPath(L"YBot.mini");
     CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // 이미 있으면 무시됨
 
     std::ifstream probe(miniPath, std::ios::binary);
@@ -252,7 +256,8 @@ bool GameCore::InitTempChar()
     m_TmpChar = m_world.SpawnActor<Character>();
     std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
     skinComp->SetMesh(skinnedMesh);
-    skinComp->SetActiveClip(0);
+    
+    skinComp->SetActiveClip(2);
 
     std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
     charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
