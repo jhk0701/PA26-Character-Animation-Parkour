@@ -18,5 +18,7 @@ namespace MiniEngine
         // RH 카메라는 로컬 -Z를 바라본다(forward = -Z basis).
         Matrix GetViewMatrix() const;
         Matrix GetProjectionMatrix() const;
+
+        void RegisterMainCamera();
     };
 }

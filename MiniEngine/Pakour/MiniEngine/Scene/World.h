@@ -8,6 +8,7 @@
 
 namespace MiniEngine
 {
+    class CameraComponent;
     class World
     {
     public:
@@ -27,10 +28,14 @@ namespace MiniEngine
         virtual void BeginPlay();
         virtual void Tick(float _dt);
         virtual void Render();
-
+        
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
 
+        void SetMainCamera(const std::shared_ptr<CameraComponent>& _newCamera) { m_mainCam = _newCamera; };
+        std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
+
     private:
+        std::shared_ptr<CameraComponent> m_mainCam;
         std::vector<std::shared_ptr<Actor>> m_actors;
     };
 }

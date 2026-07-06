@@ -134,11 +134,12 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
 
     // 카메라 Actor. 임시
-    m_cameraActor = pWorld->SpawnActor<Actor>();
-    m_cameraActor->SetName("Camera");
-    auto camera = m_cameraActor->AddComponent<CameraComponent>();
+    std::shared_ptr<Actor> pCamActor  = pWorld->SpawnActor<Actor>();
+    pCamActor->SetName("Camera");
+    auto camera = pCamActor->AddComponent<CameraComponent>();
     camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
-    m_camera = camera; // 비소유 캐시
+    camera->RegisterMainCamera();
+    
     m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
@@ -146,8 +147,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
 
-    // GameCore 초기화 완료. Play 시작
-    BeginPlay();
+    BeginPlay(); // GameCore 초기화 완료. Play 시작
 
     return true;
 }
@@ -260,17 +260,22 @@ void GameCore::Update(float _dt)
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
 
+    std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
+    if (pWorld.expired())
+        return;
+
+
     // 카메라 조작 (입력 → 카메라 트랜스폼).
     if (!uiGate)
     {
-        if (auto camera = m_camera.lock())
+        if (auto camera = pWorld.lock()->GetMainCamera().lock())
             m_camController.Update(_dt, m_input, *camera);
     }
 
     // 좌클릭 피킹. 미스는 -1로 선택 해제.
     if (!uiGate && m_input.LeftPressed())
     {
-        if (auto camera = m_camera.lock())
+        if (auto camera = pWorld.lock()->GetMainCamera().lock())
             m_editor.SetSelectedIndex(PickActor(*camera));
     }
 
@@ -290,7 +295,7 @@ void GameCore::Render()
 
     // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
     // 베이크로 스폰된 메시도 포함.
-    if (std::shared_ptr<CameraComponent> camera = m_camera.lock())
+    if (std::shared_ptr<CameraComponent> camera = pWorld->GetMainCamera().lock())
     {
         for (const auto& actor : pWorld->GetActors())
         {
@@ -505,15 +510,18 @@ void GameCore::UpdateGUI()
     // ImGui NewFrame + 패널(Hierarchy/Inspector) + 기즈모. Render()에서 draw data를 실제로 그린다.
     // 기즈모용 view/proj 전달(카메라 없으면 기본 생성자 = identity — Matrix::Identity 정적상수 LNK2001 회피).
     // (Editor 외 구성은 no-op)
+    std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
+    if (pWorld.expired())
+        return;
+
     Matrix view, proj;
-    if (auto camera = m_camera.lock())
+    if (auto camera = pWorld.lock()->GetMainCamera().lock())
     {
         view = camera->GetViewMatrix();
         proj = camera->GetProjectionMatrix();
     }
 
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    m_editor.BuildUI(*pWorld, view, proj);
+    m_editor.BuildUI(*pWorld.lock(), view, proj);
 
     // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
     const std::wstring pending = m_editor.ConsumePendingLoadMini();

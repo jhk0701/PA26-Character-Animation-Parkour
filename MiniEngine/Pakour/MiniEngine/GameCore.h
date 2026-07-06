@@ -59,8 +59,8 @@ private:
 	bool InitTempChar();
 	std::weak_ptr<Character> m_TmpChar;
 
-	std::shared_ptr<MiniEngine::Actor>             m_cameraActor;
-	std::weak_ptr<MiniEngine::CameraComponent>     m_camera;
+	// std::shared_ptr<MiniEngine::Actor>             m_cameraActor;
+	// std::weak_ptr<MiniEngine::CameraComponent>     m_camera;
 	MiniEngine::CameraController                   m_camController;
 
 	// 에디터 UI (Editor 구성 전용 동작, 그 외 no-op). §4/§14.2
