@@ -18,7 +18,7 @@ namespace MiniEngine
         m_mapKeyboardBind.clear();
     }
 
-    void Input::Update()
+    void Input::Update(float _dt)
     {
         m_keyState = DirectX::Keyboard::Get().GetState();
         m_keyTracker.Update(m_keyState);
@@ -30,19 +30,25 @@ namespace MiniEngine
         {
             if (it->second.bIsPressed == false && m_keyTracker.IsKeyPressed(it->first))
             {
+                // Pressed 키를 눌렀을 때 1회
                 it->second.bIsPressed = true;
-                it->second.OnPressed();
+
+                if (it->second.OnPressed)
+                    it->second.OnPressed();
             }
-            else if (it->second.bIsPressed && m_keyTracker.IsKeyPressed(it->first))
+            else if (it->second.bIsPressed && m_keyState.IsKeyDown(it->first))
             {
-                // Pressing 필요하면 추가
-                // 자리만 마련
+                // Pressing 누르고 있다면 매 프레임마다
+                if (it->second.Pressing)
+                    it->second.Pressing(_dt);
             }
             else if (it->second.bIsPressed && m_keyTracker.IsKeyReleased(it->first))
             {
-                // Release
+                // Released 키에서 손을 뗏을 때 1회
                 it->second.bIsPressed = false;
-                it->second.OnReleased();
+
+                if (it->second.OnReleased)
+                    it->second.OnReleased();
             }
         }
     }

@@ -5,7 +5,7 @@ namespace MiniEngine
 {
     void Actor::Tick(float _dt)
     {
-        for (auto& comp : m_components)
+        for (std::shared_ptr<Component>& comp : m_components)
             comp->Tick(_dt);
     }
 }

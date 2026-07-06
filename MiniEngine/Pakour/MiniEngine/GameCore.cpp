@@ -4,9 +4,11 @@
 #include "Scene/Actor.h"
 #include "Scene/SceneComponent.h"
 #include "Asset/MiniLoader.h"
+
 #include <fstream>
 #include <cfloat>
 #include <cmath>
+#include <directxtk/SimpleMath.h>
 
 using namespace MiniEngine;
 
@@ -131,6 +133,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     // 창이 표시(WindowInit)되어 메시지를 받기 전에 Keyboard/Mouse 싱글턴을 먼저 생성해야
     // WndProc의 ProcessMessage가 예외 없이 동작한다.
     m_input.Initialize(_hWnd);
+
     InitDefaultInput();
 
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
@@ -142,7 +145,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
         return false;
     if (InitSkinnedScene() == false)
         return false;
-    
 
     // 카메라 Actor.
     m_cameraActor = m_world.SpawnActor<Actor>();
@@ -165,6 +167,10 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 void GameCore::InitDefaultInput()
 {
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
+    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).Pressing = std::bind([this](float _dt) 
+        {
+            m_meshComponent.lock()->localTransform.position.y += 1.0f * _dt;
+        }, std::placeholders::_1);
 }
 
 
@@ -413,7 +419,7 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
 
 void GameCore::Update(float _dt)
 {
-    m_input.Update();
+    m_input.Update(_dt);
 
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
@@ -435,10 +441,10 @@ void GameCore::Update(float _dt)
     // 메시 자전 데모: Editor 구성(기즈모 조작 대상)은 정지, 그 외(스텁 IsInitialized=false)만 자전.
     if (!m_editor.IsInitialized())
     {
-        m_meshAngle += _dt * 0.5f;
+        /*m_meshAngle += _dt * 0.5f;
         if (auto meshComp = m_meshComponent.lock())
             meshComp->localTransform.rotation =
-                Quaternion::CreateFromYawPitchRoll(m_meshAngle, m_meshAngle * 0.6f, 0.0f);
+                Quaternion::CreateFromYawPitchRoll(m_meshAngle, m_meshAngle * 0.6f, 0.0f);*/
     }
 
     // Actor/컴포넌트 Tick 전파.

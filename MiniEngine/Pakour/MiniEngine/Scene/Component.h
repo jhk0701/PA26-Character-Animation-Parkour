@@ -4,7 +4,6 @@
 namespace MiniEngine
 {
     class Actor;
-
     class Component
     {
     public:
@@ -12,7 +11,7 @@ namespace MiniEngine
 
         virtual void OnAttach() {}
         virtual void Tick(float /*dt*/) {}
-
+    
         std::weak_ptr<Actor> owner;
     };
 }

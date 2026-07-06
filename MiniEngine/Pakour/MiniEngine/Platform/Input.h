@@ -15,8 +15,9 @@ namespace MiniEngine
     struct KeyBind
     {
         bool bIsPressed;
-        std::function<void()> OnPressed;
-        std::function<void()> OnReleased;
+        std::function<void()> OnPressed{nullptr};
+        std::function<void(float)> Pressing{nullptr};
+        std::function<void()> OnReleased{nullptr};
     };
 
     class Input
@@ -31,7 +32,7 @@ namespace MiniEngine
         void Clear();
 
         // 매 프레임 1회: 현재 상태 스냅샷 + 엣지 트래커 갱신.
-        void Update();
+        void Update(float _dt);
 
         // ----- 키보드 -----
         bool IsKeyDown(Keys _key) const     { return m_keyState.IsKeyDown(_key); }
