@@ -13,6 +13,7 @@ namespace MiniEngine
 		void BeginPlay();
 		void Update(float _dt);
 		void Render();
+		void EndPlay();
 
 		std::weak_ptr<World> GetCurrentScene() const { return m_pCurScene; }
 

@@ -16,6 +16,7 @@ namespace MiniEngine
         virtual void BeginPlay() {}
         virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
         virtual void Render();
+        virtual void EndPlay() {}
 
         // 컴포넌트 추가. owner(weak) 설정 + (첫 SceneComponent면) root 자동 지정 + OnAttach 호출.
         template<typename T, typename... Args>

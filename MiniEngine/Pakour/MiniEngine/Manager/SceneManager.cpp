@@ -40,4 +40,7 @@ namespace MiniEngine
 
 		m_pCurScene->Render();
 	}
+	void SceneManager::EndPlay()
+	{
+	}
 };

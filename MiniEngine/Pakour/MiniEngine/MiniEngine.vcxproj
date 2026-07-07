@@ -131,6 +131,7 @@
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
+    <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Core\Log.h" />
     <ClInclude Include="Core\Timer.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="Core\Timer.cpp" />
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Platform\Input.cpp" />
+    <ClCompile Include="Scene\RigidBodyComponent.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\Actor.cpp" />
     <ClCompile Include="Scene\World.cpp" />

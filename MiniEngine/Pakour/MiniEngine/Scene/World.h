@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "Scene/Actor.h"
+#include "Physics/PhysicsWorld.h"
 
 namespace MiniEngine
 {
@@ -28,7 +29,8 @@ namespace MiniEngine
         virtual void BeginPlay();
         virtual void Tick(float _dt);
         virtual void Render();
-        
+        virtual void EndPlay();
+
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
 
         void SetMainCamera(const std::shared_ptr<CameraComponent>& _newCamera) { m_mainCam = _newCamera; };
@@ -37,5 +39,9 @@ namespace MiniEngine
     private:
         std::shared_ptr<CameraComponent> m_mainCam;
         std::vector<std::shared_ptr<Actor>> m_actors;
+        
+        // 물리 엔진 파트 : 
+        Physics::PhysicsWorld m_physics;
+        float m_physicsAcuum = 0.0f; // 고정 60Hz로 스텝할 것
     };
 }

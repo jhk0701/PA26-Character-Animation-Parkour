@@ -130,8 +130,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     // InitTempChar();
     // InitDefaultInput();
 
-
-
     SceneManager::GetInstance()->Init();
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
 
@@ -537,6 +535,9 @@ void GameCore::UpdateGUI()
 void GameCore::QuitGame()
 {
     MG_LOG_INFO("Escape pressed - quitting");
+
+    SceneManager::GetInstance()->EndPlay();
+
     PostQuitMessage(0);
 }
 

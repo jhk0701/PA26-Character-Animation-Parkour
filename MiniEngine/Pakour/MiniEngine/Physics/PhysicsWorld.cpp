@@ -59,11 +59,7 @@ namespace MiniEngine::Physics
 
 		// 기본 물리 재질
 		m_material = m_physics->createMaterial(0.5f, 0.5f, 0.6f);
-		
-		// 테스트용
-		CreateRigidFloor();
-
-		MG_LOG_INFO("PhysX initialized (CPU, gravity -9.81 y-up, ground plane y=0)");
+		MG_LOG_INFO("PhysX initialized (CPU, gravity -9.81 y-up)");
 
 		return true;
 	}

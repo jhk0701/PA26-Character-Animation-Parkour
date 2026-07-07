@@ -65,6 +65,9 @@
     <Filter Include="Engine\02.Core\Physics">
       <UniqueIdentifier>{4671afc0-912c-42c2-a548-4021ef0415aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Component\Physics">
+      <UniqueIdentifier>{9a9f19da-fd28-401f-b77d-a480b8147df9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -166,6 +169,9 @@
     <ClInclude Include="Physics\PhysicsWorld.h">
       <Filter>Engine\02.Core\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\RigidBodyComponent.h">
+      <Filter>Engine\07.Object\Component\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -245,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="Physics\PhysicsWorld.cpp">
       <Filter>Engine\02.Core\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\RigidBodyComponent.cpp">
+      <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
