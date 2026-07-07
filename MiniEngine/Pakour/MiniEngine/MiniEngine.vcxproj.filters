@@ -181,6 +181,9 @@
     <ClInclude Include="Scene\Tag.h">
       <Filter>Engine\07.Object\Tag</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\RendererComponent.h">
+      <Filter>Engine\07.Object\Component\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -266,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="Scene\Tag.cpp">
       <Filter>Engine\07.Object\Tag</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\RendererComponent.cpp">
+      <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

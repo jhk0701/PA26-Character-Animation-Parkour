@@ -10,9 +10,6 @@
 namespace MiniEngine
 {
     // .mini 바이너리 로더 / 라이터.
-    // 이 모듈 자체는 외부 임포터(Assimp)를 절대 사용하지 않는다(전 구성 링크 대상, CLAUDE.md §4/§8).
-    // 원본 애셋 임포트(Assimp→정점/인덱스 추출)는 Editor 전용 AssimpBaker 가 담당하며,
-    // 여기서는 그렇게 만들어진 정점/인덱스를 .mini 로 직렬화하는 WriteStaticMesh 만 제공한다.
     class MiniLoader
     {
     public:
@@ -43,7 +40,6 @@ namespace MiniEngine
                                      const std::vector<AnimClip>& _clips);
 
         // 코드로 생성한 2-본 굴곡 박스(1×4×1, Y축 링 분할 + "wave" 클립)를 _path 에 기록.
-        // 성공 시 true. GPU 스키닝/AnimClip 재생 검증용(Assimp/저작권 애셋 불필요).
         static bool WriteSkinnedTest(const std::wstring& _path);
     };
 }

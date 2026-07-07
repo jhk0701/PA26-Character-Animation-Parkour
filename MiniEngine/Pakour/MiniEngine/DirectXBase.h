@@ -40,7 +40,7 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D>         m_depthTex;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthDSV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthState;   // LESS
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_rasterState;  // CULL_BACK, CCW=front
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_rasterState;  // CULL_BACK, CW=front (LH)
 
 	// Device / SwapChain / RTV / DepthStencil / Viewport 초기화. 실패 시 false.
 	bool InitDirectX();

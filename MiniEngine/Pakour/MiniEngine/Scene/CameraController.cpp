@@ -21,6 +21,7 @@ namespace MiniEngine
         m_distance = _distance;
         m_yaw = 0.0f;
         m_pitch = 0.0f;
+    
         // 초기 FPS 위치는 orbit eye 와 일치시킨다.
         m_fpsPosition = m_target - ForwardFromAngles() * m_distance;
     }
@@ -28,9 +29,8 @@ namespace MiniEngine
     Vector3 CameraController::ForwardFromAngles() const
     {
         // 정면 방향을 카메라 회전 쿼터니언에서 직접 파생 → GetViewMatrix가 쓰는 회전과
-        // orbit eye 배치가 항상 일치한다(부호 규약 손유도 실수 방지).
         const Quaternion rot = Quaternion::CreateFromYawPitchRoll(m_yaw, m_pitch, 0.0f);
-        return Vector3::Transform(Vector3(0.0f, 0.0f, -1.0f), rot); // -Z = RH 정면
+        return Vector3::Transform(Vector3(0.0f, 0.0f, 1.0f), rot); // +Z = LH 정면
     }
 
     void CameraController::Update(float _dt, const Input& _input, CameraComponent& _camera)
@@ -98,7 +98,7 @@ namespace MiniEngine
         {
             // WASD/QE 이동 (forward/right/up 기준).
             const Vector3 worldUp(0.0f, 1.0f, 0.0f);
-            Vector3 right = forward.Cross(worldUp);
+            Vector3 right = worldUp.Cross(forward);
             right.Normalize();
 
             Vector3 move(0.0f, 0.0f, 0.0f);

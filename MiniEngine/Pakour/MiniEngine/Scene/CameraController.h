@@ -25,7 +25,7 @@ namespace MiniEngine
         Mode GetMode() const { return m_mode; }
 
     private:
-        // yaw/pitch 로부터 정면 방향(RH, -Z 기준) 계산.
+        // yaw/pitch 로부터 정면 방향 계산.
         Vector3 ForwardFromAngles() const;
 
         Mode m_mode = Mode::Orbit;

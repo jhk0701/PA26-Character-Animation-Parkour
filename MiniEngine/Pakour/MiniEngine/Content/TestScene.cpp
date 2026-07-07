@@ -25,10 +25,11 @@ void TestScene::Construct()
 		std::shared_ptr<Actor> pCamActor = SpawnActor<Actor>();
 		pCamActor->SetName("Camera");
 
-		std::shared_ptr<CameraComponent> camera = pCamActor->AddComponent<CameraComponent>();
-		camera->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+		std::shared_ptr<CameraComponent> pCamComp = pCamActor->AddComponent<CameraComponent>();
+		pCamComp->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+		pCamComp->RegisterMainCamera();
 
-		camera->RegisterMainCamera();
+		pCamActor->GetRoot()->localTransform.position = Vector3(0.0f, 1.0f, 5.0f);
 		// m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
 	}
 
@@ -69,24 +70,20 @@ void TestScene::Construct()
 		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll);
 	}
 
-	// TODO: 메쉬 unit 확인 필요
 	// 중간 장애물
 	std::shared_ptr<Actor> pObsMid = BuildObstacle(L"obstacle_mid.mini");
 	std::shared_ptr<SceneComponent> pObsMidRoot = pObsMid->GetRoot();
-	pObsMidRoot->localTransform.position = Vector3(0.0f, 0.0f, -10.0f);
-	pObsMidRoot->localTransform.scale = Vector3(0.1f);
+	pObsMidRoot->localTransform.position = Vector3(0.0f, 0.0f, 0.0f);
 
 	// 사람 크기 장애물
 	std::shared_ptr<Actor> pObsTop = BuildObstacle(L"obstacle_top.mini");
 	std::shared_ptr<SceneComponent> pObsTopRoot = pObsTop->GetRoot();
-	pObsTopRoot->localTransform.position = Vector3(0.0f, 0.0f, -20.0f);
-	pObsTopRoot->localTransform.scale = Vector3(0.1f);
+	pObsTopRoot->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
 
 	// 사람보다 큰 장애물
 	std::shared_ptr<Actor> pObsHigh = BuildObstacle(L"obstacle_high.mini");
 	std::shared_ptr<SceneComponent> pObsHighRoot = pObsHigh->GetRoot();
-	pObsHighRoot->localTransform.position = Vector3(0.0f, 0.0f, -50.0f);
-	pObsHighRoot->localTransform.scale = Vector3(0.1f);
+	pObsHighRoot->localTransform.position = Vector3(0.0f, 0.0f, -10.0f);
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)

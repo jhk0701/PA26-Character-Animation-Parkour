@@ -17,3 +17,6 @@ D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\Shaders\StaticM
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\Shaders\SkinnedMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\Assets\pyramid.obj
 D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\Editor\MiniEngine.vcxproj.CopyComplete
+D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\PhysXFoundation_64.dll
+D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\PhysX_64.dll
+D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Editor\PhysXCommon_64.dll

@@ -6,11 +6,10 @@
 
 namespace MiniEngine
 {
-    // 스키닝 메시 + 애니메이션 재생 상태를 보유하는 SceneComponent. (CLAUDE.md §6/§9)
-    // Tick 에서 활성 클립을 샘플해 본 최종 행렬을 갱신하고(§7 애니메이션 슬롯),
-    // 실제 드로우는 GameCore/렌더러가 순회하며 수행(StaticMeshComponent 와 동일 분업).
+    // 스키닝 메시 + 애니메이션 재생 상태를 보유하는 SceneComponent.
+    // Tick 에서 활성 클립을 샘플해 본 최종 행렬을 갱신하고
     // 클립 전환은 PlayClip(fadeSec>0)으로 크로스페이드: 두 클립 포즈를 TRS 단계에서
-    // 가중 보간(pos/scale Lerp, rot Slerp)한다. (§9 블렌딩)
+    // 가중 보간(pos/scale Lerp, rot Slerp)한다.
     class SkeletalMeshComponent : public SceneComponent
     {
     public:

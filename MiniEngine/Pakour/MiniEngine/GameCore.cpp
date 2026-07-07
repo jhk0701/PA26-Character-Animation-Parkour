@@ -242,18 +242,12 @@ void GameCore::Update(float _dt)
     SceneManager* pScnMgr = SceneManager::GetInstance();
     pScnMgr->FixedUpdate(_dt); // 물리연산 처리
 
-    m_input.Update(_dt); // 입력 처리
-
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
+    // TODO : InputManager에서 처리
+    m_input.Update(_dt); // 입력 처리
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
-
-    // TODO : 테스트용 처리 제거
-    std::weak_ptr<World> pWorld = pScnMgr->GetCurrentScene();
-    if (pWorld.expired())
-        return;
-
-    // Actor/컴포넌트 Tick 전파.
-    pScnMgr->Update(_dt);
+    
+    pScnMgr->Update(_dt); // Actor/컴포넌트 Tick 전파.
 }
 
 void GameCore::Render()
@@ -323,6 +317,7 @@ void GameCore::QuitGame()
 {
     MG_LOG_INFO("Escape pressed - quitting");
 
+    // Actor에 EndPlay로 정리
     SceneManager::GetInstance()->EndPlay();
 
     PostQuitMessage(0);

@@ -112,12 +112,10 @@ bool DirectXBase::InitDirectX()
 	if (FAILED(hr))
 		return false;
 
-	// 래스터라이저: CCW를 정면으로(FrontCounterClockwise=TRUE), 뒷면 컬링.
-	// RH 좌표계 + 외부에서 봤을 때 CCW로 감은 지오메트리와 정합. (정석 검증 포인트 #2)
 	D3D11_RASTERIZER_DESC rsDesc = {};
 	rsDesc.FillMode = D3D11_FILL_SOLID;
 	rsDesc.CullMode = D3D11_CULL_BACK;
-	rsDesc.FrontCounterClockwise = TRUE;
+	rsDesc.FrontCounterClockwise = FALSE;
 	rsDesc.DepthClipEnable = TRUE;
 	hr = m_device->CreateRasterizerState(&rsDesc, &m_rasterState);
 	assert(SUCCEEDED(hr));

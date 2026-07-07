@@ -12,8 +12,8 @@ namespace MiniEngine
 {
     namespace
     {
-        // 단위 큐브(-1..1). 면당 4정점 * 6면 = 24정점, 면별 법선(외향). RH / CCW(외부 시점).
-        // 각 면: v0(BL) v1(BR) v2(TR) v3(TL) 순서, 삼각형 (0,1,2) (0,2,3).
+        // 단위 큐브(-1..1). 면당 4정점 * 6면 = 24정점, 면별 법선(외향). LH / CW(외부 시점).
+        // 각 면: v0(BL) v1(BR) v2(TR) v3(TL) 순서, 삼각형 (0,2,1) (0,3,2) — CW 외향.
         struct CubeFace
         {
             float normal[3];
@@ -61,13 +61,13 @@ namespace MiniEngine
                     v.uv[1]       = kCornerUV[i][1];
                     _vertices.push_back(v);
                 }
-                // 삼각형 (0,1,2) (0,2,3) — CCW 외향.
+                // 삼각형 (0,2,1) (0,3,2) — CW 외향(LH).
                 _indices.push_back(base + 0);
+                _indices.push_back(base + 2);
                 _indices.push_back(base + 1);
-                _indices.push_back(base + 2);
                 _indices.push_back(base + 0);
-                _indices.push_back(base + 2);
                 _indices.push_back(base + 3);
+                _indices.push_back(base + 2);
             }
         }
 
@@ -132,7 +132,7 @@ namespace MiniEngine
             };
 
             // 측면 4면. 각 면은 수평 에지 (b0 → b1) × 세로 링으로 구성 — 큐브와 동일한
-            // CCW 외향 와인딩: 세그먼트 쿼드 BL(b0,y0) BR(b1,y0) TR(b1,y1) TL(b0,y1), 삼각형 (0,1,2)(0,2,3).
+            // CW 외향 와인딩(LH): 세그먼트 쿼드 BL(b0,y0) BR(b1,y0) TR(b1,y1) TL(b0,y1), 삼각형 (0,2,1)(0,3,2).
             struct SideFace
             {
                 float normal[3];
@@ -163,11 +163,11 @@ namespace MiniEngine
                     pushVertex(side.b0[0], y1, side.b0[1], side.normal[0], side.normal[1], side.normal[2], 0.0f, v1);
 
                     _indices.push_back(base + 0);
+                    _indices.push_back(base + 2);
                     _indices.push_back(base + 1);
-                    _indices.push_back(base + 2);
                     _indices.push_back(base + 0);
-                    _indices.push_back(base + 2);
                     _indices.push_back(base + 3);
+                    _indices.push_back(base + 2);
                 }
             }
 
@@ -185,11 +185,11 @@ namespace MiniEngine
             for (uint32_t capBase : { topBase, bottomBase })
             {
                 _indices.push_back(capBase + 0);
+                _indices.push_back(capBase + 2);
                 _indices.push_back(capBase + 1);
-                _indices.push_back(capBase + 2);
                 _indices.push_back(capBase + 0);
-                _indices.push_back(capBase + 2);
                 _indices.push_back(capBase + 3);
+                _indices.push_back(capBase + 2);
             }
         }
     }
