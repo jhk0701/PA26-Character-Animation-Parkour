@@ -3,7 +3,7 @@
 
 #if defined(WITH_EDITOR)
 // ─── Editor 구성: 실제 ImGui 구현 ───────────────────────────────────────────
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "Scene/Actor.h"
 #include "Scene/SceneComponent.h"
 #include "Scene/SkeletalMeshComponent.h" // Inspector Animation 섹션(전 구성 타입 — 격리 무영향)
@@ -95,7 +95,7 @@ namespace MiniEngine
             m_initialized = false;
         }
 
-        void EditorUI::BuildUI(World& _world, const Matrix& _view, const Matrix& _proj)
+        void EditorUI::BuildUI(Scene& _world, const Matrix& _view, const Matrix& _proj)
         {
             if (!m_initialized)
                 return;
@@ -326,16 +326,15 @@ namespace MiniEngine
 }
 
 #else
-// ─── Debug/Release 구성: no-op 스텁 (imgui 심볼 미참조) ───────────────────────
+
 namespace MiniEngine
 {
-    class World;
-
+    class Scene;
     namespace Editor
     {
         bool EditorUI::Initialize(HWND, ID3D11Device*, ID3D11DeviceContext*) { m_initialized = false; return true; }
         void EditorUI::Shutdown() {}
-        void EditorUI::BuildUI(World&, const Matrix&, const Matrix&) {}
+        void EditorUI::BuildUI(Scene&, const Matrix&, const Matrix&) {}
         void EditorUI::Render() {}
         bool EditorUI::WantCaptureMouse() const { return false; }
         bool EditorUI::WantCaptureKeyboard() const { return false; }

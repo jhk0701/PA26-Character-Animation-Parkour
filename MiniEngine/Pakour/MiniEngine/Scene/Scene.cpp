@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Core/Log.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
+#include "Scene/CameraComponent.h"
 
 // 테스트용 임시 추가
 #include "Scene/RigidBodyComponent.h"
@@ -9,23 +10,28 @@ namespace MiniEngine
 {
     static constexpr float FIXED_DT = 1.0f / 60.0f;
 
-    void World::Construct()
+    void Scene::Construct()
     {
         m_physics = std::make_shared<Physics::PhysicsWorld>();
         if (m_physics && m_physics->Init() == false)
         {
-            MG_LOG_ERROR("World : PhysX Init failed");
+            MG_LOG_ERROR("Scene : PhysX Init failed");
             return;
         }
+
+        // main cam이 생성되지 않을때를 대비한 기본 카메라 컴포넌트
+        m_defaultCam = std::make_unique<CameraComponent>();
+        m_defaultCam->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+        m_defaultCam->localTransform.position = Vector3(0.0f);
     }
 
-    void World::BeginPlay()
+    void Scene::BeginPlay()
     {
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->BeginPlay();
     }
 
-    void World::FixedTick(float _dt)
+    void Scene::FixedTick(float _dt)
     {
         m_physicsAcuum += _dt;
 
@@ -43,23 +49,38 @@ namespace MiniEngine
         }
     }
 
-    void World::Tick(float _dt)
+    void Scene::Tick(float _dt)
     {
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Tick(_dt);
     }
 
-    void World::Render()
+    void Scene::Render(Graphics::RenderContext& _context)
     {
+        WriteCameraData(_context);
+
         for (std::shared_ptr<Actor>& actor : m_actors)
-            actor->Render();
+            actor->Render(_context);
     }
 
-    void World::EndPlay()
+    void Scene::EndPlay()
     {
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->EndPlay();
 
         m_physics->Shutdown();
+    }
+    void Scene::WriteCameraData(Graphics::RenderContext& _outContext)
+    {
+        // 렌더링 컨텍스트에 현재 카메라 정보 기입
+        if (!m_mainCam)
+        {
+            _outContext.m_camView = m_defaultCam->GetViewMatrix();
+            _outContext.m_camProj = m_defaultCam->GetProjectionMatrix();
+            return;
+        }
+
+        _outContext.m_camView = m_mainCam->GetViewMatrix();
+        _outContext.m_camProj = m_mainCam->GetProjectionMatrix();
     }
 }

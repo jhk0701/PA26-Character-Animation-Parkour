@@ -2,7 +2,9 @@
 
 namespace MiniEngine
 {
-	class World;
+	namespace Graphics { struct RenderContext; }
+	
+	class Scene;
 	class SceneManager
 	{
 		SINGLETON(SceneManager)
@@ -13,12 +15,12 @@ namespace MiniEngine
 		void BeginPlay();
 		void FixedUpdate(float _dt);
 		void Update(float _dt);
-		void Render();
+		void Render(Graphics::RenderContext& _context);
 		void EndPlay();
 
-		std::weak_ptr<World> GetCurrentScene() const { return m_pCurScene; }
+		std::weak_ptr<Scene> GetCurrentScene() const { return m_pCurScene; }
 
 	private:
-		std::shared_ptr<World> m_pCurScene{ nullptr };
+		std::shared_ptr<Scene> m_pCurScene{ nullptr };
 	};
 }

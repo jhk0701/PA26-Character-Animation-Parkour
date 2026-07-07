@@ -7,4 +7,6 @@
 #include <memory>
 #include <algorithm>
 #include <math.h>
+
 #include "define.h"
+#include "Core/Graphics.h"

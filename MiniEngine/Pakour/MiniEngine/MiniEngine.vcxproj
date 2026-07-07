@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\TestScene.h" />
+    <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXBase.h" />
     <ClInclude Include="framework.h" />
@@ -143,7 +144,7 @@
     <ClInclude Include="Scene\Component.h" />
     <ClInclude Include="Scene\SceneComponent.h" />
     <ClInclude Include="Scene\Actor.h" />
-    <ClInclude Include="Scene\World.h" />
+    <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\CameraComponent.h" />
     <ClInclude Include="Scene\CameraController.h" />
     <ClInclude Include="Scene\StaticMeshComponent.h" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
+    <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
     <ClCompile Include="Manager\PathManager.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
@@ -178,7 +180,7 @@
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\Actor.cpp" />
     <ClCompile Include="Scene\Tag.cpp" />
-    <ClCompile Include="Scene\World.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\CameraComponent.cpp" />
     <ClCompile Include="Scene\CameraController.cpp" />
     <ClCompile Include="Scene\StaticMeshComponent.cpp" />

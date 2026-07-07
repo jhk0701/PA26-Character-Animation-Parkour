@@ -9,6 +9,8 @@ namespace MiniEngine
     class SceneComponent : public Component, public std::enable_shared_from_this<SceneComponent>
     {
     public:
+        virtual ~SceneComponent() {};
+
         Transform localTransform;
 
         void AttachTo(const std::shared_ptr<SceneComponent>& _parent);

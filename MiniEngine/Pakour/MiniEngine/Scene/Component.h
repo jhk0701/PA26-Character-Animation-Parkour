@@ -3,6 +3,8 @@
 
 namespace MiniEngine
 {
+    namespace Graphics { struct RenderContext; }
+    
     class Actor;
     class Component
     {
@@ -11,7 +13,7 @@ namespace MiniEngine
 
         virtual void OnAttach() {}
         virtual void Tick(float /*dt*/) {}
-        virtual void Render() {}
+        virtual void Render(Graphics::RenderContext& _context) {}
     
         std::weak_ptr<Actor> owner;
     };

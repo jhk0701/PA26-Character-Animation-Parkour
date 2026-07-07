@@ -9,9 +9,9 @@ namespace MiniEngine
             comp->Tick(_dt);
     }
 
-    void Actor::Render()
+    void Actor::Render(Graphics::RenderContext& _context)
     {
         for (std::shared_ptr<Component>& comp : m_components)
-            comp->Render();
+            comp->Render(_context);
     }
 }

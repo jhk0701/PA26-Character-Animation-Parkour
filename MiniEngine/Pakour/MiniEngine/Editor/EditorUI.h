@@ -9,7 +9,7 @@ struct ID3D11DeviceContext;
 
 namespace MiniEngine
 {
-    class World;
+    class Scene;
 
     namespace Editor
     {
@@ -25,7 +25,7 @@ namespace MiniEngine
 
             // 프레임 시작: ImGui NewFrame + 패널(Hierarchy/Inspector) + 선택 Actor 트랜스폼 기즈모.
             // view/proj 는 ImGuizmo Manipulate 에 전달(선택 없으면 미사용).
-            void BuildUI(World& _world, const Matrix& _view, const Matrix& _proj);
+            void BuildUI(Scene& _world, const Matrix& _view, const Matrix& _proj);
 
             // 3D 씬 위에 ImGui draw data를 렌더(현재 바인딩된 RTV 대상).
             void Render();

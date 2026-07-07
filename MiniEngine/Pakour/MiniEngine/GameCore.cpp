@@ -5,9 +5,6 @@
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
 
-#include "Scene/Actor.h"
-#include "Scene/SceneComponent.h"
-
 #include <fstream>
 #include <cfloat>
 #include <cmath>
@@ -15,11 +12,12 @@
 #include <physx/PxPhysicsAPI.h>
 
 // 테스트용 추가
-#include "Content/Character.h"
+#include "Scene/Actor.h"
 #include "Scene/CameraComponent.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 
 using namespace MiniEngine;
+using namespace MiniEngine::Graphics;
 
 namespace
 {
@@ -65,28 +63,6 @@ namespace
         _outT = tMin; // 원점이 박스 내부면 음수 — 호출부에서 Maxf(0,·) 취급.
         return true;
     }
-
-    // b0: per-object. row_major 무전치 업로드(셰이더 cbuffer 규약과 일치).
-    struct PerObjectCB
-    {
-        Matrix mvp;
-        Matrix world;
-    };
-
-    // b1: per-frame 라이트/머티리얼. HLSL cbuffer 레이아웃(16바이트 정렬)과 일치.
-    struct PerFrameCB
-    {
-        Vector3 lightDir;   float ambient;
-        Vector3 lightColor; float pad0;
-        Vector3 albedo;     float pad1;
-    };
-
-    // b2: 본 최종 행렬. SkinnedMeshLambert.hlsl 의 MAX_BONES 와 일치해야 한다.
-    constexpr int MAX_BONES = 128;
-    struct BoneCB
-    {
-        Matrix boneMatrices[MAX_BONES];
-    };
 
     // 셰이더 파일을 런타임 컴파일
     // 실패 시 에러 메시지를 디버그 출력
@@ -255,18 +231,21 @@ void GameCore::Render()
     constexpr float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderBegin(clearColor);
 
-    // 이걸로 호출을 다 해야함
-    // SceneManager::GetInstance()->Render(); // Actor/컴포넌트 Render 전파
+    Graphics::RenderContext context;
+    context.m_context = m_context.Get();
 
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    if (pWorld == nullptr)
-        return;
+    SceneManager::GetInstance()->Render(context); // Actor, 컴포넌트 Render 전파
 
-    // 월드의 모든 StaticMeshComponent / SkeletalMeshComponent 를 그린다(피킹 순회와 동일).
-    // 베이크로 스폰된 메시도 포함.
-    if (std::shared_ptr<CameraComponent> camera = pWorld->GetMainCamera().lock())
     {
-        for (const auto& actor : pWorld->GetActors())
+        std::shared_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene().lock();
+        if (pScene == nullptr)
+            return;
+
+        std::shared_ptr<CameraComponent> camera = pScene->GetMainCamera().lock();
+        if (!camera)
+            return;
+
+        for (const auto& actor : pScene->GetActors())
         {
             if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
             {
@@ -286,6 +265,7 @@ void GameCore::Render()
 
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
     m_editor.Render();
+
     RenderEnd();
 }
 
@@ -294,18 +274,18 @@ void GameCore::UpdateGUI()
     // ImGui NewFrame + 패널(Hierarchy/Inspector) + 기즈모. Render()에서 draw data를 실제로 그린다.
     // 기즈모용 view/proj 전달(카메라 없으면 기본 생성자 = identity — Matrix::Identity 정적상수 LNK2001 회피).
     // (Editor 외 구성은 no-op)
-    std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
-    if (pWorld.expired())
+    std::weak_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene();
+    if (pScene.expired())
         return;
 
     Matrix view, proj;
-    if (auto camera = pWorld.lock()->GetMainCamera().lock())
+    if (auto camera = pScene.lock()->GetMainCamera().lock())
     {
         view = camera->GetViewMatrix();
         proj = camera->GetProjectionMatrix();
     }
 
-    m_editor.BuildUI(*pWorld.lock(), view, proj);
+    m_editor.BuildUI(*pScene.lock(), view, proj);
 
     // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
     const std::wstring pending = m_editor.ConsumePendingLoadMini();
@@ -437,7 +417,7 @@ void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::Static
 
     // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
     PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
+    Vector3 dir(-0.4f, -1.0f, 0.6f);
     dir.Normalize();
     perFrame.lightDir = dir;
     perFrame.ambient = 0.15f;
@@ -568,8 +548,8 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
             return false;
         }
 
-        std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-        auto actor = pWorld->SpawnActor<Actor>();
+        std::shared_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene().lock();
+        auto actor = pScene->SpawnActor<Actor>();
         actor->SetName(name);
         auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
         meshComp->SetMesh(mesh);
@@ -604,8 +584,8 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         return false;
     }
 
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    auto actor = pWorld->SpawnActor<Actor>();
+    std::shared_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene().lock();
+    auto actor = pScene->SpawnActor<Actor>();
     actor->SetName(name);
     auto meshComp = actor->AddComponent<StaticMeshComponent>();
     meshComp->SetMesh(mesh);

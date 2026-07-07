@@ -1,7 +1,7 @@
 #pragma once
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 
-class TestScene : public MiniEngine::World
+class TestScene : public MiniEngine::Scene
 {
 public:
 	TestScene();

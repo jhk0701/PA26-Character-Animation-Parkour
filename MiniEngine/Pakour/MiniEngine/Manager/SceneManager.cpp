@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Manager/SceneManager.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 
 // TODO : 콘텐츠 코드. 엔진 코드에서 지울 것
 #include "Content/TestScene.h"
@@ -43,14 +43,19 @@ namespace MiniEngine
 		m_pCurScene->Tick(_dt);
 	}
 
-	void SceneManager::Render()
+	void SceneManager::Render(Graphics::RenderContext& _context)
 	{
 		if (!m_pCurScene)
 			return;
 
-		m_pCurScene->Render();
+		m_pCurScene->Render(_context);
 	}
+
 	void SceneManager::EndPlay()
 	{
+		if (!m_pCurScene)
+			return;
+
+		m_pCurScene->EndPlay();
 	}
 };

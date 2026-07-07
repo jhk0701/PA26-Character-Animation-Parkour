@@ -3,11 +3,13 @@
 #include <memory>
 #include <string>
 #include <type_traits>
-#include "Scene/SceneComponent.h"
 #include "Scene/Tag.h"
+#include "Scene/SceneComponent.h"
 
 namespace MiniEngine
 {
+    namespace Graphics { struct RenderContext; }
+
     class Actor : public std::enable_shared_from_this<Actor>
     {
     public:
@@ -15,7 +17,7 @@ namespace MiniEngine
 
         virtual void BeginPlay() {}
         virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
-        virtual void Render();
+        virtual void Render(Graphics::RenderContext& _context);
         virtual void EndPlay() {}
 
         // 컴포넌트 추가

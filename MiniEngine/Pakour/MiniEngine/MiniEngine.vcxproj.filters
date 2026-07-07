@@ -100,7 +100,7 @@
     <ClInclude Include="Scene\Transform.h">
       <Filter>Engine\06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\World.h">
+    <ClInclude Include="Scene\Scene.h">
       <Filter>Engine\06.Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\CameraController.h">
@@ -184,6 +184,9 @@
     <ClInclude Include="Scene\RendererComponent.h">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Graphics.h">
+      <Filter>Engine\02.Core\GameCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -201,7 +204,7 @@
     <ClCompile Include="Platform\Input.cpp">
       <Filter>Engine\05.Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\World.cpp">
+    <ClCompile Include="Scene\Scene.cpp">
       <Filter>Engine\06.Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene\CameraController.cpp">
@@ -272,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="Scene\RendererComponent.cpp">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Graphics.cpp">
+      <Filter>Engine\02.Core\GameCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

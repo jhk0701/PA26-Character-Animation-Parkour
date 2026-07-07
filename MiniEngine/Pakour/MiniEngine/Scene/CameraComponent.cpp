@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Scene/CameraComponent.h"
 #include "Manager/SceneManager.h"
-#include "World.h"
+#include "Scene.h"
 
 namespace MiniEngine
 {
@@ -23,7 +23,7 @@ namespace MiniEngine
 
     void CameraComponent::RegisterMainCamera()
     {
-        std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
+        std::weak_ptr<Scene> pWorld = SceneManager::GetInstance()->GetCurrentScene();
         if (pWorld.expired())
             return;
 

@@ -19,7 +19,7 @@ TestScene::~TestScene()
 
 void TestScene::Construct()
 {
-	World::Construct();
+	Scene::Construct();
 
 	{
 		std::shared_ptr<Actor> pCamActor = SpawnActor<Actor>();

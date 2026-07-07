@@ -4,17 +4,19 @@
 #include <type_traits>
 #include <utility>
 
-#include "Scene/Actor.h"
 #include "Physics/PhysicsWorld.h"
+#include "Scene/Actor.h"
 
 namespace MiniEngine
 {
+    namespace Graphics { struct RenderContext; }
+
     class CameraComponent;
-    class World
+    class Scene
     {
     public:
-        World() {};
-        virtual ~World() {};
+        Scene() {};
+        virtual ~Scene() {};
 
         template<typename T = Actor, typename... Args>
         std::shared_ptr<T> SpawnActor(Args&&... _args)
@@ -29,23 +31,28 @@ namespace MiniEngine
         virtual void BeginPlay();
         virtual void FixedTick(float _dt);
         virtual void Tick(float _dt);
-        virtual void Render();
+        virtual void Render(Graphics::RenderContext& _context);
         virtual void EndPlay();
 
-        const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
-
+        // setter
         void SetMainCamera(const std::shared_ptr<CameraComponent>& _newCamera) { m_mainCam = _newCamera; };
+        
+        // getter
         std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
+        const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
 
     protected:
         std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
 
     private:
+        std::unique_ptr<CameraComponent> m_defaultCam; // m_mainCam이 없을때 사용할 원점 위치의 카메라
         std::shared_ptr<CameraComponent> m_mainCam;
         std::vector<std::shared_ptr<Actor>> m_actors;
 
         // 물리 엔진
         std::shared_ptr<Physics::PhysicsWorld> m_physics;   // 씬마다 설치해둘 것
         float m_physicsAcuum{ 0.0f };                       // 고정 60Hz로 스텝할 것
+
+        void WriteCameraData(Graphics::RenderContext& _outContext);
     };
 }
