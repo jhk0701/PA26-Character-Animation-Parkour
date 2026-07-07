@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <vector>
 #include "Scene/SceneComponent.h"
@@ -13,6 +13,10 @@ namespace MiniEngine
     class SkeletalMeshComponent : public SceneComponent
     {
     public:
+        // 활성 클립 샘플 → 본 최종 행렬(inverseBindPose * global) 갱신.
+        void Tick(float _dt) override;
+        void Render(Graphics::RenderContext& _context) override;
+
         void SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh);
         const std::weak_ptr<SkinnedMesh> GetMesh() const { return m_mesh; }
 
@@ -28,9 +32,6 @@ namespace MiniEngine
 
         // 크로스페이드 진행 중인지(에디터 UI 표시용).
         bool IsFading() const { return m_fadeDuration > 0.0f; }
-
-        // 활성 클립 샘플 → 본 최종 행렬(inverseBindPose * global) 갱신.
-        void Tick(float _dt) override;
 
         // 렌더러가 b2 에 업로드할 본 최종 행렬 (본 개수만큼).
         const std::vector<Matrix>& GetBoneMatrices() const { return m_boneMatrices; }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include "DirectXBase.h"
 #include "Platform/Input.h"
@@ -33,11 +33,6 @@ private:
 	bool InitRenderResources();
 	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
 	bool SpawnMeshFromMini(const std::wstring& _miniPath);
-
-	// 선택 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
-	void DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp);
-	// 선택 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다(본 행렬 b2 업로드).
-	void DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp);
 
 	// TODO : InputManager 통합
 	// 기본 공통사항 인풋 바인딩

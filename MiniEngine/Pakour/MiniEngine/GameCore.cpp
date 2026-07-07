@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GameCore.h"
 #include "Core/Log.h"
 #include "Manager/PathManager.h"
@@ -232,48 +232,18 @@ void GameCore::Render()
     RenderBegin(clearColor);
 
     Graphics::RenderContext context;
-    context.m_context = m_context.Get();
-    context.m_perObjectCB = m_perObjectCB.Get();
-    context.m_perFrameCB = m_perFrameCB.Get();
-
-    m_context->IASetInputLayout(m_inputLayout.Get());
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    // 공통 셰이더 설정
-    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &context.m_perObjectCB);
-    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &context.m_perObjectCB);
-
+    context.m_context                   = m_context.Get();
+    context.m_perObjectCB               = m_perObjectCB.Get();
+    context.m_perFrameCB                = m_perFrameCB.Get();
+    context.m_staticMeshInputLayout     = m_inputLayout.Get();
+    context.m_staticMeshVS              = m_vertexShader.Get();
+    context.m_staticMeshPS              = m_pixelShader.Get();
+    context.m_skinnedMeshInputLayout    = m_skinnedInputLayout.Get();
+    context.m_skinnedMeshVS             = m_skinnedVertexShader.Get();
+    context.m_skinnedMeshPS             = m_skinnedPixelShader.Get();
+    context.m_boneCB                    = m_boneCB.Get();
+    
     SceneManager::GetInstance()->Render(context); // Actor, 컴포넌트 Render 전파
-
-    {
-        // 파기 예정
-        std::shared_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene().lock();
-        if (pScene == nullptr)
-            return;
-
-        std::shared_ptr<CameraComponent> camera = pScene->GetMainCamera().lock();
-        if (!camera)
-            return;
-
-        for (const auto& actor : pScene->GetActors())
-        {
-            if (auto meshComp = actor->GetComponent<StaticMeshComponent>())
-            {
-                auto mesh = meshComp->GetMesh();
-                if (mesh && mesh->HasGpuResources())
-                    DrawMesh(*camera, *meshComp);
-            }
-
-            if (auto skelComp = actor->GetComponent<SkeletalMeshComponent>())
-            {
-                auto mesh = skelComp->GetMesh();
-                if (!mesh.expired() && mesh.lock()->HasGpuResources())
-                    DrawSkinnedMesh(*camera, *skelComp);
-            }
-        }
-    }
 
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
     m_editor.Render();
@@ -403,132 +373,6 @@ void GameCore::InitDefaultInput()
         });
 
     */
-}
-
-
-// 선택된 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
-void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // MVP = world * view * proj (row-vector, 전치 없음 — 셰이더 cbuffer는 row_major).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view = _camera.GetViewMatrix();
-    const Matrix proj = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
-    // 씬에서 계산
-    PerFrameCB perFrame = {};
-    /*Vector3 dir(-0.4f, -1.0f, 0.6f);
-    dir.Normalize();
-    perFrame.lightDir = dir;
-    perFrame.ambient = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo = Vector3(0.85f, 0.78f, 0.70f);*/
-
-    if (SUCCEEDED(m_context->Map(
-        m_perFrameCB.Get(), 0, 
-        D3D11_MAP_WRITE_DISCARD, 0, 
-        &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    UINT stride = mesh->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb = mesh->GetVertexBuffer();
-    ID3D11Buffer* objectCB = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB = m_perFrameCB.Get();
-
-    m_context->IASetInputLayout(m_inputLayout.Get());
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
-}
-
-// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
-void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view = _camera.GetViewMatrix();
-    const Matrix proj = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
-    dir.Normalize();
-    perFrame.lightDir = dir;
-    perFrame.ambient = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
-
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
-    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
-    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
-        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
-        for (size_t i = 0; i < count; ++i)
-            boneCB->boneMatrices[i] = bones[i];
-        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
-            boneCB->boneMatrices[i] = Matrix(); // identity
-        m_context->Unmap(m_boneCB.Get(), 0);
-    }
-
-    UINT stride = mesh.lock()->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb = mesh.lock()->GetVertexBuffer();
-    ID3D11Buffer* objectCB = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB = m_perFrameCB.Get();
-    ID3D11Buffer* boneCB = m_boneCB.Get();
-
-    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->VSSetConstantBuffers(2, 1, &boneCB);
-    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
 }
 
 bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)

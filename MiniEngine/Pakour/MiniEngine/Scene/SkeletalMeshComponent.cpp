@@ -1,6 +1,8 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene/SkeletalMeshComponent.h"
+#include "Core/Graphics.h"
 
+using namespace MiniEngine::Graphics;
 namespace MiniEngine
 {
     void SkeletalMeshComponent::SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh)
@@ -72,6 +74,73 @@ namespace MiniEngine
         RefreshBoneMatrices();
     }
 
+    void SkeletalMeshComponent::Render(Graphics::RenderContext& _context)
+    {
+        SceneComponent::Render(_context);
+
+        if (!m_mesh || !m_mesh->HasGpuResources())
+            return;
+
+        ID3D11DeviceContext*& pContext = _context.m_context;
+
+        Graphics::PerObjectCB perObject = {};
+        perObject.world = GetWorldMatrix();
+        perObject.mvp = perObject.world * _context.m_camView * _context.m_camProj; // model view projection 연산
+
+        D3D11_MAPPED_SUBRESOURCE mapped = {};
+        if (SUCCEEDED(pContext->Map(
+            _context.m_perObjectCB, 0,
+            D3D11_MAP_WRITE_DISCARD, 0,
+            &mapped)))
+        {
+            memcpy(mapped.pData, &perObject, sizeof(perObject));
+            pContext->Unmap(_context.m_perObjectCB, 0);
+        }
+
+        // TODO : 객체별 색상 받아오기
+        _context.m_perFrame.albedo = Vector3(0.7f);
+
+        if (SUCCEEDED(pContext->Map(
+            _context.m_perFrameCB, 0,
+            D3D11_MAP_WRITE_DISCARD, 0,
+            &mapped)))
+        {
+            memcpy(mapped.pData, &_context.m_perFrame, sizeof(_context.m_perFrame));
+            pContext->Unmap(_context.m_perFrameCB, 0);
+        }
+
+        // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
+        const std::vector<Matrix>& bones = GetBoneMatrices();
+        if (SUCCEEDED(pContext->Map(
+            _context.m_boneCB, 0,
+            D3D11_MAP_WRITE_DISCARD, 0, 
+            &mapped)))
+        {
+            BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
+            const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
+            for (size_t i = 0; i < count; ++i)
+                boneCB->boneMatrices[i] = bones[i];
+            for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
+                boneCB->boneMatrices[i] = Matrix(); // identity
+            pContext->Unmap(_context.m_boneCB, 0);
+        }
+
+        UINT stride = m_mesh->GetVertexStride();
+        UINT offset = 0;
+        ID3D11Buffer* vb = m_mesh->GetVertexBuffer();
+
+        pContext->IASetInputLayout(_context.m_skinnedMeshInputLayout);
+        pContext->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+        pContext->IASetIndexBuffer(m_mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+        pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        pContext->VSSetShader(_context.m_skinnedMeshVS, nullptr, 0);
+        pContext->VSSetConstantBuffers(0, 1, &_context.m_perObjectCB);
+        pContext->VSSetConstantBuffers(2, 1, &_context.m_boneCB);
+        pContext->PSSetShader(_context.m_skinnedMeshPS, nullptr, 0);
+        pContext->PSSetConstantBuffers(1, 1, &_context.m_perFrameCB);
+        pContext->DrawIndexed(m_mesh->GetIndexCount(), 0, 0);
+    }
+
     void SkeletalMeshComponent::SamplePose(int _clipIndex, float _timeSec, LocalPoseTRS& _outPose) const
     {
         if (_clipIndex >= 0 && _clipIndex < static_cast<int>(m_mesh->GetClips().size()))
@@ -103,3 +172,72 @@ namespace MiniEngine
         skeleton.ComputeBoneMatrices(m_localPose, m_boneMatrices);
     }
 }
+
+
+
+// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
+//void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
+//{
+//    auto mesh = _meshComp.GetMesh();
+//
+//    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
+//    const Matrix world = _meshComp.GetWorldMatrix();
+//    const Matrix view = _camera.GetViewMatrix();
+//    const Matrix proj = _camera.GetProjectionMatrix();
+//
+//    PerObjectCB perObject = {};
+//    perObject.mvp = world * view * proj;
+//    perObject.world = world;
+//
+//    D3D11_MAPPED_SUBRESOURCE mapped = {};
+//    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+//    {
+//        memcpy(mapped.pData, &perObject, sizeof(perObject));
+//        m_context->Unmap(m_perObjectCB.Get(), 0);
+//    }
+//
+//    PerFrameCB perFrame = {};
+//    Vector3 dir(-0.4f, -1.0f, -0.6f);
+//    dir.Normalize();
+//    perFrame.lightDir = dir;
+//    perFrame.ambient = 0.15f;
+//    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
+//    perFrame.albedo = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
+//
+//    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+//    {
+//        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
+//        m_context->Unmap(m_perFrameCB.Get(), 0);
+//    }
+//
+//    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
+//    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
+//    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+//    {
+//        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
+//        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
+//        for (size_t i = 0; i < count; ++i)
+//            boneCB->boneMatrices[i] = bones[i];
+//        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
+//            boneCB->boneMatrices[i] = Matrix(); // identity
+//        m_context->Unmap(m_boneCB.Get(), 0);
+//    }
+//
+//    UINT stride = mesh.lock()->GetVertexStride();
+//    UINT offset = 0;
+//    ID3D11Buffer* vb = mesh.lock()->GetVertexBuffer();
+//    ID3D11Buffer* objectCB = m_perObjectCB.Get();
+//    ID3D11Buffer* frameCB = m_perFrameCB.Get();
+//    ID3D11Buffer* boneCB = m_boneCB.Get();
+//
+//    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
+//    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+//    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+//    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
+//    m_context->VSSetConstantBuffers(0, 1, &objectCB);
+//    m_context->VSSetConstantBuffers(2, 1, &boneCB);
+//    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
+//    m_context->PSSetConstantBuffers(1, 1, &frameCB);
+//    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
+//}

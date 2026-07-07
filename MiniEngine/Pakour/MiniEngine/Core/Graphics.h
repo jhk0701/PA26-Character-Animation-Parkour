@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "Core/Math.h"
@@ -8,14 +8,14 @@ struct ID3D11Buffer;
 
 namespace MiniEngine::Graphics
 {
-    // b0: per-object. row_major ¹«ÀüÄ¡ ¾÷·Îµå(¼ÎÀÌ´õ cbuffer ±Ô¾à°ú ÀÏÄ¡).
+    // b0: per-object. row_major ë¬´ì „ì¹˜ ì—…ë¡œë“œ(ì…°ì´ë” cbuffer ê·œì•½ê³¼ ì¼ì¹˜).
     struct PerObjectCB
     {
         Matrix mvp;
         Matrix world;
     };
 
-    // b1: per-frame ¶óÀÌÆ®/¸ÓÆ¼¸®¾ó. HLSL cbuffer ·¹ÀÌ¾Æ¿ô(16¹ÙÀÌÆ® Á¤·Ä)°ú ÀÏÄ¡.
+    // b1: per-frame ë¼ì´íŠ¸/ë¨¸í‹°ë¦¬ì–¼. HLSL cbuffer ë ˆì´ì•„ì›ƒ(16ë°”ì´íŠ¸ ì •ë ¬)ê³¼ ì¼ì¹˜.
     struct PerFrameCB
     {
         Vector3 lightDir;   float ambient;
@@ -23,20 +23,29 @@ namespace MiniEngine::Graphics
         Vector3 albedo;     float pad1;
     };
 
-    // b2: º» ÃÖÁ¾ Çà·Ä. SkinnedMeshLambert.hlsl ÀÇ MAX_BONES ¿Í ÀÏÄ¡ÇØ¾ß ÇÑ´Ù.
+    // b2: ë³¸ ìµœì¢… í–‰ë ¬. SkinnedMeshLambert.hlsl ì˜ MAX_BONES ì™€ ì¼ì¹˜í•´ì•¼ í•œë‹¤.
     constexpr int MAX_BONES = 128;
     struct BoneCB
     {
         Matrix boneMatrices[MAX_BONES];
     };
 
-    // °ÔÀÓ·çÇÁ ·»´õ ½Ã, ³Ñ°ÜÁÙ context ±¸Á¶Ã¼
+    // ê²Œì„ë£¨í”„ ë Œë” ì‹œ, ë„˜ê²¨ì¤„ context êµ¬ì¡°ì²´
     struct RenderContext 
     {
         ID3D11DeviceContext* m_context;
         ID3D11Buffer* m_perObjectCB;
         ID3D11Buffer* m_perFrameCB;
+        ID3D11Buffer* m_boneCB;
         
+        ID3D11InputLayout* m_staticMeshInputLayout;
+        ID3D11VertexShader* m_staticMeshVS;
+        ID3D11PixelShader* m_staticMeshPS;
+
+        ID3D11InputLayout* m_skinnedMeshInputLayout;
+        ID3D11VertexShader* m_skinnedMeshVS;
+        ID3D11PixelShader* m_skinnedMeshPS;
+
         Matrix m_camView;
         Matrix m_camProj;
         PerFrameCB m_perFrame;
