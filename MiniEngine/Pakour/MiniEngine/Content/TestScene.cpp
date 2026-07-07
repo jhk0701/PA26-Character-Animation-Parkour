@@ -4,6 +4,7 @@
 #include "Manager/AssetManager.h"
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/RigidBodyComponent.h"
+#include "Scene/Tag.h"
 
 using namespace MiniEngine;
 
@@ -17,6 +18,10 @@ TestScene::~TestScene()
 void TestScene::Construct()
 {
 	World::Construct();
+
+	Tag tag("Test1,Test2,Test3,4444,5555");
+
+	return;
 
 	std::shared_ptr<StaticMesh> pCubeMesh;
 	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
@@ -35,7 +40,6 @@ void TestScene::Construct()
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
 		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Static, half);
-		
 	}
 
 	{

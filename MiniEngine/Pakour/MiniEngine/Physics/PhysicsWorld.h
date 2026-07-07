@@ -22,7 +22,8 @@ namespace MiniEngine::Physics
         Land,       // 착지할 공간
         Obstacle,   // 액터가 지나가지 못하는 장애물
         
-        IgnoreAll,
+        IgnoreAll = 31,
+        END = 32
     };
 
 
@@ -52,6 +53,6 @@ namespace MiniEngine::Physics
         physx::PxScene* m_scene = nullptr;
         physx::PxMaterial* m_material = nullptr; // m_physics 소유(함께 해제)
 
-        void SetDefaultSimulateFilter();
+        void SetDefaultCollisionGroup();
     };
 }

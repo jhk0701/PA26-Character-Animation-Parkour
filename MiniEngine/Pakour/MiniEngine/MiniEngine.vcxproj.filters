@@ -68,6 +68,9 @@
     <Filter Include="Engine\07.Object\Component\Physics">
       <UniqueIdentifier>{9a9f19da-fd28-401f-b77d-a480b8147df9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Tag">
+      <UniqueIdentifier>{82d40a68-4ae0-4e2f-9dd8-c570d4340f86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -172,6 +175,9 @@
     <ClInclude Include="Scene\RigidBodyComponent.h">
       <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\Tag.h">
+      <Filter>Engine\07.Object\Tag</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -254,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="Scene\RigidBodyComponent.cpp">
       <Filter>Engine\07.Object\Component\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Tag.cpp">
+      <Filter>Engine\07.Object\Tag</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
