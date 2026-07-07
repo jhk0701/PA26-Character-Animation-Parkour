@@ -3,6 +3,7 @@
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Scene/StaticMeshComponent.h"
+#include "Scene/RigidBodyComponent.h"
 
 using namespace MiniEngine;
 
@@ -15,8 +16,47 @@ TestScene::~TestScene()
 
 void TestScene::Construct()
 {
+	World::Construct();
+
+	std::shared_ptr<StaticMesh> pCubeMesh;
+
+	{
+		std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
+		pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
+	}
+
+	{
+		// 강체 바닥 설치
+		const Vector3 half(10.0f, 0.5f, 10.0f);
+		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
+		pGround->SetName("Ground");
+
+		std::shared_ptr<StaticMeshComponent> pMeshComp = pGround->AddComponent<StaticMeshComponent>();
+		pMeshComp->SetMesh(pCubeMesh);
+		pMeshComp->localTransform.position = Vector3(0.0f, -0.5f, 0.0f);
+		pMeshComp->localTransform.scale = half;
+
+		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
+		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Static, half);
+	}
+
+	{
+		// 낙하할 큐브 생성
+		const Vector3 half(1.0f, 1.0f, 1.0f);
+		std::shared_ptr<Actor> pCube = SpawnActor<Actor>();
+		pCube->SetName("Falling Box");
+
+		std::shared_ptr<StaticMeshComponent> pMeshComp = pCube->AddComponent<StaticMeshComponent>();
+		pMeshComp->SetMesh(pCubeMesh);
+		pMeshComp->localTransform.position = Vector3(0.0f, 10.0f, 0.0f);
+
+		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
+		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Dynamic, half, 10.f);
+	}
+
+	// 객체 생성
 	// 바닥
-	std::shared_ptr<Actor> pFloor = BuildObstacle(L"floor.mini");
+	// std::shared_ptr<Actor> pFloor = BuildObstacle(L"floor.mini");
 
 	// TODO: 메쉬 unit 확인 필요
 	// 중간 장애물

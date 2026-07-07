@@ -11,6 +11,7 @@ namespace MiniEngine
 		void Init();
 
 		void BeginPlay();
+		void FixedUpdate(float _dt);
 		void Update(float _dt);
 		void Render();
 		void EndPlay();

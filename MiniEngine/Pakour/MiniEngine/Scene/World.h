@@ -25,8 +25,9 @@ namespace MiniEngine
             return actor;
         }
 
-        virtual void Construct() = 0;
+        virtual void Construct();
         virtual void BeginPlay();
+        virtual void FixedTick(float _dt);
         virtual void Tick(float _dt);
         virtual void Render();
         virtual void EndPlay();
@@ -36,12 +37,14 @@ namespace MiniEngine
         void SetMainCamera(const std::shared_ptr<CameraComponent>& _newCamera) { m_mainCam = _newCamera; };
         std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
 
+    protected:
+        // 물리 엔진 파트 : 
+        Physics::PhysicsWorld m_physics;
+        
     private:
         std::shared_ptr<CameraComponent> m_mainCam;
         std::vector<std::shared_ptr<Actor>> m_actors;
-        
-        // 물리 엔진 파트 : 
-        Physics::PhysicsWorld m_physics;
+
         float m_physicsAcuum = 0.0f; // 고정 60Hz로 스텝할 것
     };
 }

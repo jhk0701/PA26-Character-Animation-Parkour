@@ -256,12 +256,17 @@ void GameCore::BeginPlay()
 
 void GameCore::Update(float _dt)
 {
-    m_input.Update(_dt);
+    SceneManager* pScnMgr = SceneManager::GetInstance();
+
+    pScnMgr->FixedUpdate(_dt); // 물리연산 처리
+
+    m_input.Update(_dt); // 입력처리
 
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
 
-    std::weak_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene();
+    // TODO : 테스트용 처리 제거
+    std::weak_ptr<World> pWorld = pScnMgr->GetCurrentScene();
     if (pWorld.expired())
         return;
 
@@ -280,7 +285,7 @@ void GameCore::Update(float _dt)
     }
 
     // Actor/컴포넌트 Tick 전파.
-    SceneManager::GetInstance()->Update(_dt);
+    pScnMgr->Update(_dt);
 }
 
 void GameCore::Render()

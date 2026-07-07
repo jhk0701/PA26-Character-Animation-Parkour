@@ -21,8 +21,18 @@ namespace MiniEngine
 
 	void SceneManager::BeginPlay()
 	{
-		if (m_pCurScene)
-			m_pCurScene->BeginPlay();
+		if (!m_pCurScene)
+			return;
+
+		m_pCurScene->BeginPlay();
+	}
+
+	void SceneManager::FixedUpdate(float _dt)
+	{
+		if (!m_pCurScene)
+			return;
+		
+		m_pCurScene->FixedTick(_dt);
 	}
 
 	void SceneManager::Update(float _dt)

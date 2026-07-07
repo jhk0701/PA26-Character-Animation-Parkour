@@ -17,7 +17,9 @@ namespace MiniEngine::Physics
 		inline PxQuat ToPx(const Quaternion& q) { return PxQuat(q.x, q.y, q.z, q.w); }
 	}
 
-	PhysicsWorld::~PhysicsWorld() 
+	PhysicsWorld::PhysicsWorld() { }
+
+	PhysicsWorld::~PhysicsWorld()
 	{
 		Shutdown();
 	}
@@ -110,7 +112,6 @@ namespace MiniEngine::Physics
 
 		// 지면 (평면) : 법선 +y, 위치 y = 0, 무한 평면
 		// 기본 강체
-
 		PxRigidStatic* ground = PxCreatePlane(*m_physics, PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_material);
 		if (ground == nullptr)
 			return false;

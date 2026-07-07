@@ -16,7 +16,7 @@ namespace MiniEngine::Physics
     class PhysicsWorld
     {
     public:
-        PhysicsWorld() = default;
+        PhysicsWorld();
         ~PhysicsWorld();
 
         PhysicsWorld(const PhysicsWorld&) = delete;
