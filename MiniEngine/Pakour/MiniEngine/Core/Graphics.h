@@ -1,4 +1,6 @@
 #pragma once
+#include <d3d11.h>
+#include <wrl/client.h>
 #include "Core/Math.h"
 
 struct ID3D11DeviceContext;
@@ -33,8 +35,10 @@ namespace MiniEngine::Graphics
     {
         ID3D11DeviceContext* m_context;
         ID3D11Buffer* m_perObjectCB;
-
+        ID3D11Buffer* m_perFrameCB;
+        
         Matrix m_camView;
         Matrix m_camProj;
+        PerFrameCB m_perFrame;
     };
 }

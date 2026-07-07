@@ -181,9 +181,6 @@
     <ClInclude Include="Scene\Tag.h">
       <Filter>Engine\07.Object\Tag</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\RendererComponent.h">
-      <Filter>Engine\07.Object\Component\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Graphics.h">
       <Filter>Engine\02.Core\GameCore</Filter>
     </ClInclude>
@@ -272,9 +269,6 @@
     </ClCompile>
     <ClCompile Include="Scene\Tag.cpp">
       <Filter>Engine\07.Object\Tag</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\RendererComponent.cpp">
-      <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Core\Graphics.cpp">
       <Filter>Engine\02.Core\GameCore</Filter>

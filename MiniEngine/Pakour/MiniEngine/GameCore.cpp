@@ -233,10 +233,22 @@ void GameCore::Render()
 
     Graphics::RenderContext context;
     context.m_context = m_context.Get();
+    context.m_perObjectCB = m_perObjectCB.Get();
+    context.m_perFrameCB = m_perFrameCB.Get();
+
+    m_context->IASetInputLayout(m_inputLayout.Get());
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    // 공통 셰이더 설정
+    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+    m_context->VSSetConstantBuffers(0, 1, &context.m_perObjectCB);
+    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
+    m_context->PSSetConstantBuffers(1, 1, &context.m_perObjectCB);
 
     SceneManager::GetInstance()->Render(context); // Actor, 컴포넌트 Render 전파
 
     {
+        // 파기 예정
         std::shared_ptr<Scene> pScene = SceneManager::GetInstance()->GetCurrentScene().lock();
         if (pScene == nullptr)
             return;
@@ -416,15 +428,19 @@ void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::Static
     }
 
     // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
+    // 씬에서 계산
     PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, 0.6f);
+    /*Vector3 dir(-0.4f, -1.0f, 0.6f);
     dir.Normalize();
     perFrame.lightDir = dir;
     perFrame.ambient = 0.15f;
     perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo = Vector3(0.85f, 0.78f, 0.70f);
+    perFrame.albedo = Vector3(0.85f, 0.78f, 0.70f);*/
 
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    if (SUCCEEDED(m_context->Map(
+        m_perFrameCB.Get(), 0, 
+        D3D11_MAP_WRITE_DISCARD, 0, 
+        &mapped)))
     {
         memcpy(mapped.pData, &perFrame, sizeof(perFrame));
         m_context->Unmap(m_perFrameCB.Get(), 0);
@@ -437,9 +453,10 @@ void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::Static
     ID3D11Buffer* frameCB = m_perFrameCB.Get();
 
     m_context->IASetInputLayout(m_inputLayout.Get());
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
     m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
     m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
     m_context->VSSetConstantBuffers(0, 1, &objectCB);
     m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);

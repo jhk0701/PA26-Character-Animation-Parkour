@@ -11,6 +11,14 @@ namespace MiniEngine
 {
     namespace Graphics { struct RenderContext; }
 
+    struct Light // 렌더링용 간이 디렉셔널 라이트
+    {
+        Vector3 m_dir;
+        Vector3 m_color;
+        Vector3 m_albedo;
+        float m_ambient;
+    };
+
     class CameraComponent;
     class Scene
     {
@@ -43,16 +51,22 @@ namespace MiniEngine
 
     protected:
         std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
+        Light& GetLight() { return m_light; }
 
     private:
-        std::unique_ptr<CameraComponent> m_defaultCam; // m_mainCam이 없을때 사용할 원점 위치의 카메라
-        std::shared_ptr<CameraComponent> m_mainCam;
+        // 관리할 액터 인스턴스
         std::vector<std::shared_ptr<Actor>> m_actors;
 
         // 물리 엔진
         std::shared_ptr<Physics::PhysicsWorld> m_physics;   // 씬마다 설치해둘 것
         float m_physicsAcuum{ 0.0f };                       // 고정 60Hz로 스텝할 것
 
+        // 씬 렌더링
+        Light m_light;
+        std::shared_ptr<CameraComponent> m_defaultCam; // m_mainCam이 없을때 사용할 원점 위치의 카메라
+        std::shared_ptr<CameraComponent> m_mainCam;
+
         void WriteCameraData(Graphics::RenderContext& _outContext);
+        void WriteFrameCB(Graphics::RenderContext& _outContext);
     };
 }
