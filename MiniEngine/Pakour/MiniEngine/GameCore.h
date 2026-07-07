@@ -10,6 +10,9 @@
 
 #include "Editor/EditorUI.h"
 
+// 테스트용
+#include "Physics/PhysicsWorld.h"
+
 class Character; // 테스트용
 
 class GameCore : public DirectXBase

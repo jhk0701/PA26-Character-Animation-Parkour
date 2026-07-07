@@ -62,6 +62,9 @@
     <Filter Include="Engine\02.Core\Manager">
       <UniqueIdentifier>{57601918-3ea5-4870-9ee7-ec9c86eb78ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Core\Physics">
+      <UniqueIdentifier>{4671afc0-912c-42c2-a548-4021ef0415aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -160,6 +163,9 @@
     <ClInclude Include="Manager\SceneManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Physics\PhysicsWorld.h">
+      <Filter>Engine\02.Core\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -236,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="Manager\SceneManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\PhysicsWorld.cpp">
+      <Filter>Engine\02.Core\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

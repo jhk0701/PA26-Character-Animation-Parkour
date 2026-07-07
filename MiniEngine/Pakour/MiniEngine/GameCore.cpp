@@ -11,6 +11,7 @@
 #include <cfloat>
 #include <cmath>
 #include <directxtk/SimpleMath.h>
+#include <physx/PxPhysicsAPI.h>
 
 // 테스트용 추가
 #include "Content/Character.h"
@@ -128,6 +129,8 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     // InitTempChar();
     // InitDefaultInput();
+
+
 
     SceneManager::GetInstance()->Init();
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
