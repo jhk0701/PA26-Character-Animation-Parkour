@@ -3,14 +3,14 @@
 #include "DirectXBase.h"
 #include "Platform/Input.h"
 
-#include "Scene/CameraComponent.h"
-#include "Scene/CameraController.h"
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
 
 #include "Editor/EditorUI.h"
 
-class Character; // 테스트용
+
+// 테스트용 전방선언
+namespace MiniEngine { class CameraComponent; }
 
 class GameCore : public DirectXBase
 {
@@ -39,27 +39,13 @@ private:
 	// 선택 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다(본 행렬 b2 업로드).
 	void DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp);
 
-	// 마우스 위치 → 월드 레이 → StaticMesh AABB 교차. 히트 Actor 인덱스(World::GetActors 기준), 미스는 -1.
-	int  PickActor(const MiniEngine::CameraComponent& _camera) const;
+	// TODO : InputManager 통합
 	// 기본 공통사항 인풋 바인딩
 	void InitDefaultInput();
+	MiniEngine::Input m_input; 
 
-	MiniEngine::Input m_input;
-
-	// 테스트용 임시 변수들
-	// 씬. 소유자는 World(m_actors). 메시 핸들은 비소유(weak) 캐시.
-	// 카메라 컴포넌트도 비소유 캐시(weak). (§12)
-	// std::shared_ptr<MiniEngine::World> m_pWorld;
-
-	bool InitTempChar();
-	std::weak_ptr<Character> m_TmpChar;
-
-	// std::shared_ptr<MiniEngine::Actor>             m_cameraActor;
-	// std::weak_ptr<MiniEngine::CameraComponent>     m_camera;
-	MiniEngine::CameraController                   m_camController;
-
-	// 에디터 UI (Editor 구성 전용 동작, 그 외 no-op). §4/§14.2
-	MiniEngine::Editor::EditorUI                   m_editor;
+	// 에디터 UI
+	MiniEngine::Editor::EditorUI				m_editor;
 
 	// 렌더 리소스
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_vertexShader;

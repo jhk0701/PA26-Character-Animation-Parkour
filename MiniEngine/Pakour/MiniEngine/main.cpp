@@ -10,9 +10,6 @@ namespace
 {
     HINSTANCE g_hInst = nullptr;
     HWND      g_hWnd = nullptr;
-
-    constexpr int WINDOW_WIDTH = 1280;
-    constexpr int WINDOW_HEIGHT = 720;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -82,8 +79,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    // ImGui가 이 메시지를 소비하면(패널 위 입력) 조기 반환 → 게임 입력으로 흘리지 않음.
-    // (Editor 외 구성에서는 항상 0 반환하는 no-op — 전 구성 단일 경로.)
+    // ImGui 패널 위 입력 시 return
     if (MiniEngine::Editor::WndProcHandler(hWnd, message, wParam, lParam))
         return true;
 

@@ -6,6 +6,8 @@
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Tag.h"
 
+#include "Scene/CameraComponent.h"
+
 using namespace MiniEngine;
 
 TestScene::TestScene()
@@ -19,9 +21,18 @@ void TestScene::Construct()
 {
 	World::Construct();
 
-	Tag tag("Test1,Test2,Test3,4444,5555");
+	{
+		std::shared_ptr<Actor> pCamActor = SpawnActor<Actor>();
+		pCamActor->SetName("Camera");
 
-	return;
+		std::shared_ptr<CameraComponent> camera = pCamActor->AddComponent<CameraComponent>();
+		camera->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+
+		camera->RegisterMainCamera();
+		// m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
+	}
+
+	std::shared_ptr<Physics::PhysicsWorld> physics = GetPhysics().lock();
 
 	std::shared_ptr<StaticMesh> pCubeMesh;
 	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
@@ -39,7 +50,7 @@ void TestScene::Construct()
 		pMeshComp->localTransform.scale = half;
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
-		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Static, half);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, half);
 	}
 
 	{
@@ -54,7 +65,7 @@ void TestScene::Construct()
 		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
 
 		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
-		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Dynamic, half, 1.f);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, half, 1.f);
 		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll);
 	}
 
@@ -94,3 +105,33 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
 
 	return ObstacleActor;
 }
+
+/*
+작성예시
+
+bool GameCore::InitTempChar()
+{
+	PathManager* pathMgr = PathManager::GetInstance();
+
+	std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
+	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
+
+	if (!skinnedMesh)
+		return false;
+
+	std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+	m_TmpChar = pWorld->SpawnActor<Character>();
+	std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
+	skinComp->SetMesh(skinnedMesh);
+
+	skinComp->SetActiveClip(2);
+
+	std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
+	charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
+	charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
+	charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+
+	return true;
+}
+
+*/

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Tag.h"
+#include "Scene/Tag.h"
 
 namespace MiniEngine 
 {
@@ -7,8 +7,8 @@ namespace MiniEngine
 	{
 		m_Tags.reserve(MAX_LAYER_CNT);
 
-		int offset = 0;
-		int found = 0;
+		long long offset = 0;
+		long long found = 0;
 		do
 		{
 			found = _fullTag.find(TAG_DIVIDER, offset);

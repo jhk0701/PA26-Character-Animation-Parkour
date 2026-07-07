@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "GameCore.h"
 #include "Core/Log.h"
-#include "Scene/Actor.h"
-#include "Scene/SceneComponent.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
+
+#include "Scene/Actor.h"
+#include "Scene/SceneComponent.h"
 
 #include <fstream>
 #include <cfloat>
@@ -15,13 +16,14 @@
 
 // 테스트용 추가
 #include "Content/Character.h"
+#include "Scene/CameraComponent.h"
 #include "Scene/World.h"
 
 using namespace MiniEngine;
 
 namespace
 {
-    // windows.h min/max 매크로 충돌 회피(NOMINMAX 미정의) — 명시 비교 헬퍼. (§증분6 관례)
+    // windows.h min/max 매크로 충돌 회피(NOMINMAX 미정의) — 명시 비교 헬퍼
     constexpr float Minf(float _a, float _b) { return _a < _b ? _a : _b; }
     constexpr float Maxf(float _a, float _b) { return _a > _b ? _a : _b; }
 
@@ -86,7 +88,8 @@ namespace
         Matrix boneMatrices[MAX_BONES];
     };
 
-    // 셰이더 파일을 런타임 컴파일. 실패 시 에러 메시지를 디버그 출력.
+    // 셰이더 파일을 런타임 컴파일
+    // 실패 시 에러 메시지를 디버그 출력
     HRESULT CompileShaderFromFile(const std::wstring& _path, const char* _entry, const char* _target, ID3DBlob** _outBlob)
     {
         UINT flags = 0;
@@ -99,54 +102,34 @@ namespace
             OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
         return hr;
     }
-
 }
 
-GameCore::GameCore()
-{
-}
-
+GameCore::GameCore() { }
 GameCore::~GameCore()
 {
-    // 디바이스가 살아있는 동안 ImGui 백엔드를 먼저 정리. (Editor 외 구성은 no-op)
     m_editor.Shutdown();
 }
 
 bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 {
-    // 창이 표시(WindowInit)되어 메시지를 받기 전에 Keyboard/Mouse 싱글턴을 먼저 생성해야
-    // WndProc의 ProcessMessage가 예외 없이 동작한다.
-    m_input.Initialize(_hWnd);
+    // 창이 표시(WindowInit)되어 메시지를 받기 전에 Keyboard/Mouse 싱글턴을 먼저 생성 -> WndProc의 ProcessMessage가 예외 없이 동작할 것
+    m_input.Initialize(_hWnd); // InitDefaultInput(); 
 
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
         return false;
 
-    PathManager::GetInstance()->Init();
-    AssetManager::GetInstance()->Init(m_device.Get());
-
     if (InitRenderResources() == false)
         return false;
 
-    // InitTempChar();
-    // InitDefaultInput();
-
+    PathManager::GetInstance()->Init();
+    AssetManager::GetInstance()->Init(m_device.Get());
     SceneManager::GetInstance()->Init();
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-
-    // 카메라 Actor. 임시
-    std::shared_ptr<Actor> pCamActor  = pWorld->SpawnActor<Actor>();
-    pCamActor->SetName("Camera");
-    auto camera = pCamActor->AddComponent<CameraComponent>();
-    camera->aspect = static_cast<float>(_iWidth) / static_cast<float>(_iHeight);
-    camera->RegisterMainCamera();
-    
-    m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
-
+    
     BeginPlay(); // GameCore 초기화 완료. Play 시작
 
     return true;
@@ -167,7 +150,7 @@ bool GameCore::InitRenderResources()
     assert(SUCCEEDED(hr));
     if (FAILED(hr)) return false;
 
-    // 입력 레이아웃: POSITION(0) / NORMAL(12) / TEXCOORD(24) — MiniStaticVertex 레이아웃과 일치.
+    // 입력 레이아웃: POSITION(0) / NORMAL(12) / TEXCOORD(24) — MiniStaticVertex 레이아웃
     const D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -204,7 +187,7 @@ bool GameCore::InitRenderResources()
     assert(SUCCEEDED(hr));
     if (FAILED(hr)) return false;
 
-    // ---- GPU 스키닝 리소스 (SkinnedMeshLambert.hlsl) ----
+    // GPU 스키닝 리소스 (SkinnedMeshLambert.hlsl)
     const std::wstring skinnedPath = pathMgr->ResolveShaderPath(L"SkinnedMeshLambert.hlsl");
 
     Microsoft::WRL::ComPtr<ID3DBlob> skinnedVsBlob;
@@ -257,10 +240,9 @@ void GameCore::BeginPlay()
 void GameCore::Update(float _dt)
 {
     SceneManager* pScnMgr = SceneManager::GetInstance();
-
     pScnMgr->FixedUpdate(_dt); // 물리연산 처리
 
-    m_input.Update(_dt); // 입력처리
+    m_input.Update(_dt); // 입력 처리
 
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
@@ -270,34 +252,19 @@ void GameCore::Update(float _dt)
     if (pWorld.expired())
         return;
 
-    // 카메라 조작 (입력 → 카메라 트랜스폼).
-    if (!uiGate)
-    {
-        if (auto camera = pWorld.lock()->GetMainCamera().lock())
-            m_camController.Update(_dt, m_input, *camera);
-    }
-
-    // 좌클릭 피킹. 미스는 -1로 선택 해제.
-    if (!uiGate && m_input.LeftPressed())
-    {
-        if (auto camera = pWorld.lock()->GetMainCamera().lock())
-            m_editor.SetSelectedIndex(PickActor(*camera));
-    }
-
     // Actor/컴포넌트 Tick 전파.
     pScnMgr->Update(_dt);
 }
 
 void GameCore::Render()
 {
-    constexpr float clearColor[4] = { 0.1f, 0.1f, 0.12f, 1.0f };
+    constexpr float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderBegin(clearColor);
 
     // 이걸로 호출을 다 해야함
     // SceneManager::GetInstance()->Render(); // Actor/컴포넌트 Render 전파
 
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-
     if (pWorld == nullptr)
         return;
 
@@ -326,191 +293,6 @@ void GameCore::Render()
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
     m_editor.Render();
     RenderEnd();
-}
-
-// 선택된 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
-void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // MVP = world * view * proj (row-vector, 전치 없음 — 셰이더 cbuffer는 row_major).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view  = _camera.GetViewMatrix();
-    const Matrix proj  = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp   = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
-    PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
-    dir.Normalize();
-    perFrame.lightDir   = dir;
-    perFrame.ambient    = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo     = Vector3(0.85f, 0.78f, 0.70f);
-
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    UINT stride = mesh->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb        = mesh->GetVertexBuffer();
-    ID3D11Buffer* objectCB  = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB   = m_perFrameCB.Get();
-
-    m_context->IASetInputLayout(m_inputLayout.Get());
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
-}
-
-// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
-void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
-{
-    auto mesh = _meshComp.GetMesh();
-
-    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
-    const Matrix world = _meshComp.GetWorldMatrix();
-    const Matrix view  = _camera.GetViewMatrix();
-    const Matrix proj  = _camera.GetProjectionMatrix();
-
-    PerObjectCB perObject = {};
-    perObject.mvp   = world * view * proj;
-    perObject.world = world;
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perObject, sizeof(perObject));
-        m_context->Unmap(m_perObjectCB.Get(), 0);
-    }
-
-    PerFrameCB perFrame = {};
-    Vector3 dir(-0.4f, -1.0f, -0.6f);
-    dir.Normalize();
-    perFrame.lightDir   = dir;
-    perFrame.ambient    = 0.15f;
-    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-    perFrame.albedo     = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
-
-    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-        m_context->Unmap(m_perFrameCB.Get(), 0);
-    }
-
-    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
-    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
-    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-    {
-        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
-        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
-        for (size_t i = 0; i < count; ++i)
-            boneCB->boneMatrices[i] = bones[i];
-        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
-            boneCB->boneMatrices[i] = Matrix(); // identity
-        m_context->Unmap(m_boneCB.Get(), 0);
-    }
-
-    UINT stride = mesh.lock()->GetVertexStride();
-    UINT offset = 0;
-    ID3D11Buffer* vb       = mesh.lock()->GetVertexBuffer();
-    ID3D11Buffer* objectCB = m_perObjectCB.Get();
-    ID3D11Buffer* frameCB  = m_perFrameCB.Get();
-    ID3D11Buffer* boneCB   = m_boneCB.Get();
-
-    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
-    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
-    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-    m_context->VSSetConstantBuffers(2, 1, &boneCB);
-    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
-    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
-}
-
-int GameCore::PickActor(const CameraComponent& _camera) const
-{
-    if (m_iWindowWidth <= 0 || m_iWindowHeight <= 0)
-        return -1;
-
-    // 마우스 픽셀 → NDC(-1..1, y 반전).
-    const float ndcX = 2.0f * static_cast<float>(m_input.MouseX()) / static_cast<float>(m_iWindowWidth) - 1.0f;
-    const float ndcY = 1.0f - 2.0f * static_cast<float>(m_input.MouseY()) / static_cast<float>(m_iWindowHeight);
-
-    // 뷰·프로젝션 역행렬로 NDC 근/원점을 월드로 언프로젝트(DX NDC z ∈ [0,1]).
-    const Matrix invVP = (_camera.GetViewMatrix() * _camera.GetProjectionMatrix()).Invert();
-    const Vector3 nearW = Vector3::Transform(Vector3(ndcX, ndcY, 0.0f), invVP);
-    const Vector3 farW  = Vector3::Transform(Vector3(ndcX, ndcY, 1.0f), invVP);
-    Vector3 rayO = nearW;
-    Vector3 rayD = farW - nearW;
-    rayD.Normalize();
-
-    int   bestIndex = -1;
-    float bestT     = FLT_MAX;
-
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-
-    const auto& actors = pWorld->GetActors();
-    for (int i = 0; i < static_cast<int>(actors.size()); ++i)
-    {
-        auto meshComp = actors[i]->GetComponent<StaticMeshComponent>();
-        if (!meshComp)
-            continue;
-        auto mesh = meshComp->GetMesh();
-        if (!mesh)
-            continue;
-
-        const auto& verts = mesh->GetVertices();
-        if (verts.empty())
-            continue;
-
-        // 레이를 메시 로컬 공간으로 변환(아핀 선형성으로 로컬 t == 월드 거리).
-        const Matrix invW = meshComp->GetWorldMatrix().Invert();
-        const Vector3 localO = Vector3::Transform(rayO, invW);
-        const Vector3 localD = Vector3::TransformNormal(rayD, invW);
-
-        // 로컬 AABB(정점 min/max).
-        Vector3 aabbMin(FLT_MAX, FLT_MAX, FLT_MAX);
-        Vector3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-        for (const auto& v : verts)
-        {
-            aabbMin.x = Minf(aabbMin.x, v.position[0]); aabbMin.y = Minf(aabbMin.y, v.position[1]); aabbMin.z = Minf(aabbMin.z, v.position[2]);
-            aabbMax.x = Maxf(aabbMax.x, v.position[0]); aabbMax.y = Maxf(aabbMax.y, v.position[1]); aabbMax.z = Maxf(aabbMax.z, v.position[2]);
-        }
-
-        float t;
-        if (RayIntersectsAABB(localO, localD, aabbMin, aabbMax, t))
-        {
-            const float hitT = Maxf(0.0f, t);
-            if (hitT < bestT)
-            {
-                bestT     = hitT;
-                bestIndex = i;
-            }
-        }
-    }
-
-    return bestIndex;
 }
 
 void GameCore::UpdateGUI()
@@ -546,91 +328,12 @@ void GameCore::QuitGame()
     PostQuitMessage(0);
 }
 
-bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
-{
-    // 헤더(16B)만 피크해 assetType 판별 → Static/Skinned 스폰 분기.
-    MiniEngine::MiniHeader header = {};
-    {
-        std::ifstream probe(_miniPath, std::ios::binary);
-        probe.read(reinterpret_cast<char*>(&header), sizeof(header));
-        if (!probe || header.magic != MiniEngine::MINI_MAGIC)
-        {
-            MG_LOG_ERROR("GameCore: baked file is not a valid .mini");
-            return false;
-        }
-    }
-
-    // 파일 stem(확장자/경로 제거)을 Actor 이름으로 사용.
-    std::wstring stem = _miniPath;
-    const size_t slash = stem.find_last_of(L"\\/");
-    if (slash != std::wstring::npos) stem = stem.substr(slash + 1);
-    const size_t dot = stem.find_last_of(L'.');
-    if (dot != std::wstring::npos) stem = stem.substr(0, dot);
-    std::string name; // ASCII 파일명 가정(표시용) — 명시 캐스트로 narrowing 경고 회피
-    name.reserve(stem.size());
-    for (wchar_t wc : stem) name.push_back(static_cast<char>(wc));
-    if (name.empty()) name = "BakedMesh";
-
-    if (header.assetType == static_cast<uint32_t>(MiniEngine::MiniAssetType::SkinnedMesh))
-    {
-        auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(_miniPath);
-        if (!mesh)
-        {
-            MG_LOG_ERROR("GameCore: failed to load baked skinned .mini into scene");
-            return false;
-        }
-
-        std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-        auto actor = pWorld->SpawnActor<Actor>();
-        actor->SetName(name);
-        auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
-        meshComp->SetMesh(mesh);
-        if (!mesh->GetClips().empty())
-            meshComp->SetActiveClip(0);
-
-        // 자동 스케일: 원본 단위(예: Mixamo cm ~180유닛)가 카메라(거리 6) 밖일 수 있으므로
-        // 정점 AABB 최대 치수가 ~4 유닛이 되도록 균등 스케일. 큐브와 겹치지 않게 -X 오프셋.
-        Vector3 aabbMin(FLT_MAX, FLT_MAX, FLT_MAX);
-        Vector3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-        for (const auto& v : mesh->GetVertices())
-        {
-            aabbMin.x = Minf(aabbMin.x, v.position[0]); aabbMin.y = Minf(aabbMin.y, v.position[1]); aabbMin.z = Minf(aabbMin.z, v.position[2]);
-            aabbMax.x = Maxf(aabbMax.x, v.position[0]); aabbMax.y = Maxf(aabbMax.y, v.position[1]); aabbMax.z = Maxf(aabbMax.z, v.position[2]);
-        }
-        const Vector3 size = aabbMax - aabbMin;
-        const float maxDim = Maxf(size.x, Maxf(size.y, size.z));
-        float scale = 1.0f;
-        if (maxDim > 1e-4f)
-            scale = 4.0f / maxDim;
-        meshComp->localTransform.scale = Vector3(scale, scale, scale);
-        meshComp->localTransform.position = Vector3(-3.0f, -2.0f, 0.0f);
-        MG_LOG_INFO("GameCore: spawned baked skinned actor ({} bones, {} clips, maxDim {:.1f}, scale {:.4f})",
-            mesh->GetSkeleton().bones.size(), mesh->GetClips().size(), maxDim, scale);
-        return true;
-    }
-
-    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(_miniPath);
-    if (!mesh)
-    {
-        MG_LOG_ERROR("GameCore: failed to load baked .mini into scene");
-        return false;
-    }
-
-    std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    auto actor = pWorld->SpawnActor<Actor>();
-    actor->SetName(name);
-    auto meshComp = actor->AddComponent<StaticMeshComponent>();
-    meshComp->SetMesh(mesh);
-    MG_LOG_INFO("GameCore: spawned baked mesh actor into scene");
-    return true;
-}
-
 void GameCore::InitDefaultInput()
 {
 #if WITH_EDITOR
     return;
 #endif 
-
+    /*
     // 바인딩 하드코딩
     // TODO : 쓰기 편한 형태로 정리할 것
     m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
@@ -711,30 +414,206 @@ void GameCore::InitDefaultInput()
 
             skinComp->PlayClip(curClip, 1.0f);
         });
+
+    */
 }
 
-bool GameCore::InitTempChar()
+
+// 선택된 카메라로 메시 컴포넌트를 Lambert 셰이딩으로 그린다.
+void GameCore::DrawMesh(MiniEngine::CameraComponent& _camera, MiniEngine::StaticMeshComponent& _meshComp)
 {
-    PathManager* pathMgr = PathManager::GetInstance();
+    auto mesh = _meshComp.GetMesh();
 
-    std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
-    std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
+    // MVP = world * view * proj (row-vector, 전치 없음 — 셰이더 cbuffer는 row_major).
+    const Matrix world = _meshComp.GetWorldMatrix();
+    const Matrix view = _camera.GetViewMatrix();
+    const Matrix proj = _camera.GetProjectionMatrix();
 
-    if (!skinnedMesh)
+    PerObjectCB perObject = {};
+    perObject.mvp = world * view * proj;
+    perObject.world = world;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perObject, sizeof(perObject));
+        m_context->Unmap(m_perObjectCB.Get(), 0);
+    }
+
+    // per-frame 라이트/알베도. lightDir = 빛이 나아가는 방향(정규화). PS 에서 -l 로 N·L 계산.
+    PerFrameCB perFrame = {};
+    Vector3 dir(-0.4f, -1.0f, -0.6f);
+    dir.Normalize();
+    perFrame.lightDir = dir;
+    perFrame.ambient = 0.15f;
+    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
+    perFrame.albedo = Vector3(0.85f, 0.78f, 0.70f);
+
+    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
+        m_context->Unmap(m_perFrameCB.Get(), 0);
+    }
+
+    UINT stride = mesh->GetVertexStride();
+    UINT offset = 0;
+    ID3D11Buffer* vb = mesh->GetVertexBuffer();
+    ID3D11Buffer* objectCB = m_perObjectCB.Get();
+    ID3D11Buffer* frameCB = m_perFrameCB.Get();
+
+    m_context->IASetInputLayout(m_inputLayout.Get());
+    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    m_context->IASetIndexBuffer(mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+    m_context->VSSetConstantBuffers(0, 1, &objectCB);
+    m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
+    m_context->PSSetConstantBuffers(1, 1, &frameCB);
+    m_context->DrawIndexed(mesh->GetIndexCount(), 0, 0);
+}
+
+// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
+void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
+{
+    auto mesh = _meshComp.GetMesh();
+
+    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
+    const Matrix world = _meshComp.GetWorldMatrix();
+    const Matrix view = _camera.GetViewMatrix();
+    const Matrix proj = _camera.GetProjectionMatrix();
+
+    PerObjectCB perObject = {};
+    perObject.mvp = world * view * proj;
+    perObject.world = world;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perObject, sizeof(perObject));
+        m_context->Unmap(m_perObjectCB.Get(), 0);
+    }
+
+    PerFrameCB perFrame = {};
+    Vector3 dir(-0.4f, -1.0f, -0.6f);
+    dir.Normalize();
+    perFrame.lightDir = dir;
+    perFrame.ambient = 0.15f;
+    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
+    perFrame.albedo = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
+
+    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
+        m_context->Unmap(m_perFrameCB.Get(), 0);
+    }
+
+    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
+    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
+    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+    {
+        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
+        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
+        for (size_t i = 0; i < count; ++i)
+            boneCB->boneMatrices[i] = bones[i];
+        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
+            boneCB->boneMatrices[i] = Matrix(); // identity
+        m_context->Unmap(m_boneCB.Get(), 0);
+    }
+
+    UINT stride = mesh.lock()->GetVertexStride();
+    UINT offset = 0;
+    ID3D11Buffer* vb = mesh.lock()->GetVertexBuffer();
+    ID3D11Buffer* objectCB = m_perObjectCB.Get();
+    ID3D11Buffer* frameCB = m_perFrameCB.Get();
+    ID3D11Buffer* boneCB = m_boneCB.Get();
+
+    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
+    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
+    m_context->VSSetConstantBuffers(0, 1, &objectCB);
+    m_context->VSSetConstantBuffers(2, 1, &boneCB);
+    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
+    m_context->PSSetConstantBuffers(1, 1, &frameCB);
+    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
+}
+
+bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
+{
+    // 헤더(16B)만 피크해 assetType 판별 → Static/Skinned 스폰 분기.
+    MiniEngine::MiniHeader header = {};
+    {
+        std::ifstream probe(_miniPath, std::ios::binary);
+        probe.read(reinterpret_cast<char*>(&header), sizeof(header));
+        if (!probe || header.magic != MiniEngine::MINI_MAGIC)
+        {
+            MG_LOG_ERROR("GameCore: baked file is not a valid .mini");
+            return false;
+        }
+    }
+
+    // 파일 stem(확장자/경로 제거)을 Actor 이름으로 사용.
+    std::wstring stem = _miniPath;
+    const size_t slash = stem.find_last_of(L"\\/");
+    if (slash != std::wstring::npos) stem = stem.substr(slash + 1);
+    const size_t dot = stem.find_last_of(L'.');
+    if (dot != std::wstring::npos) stem = stem.substr(0, dot);
+    std::string name; // ASCII 파일명 가정(표시용) — 명시 캐스트로 narrowing 경고 회피
+    name.reserve(stem.size());
+    for (wchar_t wc : stem) name.push_back(static_cast<char>(wc));
+    if (name.empty()) name = "BakedMesh";
+
+    if (header.assetType == static_cast<uint32_t>(MiniEngine::MiniAssetType::SkinnedMesh))
+    {
+        auto mesh = AssetManager::GetInstance()->LoadSkinnedMesh(_miniPath);
+        if (!mesh)
+        {
+            MG_LOG_ERROR("GameCore: failed to load baked skinned .mini into scene");
+            return false;
+        }
+
+        std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
+        auto actor = pWorld->SpawnActor<Actor>();
+        actor->SetName(name);
+        auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
+        meshComp->SetMesh(mesh);
+        if (!mesh->GetClips().empty())
+            meshComp->SetActiveClip(0);
+
+        // 자동 스케일: 원본 단위(예: Mixamo cm ~180유닛)가 카메라(거리 6) 밖일 수 있으므로
+        // 정점 AABB 최대 치수가 ~4 유닛이 되도록 균등 스케일. 큐브와 겹치지 않게 -X 오프셋.
+        Vector3 aabbMin(FLT_MAX, FLT_MAX, FLT_MAX);
+        Vector3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+        for (const auto& v : mesh->GetVertices())
+        {
+            aabbMin.x = Minf(aabbMin.x, v.position[0]); aabbMin.y = Minf(aabbMin.y, v.position[1]); aabbMin.z = Minf(aabbMin.z, v.position[2]);
+            aabbMax.x = Maxf(aabbMax.x, v.position[0]); aabbMax.y = Maxf(aabbMax.y, v.position[1]); aabbMax.z = Maxf(aabbMax.z, v.position[2]);
+        }
+        const Vector3 size = aabbMax - aabbMin;
+        const float maxDim = Maxf(size.x, Maxf(size.y, size.z));
+        float scale = 1.0f;
+        if (maxDim > 1e-4f)
+            scale = 4.0f / maxDim;
+        meshComp->localTransform.scale = Vector3(scale, scale, scale);
+        meshComp->localTransform.position = Vector3(-3.0f, -2.0f, 0.0f);
+        MG_LOG_INFO("GameCore: spawned baked skinned actor ({} bones, {} clips, maxDim {:.1f}, scale {:.4f})",
+            mesh->GetSkeleton().bones.size(), mesh->GetClips().size(), maxDim, scale);
+        return true;
+    }
+
+    auto mesh = AssetManager::GetInstance()->LoadStaticMesh(_miniPath);
+    if (!mesh)
+    {
+        MG_LOG_ERROR("GameCore: failed to load baked .mini into scene");
         return false;
+    }
 
     std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-    m_TmpChar = pWorld->SpawnActor<Character>();
-    std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
-    skinComp->SetMesh(skinnedMesh);
-
-    skinComp->SetActiveClip(2);
-
-    std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
-    charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
-    charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
-    charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
-
+    auto actor = pWorld->SpawnActor<Actor>();
+    actor->SetName(name);
+    auto meshComp = actor->AddComponent<StaticMeshComponent>();
+    meshComp->SetMesh(mesh);
+    MG_LOG_INFO("GameCore: spawned baked mesh actor into scene");
     return true;
 }
-

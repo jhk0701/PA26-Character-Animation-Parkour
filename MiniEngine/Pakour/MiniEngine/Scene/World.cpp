@@ -11,7 +11,8 @@ namespace MiniEngine
 
     void World::Construct()
     {
-        if (m_physics.Init() == false)
+        m_physics = std::make_shared<Physics::PhysicsWorld>();
+        if (m_physics && m_physics->Init() == false)
         {
             MG_LOG_ERROR("World : PhysX Init failed");
             return;
@@ -30,7 +31,7 @@ namespace MiniEngine
 
         while (m_physicsAcuum >= FIXED_DT) 
         {
-            m_physics.Step(FIXED_DT);
+            m_physics->Step(FIXED_DT);
             m_physicsAcuum -= FIXED_DT;
         }
 
@@ -59,6 +60,6 @@ namespace MiniEngine
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->EndPlay();
 
-        m_physics.Shutdown();
+        m_physics->Shutdown();
     }
 }

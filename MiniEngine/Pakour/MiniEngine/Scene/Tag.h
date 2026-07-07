@@ -2,7 +2,7 @@
 
 namespace MiniEngine 
 {
-	// 레이어 구성 예시 : Obstacle,Wall,OverHead
+	// 태그 구성 예시 : Obstacle,Wall,OverHead
 	struct Tag
 	{
 	private:

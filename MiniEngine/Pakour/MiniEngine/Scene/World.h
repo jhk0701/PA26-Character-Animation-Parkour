@@ -38,13 +38,14 @@ namespace MiniEngine
         std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
 
     protected:
-        // 물리 엔진 파트 : 
-        Physics::PhysicsWorld m_physics;
-        
+        std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
+
     private:
         std::shared_ptr<CameraComponent> m_mainCam;
         std::vector<std::shared_ptr<Actor>> m_actors;
 
-        float m_physicsAcuum = 0.0f; // 고정 60Hz로 스텝할 것
+        // 물리 엔진
+        std::shared_ptr<Physics::PhysicsWorld> m_physics;   // 씬마다 설치해둘 것
+        float m_physicsAcuum{ 0.0f };                       // 고정 60Hz로 스텝할 것
     };
 }

@@ -53,12 +53,6 @@
     <Filter Include="Engine\07.Object\Component\Mesh">
       <UniqueIdentifier>{cf309f1c-b086-4dd2-9472-9b1978d892f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\01.Scene">
-      <UniqueIdentifier>{ea37ff1a-673e-4bc4-8f6e-1eabd05eed50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content\02.Character">
-      <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\02.Core\Manager">
       <UniqueIdentifier>{57601918-3ea5-4870-9ee7-ec9c86eb78ba}</UniqueIdentifier>
     </Filter>
@@ -70,6 +64,15 @@
     </Filter>
     <Filter Include="Engine\07.Object\Tag">
       <UniqueIdentifier>{82d40a68-4ae0-4e2f-9dd8-c570d4340f86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\02.Scene">
+      <UniqueIdentifier>{ea37ff1a-673e-4bc4-8f6e-1eabd05eed50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\03.Character">
+      <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\01.Config">
+      <UniqueIdentifier>{603b0d7e-4658-4fa5-8672-c452c155f10f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -155,10 +158,10 @@
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Content\TestScene.h">
-      <Filter>Content\01.Scene</Filter>
+      <Filter>Content\02.Scene</Filter>
     </ClInclude>
     <ClInclude Include="Content\Character.h">
-      <Filter>Content\02.Character</Filter>
+      <Filter>Content\03.Character</Filter>
     </ClInclude>
     <ClInclude Include="Manager\PathManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
@@ -241,10 +244,10 @@
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Content\TestScene.cpp">
-      <Filter>Content\01.Scene</Filter>
+      <Filter>Content\02.Scene</Filter>
     </ClCompile>
     <ClCompile Include="Content\Character.cpp">
-      <Filter>Content\02.Character</Filter>
+      <Filter>Content\03.Character</Filter>
     </ClCompile>
     <ClCompile Include="Manager\PathManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>

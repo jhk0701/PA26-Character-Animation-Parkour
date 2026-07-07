@@ -54,10 +54,10 @@ public:
 	DirectXBase();
 	virtual ~DirectXBase();
 
+	void MainLoop();
 	virtual bool Init(HWND _hWnd, int _iWidth, int _iHeight) abstract;
 	virtual void Update(float _dt) = 0;
 	virtual void Render() = 0;
 	virtual void UpdateGUI() = 0;
-	void MainLoop();
 };
 

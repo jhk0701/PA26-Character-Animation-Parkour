@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 #include <type_traits>
-#include "Scene/Component.h"
 #include "Scene/SceneComponent.h"
+#include "Scene/Tag.h"
 
 namespace MiniEngine
 {
@@ -18,34 +18,13 @@ namespace MiniEngine
         virtual void Render();
         virtual void EndPlay() {}
 
-        // 컴포넌트 추가. owner(weak) 설정 + (첫 SceneComponent면) root 자동 지정 + OnAttach 호출.
+        // 컴포넌트 추가
         template<typename T, typename... Args>
-        std::shared_ptr<T> AddComponent(Args&&... _args)
-        {
-            static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
-            auto comp = std::make_shared<T>(std::forward<Args>(_args)...);
-            comp->owner = weak_from_this();
+        std::shared_ptr<T> AddComponent(Args&&... _args);
 
-            if (m_root.expired())
-            {
-                if (auto sc = std::dynamic_pointer_cast<SceneComponent>(comp))
-                    m_root = sc;
-            }
-
-            m_components.push_back(comp);
-            comp->OnAttach();
-            return comp;
-        }
-
-        // 첫 번째로 일치하는 타입의 컴포넌트를 반환(없으면 nullptr).
+        // 첫 번째로 일치하는 타입의 컴포넌트를 반환. 없으면 nullptr. 가급적 사용하지 말 것
         template<typename T>
-        std::shared_ptr<T> GetComponent()
-        {
-            for (auto& comp : m_components)
-                if (auto p = std::dynamic_pointer_cast<T>(comp))
-                    return p;
-            return nullptr;
-        }
+        std::shared_ptr<T> GetComponent() const; 
 
         // 루트 트랜스폼(비소유 참조). 만료 시 nullptr.
         std::shared_ptr<SceneComponent> GetRoot() const { return m_root.lock(); }
@@ -62,4 +41,37 @@ namespace MiniEngine
         std::weak_ptr<SceneComponent> m_root;
         std::string m_name = "Actor";
     };
+
+    template<typename T, typename ...Args>
+    inline std::shared_ptr<T> Actor::AddComponent(Args && ..._args)
+    {
+        // Component 요청한게 아니면 assert
+        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+        // owner 설정 
+        std::shared_ptr<T> comp = std::make_shared<T>(std::forward<Args>(_args)...);
+        comp->owner = weak_from_this(); // 약참조 의존성 주입
+
+        // 첫 SceneComponent면 root 자동 지정 + OnAttach 호출.
+        if (m_root.expired())
+        {
+            if (auto sc = std::dynamic_pointer_cast<SceneComponent>(comp))
+                m_root = sc;
+        }
+
+        m_components.push_back(comp);
+        comp->OnAttach();
+
+        return comp;
+    }
+
+    template<typename T>
+    inline std::shared_ptr<T> Actor::GetComponent() const
+    {
+        for (const std::shared_ptr<Component>& comp : m_components)
+            if (std::shared_ptr<T> p = std::dynamic_pointer_cast<T>(comp))
+                return p;
+
+        return nullptr;
+    }
 }
