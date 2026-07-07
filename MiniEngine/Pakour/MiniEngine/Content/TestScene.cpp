@@ -19,15 +19,12 @@ void TestScene::Construct()
 	World::Construct();
 
 	std::shared_ptr<StaticMesh> pCubeMesh;
-
-	{
-		std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
-		pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
-	}
+	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
+	pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
 
 	{
 		// 강체 바닥 설치
-		const Vector3 half(10.0f, 0.5f, 10.0f);
+		const Vector3 half(100.0f, 0.5f, 100.0f);
 		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
 		pGround->SetName("Ground");
 
@@ -38,6 +35,7 @@ void TestScene::Construct()
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
 		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Static, half);
+		
 	}
 
 	{
@@ -49,14 +47,12 @@ void TestScene::Construct()
 		std::shared_ptr<StaticMeshComponent> pMeshComp = pCube->AddComponent<StaticMeshComponent>();
 		pMeshComp->SetMesh(pCubeMesh);
 		pMeshComp->localTransform.position = Vector3(0.0f, 10.0f, 0.0f);
+		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
 
 		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
-		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Dynamic, half, 10.f);
+		pRB->Init(m_physics, RigidBodyComponent::EBodyType::Dynamic, half, 1.f);
+		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll);
 	}
-
-	// 객체 생성
-	// 바닥
-	// std::shared_ptr<Actor> pFloor = BuildObstacle(L"floor.mini");
 
 	// TODO: 메쉬 unit 확인 필요
 	// 중간 장애물

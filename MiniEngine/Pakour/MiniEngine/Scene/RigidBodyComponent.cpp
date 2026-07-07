@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Actor.h"
-#include "Physics/PhysicsWorld.h"
 
 #include <physx/PxPhysicsAPI.h>
+#include "Physics/PhysicsWorld.h"
 
 namespace MiniEngine
 {
@@ -29,6 +29,16 @@ namespace MiniEngine
 		m_actor = (_type == EBodyType::Dynamic) ?
 			_world.CreateDynamicBox(pos, rot, _halfExtents, _denity) :
 			_world.CreateStaticBox(pos, rot, _halfExtents);
+	}
+
+	void RigidBodyComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
+	{
+		physx::PxSetGroup(*m_actor, _group);
+	}
+
+	Physics::ECollisionGroup RigidBodyComponent::GetCollsionGroup() const
+	{
+		return (Physics::ECollisionGroup)physx::PxGetGroup(*m_actor);
 	}
 
 	void RigidBodyComponent::SyncTransform()

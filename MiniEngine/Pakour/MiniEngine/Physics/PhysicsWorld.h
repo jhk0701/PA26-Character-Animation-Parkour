@@ -13,6 +13,19 @@ namespace physx
 
 namespace MiniEngine::Physics 
 {
+    // 충돌을 감지할 그룹 종류 (레이어)
+    // 레이캐스트 쿼리와는 별개임
+    enum ECollisionGroup : uint16_t
+    {
+        Player,
+        
+        Land,       // 착지할 공간
+        Obstacle,   // 액터가 지나가지 못하는 장애물
+        
+        IgnoreAll,
+    };
+
+
     class PhysicsWorld
     {
     public:
@@ -38,5 +51,7 @@ namespace MiniEngine::Physics
         physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
         physx::PxScene* m_scene = nullptr;
         physx::PxMaterial* m_material = nullptr; // m_physics 소유(함께 해제)
+
+        void SetDefaultSimulateFilter();
     };
 }

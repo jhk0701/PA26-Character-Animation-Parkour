@@ -18,7 +18,6 @@ namespace MiniEngine::Physics
 	}
 
 	PhysicsWorld::PhysicsWorld() { }
-
 	PhysicsWorld::~PhysicsWorld()
 	{
 		Shutdown();
@@ -62,6 +61,8 @@ namespace MiniEngine::Physics
 		// 기본 물리 재질
 		m_material = m_physics->createMaterial(0.5f, 0.5f, 0.6f);
 		MG_LOG_INFO("PhysX initialized (CPU, gravity -9.81 y-up)");
+
+		SetDefaultSimulateFilter();
 
 		return true;
 	}
@@ -155,6 +156,33 @@ namespace MiniEngine::Physics
 
 		m_scene->addActor(*body);
 		return nullptr;
+	}
+
+	void PhysicsWorld::SetDefaultSimulateFilter()
+	{
+		// 가급적 런타임 중에 동적으로 이 부분을 제어할 일이 없어야 함
+		// 그러므로 별도 인터페이스를 만들지 않을 것
+
+		// 프로젝트 공통적으로 적용할 기본 충돌 레이어 설정
+		/*
+			Player - Player			O
+			Player - Land			O
+			Player - Obstacle		O
+
+			Land - Land				O
+			Land - Obstacle			X
+
+			Obstacle - Obstacle		X
+		*/
+
+		// 기본적으로 0~31 레이어 모두 true
+		// false만 명시
+		PxSetGroupCollisionFlag(ECollisionGroup::Land,		ECollisionGroup::Obstacle,		false);
+		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::Obstacle,		false);
+
+		PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, ECollisionGroup::Player,		false);
+		PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, ECollisionGroup::Land,			false);
+		PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, ECollisionGroup::Obstacle,		false);
 	}
 }
 
