@@ -26,18 +26,6 @@ void TestScene::Construct()
 {
 	Scene::Construct();
 
-	{
-		std::shared_ptr<Actor> pCamActor = SpawnActor<Actor>();
-		pCamActor->SetName("Camera");
-
-		std::shared_ptr<CameraComponent> pCamComp = pCamActor->AddComponent<CameraComponent>();
-		pCamComp->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-		pCamComp->RegisterMainCamera();
-
-		pCamActor->GetRoot()->localTransform.position = Vector3(0.0f, 1.0f, -3.0f);
-		// m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
-	}
-
 	std::shared_ptr<Physics::PhysicsWorld> physics = GetPhysics().lock();
 
 	std::shared_ptr<StaticMesh> pCubeMesh;
@@ -67,7 +55,7 @@ void TestScene::Construct()
 
 		std::shared_ptr<StaticMeshComponent> pMeshComp = pCube->AddComponent<StaticMeshComponent>();
 		pMeshComp->SetMesh(pCubeMesh);
-		pMeshComp->localTransform.position = Vector3(0.0f, 10.0f, 0.0f);
+		pMeshComp->localTransform.position = Vector3(5.0f, 10.0f, 5.0f);
 		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
 
 		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
@@ -105,12 +93,11 @@ void TestScene::Construct()
 
 		std::shared_ptr<SceneComponent> charRoot = pChar->GetRoot();
 		charRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
+		charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
-		// skinComp->SetActiveClip(2); // 레거시 테스트 호출
 		// 로코모션 구현
 		std::shared_ptr<BlendClip> testLoco = std::make_shared<BlendClip>(5);
-		// testLoco->SetAxisValue(0, 1);
-
+		
 		// 모션 하드코딩 입력
 		testLoco->AddAnimClip({ 0.0f, 0.0f }, skinnedMesh->GetClipPtr(1));	// idle
 		testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));	// Walking
@@ -122,6 +109,18 @@ void TestScene::Construct()
 		pChar->SetTempLoco(testLoco);
 
 		m_TmpChar = pChar;
+
+		{
+			// 캐릭터 카메라 설정
+			std::shared_ptr<CameraComponent> pCamComp = pChar->AddComponent<CameraComponent>();
+			pCamComp->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+			pCamComp->RegisterMainCamera();
+
+			pCamComp->AttachTo(pChar->GetRoot());
+			pCamComp->localTransform.position = Vector3(0.0f, 1.5f, 3.0f);
+			pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+		}
+
 	}
 }
 
@@ -175,7 +174,7 @@ void TestScene::InitDefaultInput()
 		[this]()
 		{
 			Vector2 inputDir = m_TmpChar->GetInputDir();
-			inputDir.x = 1.0f;
+			inputDir.x = -1.0f;
 			m_TmpChar->SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
@@ -190,7 +189,7 @@ void TestScene::InitDefaultInput()
 		[this]()
 		{
 			Vector2 inputDir = m_TmpChar->GetInputDir();
-			inputDir.x = -1.0f;
+			inputDir.x = 1.0f;
 			m_TmpChar->SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
