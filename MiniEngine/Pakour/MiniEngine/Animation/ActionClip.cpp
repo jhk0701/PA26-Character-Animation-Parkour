@@ -50,7 +50,10 @@ namespace MiniEngine
 
 	void ActionClip::AddClip(AnimClip* _clip)
 	{
-		m_duration += _clip->duration;
+		// 애니메이션 duration : frame cnt 
+		// 1s 기준으로 바꿔줘야함
+		float s = 1.0f / ((_clip->ticksPerSecond > 0.0f) ? _clip->ticksPerSecond : 1.0f);
+		m_duration += _clip->duration * s;
 		m_clip = _clip;
 	}
 }

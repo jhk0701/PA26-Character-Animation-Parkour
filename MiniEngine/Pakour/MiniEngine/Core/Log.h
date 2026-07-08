@@ -6,7 +6,7 @@
 #if !defined(MG_RELEASE)
 
 #include <memory>
-// #include <spdlog/spdlog.h>
+#include <spdlog/spdlog.h>
 
 namespace MiniEngine
 {
@@ -15,11 +15,10 @@ namespace MiniEngine
     public:
         // 로거/싱크 초기화. main 진입 초반에 1회 호출.
         static void Init();
-
-        // static std::shared_ptr<spdlog::logger>& GetLogger() { return s_logger; }
+        static std::shared_ptr<spdlog::logger>& GetLogger() { return s_logger; }
 
     private:
-        // static std::shared_ptr<spdlog::logger> s_logger;
+        static std::shared_ptr<spdlog::logger> s_logger;
         static void LogIgnore() {};
     };
 }
