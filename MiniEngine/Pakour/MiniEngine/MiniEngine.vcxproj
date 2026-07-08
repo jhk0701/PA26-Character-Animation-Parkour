@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Asset\BlendClip.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\Graphics.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Editor\AssimpBaker.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Asset\BlendClip.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />

@@ -57,6 +57,8 @@ namespace MiniEngine
 
         // SampleTRS + 행렬 합성(S·R·T) 래퍼 — 블렌드가 필요 없는 단일 클립 경로 재생
         void Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const;
+
+        float ClipDurationSec();
     };
 
     // 스켈레톤의 바인드 포즈를 TRS 로 분해해 채운다(클립 -1 = 정지 포즈 블렌드용).

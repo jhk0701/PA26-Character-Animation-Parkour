@@ -187,6 +187,9 @@
     <ClInclude Include="Scene\Animator.h">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\BlendClip.h">
+      <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -278,6 +281,9 @@
     </ClCompile>
     <ClCompile Include="Scene\Animator.cpp">
       <Filter>Engine\07.Object\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\BlendClip.cpp">
+      <Filter>Engine\03.Asset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

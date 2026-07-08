@@ -84,6 +84,12 @@ namespace MiniEngine
         ComposePose(pose, _outLocalPose);
     }
 
+    float AnimClip::ClipDurationSec()
+    {
+        const float tps = ticksPerSecond > 0.0f ? ticksPerSecond : 1.0f;
+        return duration / tps;
+    }
+
     void SampleBindPoseTRS(const Skeleton& _skeleton, LocalPoseTRS& _outPose)
     {
         const size_t boneCount = _skeleton.bones.size();
