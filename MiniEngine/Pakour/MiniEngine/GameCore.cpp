@@ -4,6 +4,7 @@
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
+#include "Platform/Input.h" // Input 
 
 #include <fstream>
 #include <cfloat>
@@ -91,7 +92,7 @@ GameCore::~GameCore()
 bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 {
     // 창이 표시(WindowInit)되어 메시지를 받기 전에 Keyboard/Mouse 싱글턴을 먼저 생성 -> WndProc의 ProcessMessage가 예외 없이 동작할 것
-    m_input.Initialize(_hWnd); // InitDefaultInput(); 
+    InputManager::GetInstance()->Init(_hWnd);
 
     if (DirectXBase::Init(_hWnd, _iWidth, _iHeight) == false)
         return false;
@@ -107,8 +108,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
-    
-    BeginPlay(); // GameCore 초기화 완료. Play 시작
 
     return true;
 }
@@ -221,8 +220,8 @@ void GameCore::Update(float _dt)
     pScnMgr->FixedUpdate(_dt); // 물리연산 처리
 
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
-    // TODO : InputManager에서 처리
-    m_input.Update(_dt); // 입력 처리
+    InputManager::GetInstance()->Update(_dt); // 입력 처리
+
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
     
     pScnMgr->Update(_dt); // Actor/컴포넌트 Tick 전파.
@@ -277,104 +276,17 @@ void GameCore::UpdateGUI()
         SpawnMeshFromMini(pending);
 }
 
+void GameCore::EndPlay()
+{
+    // Actor에 EndPlay로 정리
+    SceneManager::GetInstance()->EndPlay();
+    InputManager::GetInstance()->Clear();
+}
+
 void GameCore::QuitGame()
 {
     MG_LOG_INFO("Escape pressed - quitting");
-
-    // Actor에 EndPlay로 정리
-    SceneManager::GetInstance()->EndPlay();
-
     PostQuitMessage(0);
-}
-
-void GameCore::InitDefaultInput()
-{
-#if WITH_EDITOR
-    return;
-#endif 
-    /*
-    // 바인딩 하드코딩
-    // TODO : 쓰기 편한 형태로 정리할 것
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { QuitGame(); });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = -1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.y = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = -1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 1.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
-        [this]()
-        {
-            Vector2 inputDir = m_TmpChar.lock()->GetInputDir();
-            inputDir.x = 0.0f;
-            m_TmpChar.lock()->SetInputDir(inputDir);
-        });
-
-    m_input.GetKeyBind(DirectX::Keyboard::Keys::NumPad0).OnPressed = std::bind(
-        [this]()
-        {
-            std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->GetComponent<SkeletalMeshComponent>();
-            if (!skinComp)
-                return;
-
-            const int clipCount = skinComp->GetClipCount();
-            int curClip = skinComp->GetActiveClip();
-
-            curClip++;
-            if (curClip >= clipCount)
-                curClip = 0;
-
-            skinComp->PlayClip(curClip, 1.0f);
-        });
-
-    */
 }
 
 bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)

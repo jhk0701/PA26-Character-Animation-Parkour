@@ -57,6 +57,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     pCore->Init(g_hWnd, WINDOW_WIDTH, WINDOW_HEIGHT);
 #endif
 
+    pCore->BeginPlay();
+
     // 기본 메시지 루프.
     MSG msg = {};
     while (true)
@@ -73,6 +75,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             pCore->MainLoop();
         }
     }
+
+    pCore->EndPlay();
 
     return (int)msg.wParam;
 }

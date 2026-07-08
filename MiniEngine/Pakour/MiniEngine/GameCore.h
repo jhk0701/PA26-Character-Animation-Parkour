@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include "DirectXBase.h"
-#include "Platform/Input.h"
 #include "Editor/EditorUI.h"
-
 
 // 테스트용 전방선언
 namespace MiniEngine { class CameraComponent; }
@@ -21,6 +19,7 @@ public:
 	void Update(float _dt) override;
 	void Render() override;
 	void UpdateGUI() override;
+	void EndPlay();
 
 	void QuitGame();
 
@@ -29,11 +28,7 @@ private:
 	bool InitRenderResources();
 	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
 	bool SpawnMeshFromMini(const std::wstring& _miniPath);
-
-	// TODO : InputManager 통합
-	// 기본 공통사항 인풋 바인딩
-	void InitDefaultInput();
-	MiniEngine::Input m_input; 
+	
 
 	// 에디터 UI
 	MiniEngine::Editor::EditorUI				m_editor;

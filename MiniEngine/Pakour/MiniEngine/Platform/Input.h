@@ -64,4 +64,18 @@ namespace MiniEngine
 
         std::map<Keys, KeyBind> m_mapKeyboardBind;
     };
+
+    class InputManager 
+    {
+        SINGLETON(InputManager)
+    public:
+        void Init(HWND _hWnd);
+        void Clear();
+        void Update(float _dt);
+
+        Input& GetInput() { return m_input; }
+
+    private:
+        Input m_input;
+    };
 }

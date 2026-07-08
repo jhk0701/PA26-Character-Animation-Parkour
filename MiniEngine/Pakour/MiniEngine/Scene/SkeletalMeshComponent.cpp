@@ -12,6 +12,7 @@ namespace MiniEngine
     {
         m_mesh = _mesh;
 
+        // 새로 변경하며 기존 것은 레퍼런스 카운트 0으로 변할 것
         m_anim = std::make_shared<Animator>(std::dynamic_pointer_cast<SkeletalMeshComponent>(shared_from_this()));
         m_anim->Init();
     }

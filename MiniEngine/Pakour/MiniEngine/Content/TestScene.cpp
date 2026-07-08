@@ -2,6 +2,7 @@
 #include "TestScene.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
+#include "Platform/Input.h"
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Tag.h"
@@ -97,7 +98,9 @@ void TestScene::Construct()
 		std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
-		std::shared_ptr<SkeletalMeshComponent> skinComp = pChar->AddComponent<SkeletalMeshComponent>();
+		pChar->Construct();
+
+		std::shared_ptr<SkeletalMeshComponent> skinComp = pChar->GetSkin().lock();
 		skinComp->SetMesh(skinnedMesh);
 
 		std::shared_ptr<SceneComponent> charRoot = pChar->GetRoot();
@@ -107,16 +110,96 @@ void TestScene::Construct()
 		// skinComp->SetActiveClip(2); // 레거시 테스트 호출
 		// 로코모션 구현
 		std::shared_ptr<BlendClip> testLoco = std::make_shared<BlendClip>(5);
-		{
-			testLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));
-			testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));
-			testLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));
-			testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(4));
-			testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(3));
-		}
-		testLoco->SetAxisValue(1, 0);
+
+		// 모션 하드코딩 입력
+		testLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
+		testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));	// Walking
+		testLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));	// Walking Backword
+		testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(4));	// right strafe
+		testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(3));	// left strafe
+		
 		skinComp->GetAnim().lock()->SetLocomotion(testLoco);
+		pChar->SetTempLoco(testLoco);
+
+		m_TmpChar = pChar;
 	}
+}
+
+void TestScene::BeginPlay()
+{
+	Scene::BeginPlay();
+
+	InitDefaultInput();
+}
+
+void TestScene::InitDefaultInput()
+{
+#if WITH_EDITOR
+	return;
+#endif 
+	// 바인딩 하드코딩
+	Input& input = InputManager::GetInstance()->GetInput();
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
+	input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.y = 1.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.y = 0.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.y = -1.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.y = 0.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.x = -1.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.x = 0.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.x = 1.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = m_TmpChar->GetInputDir();
+			inputDir.x = 0.0f;
+			m_TmpChar->SetInputDir(inputDir);
+		});
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)

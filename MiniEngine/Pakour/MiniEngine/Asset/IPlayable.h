@@ -6,5 +6,7 @@ namespace MiniEngine
 	{
 	public:
 		virtual ~IPlayable() {};
+
+		
 	};
 }

@@ -19,12 +19,10 @@ namespace MiniEngine
 
 		bool bIsUnique = ComputeWeight();
 		
-		// 여러 모션들 시간 동기화
 		m_playTime += _dt;
 
 		bool bIsFirst = true;
 		float accW = 0.0f;
-
 		for (const Placement& p : m_placements)
 		{
 			if (p.m_weight <= 0.0f)

@@ -52,4 +52,20 @@ namespace MiniEngine
             }
         }
     }
+
+    InputManager::InputManager() {};
+    InputManager::~InputManager() {};
+
+    void InputManager::Init(HWND _hWnd) 
+    {
+        m_input.Initialize(_hWnd);
+    }
+    void InputManager::Clear()
+    {
+        m_input.Clear();
+    }
+    void InputManager::Update(float _dt)
+    {
+        m_input.Update(_dt);
+    }
 }

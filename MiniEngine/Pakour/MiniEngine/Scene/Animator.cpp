@@ -33,13 +33,14 @@ namespace MiniEngine
 		std::shared_ptr<SkinnedMesh> pSkin = m_meshComp.lock()->GetMesh().lock();
 		const Skeleton& skeleton = pSkin->GetSkeleton();
 
+		// TODO : 로코모션 관리 고도화
 		// 각 클립들에 대해 SamplePose
 		if (m_loco)
 			m_loco->Sample(_dt, skeleton, m_poseTarget);
 		else
 		{
 			// 테스트
-			pSkin->GetClips()[2].SampleTRS(m_playTime, skeleton, m_poseTarget);
+			// pSkin->GetClips()[2].SampleTRS(m_playTime, skeleton, m_poseTarget);
 			// SampleBindPoseTRS(m_mesh->GetSkeleton(), _outPose); // 클립 없음 — 바인드 포즈
 		}
 
