@@ -1,10 +1,13 @@
 #include "pch.h"
-#include "Asset/BlendClip.h"
+#include "Animation/BlendClip.h"
 
 namespace MiniEngine
 {
-	// 0인 경우 방지
-	constexpr float kEps = 1e-5f;
+	BlendClip::BlendClip()
+	{
+		m_placements.reserve(9);
+		m_playTime = 0.0f;
+	}
 
 	BlendClip::BlendClip(int _reserveCnt)
 	{
@@ -21,9 +24,11 @@ namespace MiniEngine
 		bool bIsUnique = ComputeWeight(matchedIdx);
 		
 		m_playTime += _dt;
+
 		if (bIsUnique)
 		{
-			m_placements[matchedIdx].m_pClip->SampleTRS(m_playTime, _skeleton, _outPose); // 선택한 모션 즉시 반영
+			// 선택한 모션 즉시 반영
+			m_placements[matchedIdx].m_pClip->SampleTRS(m_playTime, _skeleton, _outPose); 
 			return;
 		}
 
@@ -64,6 +69,12 @@ namespace MiniEngine
 		m_AxisY.m_val = std::clamp(_y, m_AxisY.m_min, m_AxisY.m_max);
 	}
 
+	void BlendClip::AddAnimClip(Vector2 _coord, AnimClip* _pClip)
+	{
+		m_placements.push_back({ _coord, _pClip });
+		m_duration = max(_pClip->duration, m_duration);
+	}
+
 	bool BlendClip::ComputeWeight(int& _outMatchedIdx)
 	{
 		// 가중치 초기화
@@ -77,7 +88,7 @@ namespace MiniEngine
 		{
 			// 현재 입력점과 배치한 클립 좌표 거리 제곱
 			const float sqrtDist = Vector2::DistanceSquared(curCoord, m_placements[i].m_coord);
-			if (sqrtDist < kEps) // 0에 매우 근사한 값인 경우
+			if (sqrtDist < 1e-5f) // 0에 매우 근사한 값인 경우
 			{
 				_outMatchedIdx = i;
 				return true; // 하나만 고르면 된다고 보냄

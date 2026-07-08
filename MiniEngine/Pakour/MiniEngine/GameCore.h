@@ -28,7 +28,6 @@ private:
 	bool InitRenderResources();
 	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
 	bool SpawnMeshFromMini(const std::wstring& _miniPath);
-	
 
 	// 에디터 UI
 	MiniEngine::Editor::EditorUI				m_editor;

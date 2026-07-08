@@ -25,7 +25,8 @@ public:
 	Vector2 GetInputDir() const { return m_inputDir; }
 
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
-	
+	std::weak_ptr<Animator> GetAnim() const;
+
 	void SetTempLoco(std::weak_ptr<BlendClip> _blendClip) { m_tempLoco = _blendClip; }
 	std::weak_ptr<BlendClip> GetTempLoco() const { return m_tempLoco; }
 	

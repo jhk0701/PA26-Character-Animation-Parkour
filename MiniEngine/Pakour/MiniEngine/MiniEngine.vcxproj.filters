@@ -74,8 +74,8 @@
     <Filter Include="Content\01.Config">
       <UniqueIdentifier>{603b0d7e-4658-4fa5-8672-c452c155f10f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\03.Asset\Interface">
-      <UniqueIdentifier>{33995b09-ab27-4ae7-a628-093383390189}</UniqueIdentifier>
+    <Filter Include="Engine\07.Object\Animation">
+      <UniqueIdentifier>{d4ec6040-2d59-4f0e-a556-0ba1b4f224e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -187,14 +187,17 @@
     <ClInclude Include="Core\Graphics.h">
       <Filter>Engine\02.Core\GameCore</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Animator.h">
-      <Filter>Engine\07.Object\Component\Mesh</Filter>
+    <ClInclude Include="Animation\Animator.h">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Asset\BlendClip.h">
-      <Filter>Engine\03.Asset</Filter>
+    <ClInclude Include="Animation\BlendClip.h">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Asset\IPlayable.h">
-      <Filter>Engine\03.Asset\Interface</Filter>
+    <ClInclude Include="Animation\ActionClip.h">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\IAnimatorClip.h">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,11 +288,17 @@
     <ClCompile Include="Core\Graphics.cpp">
       <Filter>Engine\02.Core\GameCore</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Animator.cpp">
-      <Filter>Engine\07.Object\Component\Mesh</Filter>
+    <ClCompile Include="Animation\Animator.cpp">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Asset\BlendClip.cpp">
-      <Filter>Engine\03.Asset</Filter>
+    <ClCompile Include="Animation\BlendClip.cpp">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ActionClip.cpp">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\IAnimatorClip.cpp">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "Scene/SkeletalMeshComponent.h"
-#include "Scene/Animator.h"
+#include "Animation/Animator.h"
 #include "Core/Graphics.h"
 
 using namespace MiniEngine::Graphics;

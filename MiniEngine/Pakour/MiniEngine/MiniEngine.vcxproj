@@ -120,8 +120,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Asset\BlendClip.h" />
-    <ClInclude Include="Asset\IPlayable.h" />
+    <ClInclude Include="Animation\ActionClip.h" />
+    <ClInclude Include="Animation\Animator.h" />
+    <ClInclude Include="Animation\BlendClip.h" />
+    <ClInclude Include="Animation\IAnimatorClip.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\Graphics.h" />
@@ -134,7 +136,6 @@
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
-    <ClInclude Include="Scene\Animator.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="Scene\Tag.h" />
     <ClInclude Include="targetver.h" />
@@ -161,7 +162,10 @@
     <ClInclude Include="Editor\AssimpBaker.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Asset\BlendClip.cpp" />
+    <ClCompile Include="Animation\ActionClip.cpp" />
+    <ClCompile Include="Animation\Animator.cpp" />
+    <ClCompile Include="Animation\BlendClip.cpp" />
+    <ClCompile Include="Animation\IAnimatorClip.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
@@ -178,7 +182,6 @@
     <ClCompile Include="Core\Timer.cpp" />
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Platform\Input.cpp" />
-    <ClCompile Include="Scene\Animator.cpp" />
     <ClCompile Include="Scene\RigidBodyComponent.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\Actor.cpp" />

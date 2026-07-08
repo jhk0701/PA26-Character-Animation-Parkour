@@ -2,7 +2,7 @@
 #include "Character.h"
 #include "Core/Math.h"
 #include "Scene/SkeletalMeshComponent.h"
-#include "Asset/BlendClip.h"
+#include "Animation/BlendClip.h"
 
 Character::Character()
 {
@@ -50,4 +50,9 @@ void Character::SetInputDir(const Vector2& _dir)
 		return;
 
 	m_tempLoco.lock()->SetAxisValue(m_inputDir.x, m_inputDir.y);
+}
+
+std::weak_ptr<Animator> Character::GetAnim() const
+{
+	return m_skinMeshComp.lock()->GetAnim();
 }

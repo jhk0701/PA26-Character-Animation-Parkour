@@ -3,6 +3,8 @@
 
 class Character;
 
+namespace MiniEngine { class ActionClip; }
+
 class TestScene : public MiniEngine::Scene
 {
 public:
@@ -18,5 +20,5 @@ private:
 	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const wchar_t* _path);
 
 	std::shared_ptr<Character> m_TmpChar;
-	
+	std::shared_ptr<MiniEngine::ActionClip> m_ActionClip;
 };

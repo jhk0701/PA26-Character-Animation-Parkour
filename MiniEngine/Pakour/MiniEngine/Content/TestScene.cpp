@@ -10,8 +10,9 @@
 #include "Content/Character.h"
 #include "Scene/CameraComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
-#include "Scene/Animator.h"
-#include "Asset/BlendClip.h"
+#include "Animation/Animator.h"
+#include "Animation/ActionClip.h"
+#include "Animation/BlendClip.h"
 
 using namespace MiniEngine;
 
@@ -95,20 +96,22 @@ void TestScene::Construct()
 		charRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
 		charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
+		std::shared_ptr<Animator> pAnim = skinComp->GetAnim().lock();
 		// 로코모션 구현
 		std::shared_ptr<BlendClip> testLoco = std::make_shared<BlendClip>(5);
-		
-		// 모션 하드코딩 입력
-		testLoco->AddAnimClip({ 0.0f, 0.0f }, skinnedMesh->GetClipPtr(1));	// idle
+		// 모션 입력 TODO : Editor에서 좀 사용하기 쉽게 보정
+		testLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
 		testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));	// Walking
 		testLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));	// Walking Backword
 		testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(3));	// right strafe
 		testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(4));	// left strafe
-		
-		skinComp->GetAnim().lock()->SetLocomotion(testLoco);
-		pChar->SetTempLoco(testLoco);
 
-		m_TmpChar = pChar;
+		pChar->SetTempLoco(testLoco);
+		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(testLoco);
+		pAnim->AddLocomotion(pLoco);
+
+		m_ActionClip = std::make_shared<ActionClip>();
+		m_ActionClip->AddClip(skinnedMesh->GetClipPtr(6));
 
 		{
 			// 캐릭터 카메라 설정
@@ -121,6 +124,7 @@ void TestScene::Construct()
 			pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 		}
 
+		m_TmpChar = pChar;
 	}
 }
 
@@ -199,6 +203,13 @@ void TestScene::InitDefaultInput()
 			inputDir.x = 0.0f;
 			m_TmpChar->SetInputDir(inputDir);
 		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
+		[this]() 
+		{
+			m_TmpChar->GetAnim().lock()->PlayActionClip(m_ActionClip, 0.5f);
+		}
+	);
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
