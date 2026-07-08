@@ -28,7 +28,7 @@ namespace MiniEngine
         std::vector<VecKey>  scale;
     };
 
-    // 본 1개의 로컬 포즈 TRS 성분. 행렬과 달리 성분별 보간(블렌드)이 가능하다. (§9)
+    // 본 1개의 로컬 포즈 Transform
     struct BoneTRS
     {
         Vector3    pos;
@@ -39,8 +39,10 @@ namespace MiniEngine
     // 스켈레톤 전체의 로컬 포즈(본 순서 = Skeleton::bones 순서).
     using LocalPoseTRS = std::vector<BoneTRS>;
 
-    // 애니메이션 클립. 시간 샘플링 → 본별 로컬 포즈 행렬. (CLAUDE.md §9)
-    // 보간: 위치/스케일 Lerp, 회전 Slerp(Quaternion). 시간은 duration 으로 래핑(루프).
+    // 애니메이션 클립 시간 샘플링 → 본별 로컬 포즈 행렬
+    // 위치/스케일 Lerp
+    // 회전 Slerp(Quaternion). 
+    // 시간은 duration 으로 래핑(루프).
     class AnimClip
     {
     public:
@@ -49,11 +51,11 @@ namespace MiniEngine
         float ticksPerSecond = 1.0f;
         std::vector<AnimChannel> channels;
 
-        // _timeSec(초)을 클립 시간으로 변환·래핑해 본별 로컬 포즈 TRS 를 채운다.
-        // 채널 없는 본/빈 트랙은 skeleton 의 localBindPose 분해 성분을 유지.
+        // _timeSec(초)을 클립 시간으로 변환, 래핑해 본별 로컬 포즈 TRS 계산
+        // 채널 없는 본/빈 트랙은 skeleton 의 localBindPose 유지
         void SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose) const;
 
-        // SampleTRS + 행렬 합성(S·R·T) 래퍼 — 블렌드가 필요 없는 단일 클립 경로용.
+        // SampleTRS + 행렬 합성(S·R·T) 래퍼 — 블렌드가 필요 없는 단일 클립 경로 재생
         void Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const;
     };
 

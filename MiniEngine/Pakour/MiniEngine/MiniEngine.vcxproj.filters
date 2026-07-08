@@ -184,6 +184,9 @@
     <ClInclude Include="Core\Graphics.h">
       <Filter>Engine\02.Core\GameCore</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\Animator.h">
+      <Filter>Engine\07.Object\Component\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -272,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="Core\Graphics.cpp">
       <Filter>Engine\02.Core\GameCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Animator.cpp">
+      <Filter>Engine\07.Object\Component\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

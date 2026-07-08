@@ -9,9 +9,9 @@
 
 namespace MiniEngine
 {
-    // 스키닝 메시 (통합 컨테이너 — 정점/인덱스 + 스켈레톤 + AnimClip). (CLAUDE.md §8/§9)
+    // 스키닝 메시 (통합 컨테이너 — 정점/인덱스 + 스켈레톤 + AnimClip).
     // StaticMesh 와 동형: CPU 데이터 보유 + 요청 시 GPU 버퍼(IMMUTABLE) 생성.
-    // 소유는 AssetManager 캐시(weak) + 사용처(SkeletalMeshComponent, shared). (§12)
+    // 소유는 AssetManager 캐시(weak) + 사용처(SkeletalMeshComponent, shared).
     class SkinnedMesh
     {
     public:

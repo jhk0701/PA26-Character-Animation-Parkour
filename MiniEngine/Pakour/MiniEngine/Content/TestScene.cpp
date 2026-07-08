@@ -6,7 +6,10 @@
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Tag.h"
 
+#include "Content/Character.h"
 #include "Scene/CameraComponent.h"
+#include "Scene/SkeletalMeshComponent.h"
+
 
 using namespace MiniEngine;
 
@@ -29,7 +32,7 @@ void TestScene::Construct()
 		pCamComp->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 		pCamComp->RegisterMainCamera();
 
-		pCamActor->GetRoot()->localTransform.position = Vector3(0.0f, 1.0f, -10.0f);
+		pCamActor->GetRoot()->localTransform.position = Vector3(0.0f, 1.0f, -3.0f);
 		// m_camController.Initialize(Vector3(0.0f, 0.0f, 0.0f), 10.0f);
 	}
 
@@ -84,6 +87,23 @@ void TestScene::Construct()
 	std::shared_ptr<Actor> pObsHigh = BuildObstacle(L"obstacle_high.mini");
 	std::shared_ptr<SceneComponent> pObsHighRoot = pObsHigh->GetRoot();
 	pObsHighRoot->localTransform.position = Vector3(0.0f, 0.0f, 10.0f);
+
+	// 임시 캐릭터 생성
+	{
+		PathManager* pathMgr = PathManager::GetInstance();
+
+		std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
+		std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
+
+		std::shared_ptr<Character> pChar = SpawnActor<Character>();
+		std::shared_ptr<SkeletalMeshComponent> skinComp = pChar->AddComponent<SkeletalMeshComponent>();
+		skinComp->SetMesh(skinnedMesh);
+		skinComp->SetActiveClip(2);
+
+		std::shared_ptr<SceneComponent> charRoot = pChar->GetRoot();
+		charRoot->localTransform.position = Vector3(0.0f);
+		charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+	}
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
@@ -102,33 +122,3 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
 
 	return ObstacleActor;
 }
-
-/*
-작성예시
-
-bool GameCore::InitTempChar()
-{
-	PathManager* pathMgr = PathManager::GetInstance();
-
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
-	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
-
-	if (!skinnedMesh)
-		return false;
-
-	std::shared_ptr<World> pWorld = SceneManager::GetInstance()->GetCurrentScene().lock();
-	m_TmpChar = pWorld->SpawnActor<Character>();
-	std::shared_ptr<SkeletalMeshComponent> skinComp = m_TmpChar.lock()->AddComponent<SkeletalMeshComponent>();
-	skinComp->SetMesh(skinnedMesh);
-
-	skinComp->SetActiveClip(2);
-
-	std::shared_ptr<SceneComponent> charRoot = m_TmpChar.lock()->GetRoot();
-	charRoot->localTransform.position = Vector3(0.0f, -5.0f, -3.0f);
-	charRoot->localTransform.scale = Vector3(0.05f, 0.05f, 0.05f);
-	charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
-
-	return true;
-}
-
-*/

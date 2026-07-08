@@ -1,10 +1,17 @@
 ﻿#include "pch.h"
 #include "Scene/SkeletalMeshComponent.h"
+#include "Scene/Animator.h"
 #include "Core/Graphics.h"
 
 using namespace MiniEngine::Graphics;
+
 namespace MiniEngine
 {
+    SkeletalMeshComponent::SkeletalMeshComponent()
+    {
+        m_anim = std::make_shared<Animator>(std::dynamic_pointer_cast<SkeletalMeshComponent>(shared_from_this()));
+    }
+
     void SkeletalMeshComponent::SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh)
     {
         m_mesh = _mesh;
@@ -45,29 +52,35 @@ namespace MiniEngine
     {
         SceneComponent::Tick(_dt);
 
-        if (!m_mesh)
+        if (!m_mesh || !m_anim)
             return;
 
-        const bool playing = (m_activeClip >= 0
-            && m_activeClip < static_cast<int>(m_mesh->GetClips().size()));
-        if (!playing && !IsFading())
-            return; // 정지 상태 — 바인드 포즈 유지(행렬은 이미 계산됨)
+        m_anim->Update(_dt);
 
-        m_playTime += _dt;
-
-        if (IsFading())
         {
-            m_targetTime  += _dt;
-            m_fadeElapsed += _dt;
-            if (m_fadeElapsed >= m_fadeDuration)
+            // 레거시
+            const bool playing = (m_activeClip >= 0
+                && m_activeClip < static_cast<int>(m_mesh->GetClips().size()));
+
+            if (!playing && !IsFading())
+                return; // 정지 상태 — 바인드 포즈 유지(행렬은 이미 계산됨)
+
+            m_playTime += _dt;
+
+            if (IsFading())
             {
-                // 페이드 완료 — 대상을 현재로 승격.
-                m_activeClip   = m_targetClip;
-                m_playTime     = m_targetTime;
-                m_targetClip   = -1;
-                m_targetTime   = 0.0f;
-                m_fadeDuration = 0.0f;
-                m_fadeElapsed  = 0.0f;
+                m_targetTime += _dt;
+                m_fadeElapsed += _dt;
+                if (m_fadeElapsed >= m_fadeDuration)
+                {
+                    // 페이드 완료 — 대상을 현재로 승격.
+                    m_activeClip = m_targetClip;
+                    m_playTime = m_targetTime;
+                    m_targetClip = -1;
+                    m_targetTime = 0.0f;
+                    m_fadeDuration = 0.0f;
+                    m_fadeElapsed = 0.0f;
+                }
             }
         }
 
@@ -98,7 +111,7 @@ namespace MiniEngine
         }
 
         // TODO : 객체별 색상 받아오기
-        _context.m_perFrame.albedo = Vector3(0.7f);
+        _context.m_perFrame.albedo = Vector3(0.5f, 0.7f, 0.5f);
 
         if (SUCCEEDED(pContext->Map(
             _context.m_perFrameCB, 0,
@@ -111,6 +124,7 @@ namespace MiniEngine
 
         // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
         const std::vector<Matrix>& bones = GetBoneMatrices();
+
         if (SUCCEEDED(pContext->Map(
             _context.m_boneCB, 0,
             D3D11_MAP_WRITE_DISCARD, 0, 
@@ -118,10 +132,13 @@ namespace MiniEngine
         {
             BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
             const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
+
             for (size_t i = 0; i < count; ++i)
                 boneCB->boneMatrices[i] = bones[i];
+
             for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
                 boneCB->boneMatrices[i] = Matrix(); // identity
+
             pContext->Unmap(_context.m_boneCB, 0);
         }
 
@@ -160,84 +177,19 @@ namespace MiniEngine
         const Skeleton& skeleton = m_mesh->GetSkeleton();
 
         SamplePose(m_activeClip, m_playTime, m_poseA);
+
         if (IsFading())
         {
-            // 현재 → 대상 크로스페이드: TRS 가중 보간(pos/scale Lerp, rot Slerp). (§9)
+            // 현재 → 대상 크로스페이드: TRS 가중 보간(pos/scale Lerp, rot Slerp).
             const float weight = m_fadeElapsed / m_fadeDuration;
+
             SamplePose(m_targetClip, m_targetTime, m_poseB);
+
             BlendPose(m_poseA, m_poseB, weight, m_poseA);
         }
+
         ComposePose(m_poseA, m_localPose);
 
         skeleton.ComputeBoneMatrices(m_localPose, m_boneMatrices);
     }
 }
-
-
-
-// 선택된 카메라로 스키닝 메시를 GPU 스키닝 + Lambert 로 그린다.
-//void GameCore::DrawSkinnedMesh(MiniEngine::CameraComponent& _camera, MiniEngine::SkeletalMeshComponent& _meshComp)
-//{
-//    auto mesh = _meshComp.GetMesh();
-//
-//    // b0/b1 은 DrawMesh 와 동일 규약 (row-vector, 무전치).
-//    const Matrix world = _meshComp.GetWorldMatrix();
-//    const Matrix view = _camera.GetViewMatrix();
-//    const Matrix proj = _camera.GetProjectionMatrix();
-//
-//    PerObjectCB perObject = {};
-//    perObject.mvp = world * view * proj;
-//    perObject.world = world;
-//
-//    D3D11_MAPPED_SUBRESOURCE mapped = {};
-//    if (SUCCEEDED(m_context->Map(m_perObjectCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-//    {
-//        memcpy(mapped.pData, &perObject, sizeof(perObject));
-//        m_context->Unmap(m_perObjectCB.Get(), 0);
-//    }
-//
-//    PerFrameCB perFrame = {};
-//    Vector3 dir(-0.4f, -1.0f, -0.6f);
-//    dir.Normalize();
-//    perFrame.lightDir = dir;
-//    perFrame.ambient = 0.15f;
-//    perFrame.lightColor = Vector3(1.0f, 1.0f, 1.0f);
-//    perFrame.albedo = Vector3(0.55f, 0.75f, 0.85f); // 큐브와 구분되는 한색 계열
-//
-//    if (SUCCEEDED(m_context->Map(m_perFrameCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-//    {
-//        memcpy(mapped.pData, &perFrame, sizeof(perFrame));
-//        m_context->Unmap(m_perFrameCB.Get(), 0);
-//    }
-//
-//    // b2: 본 최종 행렬 업로드 (부족분은 identity 패딩 — WRITE_DISCARD 라 전체를 채운다).
-//    const std::vector<Matrix>& bones = _meshComp.GetBoneMatrices();
-//    if (SUCCEEDED(m_context->Map(m_boneCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
-//    {
-//        BoneCB* boneCB = static_cast<BoneCB*>(mapped.pData);
-//        const size_t count = (bones.size() < static_cast<size_t>(MAX_BONES)) ? bones.size() : MAX_BONES;
-//        for (size_t i = 0; i < count; ++i)
-//            boneCB->boneMatrices[i] = bones[i];
-//        for (size_t i = count; i < static_cast<size_t>(MAX_BONES); ++i)
-//            boneCB->boneMatrices[i] = Matrix(); // identity
-//        m_context->Unmap(m_boneCB.Get(), 0);
-//    }
-//
-//    UINT stride = mesh.lock()->GetVertexStride();
-//    UINT offset = 0;
-//    ID3D11Buffer* vb = mesh.lock()->GetVertexBuffer();
-//    ID3D11Buffer* objectCB = m_perObjectCB.Get();
-//    ID3D11Buffer* frameCB = m_perFrameCB.Get();
-//    ID3D11Buffer* boneCB = m_boneCB.Get();
-//
-//    m_context->IASetInputLayout(m_skinnedInputLayout.Get());
-//    m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-//    m_context->IASetIndexBuffer(mesh.lock()->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-//    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//    m_context->VSSetShader(m_skinnedVertexShader.Get(), nullptr, 0);
-//    m_context->VSSetConstantBuffers(0, 1, &objectCB);
-//    m_context->VSSetConstantBuffers(2, 1, &boneCB);
-//    m_context->PSSetShader(m_skinnedPixelShader.Get(), nullptr, 0);
-//    m_context->PSSetConstantBuffers(1, 1, &frameCB);
-//    m_context->DrawIndexed(mesh.lock()->GetIndexCount(), 0, 0);
-//}

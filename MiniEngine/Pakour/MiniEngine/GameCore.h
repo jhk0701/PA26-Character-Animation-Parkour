@@ -2,10 +2,6 @@
 #include <string>
 #include "DirectXBase.h"
 #include "Platform/Input.h"
-
-#include "Scene/StaticMeshComponent.h"
-#include "Scene/SkeletalMeshComponent.h"
-
 #include "Editor/EditorUI.h"
 
 

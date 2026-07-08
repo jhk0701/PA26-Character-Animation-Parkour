@@ -41,8 +41,8 @@ namespace MiniEngine
         Unknown     = 0,
         StaticMesh  = 1,
         SkinnedMesh = 2,
-        Skeleton    = 3, // (예정)
-        AnimClip    = 4, // (예정)
+        Skeleton    = 3,
+        AnimClip    = 4,
     };
 
     // 본/클립 이름의 고정 길이(널 종단 포함).

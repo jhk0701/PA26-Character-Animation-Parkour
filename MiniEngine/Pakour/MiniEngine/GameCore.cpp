@@ -15,6 +15,8 @@
 #include "Scene/Actor.h"
 #include "Scene/CameraComponent.h"
 #include "Scene/Scene.h"
+#include "Scene/StaticMeshComponent.h"
+#include "Scene/SkeletalMeshComponent.h"
 
 using namespace MiniEngine;
 using namespace MiniEngine::Graphics;

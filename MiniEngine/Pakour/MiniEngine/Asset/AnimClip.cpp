@@ -6,7 +6,7 @@ namespace MiniEngine
 {
     namespace
     {
-        // 키 배열에서 _time 을 감싸는 두 키를 찾아 보간. 범위 밖은 양끝 클램프.
+        // 키 배열에서 _time 을 감싸는 두 키를 찾아 보간
         Vector3 SampleVec(const std::vector<VecKey>& _keys, float _time, const Vector3& _fallback)
         {
             if (_keys.empty())
@@ -38,10 +38,12 @@ namespace MiniEngine
             size_t next = 1;
             while (next < _keys.size() && _keys[next].time < _time)
                 ++next;
+
             const QuatKey& a = _keys[next - 1];
             const QuatKey& b = _keys[next];
             const float span = b.time - a.time;
             const float t = (span > 0.0f) ? (_time - a.time) / span : 0.0f;
+
             return Quaternion::Slerp(a.value, b.value, t);
         }
     }

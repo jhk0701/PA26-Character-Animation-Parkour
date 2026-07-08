@@ -30,7 +30,6 @@ namespace MiniEngine
         m_light.m_dir.Normalize();
         m_light.m_ambient = 0.15f;
         m_light.m_color = Vector3(1.0f, 1.0f, 1.0f);
-        m_light.m_albedo = Vector3(0.85f, 0.78f, 0.70f);
     }
 
     void Scene::BeginPlay()

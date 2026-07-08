@@ -30,7 +30,7 @@ namespace MiniEngine
 		}
 
 		// TODO : 객체별 색상 받아오기
-		_context.m_perFrame.albedo = Vector3(0.3f);
+		_context.m_perFrame.albedo = Vector3(0.5f, 0.5f, 0.5f);
 
 		if (SUCCEEDED(pContext->Map(
 			_context.m_perFrameCB, 0,

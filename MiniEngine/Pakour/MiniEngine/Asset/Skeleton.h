@@ -15,7 +15,7 @@ namespace MiniEngine
         std::string name;
     };
 
-    // 본 계층 + 바인드 포즈. 로컬 포즈 배열 → 스키닝 최종 행렬 계산. (CLAUDE.md §8/§9)
+    // 본 계층 + 바인드 포즈. 로컬 포즈 배열 → 스키닝 최종 행렬 계산. 
     class Skeleton
     {
     public:
