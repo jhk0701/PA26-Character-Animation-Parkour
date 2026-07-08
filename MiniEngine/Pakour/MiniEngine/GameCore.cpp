@@ -416,8 +416,8 @@ bool GameCore::SpawnMeshFromMini(const std::wstring& _miniPath)
         actor->SetName(name);
         auto meshComp = actor->AddComponent<SkeletalMeshComponent>();
         meshComp->SetMesh(mesh);
-        if (!mesh->GetClips().empty())
-            meshComp->SetActiveClip(0);
+        /*if (!mesh->GetClips().empty())
+            meshComp->SetActiveClip(0)*/;
 
         // 자동 스케일: 원본 단위(예: Mixamo cm ~180유닛)가 카메라(거리 6) 밖일 수 있으므로
         // 정점 AABB 최대 치수가 ~4 유닛이 되도록 균등 스케일. 큐브와 겹치지 않게 -X 오프셋.

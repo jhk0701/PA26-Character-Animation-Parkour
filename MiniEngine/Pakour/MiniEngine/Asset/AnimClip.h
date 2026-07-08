@@ -3,6 +3,7 @@
 #include <vector>
 #include "Core/Math.h"
 #include "Asset/Skeleton.h"
+#include "Asset/IPlayable.h"
 
 namespace MiniEngine
 {
@@ -43,7 +44,7 @@ namespace MiniEngine
     // 위치/스케일 Lerp
     // 회전 Slerp(Quaternion). 
     // 시간은 duration 으로 래핑(루프).
-    class AnimClip
+    class AnimClip : public IPlayable
     {
     public:
         std::string name;

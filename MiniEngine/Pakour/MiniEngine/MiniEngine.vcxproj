@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Asset\BlendClip.h" />
+    <ClInclude Include="Asset\IPlayable.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\Graphics.h" />

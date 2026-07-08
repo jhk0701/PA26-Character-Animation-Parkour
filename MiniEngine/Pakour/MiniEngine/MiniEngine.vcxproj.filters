@@ -74,6 +74,9 @@
     <Filter Include="Content\01.Config">
       <UniqueIdentifier>{603b0d7e-4658-4fa5-8672-c452c155f10f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\03.Asset\Interface">
+      <UniqueIdentifier>{33995b09-ab27-4ae7-a628-093383390189}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -189,6 +192,9 @@
     </ClInclude>
     <ClInclude Include="Asset\BlendClip.h">
       <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\IPlayable.h">
+      <Filter>Engine\03.Asset\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

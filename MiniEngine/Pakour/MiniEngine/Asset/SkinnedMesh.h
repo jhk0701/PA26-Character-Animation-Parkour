@@ -39,6 +39,7 @@ namespace MiniEngine
         const std::vector<uint32_t>& GetIndices()  const { return m_indices; }
         const Skeleton&              GetSkeleton() const { return m_skeleton; }
         const std::vector<AnimClip>& GetClips()    const { return m_clips; }
+        AnimClip* GetClipPtr(int _idx) { return &m_clips[_idx]; }
 
     private:
         std::vector<Vertex>   m_vertices;

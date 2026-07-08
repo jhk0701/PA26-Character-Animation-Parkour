@@ -9,7 +9,8 @@
 #include "Content/Character.h"
 #include "Scene/CameraComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
-
+#include "Scene/Animator.h"
+#include "Asset/BlendClip.h"
 
 using namespace MiniEngine;
 
@@ -98,11 +99,23 @@ void TestScene::Construct()
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		std::shared_ptr<SkeletalMeshComponent> skinComp = pChar->AddComponent<SkeletalMeshComponent>();
 		skinComp->SetMesh(skinnedMesh);
-		skinComp->SetActiveClip(2);
 
 		std::shared_ptr<SceneComponent> charRoot = pChar->GetRoot();
-		charRoot->localTransform.position = Vector3(0.0f);
+		charRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
 		charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+
+		// skinComp->SetActiveClip(2); // 레거시 테스트 호출
+		// 로코모션 구현
+		std::shared_ptr<BlendClip> testLoco = std::make_shared<BlendClip>(5);
+		{
+			testLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));
+			testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));
+			testLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));
+			testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(4));
+			testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(3));
+		}
+		testLoco->SetAxisValue(0, 1);
+		skinComp->GetAnim().lock()->SetLocomotion(testLoco);
 	}
 }
 
@@ -122,3 +135,4 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path)
 
 	return ObstacleActor;
 }
+ 

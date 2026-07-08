@@ -25,7 +25,6 @@ namespace MiniEngine
             const float t = (span > 0.0f) ? (_time - a.time) / span : 0.0f;
             return Vector3::Lerp(a.value, b.value, t);
         }
-
         Quaternion SampleQuat(const std::vector<QuatKey>& _keys, float _time, const Quaternion& _fallback)
         {
             if (_keys.empty())

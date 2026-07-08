@@ -30,7 +30,7 @@ namespace MiniEngine
 		~BlendClip() {};
 
 		// 현재 입력된 좌표 축을 가지고 애니메이션 가중치 계산
-		void Sample(float _dt, Skeleton& _skeleton, LocalPoseTRS& _outPose);
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
 		bool ComputeWeight(); // 질량중심좌표계 이용, 각 클립들의 가중치 계산
 
 		Axis& GetAxisX() { return m_AxisX; }

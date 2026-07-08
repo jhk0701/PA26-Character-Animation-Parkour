@@ -11,7 +11,7 @@ namespace MiniEngine
 		m_placements.reserve(_reserveCnt);
 	}
 
-	void BlendClip::Sample(float _dt, Skeleton& _skeleton, LocalPoseTRS& _outPose)
+	void BlendClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose)
 	{
 		if (m_placements.empty())
 			return;
