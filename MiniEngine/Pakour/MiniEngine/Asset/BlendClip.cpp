@@ -4,7 +4,7 @@
 namespace MiniEngine
 {
 	// 0인 경우 방지
-	constexpr float kEps = 1e-4f;
+	constexpr float kEps = 1e-5f;
 
 	BlendClip::BlendClip(int _reserveCnt)
 	{
@@ -17,9 +17,15 @@ namespace MiniEngine
 		if (m_placements.empty())
 			return;
 
-		bool bIsUnique = ComputeWeight();
+		int matchedIdx = 0;
+		bool bIsUnique = ComputeWeight(matchedIdx);
 		
 		m_playTime += _dt;
+		if (bIsUnique)
+		{
+			m_placements[matchedIdx].m_pClip->SampleTRS(m_playTime, _skeleton, _outPose); // 선택한 모션 즉시 반영
+			return;
+		}
 
 		bool bIsFirst = true;
 		float accW = 0.0f;
@@ -30,12 +36,6 @@ namespace MiniEngine
 
 			// 이 클립의 현재 시간대의 애니메이션 본 트랜스폼 반영
 			p.m_pClip->SampleTRS(m_playTime, _skeleton, m_poseScratch); // 임시 포즈에 현재 클립 원본 자세 보관
-
-			if (bIsUnique && p.m_weight >= 1.0f)
-			{
-				m_blendedPose = m_poseScratch;
-				break;
-			}
 
 			if (bIsFirst) 
 			{
@@ -64,23 +64,27 @@ namespace MiniEngine
 		m_AxisY.m_val = std::clamp(_y, m_AxisY.m_min, m_AxisY.m_max);
 	}
 
-	bool BlendClip::ComputeWeight()
+	bool BlendClip::ComputeWeight(int& _outMatchedIdx)
 	{
-		// 질량중심 좌표계 기준
-		Vector2 curCoord(m_AxisX.m_val, m_AxisY.m_val);
-
-		float sum = 0.0f;
+		// 가중치 초기화
 		for (Placement& p : m_placements)
+			p.m_weight = 0.0f; 
+
+		// 질량중심 좌표계 계산
+		Vector2 curCoord(m_AxisX.m_val, m_AxisY.m_val);
+		float sum = 0.0f;
+		for (int i = 0; i < m_placements.size(); ++i)
 		{
-			const float sqrtDist = Vector2::DistanceSquared(curCoord, p.m_coord);
-			if (sqrtDist < kEps)
+			// 현재 입력점과 배치한 클립 좌표 거리 제곱
+			const float sqrtDist = Vector2::DistanceSquared(curCoord, m_placements[i].m_coord);
+			if (sqrtDist < kEps) // 0에 매우 근사한 값인 경우
 			{
-				p.m_weight = 1.0f;
-				return false; // 하나만 고르면 된다는 의미
+				_outMatchedIdx = i;
+				return true; // 하나만 고르면 된다고 보냄
 			}
 
-			const float w = 1.0f / sqrtDist;
-			p.m_weight = w;
+			const float w = 1.0f / sqrtDist; // sqrtDist가 작아질수록(가까울수록)  w가 높아짐
+			m_placements[i].m_weight = w;
 			sum += w;
 		}
 
@@ -90,6 +94,6 @@ namespace MiniEngine
 				p.m_weight /= sum;
 		}
 
-		return true;
+		return false; // 정확히 일치하는 것이 없음
 	}
 }

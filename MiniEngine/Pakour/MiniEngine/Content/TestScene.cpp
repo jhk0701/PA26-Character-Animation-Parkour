@@ -105,18 +105,18 @@ void TestScene::Construct()
 
 		std::shared_ptr<SceneComponent> charRoot = pChar->GetRoot();
 		charRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
-		charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 		// skinComp->SetActiveClip(2); // 레거시 테스트 호출
 		// 로코모션 구현
 		std::shared_ptr<BlendClip> testLoco = std::make_shared<BlendClip>(5);
+		// testLoco->SetAxisValue(0, 1);
 
 		// 모션 하드코딩 입력
-		testLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
+		testLoco->AddAnimClip({ 0.0f, 0.0f }, skinnedMesh->GetClipPtr(1));	// idle
 		testLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));	// Walking
 		testLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));	// Walking Backword
-		testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(4));	// right strafe
-		testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(3));	// left strafe
+		testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(3));	// right strafe
+		testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(4));	// left strafe
 		
 		skinComp->GetAnim().lock()->SetLocomotion(testLoco);
 		pChar->SetTempLoco(testLoco);
@@ -175,7 +175,7 @@ void TestScene::InitDefaultInput()
 		[this]()
 		{
 			Vector2 inputDir = m_TmpChar->GetInputDir();
-			inputDir.x = -1.0f;
+			inputDir.x = 1.0f;
 			m_TmpChar->SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
@@ -190,7 +190,7 @@ void TestScene::InitDefaultInput()
 		[this]()
 		{
 			Vector2 inputDir = m_TmpChar->GetInputDir();
-			inputDir.x = 1.0f;
+			inputDir.x = -1.0f;
 			m_TmpChar->SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(

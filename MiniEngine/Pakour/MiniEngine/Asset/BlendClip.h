@@ -31,7 +31,7 @@ namespace MiniEngine
 
 		// 현재 입력된 좌표 축을 가지고 애니메이션 가중치 계산
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
-		bool ComputeWeight(); // 질량중심좌표계 이용, 각 클립들의 가중치 계산
+		bool ComputeWeight(int& _outMatchedIdx); // 질량중심좌표계 이용, 각 클립들의 가중치 계산
 
 		Axis& GetAxisX() { return m_AxisX; }
 		Axis& GetAxisY() { return m_AxisY; }
@@ -43,8 +43,8 @@ namespace MiniEngine
 	private:
 		Axis m_AxisX;
 		Axis m_AxisY;
-		LocalPoseTRS m_blendedPose;
-		LocalPoseTRS m_poseScratch;
+		LocalPoseTRS m_blendedPose;	// 실제로 전달할 포즈
+		LocalPoseTRS m_poseScratch; // 임시 보관용
 
 		float m_playTime{ 0.0f };
 

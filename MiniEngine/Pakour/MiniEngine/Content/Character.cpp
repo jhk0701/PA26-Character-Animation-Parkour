@@ -49,5 +49,5 @@ void Character::SetInputDir(const Vector2& _dir)
 	if (m_tempLoco.expired())
 		return;
 
-	m_tempLoco.lock()->SetAxisValue(_dir.x, _dir.y);
+	m_tempLoco.lock()->SetAxisValue(m_inputDir.x, m_inputDir.y);
 }
