@@ -114,7 +114,7 @@ void TestScene::Construct()
 			testLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(4));
 			testLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(3));
 		}
-		testLoco->SetAxisValue(0, 1);
+		testLoco->SetAxisValue(1, 0);
 		skinComp->GetAnim().lock()->SetLocomotion(testLoco);
 	}
 }

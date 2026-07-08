@@ -9,6 +9,7 @@ namespace MiniEngine
 	BlendClip::BlendClip(int _reserveCnt)
 	{
 		m_placements.reserve(_reserveCnt);
+		m_playTime = 0.0f;
 	}
 
 	void BlendClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose)
@@ -19,14 +20,7 @@ namespace MiniEngine
 		bool bIsUnique = ComputeWeight();
 		
 		// 여러 모션들 시간 동기화
-		float durSec = 0.0f;
-		for (const Placement& p : m_placements)
-			durSec += p.m_pClip->ClipDurationSec() * p.m_weight;
-		if (durSec < kEps)
-			durSec = kEps;
-
-		m_blendPhase += _dt / durSec;
-		m_blendPhase -= std::floor(m_blendPhase);
+		m_playTime += _dt;
 
 		bool bIsFirst = true;
 		float accW = 0.0f;
@@ -37,8 +31,7 @@ namespace MiniEngine
 				continue;
 
 			// 이 클립의 현재 시간대의 애니메이션 본 트랜스폼 반영
-			const float timeSec = m_blendPhase * p.m_pClip->ClipDurationSec();
-			p.m_pClip->SampleTRS(timeSec, _skeleton, m_poseScratch); // 임시 포즈에 현재 클립 원본 자세 보관
+			p.m_pClip->SampleTRS(m_playTime, _skeleton, m_poseScratch); // 임시 포즈에 현재 클립 원본 자세 보관
 
 			if (bIsUnique && p.m_weight >= 1.0f)
 			{
@@ -57,7 +50,7 @@ namespace MiniEngine
 			{
 				// TODO : 다중 모션 가중치에 따른 블렌드 공식 찾아볼 것
 				// 현재 가중치에 따라 희석되는 식으로 구현
-				p.m_pClip->SampleTRS(timeSec, _skeleton, m_poseScratch);
+				p.m_pClip->SampleTRS(m_playTime, _skeleton, m_poseScratch);
 				BlendPose(m_blendedPose, m_poseScratch, p.m_weight / (accW + p.m_weight), m_blendedPose);
 
 				accW += p.m_weight;

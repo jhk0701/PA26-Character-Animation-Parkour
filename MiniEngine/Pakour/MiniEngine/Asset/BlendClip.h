@@ -46,7 +46,7 @@ namespace MiniEngine
 		LocalPoseTRS m_blendedPose;
 		LocalPoseTRS m_poseScratch;
 
-		float m_blendPhase{ 0.0f };
+		float m_playTime{ 0.0f };
 
 		// x, y축 특정 위치에 애니메이션 클립 배치
 		std::vector<Placement> m_placements;
