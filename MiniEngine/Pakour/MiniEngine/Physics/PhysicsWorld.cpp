@@ -152,10 +152,30 @@ namespace MiniEngine::Physics
 			*m_material);
 
 		if (body == nullptr)
-			return body;
+			return nullptr;
 
 		m_scene->addActor(*body);
-		return nullptr;
+		return body;
+	}
+
+	physx::PxRigidActor* PhysicsWorld::CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density)
+	{
+		if (!m_physics || !m_scene || !m_material)
+			return nullptr;
+
+		PxRigidDynamic* body = PxCreateDynamic(
+			*m_physics,
+			PxTransform(ToPx(_pos), ToPx(_rot)),
+			PxCapsuleGeometry(_radius, _height),
+			*m_material,
+			_density
+		);
+
+		if (body == nullptr)
+			return nullptr;
+
+		m_scene->addActor(*body);
+		return body;
 	}
 
 	void PhysicsWorld::SetDefaultCollisionGroup()

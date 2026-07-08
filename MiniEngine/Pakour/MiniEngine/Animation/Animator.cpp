@@ -2,7 +2,6 @@
 #include "Animation/Animator.h"
 #include "Animation/IAnimatorClip.h"
 #include "Animation/ActionClip.h"
-
 #include "Scene/SkeletalMeshComponent.h"
 
 namespace MiniEngine 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Character.h"
 #include "Core/Math.h"
+#include "Scene/RigidBodyComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
 #include "Animation/BlendClip.h"
 
@@ -15,6 +16,7 @@ Character::~Character()
 void Character::Construct()
 {
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
+	m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
 }
 
 void Character::BeginPlay()

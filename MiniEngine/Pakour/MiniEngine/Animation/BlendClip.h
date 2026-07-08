@@ -33,7 +33,7 @@ namespace MiniEngine
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
 		float GetDuration() const override { return m_duration; }
 
-		bool ComputeWeight(int& _outMatchedIdx); // 질량중심좌표계 이용, 각 클립들의 가중치 계산
+		bool ComputeWeight(int& _outMatchedIdx);
 
 		Axis& GetAxisX() { return m_AxisX; }
 		Axis& GetAxisY() { return m_AxisY; }

@@ -45,6 +45,7 @@ namespace MiniEngine::Physics
         bool CreateRigidFloor();
         physx::PxRigidActor* CreateDynamicBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents, float _density);
         physx::PxRigidActor* CreateStaticBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents);
+        physx::PxRigidActor* CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density);
 
     private:
         physx::PxFoundation* m_foundation = nullptr;

@@ -81,7 +81,7 @@ namespace MiniEngine
 		for (Placement& p : m_placements)
 			p.m_weight = 0.0f; 
 
-		// 질량중심 좌표계 계산
+		// 거리 기준으로 가중치 계산
 		Vector2 curCoord(m_AxisX.m_val, m_AxisY.m_val);
 		float sum = 0.0f;
 		for (int i = 0; i < m_placements.size(); ++i)
