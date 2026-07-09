@@ -30,7 +30,7 @@ namespace MiniEngine
 			_world.CreateStaticBox(pos, rot, _halfExtents);
 
 		// UserData로 owner 액터 포인터 적용
-		m_actor->userData = reinterpret_cast<void*>(owner.lock().get());
+		m_actor->userData = reinterpret_cast<void*>(pOwner.get());
 	}
 
 	void RigidBodyComponent::InitDynamicCapsule(Physics::PhysicsWorld& _world, const Vector2& _capsuleExtent, float _denity)

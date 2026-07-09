@@ -125,6 +125,7 @@
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimatorClip.h" />
     <ClInclude Include="Content\Character.h" />
+    <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimatorClip.cpp" />
     <ClCompile Include="Content\Character.cpp" />
+    <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />

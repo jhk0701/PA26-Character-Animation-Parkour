@@ -199,6 +199,9 @@
     <ClInclude Include="Animation\IAnimatorClip.h">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Content\ContentConfig.h">
+      <Filter>Content\01.Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -299,6 +302,9 @@
     </ClCompile>
     <ClCompile Include="Animation\IAnimatorClip.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\ContentConfig.cpp">
+      <Filter>Content\01.Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

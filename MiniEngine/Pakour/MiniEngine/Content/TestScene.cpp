@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TestScene.h"
+#include "Content/ContentConfig.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Scene/StaticMeshComponent.h"
@@ -32,6 +33,10 @@ void TestScene::Construct()
 		const Vector3 size(100.0f, 0.5f, 100.0f);
 		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
 		pGround->SetName("Ground");
+
+		Tag& tag = pGround->GetTag();
+		tag += (uint8_t)Content::Config::ETagEnv::Land;
+		tag += (uint8_t)Content::Config::ETagAct::Landing;
 
 		std::shared_ptr<StaticMeshComponent> pMeshComp = pGround->AddComponent<StaticMeshComponent>();
 		pMeshComp->SetMesh(pCubeMesh);
@@ -102,6 +107,10 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vect
 	std::shared_ptr<Actor> ObstacleActor;
 	ObstacleActor = SpawnActor<Actor>();
 	ObstacleActor->SetName("Obstacle");
+	
+	Tag& tag = ObstacleActor->GetTag();
+	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
+	tag += (uint8_t)Content::Config::ETagAct::JumpOver;
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetMesh(pMesh);

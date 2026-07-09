@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Character.h"
+
+#include "Content/ContentConfig.h"
 #include "Core/Math.h"
 #include "Platform/Input.h"
 #include "Manager/AssetManager.h"
@@ -221,4 +223,10 @@ void Character::TestRaycast()
 
 	void* pActor = hitResult.GetActor();
 	Actor* pHit = reinterpret_cast<Actor*>(pActor);
+
+	bool bHasTag = pHit->GetTag().Match(Content::Config::TAG_TYPE_ENV, (uint8_t)Content::Config::ETagEnv::Obstacle);
+	if (bHasTag)
+	{
+
+	}
 }

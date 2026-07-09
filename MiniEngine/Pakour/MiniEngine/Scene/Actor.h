@@ -42,7 +42,11 @@ namespace MiniEngine
         void OnSpawned(std::weak_ptr<Scene> _scene);
         std::shared_ptr<Scene> GetScene() const { return m_scene.lock(); };
 
+        Tag& GetTag() { return m_tag; }
+
     private:
+        Tag m_tag;
+
         std::weak_ptr<Scene> m_scene;
         std::vector<std::shared_ptr<Component>> m_components;
         std::weak_ptr<SceneComponent> m_root;

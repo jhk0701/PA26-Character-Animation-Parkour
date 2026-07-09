@@ -12,9 +12,19 @@ namespace MiniEngine
 			TAG_DIVIDER		= ','	// ','으로 구분
 		};
 	public:
-		std::vector<std::string> m_Tags;
-		
-		Tag(const std::string& _fullTag);
-		bool HasTag(const std::string& _tag) const;
+		Tag();
+		// Tag(const std::string& _fullTag); // 문자열 비교보단 int 비교가 더 저렴하므로 변경
+
+		bool Has(const uint8_t _tag) const;
+		bool Match(const uint8_t _idx, const uint8_t _tag) const;
+
+		Tag& operator+=(const uint8_t _tag) 
+		{
+			m_tags.push_back(_tag);
+			return *this;
+		}
+
+	private:
+		std::vector<uint8_t> m_tags;
 	};
 }
