@@ -73,11 +73,11 @@ namespace MiniEngine
             // 비어있는 트랙의 기본 성분은 바인드 포즈(위에서 채운 값)를 유지한
             BoneTRS& out = _outPose[channel.boneIndex];
 
-            if (channel.boneIndex == 0 && channel.pos.size() > 0) 
+            // 데이터 단에서 루트 확인
+            if (channel.boneIndex == 0 && 
+                channel.pos.size() > 0)  
             {
                 // 루트모션이 있는 상황
-                // out.pos = SampleVec(channel.pos, timeTick, out.pos);
-                
                 // 델타값 격리 후 Transform에 직접 반영
                 Vector3 dtPos = SampleVec(channel.pos, timeTick, _rootTrs.position);
                 Quaternion dtRot = SampleQuat(channel.rot, timeTick, _rootTrs.rotation);
@@ -85,8 +85,7 @@ namespace MiniEngine
 
                 _rootTrs.position += dtPos;
                 _rootTrs.rotation *= dtRot;
-                _rootTrs.scale += dtScale;
-
+                _rootTrs.scale = dtScale;
                 continue;
             }
             
@@ -96,12 +95,6 @@ namespace MiniEngine
         }
     }
 
-    /*void AnimClip::Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const
-    {
-        LocalPoseTRS pose;
-        SampleTRS(_timeSec, _skeleton, pose);
-        ComposePose(pose, _outLocalPose);
-    }*/
 
     float AnimClip::ClipDurationSec()
     {

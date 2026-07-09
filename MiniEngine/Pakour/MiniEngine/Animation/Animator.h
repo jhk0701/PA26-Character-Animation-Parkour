@@ -30,7 +30,6 @@ namespace MiniEngine
 		// 정지 대상(-1)으로도 페이드 가능(바인드 포즈로 블렌드).
 		// void PlayClip(int _clipIndex, float _fadeSec = 0.0f);
 		// void SetActiveClip(int _clipIndex) { PlayClip(_clipIndex, 0.0f); }
-
 		// bool IsFading() const { return m_fadeDuration > 0.0f; }
 
 	private:
@@ -48,6 +47,9 @@ namespace MiniEngine
 		
 		Layer m_baseLayer;		// 로코모션 루프용
 		Layer m_overrideLayer;	// 단발 액션 오버라이드용
+
+		// tag - action 맵
+		std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 
 	public:
 		void AddLocomotion(std::shared_ptr<IAnimatorClip>& _loco) { m_baseLayer.m_pClip = _loco; }
