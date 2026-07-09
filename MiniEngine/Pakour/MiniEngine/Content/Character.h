@@ -32,7 +32,7 @@ public:
 
 private:
 	void InitInput();
-	void TestRaycast();
+	bool RaycastObstacle();
 
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;

@@ -49,16 +49,16 @@ void Character::Construct()
 		// 모션 입력 
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
 		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
-		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(2));	// Walking
-		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(5));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(3));	// right strafe
-		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(4));	// left strafe
+		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));	// right strafe
+		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));	// left strafe
 
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
 		pAnim->AddLocomotion(pLoco);
 
 		m_tempActionClip = std::make_shared<ActionClip>();
-		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(6));
+		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // 애니메이션 몽타주 용도
 	}
 
 	{
@@ -100,15 +100,15 @@ void Character::ProcessInput(float _dt)
 	{
 		// 임시 이동 코드
 		const float deltaSpeed = _dt * m_moveSpeed;
-		std::shared_ptr<SceneComponent> root = GetRoot();
+		std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
 		// 캐릭터 정면 기준 이동
-		const Vector3& fwd = root->localTransform.GetMatrix().Forward();
-		const Vector3& rht = root->localTransform.GetMatrix().Right();
+		const Vector3& fwd = pRoot->localTransform.Forward();
+		const Vector3& rht = pRoot->localTransform.Right();
 
-		root->localTransform.position +=
+		pRoot->localTransform.position +=
 			deltaSpeed * m_inputDir.y * fwd +
-			deltaSpeed * m_inputDir.x * rht;
+			deltaSpeed * -m_inputDir.x * rht;
 	}
 }
 
@@ -167,7 +167,7 @@ void Character::InitInput()
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
-			inputDir.x = -1.0f;
+			inputDir.x = 1.0f;
 			SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
@@ -182,7 +182,7 @@ void Character::InitInput()
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
-			inputDir.x = 1.0f;
+			inputDir.x = -1.0f;
 			SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
@@ -199,14 +199,15 @@ void Character::InitInput()
 			GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.5f);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::F1).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnReleased = std::bind(
 		[this]() 
 		{
-			TestRaycast();
+			if (RaycastObstacle())
+				GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.3f);
 		});
 }
 
-void Character::TestRaycast()
+bool Character::RaycastObstacle()
 {
 	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
 	
@@ -219,14 +220,8 @@ void Character::TestRaycast()
 
 	Physics::RaycastResult hitResult;
 	if (!pPhysics->Raycast(rayParam, hitResult))
-		return;
+		return false;
 
-	void* pActor = hitResult.GetActor();
-	Actor* pHit = reinterpret_cast<Actor*>(pActor);
-
-	bool bHasTag = pHit->GetTag().Match(Content::Config::TAG_TYPE_ENV, (uint8_t)Content::Config::ETagEnv::Obstacle);
-	if (bHasTag)
-	{
-
-	}
+	Actor* pHit = reinterpret_cast<Actor*>(hitResult.GetActor());
+	return pHit->GetTag().Match(Content::Config::TAG_TYPE_ENV, (uint8_t)Content::Config::ETagEnv::Obstacle);
 }
