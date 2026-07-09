@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "Core/Math.h"
+#include "Scene/Transform.h"
 #include "Asset/Skeleton.h"
 
 namespace MiniEngine
@@ -53,10 +54,11 @@ namespace MiniEngine
 
         // _timeSec(초)을 클립 시간으로 변환, 래핑해 본별 로컬 포즈 TRS 계산
         // 채널 없는 본/빈 트랙은 skeleton 의 localBindPose 유지
-        void SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose) const;
+        // 루트모션 처리
+        void SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs) const;
 
         // SampleTRS + 행렬 합성(S·R·T) 래퍼 — 블렌드가 필요 없는 단일 클립 경로 재생
-        void Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const;
+        // void Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const;
 
         float ClipDurationSec();
     };

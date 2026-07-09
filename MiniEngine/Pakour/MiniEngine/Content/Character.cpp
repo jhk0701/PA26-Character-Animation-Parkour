@@ -28,8 +28,6 @@ Character::~Character()
 void Character::Construct()
 {
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
-	// m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
-
 	PathManager* pathMgr = PathManager::GetInstance();
 
 	std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
@@ -49,15 +47,15 @@ void Character::Construct()
 		m_tempLoco = std::make_shared<BlendClip>(9);
 		// 모션 입력 
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
-		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
-		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));	// right strafe
-		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));	// left strafe
+		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));		// idle
+		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));		// Walking
+		m_tempLoco->AddAnimClip({ 0.3, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ -0.3, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));		// Walking Backword
+		m_tempLoco->AddAnimClip({ 0.3, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ -0.3, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));		// right strafe
+		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));		// left strafe
 
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
 		pAnim->AddLocomotion(pLoco);
@@ -76,7 +74,7 @@ void Character::Construct()
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, 3.0f);
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, 4.0f);
 		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 		m_cameraHolder = pCamHolder;
@@ -84,6 +82,7 @@ void Character::Construct()
 
 	{
 		// RigidBody 설정
+		// m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
 		// Vector2 capsuleExtent(1.0f, 1.8f);
 		// m_rigidBodyComp.lock()->InitDynamicCapsule(*GetScene()->GetPhysics().lock(), capsuleExtent * 0.5f);
 	}
@@ -137,6 +136,8 @@ void Character::ProcessInput(float _dt)
 
 		pRoot->localTransform.rotation *= 
 			Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
+		pRoot->localTransform.rotation *=
+			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
 	}
 }
 
@@ -157,7 +158,7 @@ std::weak_ptr<Animator> Character::GetAnim() const
 
 void Character::InitInput()
 {
-	// 바인딩 하드코딩
+	// 바인딩
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
@@ -221,14 +222,14 @@ void Character::InitInput()
 			SetInputDir(inputDir);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnPressed = std::bind(
 		[this]() 
 		{
 			Vector2 dir = GetCamRotDir();
 			dir.x = -1.0f;
 			SetCamRotDir(dir);
 		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnReleased = std::bind(
 		[this]()
 		{
 			Vector2 dir = GetCamRotDir();
@@ -236,20 +237,51 @@ void Character::InitInput()
 			SetCamRotDir(dir);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::E).OnPressed = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
 		[this]()
 		{
 			Vector2 dir = GetCamRotDir();
 			dir.x = 1.0f;
 			SetCamRotDir(dir);
 		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::E).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
 		[this]()
 		{
 			Vector2 dir = GetCamRotDir();
 			dir.x = 0.0f;
 			SetCamRotDir(dir);
 		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.y = -1.0f;
+			SetCamRotDir(dir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.y = 0.0f;
+			SetCamRotDir(dir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.y = 1.0f;
+			SetCamRotDir(dir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.y = 0.0f;
+			SetCamRotDir(dir);
+		});
+
 
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
@@ -263,7 +295,10 @@ void Character::InitInput()
 		[this]() 
 		{
 			if (RaycastObstacle())
+			{
 				GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.3f);
+				MG_LOG_INFO("[Character] Play Valut!");
+			}
 		});
 
 }
@@ -277,7 +312,7 @@ bool Character::RaycastObstacle()
 	Physics::RaycastParam rayParam;
 	rayParam.m_origin = localTrs.position + Vector3(0.0f, 1.0f, 0.0f);
 	rayParam.m_dir = localTrs.Forward();
-	rayParam.m_maxDistance = 1.0f;
+	rayParam.m_maxDistance = 2.0f;
 
 	Physics::RaycastResult hitResult;
 	if (!pPhysics->Raycast(rayParam, hitResult))

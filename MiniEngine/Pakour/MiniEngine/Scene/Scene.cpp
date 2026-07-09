@@ -26,9 +26,9 @@ namespace MiniEngine
         m_defaultCam->localTransform.position = Vector3(0.0f);
 
         // 라이트 기본값
-        m_light.m_dir = Vector3(-0.4f, -1.0f, 0.6f);
+        m_light.m_dir = Vector3(-0.4f, -1.0f, -0.5f);
         m_light.m_dir.Normalize();
-        m_light.m_ambient = 0.15f;
+        m_light.m_ambient = 0.3f;
         m_light.m_color = Vector3(1.0f, 1.0f, 1.0f);
     }
 

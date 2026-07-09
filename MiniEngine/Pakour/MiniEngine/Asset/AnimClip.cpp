@@ -23,6 +23,7 @@ namespace MiniEngine
             const VecKey& b = _keys[next];
             const float span = b.time - a.time;
             const float t = (span > 0.0f) ? (_time - a.time) / span : 0.0f;
+
             return Vector3::Lerp(a.value, b.value, t);
         }
         Quaternion SampleQuat(const std::vector<QuatKey>& _keys, float _time, const Quaternion& _fallback)
@@ -47,17 +48,18 @@ namespace MiniEngine
         }
     }
 
-    void AnimClip::SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose) const
+    void AnimClip::SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs) const
     {
         const size_t boneCount = _skeleton.bones.size();
 
-        // 기본값 = 바인드 포즈 분해 성분 (채널 없는 본은 그대로 유지).
+        // 기본값 = 바인드 포즈 분해 성분
         SampleBindPoseTRS(_skeleton, _outPose);
 
-        // 초 → tick 변환 후 duration 으로 래핑(루프 재생).
+        // 초 → tick 변환 후 duration 으로 래핑
         float timeTick = _timeSec * ((ticksPerSecond > 0.0f) ? ticksPerSecond : 1.0f);
         if (duration > 0.0f)
         {
+            // 루프 재생
             timeTick = std::fmod(timeTick, duration);
             if (timeTick < 0.0f)
                 timeTick += duration;
@@ -68,20 +70,38 @@ namespace MiniEngine
             if (channel.boneIndex < 0 || channel.boneIndex >= static_cast<int>(boneCount))
                 continue;
 
-            // 비어있는 트랙의 기본 성분은 바인드 포즈(위에서 채운 값)를 유지한다.
+            // 비어있는 트랙의 기본 성분은 바인드 포즈(위에서 채운 값)를 유지한
             BoneTRS& out = _outPose[channel.boneIndex];
-            out.pos   = SampleVec(channel.pos, timeTick, out.pos);
-            out.rot   = SampleQuat(channel.rot, timeTick, out.rot);
-            out.scale = SampleVec(channel.scale, timeTick, out.scale);
+
+            if (channel.boneIndex == 0 && channel.pos.size() > 0) 
+            {
+                // 루트모션이 있는 상황
+                // out.pos = SampleVec(channel.pos, timeTick, out.pos);
+                
+                // 델타값 격리 후 Transform에 직접 반영
+                Vector3 dtPos = SampleVec(channel.pos, timeTick, _rootTrs.position);
+                Quaternion dtRot = SampleQuat(channel.rot, timeTick, _rootTrs.rotation);
+                Vector3 dtScale = SampleVec(channel.scale, timeTick, _rootTrs.scale);
+
+                _rootTrs.position += dtPos;
+                _rootTrs.rotation *= dtRot;
+                _rootTrs.scale += dtScale;
+
+                continue;
+            }
+            
+            out.pos     = SampleVec(channel.pos, timeTick, out.pos);
+            out.rot     = SampleQuat(channel.rot, timeTick, out.rot);
+            out.scale   = SampleVec(channel.scale, timeTick, out.scale);
         }
     }
 
-    void AnimClip::Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const
+    /*void AnimClip::Sample(float _timeSec, const Skeleton& _skeleton, std::vector<Matrix>& _outLocalPose) const
     {
         LocalPoseTRS pose;
         SampleTRS(_timeSec, _skeleton, pose);
         ComposePose(pose, _outLocalPose);
-    }
+    }*/
 
     float AnimClip::ClipDurationSec()
     {

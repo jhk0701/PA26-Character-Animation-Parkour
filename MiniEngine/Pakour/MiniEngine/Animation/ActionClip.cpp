@@ -25,7 +25,7 @@ namespace MiniEngine
 		m_playTime = 0.0f;
 	}
 
-	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose)
+	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs)
 	{
 		if (!m_bIsPlaying)
 			return;
@@ -45,15 +45,17 @@ namespace MiniEngine
 		}
 
 		// 포즈는 바로 적용할 것
-		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
+		m_clip->SampleTRS(m_playTime, _skeleton, _outPose, _rootTrs);
+	}
+
+	const float ActionClip::GetTickPerSec() const
+	{
+		return m_clip->ticksPerSecond;
 	}
 
 	void ActionClip::AddClip(AnimClip* _clip)
 	{
-		// 애니메이션 duration : frame cnt 
-		// 1s 기준으로 바꿔줘야함
-		float s = 1.0f / ((_clip->ticksPerSecond > 0.0f) ? _clip->ticksPerSecond : 1.0f);
-		m_duration += _clip->duration * s;
+		m_duration += _clip->ClipDurationSec();
 		m_clip = _clip;
 	}
 }

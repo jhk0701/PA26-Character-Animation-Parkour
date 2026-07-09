@@ -14,8 +14,9 @@ namespace MiniEngine
 		void Play();
 		void Stop();
 
-		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs) override;
 		float GetDuration() const override { return m_duration; }
+		const float GetTickPerSec() const;
 
 		void AddClip(AnimClip* _clip);
 
