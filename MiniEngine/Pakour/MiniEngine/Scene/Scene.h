@@ -4,8 +4,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "Physics/PhysicsWorld.h"
 #include "Scene/Actor.h"
+#include "Physics/PhysicsWorld.h"
 
 namespace MiniEngine
 {
@@ -15,12 +15,12 @@ namespace MiniEngine
     {
         Vector3 m_dir;
         Vector3 m_color;
-        Vector3 m_albedo;
         float m_ambient;
+        Vector3 m_albedo;
     };
 
     class CameraComponent;
-    class Scene
+    class Scene : public std::enable_shared_from_this<Scene>
     {
     public:
         Scene() {};
@@ -30,8 +30,11 @@ namespace MiniEngine
         std::shared_ptr<T> SpawnActor(Args&&... _args)
         {
             static_assert(std::is_base_of<Actor, T>::value, "T must derive from Actor");
-            auto actor = std::make_shared<T>(std::forward<Args>(_args)...);
+            std::shared_ptr<T> actor = std::make_shared<T>(std::forward<Args>(_args)...);
             m_actors.push_back(actor);
+
+            actor->OnSpawned(shared_from_this());
+
             return actor;
         }
 
@@ -48,9 +51,9 @@ namespace MiniEngine
         // getter
         std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
+        std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
 
     protected:
-        std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
         Light& GetLight() { return m_light; }
 
     private:

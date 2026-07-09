@@ -9,6 +9,7 @@ namespace physx
     class PxMaterial;
     class PxDefaultCpuDispatcher;
     class PxRigidActor;
+    class PxShape;
 }
 
 namespace MiniEngine::Physics 
@@ -26,6 +27,25 @@ namespace MiniEngine::Physics
         END = 32
     };
 
+    struct RaycastParam 
+    {
+        Vector3 m_origin;
+        Vector3 m_dir;
+        float m_maxDistance;
+        // physx::PxHitFlag::Enum m_hitFlag{ physx::PxHitFlag::eDEFAULT };
+        // physx::PxFilterData m_filterData; // 충돌할 대상 static, dynamic, any
+    };
+
+    struct RaycastResult // 레이캐스트 후 결과
+    {
+        Vector3 m_pos;
+        Vector3 m_nrm;
+        float m_distance;
+        physx::PxRigidActor* m_hitActor;
+        physx::PxShape* m_hitShape;
+
+        void* GetActor() const;
+    };
 
     class PhysicsWorld
     {
@@ -42,12 +62,18 @@ namespace MiniEngine::Physics
         void Step(float _fixedDt);
         bool IsInitialized() const { return m_scene != nullptr; }
 
-        bool CreateRigidFloor();
-        physx::PxRigidActor* CreateDynamicBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents, float _density);
+        bool CreateRigidFloor(); 
         physx::PxRigidActor* CreateStaticBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents);
+        physx::PxRigidActor* CreateDynamicBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents, float _density);
         physx::PxRigidActor* CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density);
 
+        void ToggleDebugMode(bool _bIsOn);
+
+        bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult);
+
     private:
+        bool m_bIsDebugging{ false };
+
         physx::PxFoundation* m_foundation = nullptr;
         physx::PxPhysics* m_physics = nullptr;
         physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
@@ -56,4 +82,6 @@ namespace MiniEngine::Physics
 
         void SetDefaultCollisionGroup();
     };
+
+
 }

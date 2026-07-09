@@ -8,6 +8,7 @@
 
 namespace MiniEngine
 {
+    class Scene;
     namespace Graphics { struct RenderContext; }
 
     class Actor : public std::enable_shared_from_this<Actor>
@@ -38,7 +39,11 @@ namespace MiniEngine
         void SetName(const std::string& _name) { m_name = _name; }
         const std::string& GetName() const { return m_name; }
 
+        void OnSpawned(std::weak_ptr<Scene> _scene);
+        std::shared_ptr<Scene> GetScene() const { return m_scene.lock(); };
+
     private:
+        std::weak_ptr<Scene> m_scene;
         std::vector<std::shared_ptr<Component>> m_components;
         std::weak_ptr<SceneComponent> m_root;
         std::string m_name = "Actor";

@@ -14,4 +14,9 @@ namespace MiniEngine
         for (std::shared_ptr<Component>& comp : m_components)
             comp->Render(_context);
     }
+    
+    void Actor::OnSpawned(std::weak_ptr<Scene> _scene)
+    {
+        m_scene = _scene;
+    }
 }

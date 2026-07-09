@@ -19,5 +19,9 @@ namespace MiniEngine
                  * Matrix::CreateFromQuaternion(rotation)
                  * Matrix::CreateTranslation(position);
         }
+
+        inline Vector3 Forward() const { return GetMatrix().Forward(); }
+        inline Vector3 Right() const { return GetMatrix().Right(); }
+        inline Vector3 Up() const { return GetMatrix().Up(); }
     };
 }

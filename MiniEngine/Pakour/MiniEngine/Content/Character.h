@@ -7,6 +7,7 @@ namespace MiniEngine
 	class SkeletalMeshComponent;
 	class Animator;
 	class BlendClip;
+	class ActionClip;
 }
 
 using namespace MiniEngine;
@@ -21,6 +22,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
+	void ProcessInput(float _dt);
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);
 	Vector2 GetInputDir() const { return m_inputDir; }
@@ -28,17 +30,17 @@ public:
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
 
-	void SetTempLoco(std::weak_ptr<BlendClip> _blendClip) { m_tempLoco = _blendClip; }
-	std::weak_ptr<BlendClip> GetTempLoco() const { return m_tempLoco; }
-
-
 private:
+	void InitInput();
+	void TestRaycast();
+
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
 	float m_moveSpeed{ 1.0f };
 
 	std::weak_ptr<RigidBodyComponent> m_rigidBodyComp;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
-	std::weak_ptr<BlendClip> m_tempLoco;
+	std::shared_ptr<BlendClip> m_tempLoco;
+	std::shared_ptr<ActionClip> m_tempActionClip;
 };
 

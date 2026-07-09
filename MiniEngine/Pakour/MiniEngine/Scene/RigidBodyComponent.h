@@ -18,6 +18,7 @@ namespace MiniEngine
 		enum class EBodyType { Static, Dynamic };
 
 		void Init(Physics::PhysicsWorld& _world, EBodyType _type, const Vector3& _halfExtents, float _denity = 10.0f);
+		void InitDynamicCapsule(Physics::PhysicsWorld& _world, const Vector2& _capsuleExtent, float _denity = 10.0f);
 		
 		EBodyType GetBodyType() const { return m_type; }
 		
@@ -26,6 +27,8 @@ namespace MiniEngine
 		
 		// TODO : 빠른 테스트용 임시 코드 -> 제거하고 위계대로 적용시킬 것
 		void SyncTransform();
+
+		void SetKinemetic(bool _bIsOn);
 
 	private:
 		physx::PxRigidActor* m_actor = nullptr;

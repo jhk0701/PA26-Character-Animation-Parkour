@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Physics/PhysicsWorld.h"
-
 #include "Core/Log.h"
 #include <physx/PxPhysicsAPI.h>
 
@@ -15,6 +14,12 @@ namespace MiniEngine::Physics
 
 		inline PxVec3 ToPx(const Vector3& v) { return PxVec3(v.x, v.y, v.z); }
 		inline PxQuat ToPx(const Quaternion& q) { return PxQuat(q.x, q.y, q.z, q.w); }
+		inline Vector3 ToVec3(const physx::PxVec3& v) { return Vector3(v.x, v.y, v.z); }
+	}
+
+	void* RaycastResult::GetActor() const
+	{
+		return m_hitActor->userData;
 	}
 
 	PhysicsWorld::PhysicsWorld() { }
@@ -158,6 +163,17 @@ namespace MiniEngine::Physics
 		return body;
 	}
 
+	void PhysicsWorld::ToggleDebugMode(bool _bIsOn)
+	{
+		if (!m_physics || !m_scene || !m_material)
+			return;
+
+		m_bIsDebugging = _bIsOn;
+
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, m_bIsDebugging);
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, m_bIsDebugging);
+	}
+
 	physx::PxRigidActor* PhysicsWorld::CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density)
 	{
 		if (!m_physics || !m_scene || !m_material)
@@ -203,6 +219,29 @@ namespace MiniEngine::Physics
 		for (uint16_t i = 0; i < ECollisionGroup::END; ++i)
 			PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, i, false);
 	}
+
+	bool PhysicsWorld::Raycast(const RaycastParam& _inParam, RaycastResult& _outResult)
+	{
+		if (!m_scene)
+			return false;
+
+		PxRaycastBuffer hit;
+
+		bool bIsHit = m_scene->raycast(
+			ToPx(_inParam.m_origin), 
+			ToPx(_inParam.m_dir), 
+			physx::PxReal(_inParam.m_maxDistance),
+			hit);
+
+		if (bIsHit) 
+		{
+			_outResult.m_pos = ToVec3(hit.block.position);
+			_outResult.m_nrm = ToVec3(hit.block.normal);
+			_outResult.m_distance = hit.block.distance;
+			_outResult.m_hitActor = hit.block.actor;
+			_outResult.m_hitShape = hit.block.shape;
+		}
+
+		return bIsHit;
+	}
 }
-
-
