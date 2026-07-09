@@ -43,7 +43,6 @@ namespace MiniEngine::Physics
         float m_distance;
         physx::PxRigidActor* m_hitActor;
         physx::PxShape* m_hitShape;
-
         void* GetActor() const;
     };
 

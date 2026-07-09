@@ -30,7 +30,7 @@ namespace MiniEngine
 			_world.CreateStaticBox(pos, rot, _halfExtents);
 
 		// UserData로 owner 액터 포인터 적용
-		m_actor->userData = static_cast<void*>(owner.lock().get());
+		m_actor->userData = reinterpret_cast<void*>(owner.lock().get());
 	}
 
 	void RigidBodyComponent::InitDynamicCapsule(Physics::PhysicsWorld& _world, const Vector2& _capsuleExtent, float _denity)
@@ -55,7 +55,7 @@ namespace MiniEngine
 		m_actor = _world.CreateDynamicCapsule(pos, rot, _capsuleExtent.x, _capsuleExtent.y, _denity);
 
 		// UserData로 owner 액터 포인터 적용
-		m_actor->userData = static_cast<void*>(pOwner.get());
+		m_actor->userData = reinterpret_cast<void*>(pOwner.get());
 	}
 
 	void RigidBodyComponent::SetCollsionGroup(Physics::ECollisionGroup _group)

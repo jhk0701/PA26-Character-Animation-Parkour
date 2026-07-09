@@ -23,30 +23,28 @@ void TestScene::Construct()
 
 	std::shared_ptr<Physics::PhysicsWorld> physics = GetPhysics().lock();
 
-	physics->ToggleDebugMode(true);
-
 	std::shared_ptr<StaticMesh> pCubeMesh;
 	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
 	pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
 
 	{
 		// 강체 바닥 설치
-		const Vector3 half(100.0f, 0.5f, 100.0f);
+		const Vector3 size(100.0f, 0.5f, 100.0f);
 		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
 		pGround->SetName("Ground");
 
 		std::shared_ptr<StaticMeshComponent> pMeshComp = pGround->AddComponent<StaticMeshComponent>();
 		pMeshComp->SetMesh(pCubeMesh);
 		pMeshComp->localTransform.position = Vector3(0.0f, -0.5f, 0.0f);
-		pMeshComp->localTransform.scale = half;
+		pMeshComp->localTransform.scale = size;
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, half);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size);
 	}
 
 	{
 		// 낙하할 큐브 생성
-		const Vector3 half(1.0f, 1.0f, 1.0f);
+		const Vector3 size(1.0f, 1.0f, 1.0f);
 		std::shared_ptr<Actor> pCube = SpawnActor<Actor>();
 		pCube->SetName("Falling Box");
 
@@ -56,7 +54,7 @@ void TestScene::Construct()
 		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
 
 		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, half, 1.f);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, size, 1.f);
 		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll); // 충돌그룹 확인용 테스트
 	}
 
@@ -66,14 +64,13 @@ void TestScene::Construct()
 		std::shared_ptr<Actor> pObsMid = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsMidRoot = pObsMid->GetRoot();
 		pObsMidRoot->localTransform.position = Vector3(0.0f, 0.5f, 0.0f);
-		
 
 		// 사람 크기 장애물
 		scale = {2.0f, 2.0f, 0.5f};
 		std::shared_ptr<Actor> pObsHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsHeadRoot = pObsHead->GetRoot();
 		pObsHeadRoot->localTransform.position = Vector3(0.0f, 1.0f, 2.0f);
-
+		
 		// 사람보다 큰 장애물
 		scale = { 4.0f, 4.0f, 0.5f };
 		std::shared_ptr<Actor> pObsOverHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
@@ -84,6 +81,7 @@ void TestScene::Construct()
 	{
 		// 임시 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
+		pChar->SetName("Character");
 		pChar->Construct();
 	}
 }
@@ -103,6 +101,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vect
 
 	std::shared_ptr<Actor> ObstacleActor;
 	ObstacleActor = SpawnActor<Actor>();
+	ObstacleActor->SetName("Obstacle");
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetMesh(pMesh);

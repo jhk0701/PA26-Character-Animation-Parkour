@@ -17,10 +17,7 @@ namespace MiniEngine::Physics
 		inline Vector3 ToVec3(const physx::PxVec3& v) { return Vector3(v.x, v.y, v.z); }
 	}
 
-	void* RaycastResult::GetActor() const
-	{
-		return m_hitActor->userData;
-	}
+	void* RaycastResult::GetActor() const { return m_hitActor->userData; }
 
 	PhysicsWorld::PhysicsWorld() { }
 	PhysicsWorld::~PhysicsWorld()

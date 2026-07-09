@@ -24,11 +24,11 @@ namespace MiniEngine
 		
 		void SetCollsionGroup(Physics::ECollisionGroup _group);
 		Physics::ECollisionGroup GetCollsionGroup() const;
-		
-		// TODO : 빠른 테스트용 임시 코드 -> 제거하고 위계대로 적용시킬 것
-		void SyncTransform();
 
 		void SetKinemetic(bool _bIsOn);
+
+		// TODO : 빠른 테스트용 임시 코드 -> 제거하고 위계대로 적용시킬 것
+		void SyncTransform();
 
 	private:
 		physx::PxRigidActor* m_actor = nullptr;

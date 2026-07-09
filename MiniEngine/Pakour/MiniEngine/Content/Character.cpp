@@ -211,7 +211,7 @@ void Character::TestRaycast()
 	Transform& localTrs = GetRoot()->localTransform;
 
 	Physics::RaycastParam rayParam;
-	rayParam.m_origin = localTrs.position;
+	rayParam.m_origin = localTrs.position + Vector3(0.0f, 1.0f, 0.0f);
 	rayParam.m_dir = localTrs.Forward();
 	rayParam.m_maxDistance = 1.0f;
 
@@ -220,5 +220,5 @@ void Character::TestRaycast()
 		return;
 
 	void* pActor = hitResult.GetActor();
-	Actor* pHit = static_cast<Actor*>(pActor);
+	Actor* pHit = reinterpret_cast<Actor*>(pActor);
 }
