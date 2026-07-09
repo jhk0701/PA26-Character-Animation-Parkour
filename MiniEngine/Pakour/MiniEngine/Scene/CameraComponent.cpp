@@ -5,6 +5,11 @@
 
 namespace MiniEngine
 {
+    CameraComponent::CameraComponent()
+    {
+        aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+    }
+
     Matrix CameraComponent::GetViewMatrix() const
     {
         const Matrix world = GetWorldMatrix();

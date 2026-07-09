@@ -6,6 +6,11 @@
 #include <directxtk/Keyboard.h>
 #include <directxtk/Mouse.h>
 
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
+#include <ImGuizmo.h>
+
 namespace
 {
     HINSTANCE g_hInst = nullptr;
@@ -81,11 +86,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int)msg.wParam;
 }
 
+#ifndef WITH_EDITOR
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+LRESULT WndProcHandler(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
+{
+    if (ImGui::GetCurrentContext() == nullptr)
+        return 0;
+    return ImGui_ImplWin32_WndProcHandler(_hWnd, _msg, _wParam, _lParam);
+}
+
+#endif
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     // ImGui 패널 위 입력 시 return
+#if defined(WITH_EDITOR)
     if (MiniEngine::Editor::WndProcHandler(hWnd, message, wParam, lParam))
         return true;
+#else
+    if (WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
+#endif
+
 
     switch (message)
     {

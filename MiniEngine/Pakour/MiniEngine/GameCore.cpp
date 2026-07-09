@@ -4,6 +4,7 @@
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
+#include "Manager/UIManager.h"
 #include "Platform/Input.h" // Input 
 
 #include <fstream>
@@ -106,6 +107,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
+    UIManager::GetInstance()->Init(_hWnd, m_device.Get(), m_context.Get());
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
 
@@ -222,7 +224,9 @@ void GameCore::Update(float _dt)
     // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     InputManager::GetInstance()->Update(_dt); // 입력 처리
 
+#if defined(WITH_EDITOR)
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
+#endif // defined(WITH_EDITOR)
     
     pScnMgr->Update(_dt); // Actor/컴포넌트 Tick 전파.
 }
@@ -248,6 +252,7 @@ void GameCore::Render()
 
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
     m_editor.Render();
+    UIManager::GetInstance()->Render();
 
     RenderEnd();
 }
@@ -269,6 +274,7 @@ void GameCore::UpdateGUI()
     }
 
     m_editor.BuildUI(*pScene.lock(), view, proj);
+    UIManager::GetInstance()->BuildUI(*pScene.lock(), view, proj);
 
     // Baker "Bake & Load" 요청 소비 → 베이크된 .mini 를 씬에 스폰(일반화된 Render 로 함께 렌더).
     const std::wstring pending = m_editor.ConsumePendingLoadMini();
@@ -281,6 +287,7 @@ void GameCore::EndPlay()
     // Actor에 EndPlay로 정리
     SceneManager::GetInstance()->EndPlay();
     InputManager::GetInstance()->Clear();
+    UIManager::GetInstance()->Shutdown();
 }
 
 void GameCore::QuitGame()

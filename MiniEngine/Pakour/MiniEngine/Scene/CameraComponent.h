@@ -9,6 +9,8 @@ namespace MiniEngine
     class CameraComponent : public SceneComponent
     {
     public:
+        CameraComponent();
+
         float fovYRadians = 3.14159265f / 3.0f; // 60도
         float aspect      = 16.0f / 9.0f;
         float nearZ       = 0.1f;

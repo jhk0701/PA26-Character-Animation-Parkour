@@ -34,12 +34,12 @@ namespace MiniEngine
         // 매 프레임 1회: 현재 상태 스냅샷 + 엣지 트래커 갱신.
         void Update(float _dt);
 
-        // ----- 키보드 -----
+        // 키보드
         bool IsKeyDown(Keys _key) const     { return m_keyState.IsKeyDown(_key); }
         bool IsKeyPressed(Keys _key) const  { return m_keyTracker.IsKeyPressed(_key); }
         bool IsKeyReleased(Keys _key) const { return m_keyTracker.IsKeyReleased(_key); }
 
-        // ----- 마우스 -----
+        // 마우스
         int  MouseX() const       { return m_mouseState.x; }
         int  MouseY() const       { return m_mouseState.y; }
         int  ScrollValue() const  { return m_mouseState.scrollWheelValue; }

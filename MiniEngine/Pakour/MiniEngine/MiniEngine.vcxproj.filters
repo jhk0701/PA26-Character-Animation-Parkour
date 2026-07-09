@@ -77,6 +77,9 @@
     <Filter Include="Engine\07.Object\Animation">
       <UniqueIdentifier>{d4ec6040-2d59-4f0e-a556-0ba1b4f224e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\08.UI">
+      <UniqueIdentifier>{573eff2b-139e-49b9-8e64-34673a681771}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -202,6 +205,9 @@
     <ClInclude Include="Content\ContentConfig.h">
       <Filter>Content\01.Config</Filter>
     </ClInclude>
+    <ClInclude Include="Manager\UIManager.h">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -305,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="Content\ContentConfig.cpp">
       <Filter>Content\01.Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\UIManager.cpp">
+      <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

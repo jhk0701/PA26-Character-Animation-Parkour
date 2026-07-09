@@ -63,13 +63,18 @@ void Character::Construct()
 
 	{
 		// 캐릭터 카메라 설정
+		std::shared_ptr<MiniEngine::SceneComponent> pCamHolder = AddComponent<MiniEngine::SceneComponent>();
+		pCamHolder->AttachTo(GetRoot());
+		pCamHolder->localTransform.position = Vector3(0.0f, 1.5f, 0.0f);
+
 		std::shared_ptr<CameraComponent> pCamComp = AddComponent<CameraComponent>();
-		pCamComp->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
 		pCamComp->RegisterMainCamera();
 
-		pCamComp->AttachTo(GetRoot());
-		pCamComp->localTransform.position = Vector3(0.0f, 1.5f, 3.0f);
+		pCamComp->AttachTo(pCamHolder);
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, 3.0f);
 		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+
+		m_cameraHolder = pCamHolder;
 	}
 
 	{
@@ -95,7 +100,10 @@ void Character::Tick(float _dt)
 
 void Character::ProcessInput(float _dt)
 {
-
+	// 마우스
+	Input& input = InputManager::GetInstance()->GetInput();
+	
+	// 키보드 이동키
 	if (m_inputDir.LengthSquared() > 0)
 	{
 		// 임시 이동 코드

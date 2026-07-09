@@ -20,11 +20,13 @@ namespace MiniEngine
 
     void Input::Update(float _dt)
     {
-        m_keyState = DirectX::Keyboard::Get().GetState();
-        m_keyTracker.Update(m_keyState);
-
+        // 마우스 입력 업데이트
         m_mouseState = DirectX::Mouse::Get().GetState();
         m_mouseTracker.Update(m_mouseState);
+
+        // 키보드 입력 업데이트
+        m_keyState = DirectX::Keyboard::Get().GetState();
+        m_keyTracker.Update(m_keyState);
 
         for (auto it = m_mapKeyboardBind.begin(); it != m_mapKeyboardBind.end(); ++it)
         {

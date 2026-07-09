@@ -135,6 +135,7 @@
     <ClInclude Include="Manager\AssetManager.h" />
     <ClInclude Include="Manager\PathManager.h" />
     <ClInclude Include="Manager\SceneManager.h" />
+    <ClInclude Include="Manager\UIManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Manager\AssetManager.cpp" />
     <ClCompile Include="Manager\PathManager.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
+    <ClCompile Include="Manager\UIManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

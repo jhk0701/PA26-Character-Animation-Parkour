@@ -23,10 +23,11 @@ public:
 	virtual void Tick(float _dt) override;
 
 	void ProcessInput(float _dt);
+
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);
-	Vector2 GetInputDir() const { return m_inputDir; }
 
+	Vector2 GetInputDir() const { return m_inputDir; }
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
 
@@ -37,7 +38,8 @@ private:
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
 	float m_moveSpeed{ 1.0f };
-
+	
+	std::weak_ptr<SceneComponent> m_cameraHolder;
 	std::weak_ptr<RigidBodyComponent> m_rigidBodyComp;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	std::shared_ptr<BlendClip> m_tempLoco;
