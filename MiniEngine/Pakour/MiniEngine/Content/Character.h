@@ -39,7 +39,9 @@ private:
 
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
-	float m_moveSpeed{ 1.0f };
+	Vector2 m_lerpInputDir;
+	float m_lerpWeight{ 0.1 };
+	float m_moveSpeed{ 3.0f };
 
 	Vector2 m_camRotDir;
 	float m_camRotateSpeed{ 1.0f };

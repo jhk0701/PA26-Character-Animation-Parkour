@@ -74,13 +74,13 @@ void TestScene::Construct()
 		scale = {2.0f, 2.0f, 0.5f};
 		std::shared_ptr<Actor> pObsHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsHeadRoot = pObsHead->GetRoot();
-		pObsHeadRoot->localTransform.position = Vector3(0.0f, 1.0f, 2.0f);
+		pObsHeadRoot->localTransform.position = Vector3(-5.0f, 1.0f, 2.0f);
 		
 		// 사람보다 큰 장애물
 		scale = { 4.0f, 4.0f, 0.5f };
 		std::shared_ptr<Actor> pObsOverHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsOverHeadRoot = pObsOverHead->GetRoot();
-		pObsOverHeadRoot->localTransform.position = Vector3(0.0f, 2.0f, 4.0f);
+		pObsOverHeadRoot->localTransform.position = Vector3(5.0f, 2.0f, 4.0f);
 	}
 
 	{

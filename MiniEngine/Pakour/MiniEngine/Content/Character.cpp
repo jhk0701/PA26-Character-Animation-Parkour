@@ -46,12 +46,16 @@ void Character::Construct()
 		// 애니메이션 설정
 		std::shared_ptr<Animator> pAnim = skinComp->GetAnim().lock();
 		// 로코모션 구현
-		m_tempLoco = std::make_shared<BlendClip>(5);
+		m_tempLoco = std::make_shared<BlendClip>(9);
 		// 모션 입력 
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
 		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
 		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
 		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
 		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));	// right strafe
 		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));	// left strafe
 
@@ -102,9 +106,13 @@ void Character::Tick(float _dt)
 void Character::ProcessInput(float _dt)
 {
 	// 키보드 이동키
-	if (m_inputDir.LengthSquared() > 0)
 	{
 		// 임시 이동 코드
+		Vector2 input = m_inputDir;
+		input.Normalize();
+
+		m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, input, m_lerpWeight);
+
 		const float deltaSpeed = _dt * m_moveSpeed;
 		std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
@@ -113,8 +121,13 @@ void Character::ProcessInput(float _dt)
 		const Vector3& rht = pRoot->localTransform.Right();
 
 		pRoot->localTransform.position +=
-			deltaSpeed * m_inputDir.y * fwd +
-			deltaSpeed * -m_inputDir.x * rht;
+			deltaSpeed * m_lerpInputDir.y * fwd +
+			deltaSpeed * -m_lerpInputDir.x * rht;
+
+		if (!m_tempLoco)
+			return;
+
+		m_tempLoco->SetAxisValue(m_lerpInputDir.x, m_lerpInputDir.y);
 	}
 
 	if (m_camRotDir.LengthSquared() > 0)
@@ -122,19 +135,14 @@ void Character::ProcessInput(float _dt)
 		const float deltaSpeed = _dt * m_camRotateSpeed;
 		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
 
-		pRoot->localTransform.rotation *= Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
-		// pRoot->localTransform.rotation *= Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
+		pRoot->localTransform.rotation *= 
+			Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
 	}
 }
 
 void Character::SetInputDir(const Vector2& _dir)
 {
 	m_inputDir = _dir;
-
-	if (!m_tempLoco)
-		return;
-
-	m_tempLoco->SetAxisValue(m_inputDir.x, m_inputDir.y);
 }
 
 void Character::SetCamRotDir(const Vector2& _dir)
