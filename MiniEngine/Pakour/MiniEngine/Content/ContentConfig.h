@@ -4,6 +4,7 @@ namespace Content::Config
 {
 	extern constexpr uint8_t TAG_TYPE_ENV		= 0;
 	extern constexpr uint8_t TAG_TYPE_ACT		= 1;
+	extern constexpr uint8_t TAG_TYPE_HEIGHT	= 2;
 
 	enum class ETagEnv : uint8_t
 	{
