@@ -197,6 +197,11 @@ void Character::InitInput()
 			GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.5f);
 		});
 
+	input.GetKeyBind(DirectX::Keyboard::Keys::F1).OnReleased = std::bind(
+		[this]() 
+		{
+			TestRaycast();
+		});
 }
 
 void Character::TestRaycast()
@@ -215,4 +220,5 @@ void Character::TestRaycast()
 		return;
 
 	void* pActor = hitResult.GetActor();
+	Actor* pHit = static_cast<Actor*>(pActor);
 }
