@@ -76,10 +76,9 @@ namespace MiniEngine
 		ImGuiIO& io = ImGui::GetIO();
 
 		// 디버깅용 로그 콘솔
-		ImGui::Begin("Debug Console");
-
-
-		ImGui::End();
+		//ImGui::Begin("Debug Console");
+		////
+		//ImGui::End();
 	}
 
 	void UIManager::Render()

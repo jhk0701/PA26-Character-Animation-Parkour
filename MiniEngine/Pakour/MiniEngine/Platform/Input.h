@@ -43,6 +43,7 @@ namespace MiniEngine
         int  MouseX() const       { return m_mouseState.x; }
         int  MouseY() const       { return m_mouseState.y; }
         int  ScrollValue() const  { return m_mouseState.scrollWheelValue; }
+        const Vector2& GetMouseDelta() const { return m_mouseDelta; }
 
         bool LeftDown() const     { return m_mouseState.leftButton; }
         bool RightDown() const    { return m_mouseState.rightButton; }
@@ -61,7 +62,11 @@ namespace MiniEngine
         DirectX::Keyboard::KeyboardStateTracker m_keyTracker;
         DirectX::Mouse::State                   m_mouseState;
         DirectX::Mouse::ButtonStateTracker      m_mouseTracker;
-
+        
+        int m_prevMouseX = 0;
+        int m_prevMouseY = 0;
+        Vector2 m_mouseDelta{ 0.0f, 0.0f};
+        
         std::map<Keys, KeyBind> m_mapKeyboardBind;
     };
 

@@ -23,12 +23,9 @@ namespace MiniEngine
     };
 }
 
-//#define MG_LOG_INFO(...)  ::MiniEngine::Log::GetLogger()->info(__VA_ARGS__)
-//#define MG_LOG_WARN(...)  ::MiniEngine::Log::GetLogger()->warn(__VA_ARGS__)
-//#define MG_LOG_ERROR(...) ::MiniEngine::Log::GetLogger()->error(__VA_ARGS__)
-#define MG_LOG_INFO(...)  ((void)0)
-#define MG_LOG_WARN(...)  ((void)0)
-#define MG_LOG_ERROR(...) ((void)0)
+#define MG_LOG_INFO(...)  ::MiniEngine::Log::GetLogger()->info(__VA_ARGS__)
+#define MG_LOG_WARN(...)  ::MiniEngine::Log::GetLogger()->warn(__VA_ARGS__)
+#define MG_LOG_ERROR(...) ::MiniEngine::Log::GetLogger()->error(__VA_ARGS__)
 
 #else // MG_RELEASE
 

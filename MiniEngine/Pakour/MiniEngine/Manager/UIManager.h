@@ -21,6 +21,5 @@ namespace MiniEngine
 
 	private:
 		bool m_initialized = false;
-
 	};
 }

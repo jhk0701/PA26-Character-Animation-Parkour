@@ -3,6 +3,7 @@
 
 #include "Content/ContentConfig.h"
 #include "Core/Math.h"
+#include "Core/Log.h"
 #include "Platform/Input.h"
 #include "Manager/AssetManager.h"
 #include "Manager/PathManager.h"
@@ -100,9 +101,6 @@ void Character::Tick(float _dt)
 
 void Character::ProcessInput(float _dt)
 {
-	// 마우스
-	Input& input = InputManager::GetInstance()->GetInput();
-	
 	// 키보드 이동키
 	if (m_inputDir.LengthSquared() > 0)
 	{
@@ -118,6 +116,15 @@ void Character::ProcessInput(float _dt)
 			deltaSpeed * m_inputDir.y * fwd +
 			deltaSpeed * -m_inputDir.x * rht;
 	}
+
+	if (m_camRotDir.LengthSquared() > 0)
+	{
+		const float deltaSpeed = _dt * m_camRotateSpeed;
+		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
+
+		pRoot->localTransform.rotation *= Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
+		// pRoot->localTransform.rotation *= Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
+	}
 }
 
 void Character::SetInputDir(const Vector2& _dir)
@@ -128,6 +135,11 @@ void Character::SetInputDir(const Vector2& _dir)
 		return;
 
 	m_tempLoco->SetAxisValue(m_inputDir.x, m_inputDir.y);
+}
+
+void Character::SetCamRotDir(const Vector2& _dir)
+{
+	m_camRotDir = _dir;
 }
 
 std::weak_ptr<Animator> Character::GetAnim() const
@@ -201,18 +213,51 @@ void Character::InitInput()
 			SetInputDir(inputDir);
 		});
 
+	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
+		[this]() 
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.x = -1.0f;
+			SetCamRotDir(dir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.x = 0.0f;
+			SetCamRotDir(dir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::E).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.x = 1.0f;
+			SetCamRotDir(dir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::E).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 dir = GetCamRotDir();
+			dir.x = 0.0f;
+			SetCamRotDir(dir);
+		});
+
+	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
 			GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.5f);
 		});
 
+	// 레이캐스트
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnReleased = std::bind(
 		[this]() 
 		{
 			if (RaycastObstacle())
 				GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.3f);
 		});
+
 }
 
 bool Character::RaycastObstacle()

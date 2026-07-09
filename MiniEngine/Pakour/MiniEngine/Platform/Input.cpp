@@ -8,7 +8,7 @@ namespace MiniEngine
         m_keyboard = std::make_unique<DirectX::Keyboard>();
         m_mouse = std::make_unique<DirectX::Mouse>();
         m_mouse->SetWindow(_hWnd);
-
+        
         m_keyTracker.Reset();
         m_mouseTracker.Reset();
     }
@@ -23,6 +23,13 @@ namespace MiniEngine
         // 마우스 입력 업데이트
         m_mouseState = DirectX::Mouse::Get().GetState();
         m_mouseTracker.Update(m_mouseState);
+
+        m_mouseDelta.x = static_cast<float>(MouseX() - m_prevMouseX);
+        m_mouseDelta.y = static_cast<float>(m_prevMouseY - MouseY());
+        m_mouseDelta *= _dt;
+
+        m_prevMouseX = MouseX();
+        m_prevMouseY = MouseY();
 
         // 키보드 입력 업데이트
         m_keyState = DirectX::Keyboard::Get().GetState();
