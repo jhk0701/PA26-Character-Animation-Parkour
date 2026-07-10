@@ -26,10 +26,6 @@ namespace MiniEngine
 
 		m_baseLayer.m_bIsPlaying = true;
 		m_overrideLayer.m_bIsPlaying = false;
-
-		m_bEnableRootMotion = true;
-		m_rootMotionCfg.extractY = true;
-		m_rootMotionCfg.extractYaw = true;
 	}
 
 	void Animator::Update(float _dt)
@@ -48,7 +44,7 @@ namespace MiniEngine
 
 		// TODO : 로코모션 관리 고도화
 		if (m_baseLayer.m_pClip)
-			m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);			// m_poseTarget
+			m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);	// m_poseTarget
 
 		if (m_overrideLayer.m_bIsPlaying &&
 			m_overrideLayer.m_pClip)
@@ -59,7 +55,6 @@ namespace MiniEngine
 
 			if (m_bEnableRootMotion)
 				ExtractClipRootMotion(*m_overrideLayer.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
-
 
 			// 액션 클립 재생
 			m_actionElapsed = t1;
@@ -81,9 +76,7 @@ namespace MiniEngine
 		else 
 			m_poseTarget = m_baseLayer.m_layerPose;
 		
-
 		// 포즈 적용 절차
-
 		if (m_bEnableRootMotion) 
 		{
 			// 루트 본으로부터 바인드된 Transform 제거
@@ -117,6 +110,12 @@ namespace MiniEngine
 
 	RootMotionDelta Animator::ConsumeRootMotionDelta()
 	{
+		if (m_rootMotionCfg.applyY == false) 
+			m_rootMotionDt.translation = Vector3(0.0f);
+
+		if (m_rootMotionCfg.applyYaw == false)
+			m_rootMotionDt.rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		
 		const RootMotionDelta delta = m_rootMotionDt;
 		m_rootMotionDt.Reset();
 		return delta;

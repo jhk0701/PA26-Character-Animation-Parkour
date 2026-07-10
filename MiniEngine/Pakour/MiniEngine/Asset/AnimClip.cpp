@@ -79,7 +79,6 @@ namespace MiniEngine
         }
     }
 
-
     void AnimClip::SampleTRS(int _rootBoneIdx, float _timeTick, const Skeleton& _skeleton, BoneTRS& _outBone) const
     {
         if (_rootBoneIdx < 0 || _rootBoneIdx >= static_cast<int>(_skeleton.bones.size()))

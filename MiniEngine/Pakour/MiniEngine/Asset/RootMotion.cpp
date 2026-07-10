@@ -101,10 +101,12 @@ namespace MiniEngine
 		bind.Decompose(bindScale, bindRot, bindPos);
 
 		BoneTRS& bone = _inoutPose[_rootBone];
+		
+		// x,z 축은 상시 추출
 		bone.pos.x = bindPos.x;
 		bone.pos.z = bindPos.z;
-
-		if (_config.extractY)
+		// y축은 선택적 추출
+		if (_config.extractY) 
 			bone.pos.y = bindPos.y; // position y값 추출
 
 		if (_config.extractYaw) 

@@ -26,9 +26,13 @@ namespace MiniEngine
 	// 추출 대상
 	struct RootMotionConfig 
 	{
-		// x,z 축에 해당하는 위치 값은 기본적으로 추출
-		bool extractY{ false };
-		bool extractYaw{ true };
+		// x,z 축에 해당하는 위치값은 기본적으로 추출
+		bool extractY{ true };
+		bool extractYaw{ false }; // y축 회전값 추출
+
+		// 실제 적용 여부
+		bool applyY{ true };
+		bool applyYaw{ true };
 	};
 
 	Quaternion ExtractYaw(const Quaternion& _q); // 쿼터니언에서 yaw 회전각 추출

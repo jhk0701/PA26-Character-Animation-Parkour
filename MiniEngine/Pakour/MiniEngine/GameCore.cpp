@@ -219,14 +219,15 @@ void GameCore::BeginPlay()
 void GameCore::Update(float _dt)
 {
     SceneManager* pScnMgr = SceneManager::GetInstance();
+    
     pScnMgr->FixedUpdate(_dt); // 물리연산 처리
 
-    // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     InputManager::GetInstance()->Update(_dt); // 입력 처리
 
 #if defined(WITH_EDITOR)
+    // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
-#endif // defined(WITH_EDITOR)
+#endif
     
     pScnMgr->Update(_dt); // Actor/컴포넌트 Tick 전파.
 }

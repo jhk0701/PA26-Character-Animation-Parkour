@@ -48,7 +48,7 @@ namespace MiniEngine
             m_physicsAcuum -= FIXED_DT;
         }
 
-        // TODO : 물리 강체 관련해서 억지로 조정중 -> 컴포넌트 위계를 통한 보정으로 변경하기
+        // 물리 강체 관련해서 억지로 조정중 -> 컴포넌트 위계를 통한 보정으로 변경하기
         for (std::shared_ptr<Actor> pActor : GetActors())
         {
             if (std::shared_ptr<RigidBodyComponent> pRB = pActor->GetComponent<RigidBodyComponent>())

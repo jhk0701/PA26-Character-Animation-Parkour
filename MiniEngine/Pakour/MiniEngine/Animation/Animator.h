@@ -64,11 +64,8 @@ namespace MiniEngine
 
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
 		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }
-		void SetRootMotionConfig(bool _bExtractY, bool _bExtractYaw) 
-		{
-			m_rootMotionCfg.extractY = _bExtractY;
-			m_rootMotionCfg.extractYaw = _bExtractYaw;
-		}
+		void SetRootMotionConfig(RootMotionConfig& _config) { m_rootMotionCfg = _config; }
+		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionCfg; }
 
 		const RootMotionDelta& GetRootMotionDelta() const { return m_rootMotionDt; }
 		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 비움

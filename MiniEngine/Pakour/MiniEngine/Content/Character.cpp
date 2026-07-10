@@ -20,7 +20,6 @@
 Character::Character()
 {
 }
-
 Character::~Character()
 {
 }
@@ -49,11 +48,11 @@ void Character::Construct()
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
 		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));		// idle
 		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));		// Walking
-		m_tempLoco->AddAnimClip({ 0.3, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ -0.3, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
 		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));		// Walking Backword
-		m_tempLoco->AddAnimClip({ 0.3, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ -0.3, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
 		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));		// right strafe
 		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));		// left strafe
 
@@ -63,7 +62,15 @@ void Character::Construct()
 		m_tempActionClip = std::make_shared<ActionClip>();
 		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // 애니메이션 몽타주 용도
 
-		pAnim->SetRootBoneIdx(1);
+		pAnim->SetEnableRootMotion(true);
+		RootMotionConfig rmCfg;
+		rmCfg.extractY = true;
+		rmCfg.extractYaw = false;
+		rmCfg.applyY = true;
+		rmCfg.applyYaw = false;
+		pAnim->SetRootMotionConfig(rmCfg);
+		
+		pAnim->SetRootBoneIdx(1); // hips
 	}
 
 	{
@@ -102,20 +109,7 @@ void Character::Tick(float _dt)
 	Actor::Tick(_dt);
 
 	ProcessInput(_dt);
-
-	{
-		// TODO : 캐릭터 컨트롤러로 이동
-		std::shared_ptr<SceneComponent> pRoot = GetRoot();
-		std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
-		RootMotionDelta d = m_skinMeshComp.lock()->GetAnim().lock()->ConsumeRootMotionDelta();
-
-		const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
-		Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
-
-		pRoot->localTransform.position += movement;
-		pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
-		pRoot->localTransform.rotation.Normalize();
-	}
+	ProcessRootMotion();
 }
 
 void Character::ProcessInput(float _dt)
@@ -126,7 +120,7 @@ void Character::ProcessInput(float _dt)
 		Vector2 input = m_inputDir;
 		input.Normalize();
 
-		m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, input, m_lerpWeight);
+		m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, input, m_lerpWeight * _dt);
 
 		const float deltaSpeed = _dt * m_moveSpeed;
 		std::shared_ptr<SceneComponent> pRoot = GetRoot();
@@ -155,6 +149,22 @@ void Character::ProcessInput(float _dt)
 		pRoot->localTransform.rotation *=
 			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
 	}
+}
+
+void Character::ProcessRootMotion()
+{
+	// TODO : 캐릭터 컨트롤러로 이동
+	// 추출한 루트모션 적용
+	std::shared_ptr<SceneComponent> pRoot = GetRoot();
+	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	RootMotionDelta d = pSkin->GetAnim().lock()->ConsumeRootMotionDelta();
+
+	const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
+	Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
+
+	pRoot->localTransform.position += movement;
+	pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
+	pRoot->localTransform.rotation.Normalize();
 }
 
 void Character::SetInputDir(const Vector2& _dir)
@@ -335,5 +345,8 @@ bool Character::RaycastObstacle()
 		return false;
 
 	Actor* pHit = reinterpret_cast<Actor*>(hitResult.GetActor());
-	return pHit->GetTag().Match(Content::Config::TAG_TYPE_ENV, (uint8_t)Content::Config::ETagEnv::Obstacle);
+	return pHit->GetTag().Match(
+		Content::Config::TAG_TYPE_ENV, 
+		(uint8_t)Content::Config::ETagEnv::Obstacle
+	);
 }

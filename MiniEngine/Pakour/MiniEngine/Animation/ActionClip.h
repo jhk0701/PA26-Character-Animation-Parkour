@@ -16,7 +16,7 @@ namespace MiniEngine
 
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
 		float GetDuration() const override { return m_duration; }
-		AnimClip* GetClip() const { return m_clip; }
+		AnimClip* GetClip() const override { return m_clip; }
 
 		const float GetTickPerSec() const;
 
