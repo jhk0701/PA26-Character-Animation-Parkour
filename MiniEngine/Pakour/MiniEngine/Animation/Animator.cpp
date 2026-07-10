@@ -7,11 +7,25 @@
 
 namespace MiniEngine 
 {
-	float ClipDurationSec(const AnimClip* _clip) 
+	void AnimStateMachine::Transition(int _newIdx, float _duration)
 	{
-		const float tps = (_clip->ticksPerSecond > 0.0f) ? _clip->ticksPerSecond : 1.0f;
-		return _clip->duration / tps;
-	};
+		m_fadeDuration = _duration;
+		m_prevIdx = m_curStateIdx;
+		m_curStateIdx = _newIdx;
+	}
+	void AnimStateMachine::Update(float _dt, const Skeleton& _skeleton)
+	{
+		if (m_curStateIdx < 0 || m_curStateIdx >= m_states.size())
+			return;
+
+		if (IsFading())
+		{
+
+
+		}
+		else
+			m_states[m_curStateIdx]->Sample(_dt, _skeleton, m_poseTarget); // 포즈 타겟에 해당 index 바로 샘플링
+	}
 
 	Animator::Animator() { Init(); }
 	Animator::Animator(std::shared_ptr<SkeletalMeshComponent> _meshComp) : m_meshComp(_meshComp)
@@ -23,7 +37,6 @@ namespace MiniEngine
 	void Animator::Init()
 	{
 		m_fadeDuration = 0.0f;
-
 		m_baseLayer.m_bIsPlaying = true;
 		m_overrideLayer.m_bIsPlaying = false;
 	}
@@ -36,48 +49,70 @@ namespace MiniEngine
 			return;
 		}
 
-		std::shared_ptr<SkinnedMesh> pSkin = m_meshComp.lock()->GetMesh().lock();
-		const Skeleton& skeleton = pSkin->GetSkeleton();
+		SampleBaseLayer(_dt);
+
+		SampleOverrideLayer(_dt);
+		
+		FinalizePose();
+	}
+
+	void Animator::SampleBaseLayer(float _dt)
+	{
+		const Skeleton& skeleton = GetSkeleton();
+
+		// 로코모션 관리 고도화
+		if (m_baseLayer.m_bIsPlaying == false ||
+			m_baseLayer.m_pClip == nullptr)
+			return;
+
+		m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);	// m_poseTarget
+	}
+
+	void Animator::SampleOverrideLayer(float _dt)
+	{
+		if (m_overrideLayer.m_bIsPlaying == false || 
+			m_overrideLayer.m_pClip == nullptr)
+		{
+			m_poseTarget = m_baseLayer.m_layerPose;
+			return;
+		}
+
+		const Skeleton& skeleton = GetSkeleton();
+
+		// root motion 추출
+		const float t0 = m_actionElapsed;
+		float t1 = m_actionElapsed + _dt;
 
 		if (m_bEnableRootMotion)
-			m_rootMotionDt.Reset();
-
-		// TODO : 로코모션 관리 고도화
-		if (m_baseLayer.m_pClip)
-			m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);	// m_poseTarget
-
-		if (m_overrideLayer.m_bIsPlaying &&
-			m_overrideLayer.m_pClip)
 		{
-			// root motion 추출
-			const float t0 = m_actionElapsed;
-			float t1 = m_actionElapsed + _dt;
-
-			if (m_bEnableRootMotion)
-				ExtractClipRootMotion(*m_overrideLayer.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
-
-			// 액션 클립 재생
-			m_actionElapsed = t1;
-			m_fadeElapsed += m_actionElapsed < m_actionEndTime ? _dt : -_dt;
-			m_overrideLayer.m_pClip->Sample(_dt, skeleton, m_overrideLayer.m_layerPose);	// m_poseTarget
-
-			float w = 0.0f;
-			w = m_fadeElapsed / m_fadeDuration;
-			w = std::clamp(w, 0.0f, 1.0f);
-
-			BlendPose(m_baseLayer.m_layerPose, m_overrideLayer.m_layerPose, w, m_poseTarget);
-
-			if (m_actionDuration < m_actionElapsed)
-			{
-				m_overrideLayer.m_bIsPlaying = false;
-				m_overrideLayer.m_pClip = nullptr;
-			}
+			m_rootMotionDt.Reset();
+			ExtractClipRootMotion(*m_overrideLayer.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
 		}
-		else 
-			m_poseTarget = m_baseLayer.m_layerPose;
+
+		// 액션 클립 재생
+		m_actionElapsed = t1;
+		m_fadeElapsed += m_actionElapsed < m_actionEndTime ? _dt : -_dt;
+		m_overrideLayer.m_pClip->Sample(_dt, skeleton, m_overrideLayer.m_layerPose);	// m_poseTarget
+
+		float w = 0.0f;
+		w = m_fadeElapsed / m_fadeDuration;
+		w = std::clamp(w, 0.0f, 1.0f);
+
+		BlendPose(m_baseLayer.m_layerPose, m_overrideLayer.m_layerPose, w, m_poseTarget);
+
+		if (m_actionDuration < m_actionElapsed)
+		{
+			m_overrideLayer.m_bIsPlaying = false;
+			m_overrideLayer.m_pClip = nullptr;
+		}
+	}
+
+	void Animator::FinalizePose()
+	{
+		// 애니메이션 샘플링이 끝난 포즈 적용 절차
+		const Skeleton& skeleton = GetSkeleton();
 		
-		// 포즈 적용 절차
-		if (m_bEnableRootMotion) 
+		if (m_bEnableRootMotion)
 		{
 			// 루트 본으로부터 바인드된 Transform 제거
 			// 추출한 루트 모션 델타값은 외부에서 소비할 것
@@ -120,13 +155,9 @@ namespace MiniEngine
 		m_rootMotionDt.Reset();
 		return delta;
 	}
-}
 
-// _clipIndex 가 유효 클립이면 SampleTRS, 아니면 바인드 포즈 TRS.
-//void SkeletalMeshComponent::SamplePose(int _clipIndex, float _timeSec, LocalPoseTRS& _outPose) const
-//{
-//	if (_clipIndex >= 0 && _clipIndex < static_cast<int>(m_mesh->GetClips().size()))
-//		m_mesh->GetClips()[_clipIndex].SampleTRS(_timeSec, m_mesh->GetSkeleton(), _outPose);
-//	else
-//		SampleBindPoseTRS(m_mesh->GetSkeleton(), _outPose); // 클립 없음 — 바인드 포즈
-//}
+	const Skeleton& Animator::GetSkeleton() const
+	{
+		return m_meshComp.lock()->GetMesh().lock()->GetSkeleton();
+	}
+}

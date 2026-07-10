@@ -46,15 +46,15 @@ void Character::Construct()
 		m_tempLoco = std::make_shared<BlendClip>(9);
 		// 모션 입력 
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
-		m_tempLoco->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));		// idle
-		m_tempLoco->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));		// Walking
-		m_tempLoco->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));		// Walking Backword
-		m_tempLoco->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));		// right strafe
-		m_tempLoco->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));		// left strafe
+		m_tempLoco->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
+		m_tempLoco->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ -0.5, 1 },	skinnedMesh->GetClipPtr(6));	// Walking
+		m_tempLoco->AddAnimClip({ 0, -1 },		skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
+		m_tempLoco->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
+		m_tempLoco->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
 
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
 		pAnim->AddLocomotion(pLoco);
@@ -117,8 +117,23 @@ void Character::Tick(float _dt)
 
 void Character::ProcessInput(float _dt)
 {
+	// 임시 카메라 제어
+	if (m_camRotDir.LengthSquared() > 0)
+	{
+		const float deltaSpeed = _dt * m_camRotateSpeed;
+		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
+
+		pRoot->localTransform.rotation *=
+			Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
+		pRoot->localTransform.rotation *=
+			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
+	}
+
 	// 키보드 이동키
 	{
+		if (m_skinMeshComp.lock()->GetAnim().lock()->IsActionClipPlaying())
+			return;
+
 		// 임시 이동 코드
 		Vector2 input = m_inputDir;
 		input.Normalize();
@@ -140,17 +155,6 @@ void Character::ProcessInput(float _dt)
 			return;
 
 		m_tempLoco->SetAxisValue(m_lerpInputDir.x, m_lerpInputDir.y);
-	}
-
-	if (m_camRotDir.LengthSquared() > 0)
-	{
-		const float deltaSpeed = _dt * m_camRotateSpeed;
-		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
-
-		pRoot->localTransform.rotation *= 
-			Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
-		pRoot->localTransform.rotation *=
-			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
 	}
 }
 
@@ -320,8 +324,8 @@ void Character::InitInput()
 		});
 
 	// 레이캐스트
-	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnReleased = std::bind(
-		[this]() 
+	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
+		[this](float _dt) 
 		{
 			Tag actorTag;
 			if (RaycastObstacle(actorTag) == false)
@@ -333,8 +337,9 @@ void Character::InitInput()
 
 			std::shared_ptr<ActionClip> pAction = GetActions(actTag);
 			GetAnim().lock()->PlayActionClip(pAction, 0.3f);
+
 			MG_LOG_INFO("[Character] Play Valut!");
-		});
+		}, std::placeholders::_1);
 
 }
 

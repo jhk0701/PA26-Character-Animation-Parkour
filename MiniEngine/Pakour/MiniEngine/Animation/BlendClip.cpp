@@ -8,7 +8,6 @@ namespace MiniEngine
 		m_placements.reserve(9);
 		m_playTime = 0.0f;
 	}
-
 	BlendClip::BlendClip(int _reserveCnt)
 	{
 		m_placements.reserve(_reserveCnt);

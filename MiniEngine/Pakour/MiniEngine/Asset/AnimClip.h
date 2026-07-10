@@ -37,8 +37,7 @@ namespace MiniEngine
         Vector3    scale = Vector3(1.0f, 1.0f, 1.0f);
     };
 
-    // 스켈레톤 전체의 로컬 포즈(본 순서 = Skeleton::bones 순서).
-    using LocalPoseTRS = std::vector<BoneTRS>;
+    using LocalPoseTRS = std::vector<BoneTRS>;     // 스켈레톤 전체의 로컬 포즈(본 순서 = Skeleton::bones 순서).
 
     // 애니메이션 클립 시간 샘플링 → 본별 로컬 포즈 행렬
     // 위치/스케일 Lerp
