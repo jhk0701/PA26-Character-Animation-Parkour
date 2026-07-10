@@ -48,9 +48,6 @@ namespace MiniEngine
 		Layer m_baseLayer;		// 로코모션 루프용
 		Layer m_overrideLayer;	// 단발 액션 오버라이드용
 
-		// tag - action 맵
-		std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
-
 		bool m_bEnableRootMotion{ false };
 		
 		int m_rootBoneIdx{ 0 };

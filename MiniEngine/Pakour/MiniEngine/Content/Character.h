@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene/Actor.h"
 
+#include <unordered_map>
+
 namespace MiniEngine 
 {
 	class RigidBodyComponent;
@@ -34,9 +36,11 @@ public:
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
 
+	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
+
 private:
 	void InitInput();
-	bool RaycastObstacle();
+	bool RaycastObstacle(Tag& _outTag);
 
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
@@ -52,7 +56,8 @@ private:
 
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	std::shared_ptr<BlendClip> m_tempLoco;
-	std::shared_ptr<ActionClip> m_tempJump;
-	std::shared_ptr<ActionClip> m_tempActionClip;
+
+	// tag - action 맵
+	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 };
 

@@ -59,10 +59,11 @@ void Character::Construct()
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
 		pAnim->AddLocomotion(pLoco);
 
-		m_tempJump = std::make_shared<ActionClip>();
-		m_tempJump->AddClip(skinnedMesh->GetClipPtr(10));
-		m_tempActionClip = std::make_shared<ActionClip>();
-		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // 애니메이션 몽타주 용도
+		// 단일 재생
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump]->AddClip(skinnedMesh->GetClipPtr(10));
+		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpOver] = std::make_shared<ActionClip>();
+		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpOver]->AddClip(skinnedMesh->GetClipPtr(11));
 
 		pAnim->SetEnableRootMotion(true);
 
@@ -72,7 +73,6 @@ void Character::Construct()
 		rmCfg.applyY = true;
 		rmCfg.applyYaw = false;
 		pAnim->SetRootMotionConfig(rmCfg);
-		
 		pAnim->SetRootBoneIdx(1); // hips
 	}
 
@@ -311,28 +311,34 @@ void Character::InitInput()
 			SetCamRotDir(dir);
 		});
 
-
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
-			GetAnim().lock()->PlayActionClip(m_tempJump, 0.2f);
+			std::shared_ptr<ActionClip> pJump = GetActions((uint8_t)Content::Config::ETagAct::Jump);
+			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
 		});
 
 	// 레이캐스트
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnReleased = std::bind(
 		[this]() 
 		{
-			if (RaycastObstacle())
-			{
-				GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.3f);
-				MG_LOG_INFO("[Character] Play Valut!");
-			}
+			Tag actorTag;
+			if (RaycastObstacle(actorTag) == false)
+				return;
+
+			uint8_t actTag = 0;
+			if (actorTag.GetTagAt((uint8_t)Content::Config::TAG_TYPE_ACT, actTag) == false)
+				return;
+
+			std::shared_ptr<ActionClip> pAction = GetActions(actTag);
+			GetAnim().lock()->PlayActionClip(pAction, 0.3f);
+			MG_LOG_INFO("[Character] Play Valut!");
 		});
 
 }
 
-bool Character::RaycastObstacle()
+bool Character::RaycastObstacle(Tag& _outTag)
 {
 	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
 	
@@ -348,6 +354,8 @@ bool Character::RaycastObstacle()
 		return false;
 
 	Actor* pHit = reinterpret_cast<Actor*>(hitResult.GetActor());
+	_outTag = pHit->GetTag();
+
 	return pHit->GetTag().Match(
 		Content::Config::TAG_TYPE_ENV, 
 		(uint8_t)Content::Config::ETagEnv::Obstacle

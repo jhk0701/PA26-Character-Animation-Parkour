@@ -17,6 +17,7 @@ namespace Content::Config
 	enum class ETagAct : uint8_t
 	{
 		Landing,
+		Jump,
 		JumpOver, // ´ã³Ñ±â valut
 
 		End
