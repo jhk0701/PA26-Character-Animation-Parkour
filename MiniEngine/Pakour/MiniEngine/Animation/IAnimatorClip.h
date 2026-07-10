@@ -13,5 +13,6 @@ namespace MiniEngine
 		// 루트모션 처리용으로 오너 액터의 root transform 전달
 		virtual void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) = 0;
 		virtual float GetDuration() const = 0;
+		virtual AnimClip* GetClip() const = 0;
 	};
 }

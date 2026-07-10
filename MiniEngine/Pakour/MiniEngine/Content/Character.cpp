@@ -62,6 +62,8 @@ void Character::Construct()
 
 		m_tempActionClip = std::make_shared<ActionClip>();
 		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // 애니메이션 몽타주 용도
+
+		pAnim->SetRootBoneIdx(1);
 	}
 
 	{
@@ -100,6 +102,20 @@ void Character::Tick(float _dt)
 	Actor::Tick(_dt);
 
 	ProcessInput(_dt);
+
+	{
+		// TODO : 캐릭터 컨트롤러로 이동
+		std::shared_ptr<SceneComponent> pRoot = GetRoot();
+		std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+		RootMotionDelta d = m_skinMeshComp.lock()->GetAnim().lock()->ConsumeRootMotionDelta();
+
+		const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
+		Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
+
+		pRoot->localTransform.position += movement;
+		pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
+		pRoot->localTransform.rotation.Normalize();
+	}
 }
 
 void Character::ProcessInput(float _dt)

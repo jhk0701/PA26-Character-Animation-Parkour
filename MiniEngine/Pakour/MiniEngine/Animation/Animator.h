@@ -1,5 +1,6 @@
-#pragma once
+ï»¿#pragma once
 #include "Asset/AnimClip.h"
+#include "Asset/RootMotion.h"
 
 namespace MiniEngine 
 {
@@ -13,8 +14,8 @@ namespace MiniEngine
 		{
 			bool m_bIsPlaying{ false };
 
-			std::shared_ptr<IAnimatorClip> m_pClip; // Àç»ıÇÒ Å¬¸³ Å¸ÀÔ // ¿©·¯ °³ »ç¿ëµÉ °Í - Å×½ºÆ®¿ë 1°³
-			LocalPoseTRS m_layerPose; // Àç»ıÇÑ Å¬¸³ÀÇ ÁÂÇ¥°¡ ÀÌ °ª¿¡ ÀúÀåµÉ °Í
+			std::shared_ptr<IAnimatorClip> m_pClip; // ì¬ìƒí•  í´ë¦½ íƒ€ì… // ì—¬ëŸ¬ ê°œ ì‚¬ìš©ë  ê²ƒ - í…ŒìŠ¤íŠ¸ìš© 1ê°œ
+			LocalPoseTRS m_layerPose; // ì¬ìƒí•œ í´ë¦½ì˜ ì¢Œí‘œê°€ ì´ ê°’ì— ì €ì¥ë  ê²ƒ
 		};
 
 	public:
@@ -25,34 +26,51 @@ namespace MiniEngine
 		void Init();
 		void Update(float _dt);
 
-		// Å¬¸³ Àç»ı/ÀüÈ¯. _clipIndex ¹üÀ§ ¹Û(-1 Æ÷ÇÔ) = Á¤Áö(¹ÙÀÎµå Æ÷Áî).
-		// _fadeSec>0 ÀÌ°í ÇöÀç Àç»ı ÁßÀÌ¸é Å©·Î½ºÆäÀÌµå, ¾Æ´Ï¸é Áï½Ã ÀüÈ¯.
-		// Á¤Áö ´ë»ó(-1)À¸·Îµµ ÆäÀÌµå °¡´É(¹ÙÀÎµå Æ÷Áî·Î ºí·»µå).
+		// í´ë¦½ ì¬ìƒ/ì „í™˜. _clipIndex ë²”ìœ„ ë°–(-1 í¬í•¨) = ì •ì§€(ë°”ì¸ë“œ í¬ì¦ˆ).
+		// _fadeSec>0 ì´ê³  í˜„ì¬ ì¬ìƒ ì¤‘ì´ë©´ í¬ë¡œìŠ¤í˜ì´ë“œ, ì•„ë‹ˆë©´ ì¦‰ì‹œ ì „í™˜.
+		// ì •ì§€ ëŒ€ìƒ(-1)ìœ¼ë¡œë„ í˜ì´ë“œ ê°€ëŠ¥(ë°”ì¸ë“œ í¬ì¦ˆë¡œ ë¸”ë Œë“œ).
 		// void PlayClip(int _clipIndex, float _fadeSec = 0.0f);
 		// void SetActiveClip(int _clipIndex) { PlayClip(_clipIndex, 0.0f); }
 		// bool IsFading() const { return m_fadeDuration > 0.0f; }
 
 	private:
-		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // ¸Ş½Ã ÄÄÆ÷³ÍÆ® ¾àÂüÁ¶
+		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // ë©”ì‹œ ì»´í¬ë„ŒíŠ¸ ì•½ì°¸ì¡°
 
 		float m_fadeElapsed		= 0.0f;
-		float m_fadeDuration	= 0.0f;		// 0 = ÆäÀÌµå ¾øÀ½
+		float m_fadeDuration	= 0.0f;		// 0 = í˜ì´ë“œ ì—†ìŒ
 		float m_actionDuration = 0.0f;
 		float m_actionElapsed	= 0.0f;
-		float m_actionEndTime	= 0.0f; // Á¾·á ÆäÀÌµå°¡ ½ÃÀÛµÇ´Â ½ÃÁ¡
+		float m_actionEndTime	= 0.0f; // ì¢…ë£Œ í˜ì´ë“œê°€ ì‹œì‘ë˜ëŠ” ì‹œì 
 
-		LocalPoseTRS m_poseTarget;				// ºí·»µå, Æ®·£Áö¼Ç µî ¿¬»êÀÌ ¹İ¿µµÇ´Â º» À§°è±¸Á¶
-		std::vector<Matrix> m_localPose;		// ÇÕ¼º ·ÎÄÃ Çà·Ä ½ºÅ©·¡Ä¡
-		std::vector<Matrix>* m_pBoneMatrices;	// ½ºÅ°´× ÃÖÁ¾ Çà·Ä
+		LocalPoseTRS m_poseTarget;				// ë¸”ë Œë“œ, íŠ¸ëœì§€ì…˜ ë“± ì—°ì‚°ì´ ë°˜ì˜ë˜ëŠ” ë³¸ ìœ„ê³„êµ¬ì¡°
+		std::vector<Matrix> m_localPose;		// í•©ì„± ë¡œì»¬ í–‰ë ¬ ìŠ¤í¬ë˜ì¹˜
+		std::vector<Matrix>* m_pBoneMatrices;	// ìŠ¤í‚¤ë‹ ìµœì¢… í–‰ë ¬
 		
-		Layer m_baseLayer;		// ·ÎÄÚ¸ğ¼Ç ·çÇÁ¿ë
-		Layer m_overrideLayer;	// ´Ü¹ß ¾×¼Ç ¿À¹ö¶óÀÌµå¿ë
+		Layer m_baseLayer;		// ë¡œì½”ëª¨ì…˜ ë£¨í”„ìš©
+		Layer m_overrideLayer;	// ë‹¨ë°œ ì•¡ì…˜ ì˜¤ë²„ë¼ì´ë“œìš©
 
-		// tag - action ¸Ê
+		// tag - action ë§µ
 		std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
+
+		bool m_bEnableRootMotion{ false };
+		
+		int m_rootBoneIdx{ 0 };
+		RootMotionDelta m_rootMotionDt;
+		RootMotionConfig m_rootMotionCfg;
 
 	public:
 		void AddLocomotion(std::shared_ptr<IAnimatorClip>& _loco) { m_baseLayer.m_pClip = _loco; }
 		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f);
+
+		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
+		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }
+		void SetRootMotionConfig(bool _bExtractY, bool _bExtractYaw) 
+		{
+			m_rootMotionCfg.extractY = _bExtractY;
+			m_rootMotionCfg.extractYaw = _bExtractYaw;
+		}
+
+		const RootMotionDelta& GetRootMotionDelta() const { return m_rootMotionDt; }
+		RootMotionDelta ConsumeRootMotionDelta(); // ë¸íƒ€ë¥¼ ì½ê³  0 ìœ¼ë¡œ ë¹„ì›€
 	};
 }

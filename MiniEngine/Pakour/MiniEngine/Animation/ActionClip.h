@@ -16,14 +16,13 @@ namespace MiniEngine
 
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
 		float GetDuration() const override { return m_duration; }
+		AnimClip* GetClip() const { return m_clip; }
+
 		const float GetTickPerSec() const;
 
 		void AddClip(AnimClip* _clip);
-		void SetEnableRootMotion(bool _bIsRoot) { m_bIsRootMotion = _bIsRoot; }
 
 	private:
-		bool m_bIsRootMotion{ false };
-
 		bool m_bIsPlaying{ false };
 		float m_playTime{ 0.0f };
 		float m_duration{ 0.0f };
