@@ -55,10 +55,9 @@ void Character::Construct()
 		pBlend->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
 		pBlend->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
 		pBlend->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
-		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(pBlend);
 
 		pAnim->ReserveBaseLocomotion(1);
-		pAnim->AddBaseLocomotion(pLoco);
+		pAnim->AddBaseLocomotion(pBlend);
 
 		// 단일 재생
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
@@ -112,9 +111,10 @@ void Character::BeginPlay()
 
 void Character::Tick(float _dt)
 {
+	ProcessInput(_dt);
+
 	Actor::Tick(_dt);
 
-	ProcessInput(_dt);
 	ProcessRootMotion();
 }
 
@@ -134,7 +134,7 @@ void Character::ProcessInput(float _dt)
 
 	// 키보드 이동키
 	{
-		if (m_skinMeshComp.lock()->GetAnim().lock()->IsActionClipPlaying())
+		if (GetAnim().lock()->IsActionClipPlaying())
 			return;
 
 		// 임시 이동 코드
@@ -155,6 +155,7 @@ void Character::ProcessInput(float _dt)
 			deltaSpeed * -m_lerpInputDir.x * rht;
 
 		GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
+		MG_LOG_INFO("[Anim Log] m_lerpInput {0}, {1}", m_lerpInputDir.x, m_lerpInputDir.y);
 	}
 }
 

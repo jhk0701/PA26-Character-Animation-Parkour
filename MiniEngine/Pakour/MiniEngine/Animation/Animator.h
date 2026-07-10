@@ -4,7 +4,7 @@
 
 namespace MiniEngine 
 {
-	class IAnimatorClip;
+	class BlendClip;
 	class ActionClip;
 	class SkeletalMeshComponent;
 
@@ -17,7 +17,7 @@ namespace MiniEngine
 		~AnimStateMachine() { m_states.clear(); }
 
 		void Reserve(uint8_t _cnt) { m_states.reserve(_cnt); }
-		void AddState(std::shared_ptr<IAnimatorClip> _clip) { m_states.push_back(_clip); };
+		void AddState(std::shared_ptr<BlendClip> _clip) { m_states.push_back(_clip); };
 		
 		void Init(int _startIdx);
 		void Transition(int _newIdx, float _duration = 0.5f);
@@ -32,7 +32,7 @@ namespace MiniEngine
 		int m_prevIdx{ -1 }; // 트랜지션일 때 페이드 인 아웃용 직전 스테이트
 		Vector2 m_InputAxis;
 
-		std::vector<std::shared_ptr<IAnimatorClip>> m_states;
+		std::vector<std::shared_ptr<BlendClip>> m_states;
 
 		// TODO : Transition 정보 및 조건
 		float m_fadeElapsed{ 0.0f };
@@ -53,7 +53,7 @@ namespace MiniEngine
 		float m_actionElapsed = 0.0f;
 		float m_actionEndTime = 0.0f; // 종료 페이드가 시작되는 시점
 	
-		std::shared_ptr<IAnimatorClip> m_pClip; // 재생할 클립 타입 // 여러 개 사용될 것 - 테스트용 1개
+		std::shared_ptr<ActionClip> m_pClip; // 재생할 클립 타입 // 여러 개 사용될 것 - 테스트용 1개
 		LocalPoseTRS m_layerPose;				// 재생한 클립의 좌표가 이 값에 저장될 것
 
 		bool IsEnd() const { return m_actionElapsed >= m_actionDuration; }
@@ -77,7 +77,7 @@ namespace MiniEngine
 		void FinalizePose();
 
 		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }
-		void AddBaseLocomotion(std::shared_ptr<IAnimatorClip>& _loco) { m_baseTrack.AddState(_loco); }
+		void AddBaseLocomotion(std::shared_ptr<BlendClip>& _loco) { m_baseTrack.AddState(_loco); }
 
 		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f);
 

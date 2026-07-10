@@ -39,7 +39,7 @@ namespace MiniEngine
 		Axis& GetAxisX() { return m_AxisX; }
 		Axis& GetAxisY() { return m_AxisY; }
 
-		void SetAxisValue(float _x, float _y);
+		void SetAxisValue(const Vector2& _vec);
 		void AddAnimClip(Vector2 _coord, AnimClip* _pClip);
 
 	private:

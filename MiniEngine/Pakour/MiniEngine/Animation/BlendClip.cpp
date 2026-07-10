@@ -62,10 +62,10 @@ namespace MiniEngine
 		_outPose = m_blendedPose; // 정확히 하나에만 해당하는 값이므로 바로 변영
 	}
 
-	void BlendClip::SetAxisValue(float _x, float _y)
+	void BlendClip::SetAxisValue(const Vector2& _vec)
 	{
-		m_AxisX.m_val = std::clamp(_x, m_AxisX.m_min, m_AxisX.m_max);
-		m_AxisY.m_val = std::clamp(_y, m_AxisY.m_min, m_AxisY.m_max);
+		m_AxisX.m_val = std::clamp(_vec.x, m_AxisX.m_min, m_AxisX.m_max);
+		m_AxisY.m_val = std::clamp(_vec.y, m_AxisY.m_min, m_AxisY.m_max);
 	}
 
 	void BlendClip::AddAnimClip(Vector2 _coord, AnimClip* _pClip)

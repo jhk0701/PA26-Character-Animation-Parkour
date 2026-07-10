@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Animation/Animator.h"
 #include "Core/Log.h"
-#include "Animation/IAnimatorClip.h"
+#include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
 #include "Scene/Actor.h"
 #include "Scene/SkeletalMeshComponent.h"
@@ -30,12 +30,15 @@ namespace MiniEngine
 
 		if (IsFading() == false)
 		{
+			m_states[m_curStateIdx]->SetAxisValue(m_InputAxis);
 			m_states[m_curStateIdx]->Sample(_dt, _skeleton, _outPose); // 포즈 타겟에 해당 index 바로 샘플링
 			return;
 		}
 
 		m_fadeElapsed += _dt;
 		
+		m_states[m_curStateIdx]->SetAxisValue(m_InputAxis);
+		m_states[m_prevIdx]->SetAxisValue(m_InputAxis); // 이전 포즈
 		m_states[m_curStateIdx]->Sample(_dt, _skeleton, m_poseNext); // 메인 포즈
 		m_states[m_prevIdx]->Sample(_dt, _skeleton, m_posePrev); // 이전 포즈
 
