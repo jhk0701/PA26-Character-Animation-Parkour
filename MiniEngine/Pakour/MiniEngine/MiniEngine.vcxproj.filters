@@ -208,6 +208,9 @@
     <ClInclude Include="Manager\UIManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\RootMotion.h">
+      <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -314,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="Manager\UIManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\RootMotion.cpp">
+      <Filter>Engine\03.Asset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

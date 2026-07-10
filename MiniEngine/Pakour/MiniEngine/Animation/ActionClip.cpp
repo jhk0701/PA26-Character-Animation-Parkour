@@ -5,13 +5,7 @@ namespace MiniEngine
 {
 	ActionClip::ActionClip()
 	{
-		// m_clips.reserve(4);
 	}
-
-	//ActonClip::ActonClip(int _reserveCnt)
-	//{
-	//	// m_clips.reserve(_reserveCnt);
-	//}
 
 	void ActionClip::Play()
 	{
@@ -25,7 +19,7 @@ namespace MiniEngine
 		m_playTime = 0.0f;
 	}
 
-	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs)
+	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose)
 	{
 		if (!m_bIsPlaying)
 			return;
@@ -45,7 +39,7 @@ namespace MiniEngine
 		}
 
 		// 포즈는 바로 적용할 것
-		m_clip->SampleTRS(m_playTime, _skeleton, _outPose, _rootTrs);
+		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
 	}
 
 	const float ActionClip::GetTickPerSec() const

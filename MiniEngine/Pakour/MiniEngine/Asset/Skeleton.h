@@ -43,5 +43,7 @@ namespace MiniEngine
             for (size_t i = 0; i < count; ++i)
                 _outFinal[i] = bones[i].inverseBindPose * _outFinal[i];
         }
+        
+        bool IsRoot(int _idx) const { return bones[_idx].parentIndex == -1; };
     };
 }

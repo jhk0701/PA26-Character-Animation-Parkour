@@ -30,20 +30,19 @@ namespace MiniEngine
 			return;
 		}
 
-		std::shared_ptr<SceneComponent> pRoot = m_meshComp.lock()->owner.lock()->GetRoot();
 		std::shared_ptr<SkinnedMesh> pSkin = m_meshComp.lock()->GetMesh().lock();
 		const Skeleton& skeleton = pSkin->GetSkeleton();
 
 		// TODO : 로코모션 관리 고도화
 		if (m_baseLayer.m_pClip)
-			m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose, pRoot->localTransform);			// m_poseTarget
+			m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);			// m_poseTarget
 
 		if (m_overrideLayer.m_bIsPlaying &&
 			m_overrideLayer.m_pClip)
 		{
 			m_actionElapsed += _dt;
 			m_fadeElapsed += m_actionElapsed < m_actionEndTime ? _dt : -_dt;
-			m_overrideLayer.m_pClip->Sample(_dt, skeleton, m_overrideLayer.m_layerPose, pRoot->localTransform);	// m_poseTarget
+			m_overrideLayer.m_pClip->Sample(_dt, skeleton, m_overrideLayer.m_layerPose);	// m_poseTarget
 
 			float w = 0.0f;
 			w = m_fadeElapsed / m_fadeDuration;

@@ -30,7 +30,7 @@ namespace MiniEngine
 		~BlendClip() { m_placements.clear(); }
 
 		// 현재 입력된 좌표 축을 가지고 애니메이션 가중치 계산
-		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs) override;
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
 		float GetDuration() const override { return m_duration; }
 
 		bool ComputeWeight(int& _outMatchedIdx);

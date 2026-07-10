@@ -48,7 +48,7 @@ namespace MiniEngine
         }
     }
 
-    void AnimClip::SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose, Transform& _rootTrs) const
+    void AnimClip::SampleTRS(float _timeSec, const Skeleton& _skeleton, LocalPoseTRS& _outPose) const
     {
         const size_t boneCount = _skeleton.bones.size();
 
@@ -72,22 +72,6 @@ namespace MiniEngine
 
             // 비어있는 트랙의 기본 성분은 바인드 포즈(위에서 채운 값)를 유지한
             BoneTRS& out = _outPose[channel.boneIndex];
-
-            // 데이터 단에서 루트 확인
-            if (channel.boneIndex == 0 && 
-                channel.pos.size() > 0)  
-            {
-                // 루트모션이 있는 상황
-                // 델타값 격리 후 Transform에 직접 반영
-                Vector3 dtPos = SampleVec(channel.pos, timeTick, _rootTrs.position);
-                Quaternion dtRot = SampleQuat(channel.rot, timeTick, _rootTrs.rotation);
-                Vector3 dtScale = SampleVec(channel.scale, timeTick, _rootTrs.scale);
-
-                _rootTrs.position += dtPos;
-                _rootTrs.rotation *= dtRot;
-                _rootTrs.scale = dtScale;
-                continue;
-            }
             
             out.pos     = SampleVec(channel.pos, timeTick, out.pos);
             out.rot     = SampleQuat(channel.rot, timeTick, out.rot);
@@ -95,6 +79,29 @@ namespace MiniEngine
         }
     }
 
+
+    void AnimClip::SampleTRS(int _rootBoneIdx, float _timeTick, const Skeleton& _skeleton, BoneTRS& _outBone) const
+    {
+        if (_rootBoneIdx < 0 || _rootBoneIdx >= static_cast<int>(_skeleton.bones.size()))
+            return;
+
+        // 기본값 용도 바인드 포즈 대입
+        Matrix bindPose = _skeleton.bones[_rootBoneIdx].localBindPose;
+        bindPose.Decompose(_outBone.scale, _outBone.rot, _outBone.pos);
+
+        // rootBone에 해당하는 Transform값 샘플링
+        for (const AnimChannel& channel : channels)
+        {
+            if (channel.boneIndex != _rootBoneIdx)
+                continue;
+
+            _outBone.pos = SampleVec(channel.pos, _timeTick, _outBone.pos);
+            _outBone.rot = SampleQuat(channel.rot, _timeTick, _outBone.rot);
+            _outBone.scale = SampleVec(channel.scale, _timeTick, _outBone.scale);
+
+            return;
+        }
+    }
 
     float AnimClip::ClipDurationSec()
     {
