@@ -32,18 +32,17 @@ namespace MiniEngine
 		// void PlayClip(int _clipIndex, float _fadeSec = 0.0f);
 		// void SetActiveClip(int _clipIndex) { PlayClip(_clipIndex, 0.0f); }
 		// bool IsFading() const { return m_fadeDuration > 0.0f; }
-
 	private:
 		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // 메시 컴포넌트 약참조
 
 		float m_fadeElapsed		= 0.0f;
 		float m_fadeDuration	= 0.0f;		// 0 = 페이드 없음
-		float m_actionDuration = 0.0f;
+		float m_actionDuration	= 0.0f;
 		float m_actionElapsed	= 0.0f;
 		float m_actionEndTime	= 0.0f; // 종료 페이드가 시작되는 시점
 
-		LocalPoseTRS m_poseTarget;				// 블렌드, 트랜지션 등 연산이 반영되는 본 위계구조
-		std::vector<Matrix> m_localPose;		// 합성 로컬 행렬 스크래치
+		LocalPoseTRS m_poseTarget;		// 블렌드, 트랜지션 등 연산이 반영되는 본 위계구조
+		std::vector<Matrix> m_localPose;	// 합성 로컬 행렬 스크래치
 		std::vector<Matrix>* m_pBoneMatrices;	// 스키닝 최종 행렬
 		
 		Layer m_baseLayer;		// 로코모션 루프용

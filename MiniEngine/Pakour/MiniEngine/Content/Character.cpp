@@ -59,10 +59,13 @@ void Character::Construct()
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
 		pAnim->AddLocomotion(pLoco);
 
+		m_tempJump = std::make_shared<ActionClip>();
+		m_tempJump->AddClip(skinnedMesh->GetClipPtr(10));
 		m_tempActionClip = std::make_shared<ActionClip>();
 		m_tempActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // 애니메이션 몽타주 용도
 
 		pAnim->SetEnableRootMotion(true);
+
 		RootMotionConfig rmCfg;
 		rmCfg.extractY = true;
 		rmCfg.extractYaw = false;
@@ -313,7 +316,7 @@ void Character::InitInput()
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
-			GetAnim().lock()->PlayActionClip(m_tempActionClip, 0.5f);
+			GetAnim().lock()->PlayActionClip(m_tempJump, 0.2f);
 		});
 
 	// 레이캐스트

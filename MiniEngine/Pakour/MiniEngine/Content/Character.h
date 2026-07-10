@@ -52,6 +52,7 @@ private:
 
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	std::shared_ptr<BlendClip> m_tempLoco;
+	std::shared_ptr<ActionClip> m_tempJump;
 	std::shared_ptr<ActionClip> m_tempActionClip;
 };
 
