@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Animation/Animator.h"
+#include "Core/Log.h"
 #include "Animation/IAnimatorClip.h"
 #include "Animation/ActionClip.h"
 #include "Scene/Actor.h"
@@ -7,42 +8,64 @@
 
 namespace MiniEngine 
 {
+	void AnimStateMachine::Init(int _startIdx)
+	{
+		m_curStateIdx = _startIdx;
+		m_prevIdx = 0;
+
+		m_bIsInitialized = true;
+	}
+
 	void AnimStateMachine::Transition(int _newIdx, float _duration)
 	{
 		m_fadeDuration = _duration;
 		m_prevIdx = m_curStateIdx;
 		m_curStateIdx = _newIdx;
 	}
-	void AnimStateMachine::Update(float _dt, const Skeleton& _skeleton)
+
+	void AnimStateMachine::Update(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) 
 	{
-		if (m_curStateIdx < 0 || m_curStateIdx >= m_states.size())
+		if (m_curStateIdx < 0 || m_curStateIdx >= m_states.size() || m_bIsInitialized == false)
 			return;
 
-		if (IsFading())
+		if (IsFading() == false)
 		{
-
-
+			m_states[m_curStateIdx]->Sample(_dt, _skeleton, _outPose); // 포즈 타겟에 해당 index 바로 샘플링
+			return;
 		}
-		else
-			m_states[m_curStateIdx]->Sample(_dt, _skeleton, m_poseTarget); // 포즈 타겟에 해당 index 바로 샘플링
+
+		m_fadeElapsed += _dt;
+		
+		m_states[m_curStateIdx]->Sample(_dt, _skeleton, m_poseNext); // 메인 포즈
+		m_states[m_prevIdx]->Sample(_dt, _skeleton, m_posePrev); // 이전 포즈
+
+		const float w = m_fadeElapsed / m_fadeDuration;
+		BlendPose(m_posePrev, m_poseNext, w, _outPose);
 	}
 
-	Animator::Animator() { Init(); }
+	Animator::Animator() { }
 	Animator::Animator(std::shared_ptr<SkeletalMeshComponent> _meshComp) : m_meshComp(_meshComp)
 	{
-		Init();
 		m_pBoneMatrices = m_meshComp.lock()->GetBoneMatricesPtr();
 	}
 
-	void Animator::Init()
+	void Animator::Init(int _baseTrackStart)
 	{
+		m_bIsInitialized = true;
+
 		m_fadeDuration = 0.0f;
-		m_baseLayer.m_bIsPlaying = true;
+		m_baseTrack.Init(_baseTrackStart);
 		m_overrideLayer.m_bIsPlaying = false;
 	}
 
 	void Animator::Update(float _dt)
 	{
+		if (m_bIsInitialized == false)
+		{
+			MG_LOG_INFO("[Animator Error] Animator is not initialized.");
+			return;
+		}
+
 		if (m_meshComp.expired())
 		{
 			m_pBoneMatrices->clear();
@@ -50,9 +73,9 @@ namespace MiniEngine
 		}
 
 		SampleBaseLayer(_dt);
-
-		SampleOverrideLayer(_dt);
 		
+		SampleOverrideLayer(_dt);
+				
 		FinalizePose();
 	}
 
@@ -60,12 +83,10 @@ namespace MiniEngine
 	{
 		const Skeleton& skeleton = GetSkeleton();
 
-		// 로코모션 관리 고도화
-		if (m_baseLayer.m_bIsPlaying == false ||
-			m_baseLayer.m_pClip == nullptr)
+		if (m_baseTrack.IsValid() == false)
 			return;
 
-		m_baseLayer.m_pClip->Sample(_dt, skeleton, m_baseLayer.m_layerPose);	// m_poseTarget
+		m_baseTrack.Update(_dt, skeleton, m_poseTarget);
 	}
 
 	void Animator::SampleOverrideLayer(float _dt)
@@ -73,7 +94,6 @@ namespace MiniEngine
 		if (m_overrideLayer.m_bIsPlaying == false || 
 			m_overrideLayer.m_pClip == nullptr)
 		{
-			m_poseTarget = m_baseLayer.m_layerPose;
 			return;
 		}
 
@@ -98,7 +118,7 @@ namespace MiniEngine
 		w = m_fadeElapsed / m_fadeDuration;
 		w = std::clamp(w, 0.0f, 1.0f);
 
-		BlendPose(m_baseLayer.m_layerPose, m_overrideLayer.m_layerPose, w, m_poseTarget);
+		BlendPose(m_poseTarget, m_overrideLayer.m_layerPose, w, m_poseTarget);
 
 		if (m_actionDuration < m_actionElapsed)
 		{

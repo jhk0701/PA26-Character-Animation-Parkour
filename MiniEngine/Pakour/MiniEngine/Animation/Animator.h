@@ -18,12 +18,14 @@ namespace MiniEngine
 
 		void Reserve(uint8_t _cnt) { m_states.reserve(_cnt); }
 		void AddState(std::shared_ptr<IAnimatorClip> _clip) { m_states.push_back(_clip); };
-		void Transition(int _newIdx, float _duration = 0.5f);
-		void Update(float _dt, const Skeleton& _skeleton);
 		
-		const LocalPoseTRS& GetPoseTRS() const { return m_poseTarget; }
+		void Init(int _startIdx);
+		void Transition(int _newIdx, float _duration = 0.5f);
+		void Update(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
+		bool IsValid() const { return m_states.size() > 0 && m_bIsInitialized; }
 
 	private:
+		bool m_bIsInitialized{ false };
 		int m_curStateIdx{ -1 };
 		int m_prevIdx{ -1 }; // 트랜지션일 때 페이드 인 아웃용 직전 스테이트
 
@@ -33,8 +35,7 @@ namespace MiniEngine
 		float m_fadeElapsed{ 0.0f };
 		float m_fadeDuration{ 0.0f };	// 0 = 페이드 없음
 
-		LocalPoseTRS m_poseTarget; // 최종 타겟
-		LocalPoseTRS m_posePrev; // 트랜지션 중인 경우, 지나오는 애니메이션 스테이트에 사용
+		LocalPoseTRS m_posePrev, m_poseNext; // 트랜지션 간 각각 사용
 
 		bool IsFading() const { return m_fadeDuration > 0.0f; }
 	};
@@ -55,14 +56,16 @@ namespace MiniEngine
 		Animator(std::shared_ptr<SkeletalMeshComponent> _meshComp);
 		~Animator() {};
 
-		void Init();
+		void Init(int _baseTrackStart);
 		void Update(float _dt);
 
 		void SampleBaseLayer(float _dt);
 		void SampleOverrideLayer(float _dt);
 		void FinalizePose();
 
-		void AddLocomotion(std::shared_ptr<IAnimatorClip>& _loco) { m_baseLayer.m_pClip = _loco; }
+		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }
+		void AddBaseLocomotion(std::shared_ptr<IAnimatorClip>& _loco) { m_baseTrack.AddState(_loco); }
+
 		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f);
 
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
@@ -76,6 +79,8 @@ namespace MiniEngine
 		bool IsActionClipPlaying() const { return m_overrideLayer.m_bIsPlaying; }
 
 	private:
+		bool m_bIsInitialized{ false };
+
 		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // 메시 컴포넌트 약참조
 		const Skeleton& GetSkeleton() const;
 
@@ -95,7 +100,7 @@ namespace MiniEngine
 		RootMotionDelta m_rootMotionDt;
 		RootMotionConfig m_rootMotionCfg;
 
-		Layer m_baseLayer;		// 레거시
+		// Layer m_baseLayer;		// 레거시
 		AnimStateMachine m_baseTrack; // 로코모션 루프용
 
 		Layer m_overrideLayer;	// 단발 액션 오버라이드용

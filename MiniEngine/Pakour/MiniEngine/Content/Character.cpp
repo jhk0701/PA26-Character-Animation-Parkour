@@ -55,9 +55,10 @@ void Character::Construct()
 		m_tempLoco->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
 		m_tempLoco->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
 		m_tempLoco->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
-
 		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
-		pAnim->AddLocomotion(pLoco);
+
+		pAnim->ReserveBaseLocomotion(1);
+		pAnim->AddBaseLocomotion(pLoco);
 
 		// 단일 재생
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
@@ -74,6 +75,8 @@ void Character::Construct()
 		rmCfg.applyYaw = false;
 		pAnim->SetRootMotionConfig(rmCfg);
 		pAnim->SetRootBoneIdx(1); // hips
+
+		pAnim->Init(0);
 	}
 
 	{
