@@ -43,7 +43,6 @@ namespace MiniEngine
 		BlendPose(m_posePrev, m_poseNext, w, _outPose);
 	}
 
-	Animator::Animator() { }
 	Animator::Animator(std::shared_ptr<SkeletalMeshComponent> _meshComp) : m_meshComp(_meshComp)
 	{
 		m_pBoneMatrices = m_meshComp.lock()->GetBoneMatricesPtr();
@@ -53,9 +52,8 @@ namespace MiniEngine
 	{
 		m_bIsInitialized = true;
 
-		m_fadeDuration = 0.0f;
 		m_baseTrack.Init(_baseTrackStart);
-		m_overrideLayer.m_bIsPlaying = false;
+		m_overrideTrack.m_bIsPlaying = false;
 	}
 
 	void Animator::Update(float _dt)
@@ -72,14 +70,12 @@ namespace MiniEngine
 			return;
 		}
 
-		SampleBaseLayer(_dt);
-		
-		SampleOverrideLayer(_dt);
-				
+		SampleBaseTrack(_dt);
+		SampleOverrideTrack(_dt);
 		FinalizePose();
 	}
 
-	void Animator::SampleBaseLayer(float _dt)
+	void Animator::SampleBaseTrack(float _dt)
 	{
 		const Skeleton& skeleton = GetSkeleton();
 
@@ -89,41 +85,38 @@ namespace MiniEngine
 		m_baseTrack.Update(_dt, skeleton, m_poseTarget);
 	}
 
-	void Animator::SampleOverrideLayer(float _dt)
+	void Animator::SampleOverrideTrack(float _dt)
 	{
-		if (m_overrideLayer.m_bIsPlaying == false || 
-			m_overrideLayer.m_pClip == nullptr)
-		{
+		if (m_overrideTrack.m_bIsPlaying == false ||
+			m_overrideTrack.m_pClip == nullptr)
 			return;
-		}
 
 		const Skeleton& skeleton = GetSkeleton();
 
 		// root motion 추출
-		const float t0 = m_actionElapsed;
-		float t1 = m_actionElapsed + _dt;
+		const float t0 = m_overrideTrack.m_actionElapsed;
+		float t1 = m_overrideTrack.m_actionElapsed + _dt;
 
 		if (m_bEnableRootMotion)
 		{
 			m_rootMotionDt.Reset();
-			ExtractClipRootMotion(*m_overrideLayer.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
+			ExtractClipRootMotion(*m_overrideTrack.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
 		}
 
 		// 액션 클립 재생
-		m_actionElapsed = t1;
-		m_fadeElapsed += m_actionElapsed < m_actionEndTime ? _dt : -_dt;
-		m_overrideLayer.m_pClip->Sample(_dt, skeleton, m_overrideLayer.m_layerPose);	// m_poseTarget
+		m_overrideTrack.m_actionElapsed = t1;
+		m_overrideTrack.m_fadeElapsed += m_overrideTrack.IsEndArea() ? -_dt : _dt;
+		m_overrideTrack.m_pClip->Sample(_dt, skeleton, m_overrideTrack.m_layerPose);	// m_poseTarget
 
-		float w = 0.0f;
-		w = m_fadeElapsed / m_fadeDuration;
+		float w = m_overrideTrack.GetProgress();
 		w = std::clamp(w, 0.0f, 1.0f);
 
-		BlendPose(m_poseTarget, m_overrideLayer.m_layerPose, w, m_poseTarget);
+		BlendPose(m_poseTarget, m_overrideTrack.m_layerPose, w, m_poseTarget);
 
-		if (m_actionDuration < m_actionElapsed)
+		if (m_overrideTrack.IsEnd())
 		{
-			m_overrideLayer.m_bIsPlaying = false;
-			m_overrideLayer.m_pClip = nullptr;
+			m_overrideTrack.m_bIsPlaying = false;
+			m_overrideTrack.m_pClip = nullptr;
 		}
 	}
 
@@ -145,20 +138,19 @@ namespace MiniEngine
 
 	void Animator::PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration)
 	{
-		if (m_overrideLayer.m_bIsPlaying)
+		if (m_overrideTrack.m_bIsPlaying)
 			return;
 
-		m_overrideLayer.m_bIsPlaying = true;
-		m_overrideLayer.m_pClip = _action;
+		m_overrideTrack.m_bIsPlaying = true;
+		m_overrideTrack.m_pClip = _action;
+		m_overrideTrack.m_fadeDuration = _fadeDuration;
+		m_overrideTrack.m_fadeElapsed = 0.0f;
+		m_overrideTrack.m_actionElapsed = 0.0f;
+		m_overrideTrack.m_actionDuration = _action->GetDuration();
 
-		m_fadeDuration = _fadeDuration;
-		m_fadeElapsed = 0.0f;
-		
-		m_actionElapsed = 0.0f;
-		m_actionDuration = _action->GetDuration();
-		m_actionEndTime = m_actionDuration - _fadeDuration * (1.0f / _action->GetTickPerSec());
-		if (m_actionEndTime < 0.0f)
-			m_actionEndTime = m_actionDuration - 0.01f;
+		m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - _fadeDuration * (1.0f / _action->GetTickPerSec());
+		if (m_overrideTrack.m_actionEndTime < 0.0f)
+			m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - 0.01f;
 
 		_action->Play();
 	}
@@ -174,6 +166,11 @@ namespace MiniEngine
 		const RootMotionDelta delta = m_rootMotionDt;
 		m_rootMotionDt.Reset();
 		return delta;
+	}
+
+	void Animator::SetBaseTrackInputAxis(const Vector2& _axis)
+	{
+		m_baseTrack.SetInputAxis(_axis);
 	}
 
 	const Skeleton& Animator::GetSkeleton() const

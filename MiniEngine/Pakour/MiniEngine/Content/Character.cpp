@@ -43,19 +43,19 @@ void Character::Construct()
 		// 애니메이션 설정
 		std::shared_ptr<Animator> pAnim = skinComp->GetAnim().lock();
 		// 로코모션 구현
-		m_tempLoco = std::make_shared<BlendClip>(9);
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
 		// 모션 입력 
 		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
-		m_tempLoco->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
-		m_tempLoco->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ -0.5, 1 },	skinnedMesh->GetClipPtr(6));	// Walking
-		m_tempLoco->AddAnimClip({ 0, -1 },		skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
-		m_tempLoco->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
-		m_tempLoco->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
-		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(m_tempLoco);
+		pBlend->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
+		pBlend->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ -0.5, 1 },	skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ 0, -1 },		skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ 0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
+		pBlend->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
+		std::shared_ptr<IAnimatorClip> pLoco = std::dynamic_pointer_cast<IAnimatorClip>(pBlend);
 
 		pAnim->ReserveBaseLocomotion(1);
 		pAnim->AddBaseLocomotion(pLoco);
@@ -154,10 +154,7 @@ void Character::ProcessInput(float _dt)
 			deltaSpeed * m_lerpInputDir.y * fwd +
 			deltaSpeed * -m_lerpInputDir.x * rht;
 
-		if (!m_tempLoco)
-			return;
-
-		m_tempLoco->SetAxisValue(m_lerpInputDir.x, m_lerpInputDir.y);
+		GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 	}
 }
 
