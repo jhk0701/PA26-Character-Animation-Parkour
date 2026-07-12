@@ -84,7 +84,8 @@ namespace MiniEngine
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
 		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }
 		void SetRootMotionConfig(RootMotionConfig& _config) { m_rootMotionCfg = _config; }
-		
+
+		const bool GetIsEnableRootMotion() const { return m_bEnableRootMotion; }
 		const RootMotionDelta& GetRootMotionDelta() const { return m_rootMotionDt; }
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionCfg; }
 		

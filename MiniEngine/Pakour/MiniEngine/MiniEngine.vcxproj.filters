@@ -211,6 +211,9 @@
     <ClInclude Include="Asset\RootMotion.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\CharacaterControllerComponent.h">
+      <Filter>Engine\07.Object\Component\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -320,6 +323,9 @@
     </ClCompile>
     <ClCompile Include="Asset\RootMotion.cpp">
       <Filter>Engine\03.Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\CharacaterControllerComponent.cpp">
+      <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

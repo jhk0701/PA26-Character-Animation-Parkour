@@ -95,4 +95,14 @@ namespace MiniEngine
         pContext->DrawIndexed(m_mesh->GetIndexCount(), 0, 0);
     }
 
+    RootMotionDelta SkeletalMeshComponent::ConsumeRootMotionDelta() 
+    {
+        return m_anim->ConsumeRootMotionDelta();
+    }
+
+    bool SkeletalMeshComponent::IsRootMotionEnabled() const
+    {
+        return m_anim->GetIsEnableRootMotion();
+    }
+
 }

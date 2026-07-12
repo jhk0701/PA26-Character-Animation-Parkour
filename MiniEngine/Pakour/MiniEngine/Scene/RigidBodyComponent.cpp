@@ -5,6 +5,7 @@
 
 #include <physx/PxPhysicsAPI.h>
 #include "Physics/PhysicsWorld.h"
+#include "CharacaterControllerComponent.h"
 
 namespace MiniEngine
 {
@@ -32,33 +33,6 @@ namespace MiniEngine
 		m_actor = (_type == EBodyType::Dynamic) ?
 			_world.CreateDynamicBox(pos, rot, _halfExtents, _denity) :
 			_world.CreateStaticBox(pos, rot, _halfExtents);
-
-		// UserData로 owner 액터 포인터 적용
-		m_actor->userData = owner.lock().get();
-	}
-
-	void RigidBodyComponent::InitAsDynamicCapsule(Physics::PhysicsWorld& _world, const Vector2& _capsuleExtent, float _denity, const std::shared_ptr<SceneComponent>& _target)
-	{
-		// root 컴포넌트를 대상으로 Rigidbody가 Transform을 사용할 것
-		std::shared_ptr<SceneComponent> target = _target;
-		if (target == nullptr)
-		{
-			if (std::shared_ptr<Actor> o = owner.lock())
-				target = o->GetRoot();
-		}
-
-		if (target == nullptr)
-			return;
-
-		CheckParented(target);
-
-		m_type = EBodyType::Dynamic;
-		m_target = target;
-
-		const Vector3& pos = target->localTransform.position;
-		const Quaternion& rot = target->localTransform.rotation;
-
-		m_actor = _world.CreateDynamicCapsule(pos, rot, _capsuleExtent.x, _capsuleExtent.y, _denity);
 
 		// UserData로 owner 액터 포인터 적용
 		m_actor->userData = owner.lock().get();

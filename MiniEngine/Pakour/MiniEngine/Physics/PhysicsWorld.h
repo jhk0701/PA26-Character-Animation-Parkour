@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Core/Math.h"
 
 namespace physx
@@ -10,18 +10,30 @@ namespace physx
     class PxDefaultCpuDispatcher;
     class PxRigidActor;
     class PxShape;
+    class PxController;
+    class PxControllerManager;
 }
 
 namespace MiniEngine::Physics 
 {
-    // Ãæµ¹À» °¨ÁöÇÒ ±×·ì Á¾·ù (·¹ÀÌ¾î)
-    // ·¹ÀÌÄ³½ºÆ® Äõ¸®¿Í´Â º°°³ÀÓ
+    struct CapsuleControllerDesc
+    {
+        Vector3 footPosition{ 0.0f, 0.0f, 0.0f }; // ìº¡ìŠ ë°œ ìœ„ì¹˜
+        float radius = 0.04f;
+        float height = 1.0f;
+        float stepOffset = 0.3f; // ë°”ë‹¥ì— ë¬´ì‹œí•  ìˆ˜ ìˆëŠ” í„±ì˜ ë†’ì´
+        float contactOffset = 0.1f; // ìˆ˜ì¹˜ ì•ˆì •ìš©
+        float slopeLimitDeg = 45.0f; // ê±¸ì–´ ì˜¬ë¼ê°ˆ ìˆ˜ ìˆëŠ” ê²½ì‚¬ê°
+    };
+
+    // ì¶©ëŒì„ ê°ì§€í•  ê·¸ë£¹ ì¢…ë¥˜ (ë ˆì´ì–´)
+    // ë ˆì´ìºìŠ¤íŠ¸ ì¿¼ë¦¬ì™€ëŠ” ë³„ê°œì„
     enum ECollisionGroup : uint16_t
     {
         Player,
         
-        Land,       // ÂøÁöÇÒ °ø°£
-        Obstacle,   // ¾×ÅÍ°¡ Áö³ª°¡Áö ¸øÇÏ´Â Àå¾Ö¹°
+        Land,       // ì°©ì§€í•  ê³µê°„
+        Obstacle,   // ì•¡í„°ê°€ ì§€ë‚˜ê°€ì§€ ëª»í•˜ëŠ” ì¥ì• ë¬¼
         
         IgnoreAll = 31,
         END = 32
@@ -33,10 +45,10 @@ namespace MiniEngine::Physics
         Vector3 m_dir;
         float m_maxDistance;
         // physx::PxHitFlag::Enum m_hitFlag{ physx::PxHitFlag::eDEFAULT };
-        // physx::PxFilterData m_filterData; // Ãæµ¹ÇÒ ´ë»ó static, dynamic, any
+        // physx::PxFilterData m_filterData; // ì¶©ëŒí•  ëŒ€ìƒ static, dynamic, any
     };
 
-    struct RaycastResult // ·¹ÀÌÄ³½ºÆ® ÈÄ °á°ú
+    struct RaycastResult // ë ˆì´ìºìŠ¤íŠ¸ í›„ ê²°ê³¼
     {
         Vector3 m_pos;
         Vector3 m_nrm;
@@ -64,7 +76,8 @@ namespace MiniEngine::Physics
         bool CreateRigidFloor(); 
         physx::PxRigidActor* CreateStaticBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents);
         physx::PxRigidActor* CreateDynamicBox(const Vector3& _pos, const Quaternion& _rot, const Vector3& _halfExtents, float _density);
-        physx::PxRigidActor* CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density);
+        
+        physx::PxController* CreateCapsuleController(const CapsuleControllerDesc& _desc);
 
         void ToggleDebugMode(bool _bIsOn);
 
@@ -77,7 +90,8 @@ namespace MiniEngine::Physics
         physx::PxPhysics* m_physics = nullptr;
         physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
         physx::PxScene* m_scene = nullptr;
-        physx::PxMaterial* m_material = nullptr; // m_physics ¼ÒÀ¯(ÇÔ²² ÇØÁ¦)
+        physx::PxMaterial* m_material = nullptr; // m_physics ì†Œìœ (í•¨ê»˜ í•´ì œ)
+        physx::PxControllerManager* m_controllerManager = nullptr; // ìì‹ ì´ ë§Œë“  PxController ë¥¼ ëª¨ë‘ ì†Œìœ  â€” scene ë³´ë‹¤ ë¨¼ì € release
 
         void SetDefaultCollisionGroup();
     };

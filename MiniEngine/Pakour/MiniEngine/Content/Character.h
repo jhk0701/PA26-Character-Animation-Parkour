@@ -52,9 +52,7 @@ private:
 	float m_camRotateSpeed{ 1.0f };
 	
 	std::weak_ptr<SceneComponent> m_cameraHolder;
-	std::weak_ptr<RigidBodyComponent> m_rigidBodyComp;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
-	// std::shared_ptr<BlendClip> m_tempLoco;
 
 	// tag - action 맵
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;

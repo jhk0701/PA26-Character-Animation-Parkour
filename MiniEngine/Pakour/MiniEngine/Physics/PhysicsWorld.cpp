@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Log.h"
 #include <physx/PxPhysicsAPI.h>
@@ -28,7 +28,7 @@ namespace MiniEngine::Physics
 	bool PhysicsWorld::Init()
 	{
 		if (m_scene)
-			return true; // ÀÌ¹Ì ÃÊ±âÈ­µÈ »óÈ²
+			return true; // ì´ë¯¸ ì´ˆê¸°í™”ëœ ìƒí™©
 
 		m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
 		if (m_foundation == nullptr)
@@ -45,7 +45,7 @@ namespace MiniEngine::Physics
 			return false;
 		}
 
-		m_dispatcher = PxDefaultCpuDispatcherCreate(1); // ´ÜÀÏ ¿öÄ¿ »ı¼º
+		m_dispatcher = PxDefaultCpuDispatcherCreate(1); // ë‹¨ì¼ ì›Œì»¤ ìƒì„±
 
 		PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
 		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
@@ -60,9 +60,13 @@ namespace MiniEngine::Physics
 			return false;
 		}
 
-		// ±âº» ¹°¸® ÀçÁú
+		// ê¸°ë³¸ ë¬¼ë¦¬ ì¬ì§ˆ
 		m_material = m_physics->createMaterial(0.5f, 0.5f, 0.6f);
 		MG_LOG_INFO("PhysX initialized (CPU, gravity -9.81 y-up)");
+
+		m_controllerManager = PxCreateControllerManager(*m_scene);
+		if (!m_controllerManager)
+			MG_LOG_ERROR("PhysX : PxCreateControllerManager failed");
 
 		SetDefaultCollisionGroup();
 
@@ -71,7 +75,13 @@ namespace MiniEngine::Physics
 
 	void PhysicsWorld::Shutdown()
 	{
-		// »ı¼º ¿ª¼ø release. Material Àº m_physics ¼ÒÀ¯¶ó º°µµ release ¾È ÇÔ(ÂüÁ¶¸¸ ÇØÁ¦).
+		// ìƒì„± ì—­ìˆœ release. Material ì€ m_physics ì†Œìœ ë¼ ë³„ë„ release ì•ˆ í•¨(ì°¸ì¡°ë§Œ í•´ì œ).
+		if (m_controllerManager)
+		{
+			m_controllerManager->release();
+			m_controllerManager = nullptr;
+		}
+
 		if (m_scene) 
 		{
 			m_scene->release();
@@ -105,7 +115,7 @@ namespace MiniEngine::Physics
 			return;
 
 		m_scene->simulate(_fixedDt);
-		m_scene->fetchResults(true); // ºí·ÎÅ·½ÃÅ°°í °á°ú ¹İ¿µ±îÁö ´ë±â
+		m_scene->fetchResults(true); // ë¸”ë¡œí‚¹ì‹œí‚¤ê³  ê²°ê³¼ ë°˜ì˜ê¹Œì§€ ëŒ€ê¸°
 	}
 
 	bool PhysicsWorld::CreateRigidFloor()
@@ -113,8 +123,8 @@ namespace MiniEngine::Physics
 		if (m_scene == nullptr)
 			return false;
 
-		// Áö¸é (Æò¸é) : ¹ı¼± +y, À§Ä¡ y = 0, ¹«ÇÑ Æò¸é
-		// ±âº» °­Ã¼
+		// ì§€ë©´ (í‰ë©´) : ë²•ì„  +y, ìœ„ì¹˜ y = 0, ë¬´í•œ í‰ë©´
+		// ê¸°ë³¸ ê°•ì²´
 		PxRigidStatic* ground = PxCreatePlane(*m_physics, PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_material);
 		if (ground == nullptr)
 			return false;
@@ -171,32 +181,50 @@ namespace MiniEngine::Physics
 		m_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, m_bIsDebugging);
 	}
 
-	physx::PxRigidActor* PhysicsWorld::CreateDynamicCapsule(const Vector3& _pos, const Quaternion& _rot, float _radius, float _height, float _density)
+	physx::PxController* PhysicsWorld::CreateCapsuleController(const CapsuleControllerDesc& _desc)
 	{
-		if (!m_physics || !m_scene || !m_material)
+		if (!m_controllerManager || !m_material)
 			return nullptr;
 
-		PxRigidDynamic* body = PxCreateDynamic(
-			*m_physics,
-			PxTransform(ToPx(_pos), ToPx(_rot)),
-			PxCapsuleGeometry(_radius, _height),
-			*m_material,
-			_density
+		PxCapsuleControllerDesc d;
+		d.radius = _desc.radius;
+		d.height = _desc.height;
+		d.stepOffset = _desc.stepOffset;
+		d.contactOffset = _desc.contactOffset;
+		d.slopeLimit = cosf(ToRadians(_desc.slopeLimitDeg)); // ì½”ì‚¬ì¸ ê°ìœ¼ë¡œ ë³€í™˜
+		d.upDirection = PxVec3(0.0f, 1.0f, 0.0f);
+		d.material = m_material;
+		d.position = PxExtendedVec3(
+			static_cast<PxExtended>(_desc.footPosition.x),
+			static_cast<PxExtended>(_desc.footPosition.y),
+			static_cast<PxExtended>(_desc.footPosition.z)
 		);
 
-		if (body == nullptr)
+		if (!d.isValid())
+		{
+			MG_LOG_ERROR("PhysX : PxCapsuleControllerê°€ ìœ íš¨í•˜ì§€ ì•ŠìŒ\n(radius > 0, height > 0, stepOffset <= height + 2 * radius í™•ì¸ í•„ìš”).");
 			return nullptr;
+		}
 
-		m_scene->addActor(*body);
-		return body;
+		PxController* cont = m_controllerManager->createController(d);
+		if (!cont)
+		{
+			MG_LOG_ERROR("PhysX : Create Controller Failed");
+			return nullptr;
+		}
+
+		// ìº¡ìŠ ì¤‘ì‹¬ ìœ„ì¹˜ ì„¤ì •
+		// ì”¬ì— ìƒì„± ì§í›„ë¼ í…”ë ˆí¬íŠ¸ ê´€ë ¨í•´ì„œ ì•ˆì „
+		cont->setFootPosition(d.position);
+		return cont;
 	}
 
 	void PhysicsWorld::SetDefaultCollisionGroup()
 	{
-		// °¡±ŞÀû ·±Å¸ÀÓ Áß¿¡ µ¿ÀûÀ¸·Î ÀÌ ºÎºĞÀ» Á¦¾îÇÒ ÀÏÀÌ ¾ø¾î¾ß ÇÔ
-		// ±×·¯¹Ç·Î º°µµ ÀÎÅÍÆäÀÌ½º¸¦ ¸¸µéÁö ¾ÊÀ» °Í
+		// ê°€ê¸‰ì  ëŸ°íƒ€ì„ ì¤‘ì— ë™ì ìœ¼ë¡œ ì´ ë¶€ë¶„ì„ ì œì–´í•  ì¼ì´ ì—†ì–´ì•¼ í•¨
+		// ê·¸ëŸ¬ë¯€ë¡œ ë³„ë„ ì¸í„°í˜ì´ìŠ¤ë¥¼ ë§Œë“¤ì§€ ì•Šì„ ê²ƒ
 
-		// ÇÁ·ÎÁ§Æ® °øÅëÀûÀ¸·Î Àû¿ëÇÒ ±âº» Ãæµ¹ ·¹ÀÌ¾î ¼³Á¤
+		// í”„ë¡œì íŠ¸ ê³µí†µì ìœ¼ë¡œ ì ìš©í•  ê¸°ë³¸ ì¶©ëŒ ë ˆì´ì–´ ì„¤ì •
 		/*
 			Player - Player			O
 			Player - Land			O
@@ -208,8 +236,8 @@ namespace MiniEngine::Physics
 			Obstacle - Obstacle		X
 		*/
 
-		// ±âº»ÀûÀ¸·Î 0~31 ·¹ÀÌ¾î ¸ğµÎ true
-		// false¸¸ ¸í½Ã
+		// ê¸°ë³¸ì ìœ¼ë¡œ 0~31 ë ˆì´ì–´ ëª¨ë‘ true
+		// falseë§Œ ëª…ì‹œ
 		PxSetGroupCollisionFlag(ECollisionGroup::Land,		ECollisionGroup::Obstacle,		false);
 		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::Obstacle,		false);
 

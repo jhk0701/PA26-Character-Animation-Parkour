@@ -22,9 +22,6 @@ namespace MiniEngine
 		void Init(Physics::PhysicsWorld& _world, EBodyType _type, 
 			const Vector3& _halfExtents, float _denity = 10.0f,
 			const std::shared_ptr<SceneComponent>& _target = nullptr);
-		void InitAsDynamicCapsule(Physics::PhysicsWorld& _world, 
-			const Vector2& _capsuleExtent, float _denity = 10.0f, 
-			const std::shared_ptr<SceneComponent>& _target = nullptr);
 		
 		std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 		EBodyType GetBodyType() const { return m_type; }

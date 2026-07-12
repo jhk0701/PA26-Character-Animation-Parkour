@@ -3,6 +3,7 @@
 #include <vector>
 #include "Scene/SceneComponent.h"
 #include "Asset/SkinnedMesh.h"
+#include "Asset/RootMotion.h"
 
 namespace MiniEngine
 {
@@ -26,6 +27,9 @@ namespace MiniEngine
 
         // 렌더러가 b2 에 업로드할 본 최종 행렬 (본 개수만큼).
         std::vector<Matrix>* GetBoneMatricesPtr() { return &m_boneMatrices; }
+        
+        RootMotionDelta ConsumeRootMotionDelta();
+        bool IsRootMotionEnabled() const;
 
     private:
         std::shared_ptr<SkinnedMesh> m_mesh;    // 스킨 메시 소유

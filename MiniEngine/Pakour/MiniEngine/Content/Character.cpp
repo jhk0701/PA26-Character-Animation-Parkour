@@ -96,10 +96,7 @@ void Character::Construct()
 	}
 
 	{
-		// RigidBody 설정
-		m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
-		Vector2 capsuleExtent(1.0f, 1.8f);
-		m_rigidBodyComp.lock()->InitAsDynamicCapsule(*GetScene()->GetPhysics().lock(), capsuleExtent * 0.5f, 10.0f, GetRoot());
+		// 캐릭터 컨트롤러 설정
 	}
 }
 
