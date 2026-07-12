@@ -19,4 +19,3 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Sh
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Shaders\StaticMeshLambert.hlsl
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Shaders\SkinnedMeshLambert.hlsl
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Assets\pyramid.obj
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\MiniEngi.25EFF4BB.Up2Date
