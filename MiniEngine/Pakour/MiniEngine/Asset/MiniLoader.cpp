@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Asset/MiniLoader.h"
 #include "Asset/MiniFormat.h"
 #include "Core/Log.h"
@@ -556,42 +556,83 @@ namespace MiniEngine
         // 글로벌 바인드 역행렬 = 역방향 이동.
         Skeleton skeleton;
         skeleton.bones.resize(2);
-        skeleton.bones[0].parentIndex     = -1;
-        skeleton.bones[0].name            = "root";
-        skeleton.bones[1].parentIndex     = 0;
-        skeleton.bones[1].localBindPose   = Matrix::CreateTranslation(0.0f, 2.0f, 0.0f);
+        skeleton.bones[0].parentIndex = -1;
+        skeleton.bones[0].name = "root";
+        skeleton.bones[1].parentIndex = 0;
+        skeleton.bones[1].localBindPose = Matrix::CreateTranslation(0.0f, 2.0f, 0.0f);
         skeleton.bones[1].inverseBindPose = Matrix::CreateTranslation(0.0f, -2.0f, 0.0f);
-        skeleton.bones[1].name            = "upper";
+        skeleton.bones[1].name = "upper";
 
         // 클립 = bone1 왕복 회전(0° → +40° → 0° → −40° → 0°, 2초 루프). 축만 다름:
-        // "wave"(Z축) / "twist"(Y축) — 크로스페이드가 시각적으로 구분되도록 2개 수록.
+        // "wave"(Z축) / "twist"(Y축) / "roll"(X축) — 크로스페이드·블렌드 스페이스(1D 3샘플 / 2D 삼각형)
+        // 데모가 시각적으로 구분되도록 3개 수록.
         const struct { const char* name; Vector3 axis; } kClipDefs[] = {
             { "wave",  Vector3(0.0f, 0.0f, 1.0f) },
             { "twist", Vector3(0.0f, 1.0f, 0.0f) },
+            { "roll",  Vector3(1.0f, 0.0f, 0.0f) },
         };
 
         std::vector<AnimClip> clips;
         for (const auto& def : kClipDefs)
         {
             AnimClip clip;
-            clip.name           = def.name;
-            clip.duration       = 2.0f;
+            clip.name = def.name;
+            clip.duration = 2.0f;
             clip.ticksPerSecond = 1.0f;
 
             AnimChannel channel;
             channel.boneIndex = 1;
-            const float kTimes[5]  = { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f };
+            const float kTimes[5] = { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f };
             const float kAngles[5] = { 0.0f, ToRadians(40.0f), 0.0f, ToRadians(-40.0f), 0.0f };
             for (int i = 0; i < 5; ++i)
             {
                 QuatKey key;
-                key.time  = kTimes[i];
+                key.time = kTimes[i];
                 key.value = Quaternion::CreateFromAxisAngle(def.axis, kAngles[i]);
                 channel.rot.push_back(key);
             }
             // pos/scale 트랙은 비움 → 바인드 포즈 성분(이동 y=2, 스케일 1) 유지.
             clip.channels.push_back(std::move(channel));
             clips.push_back(std::move(clip));
+        }
+
+        // ── 루트 모션 검증 클립 (bone0="root" 에 이동/회전 트랙) ──
+        // 루트 모션을 끄면 앞으로 나아가다 루프 지점에서 원점으로 튕겨 돌아오고(증상 재현),
+        // 켜면 액터가 계속 전진/회전한다. bone1 흔들기를 얹어 재생 중임이 눈에 보이게 한다.
+        {
+            AnimChannel wave; // 상체 흔들기 — 3클립과 동일한 Z축 왕복.
+            wave.boneIndex = 1;
+            const float kTimes[5] = { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f };
+            const float kAngles[5] = { 0.0f, ToRadians(40.0f), 0.0f, ToRadians(-40.0f), 0.0f };
+            for (int i = 0; i < 5; ++i)
+                wave.rot.push_back({ kTimes[i], Quaternion::CreateFromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), kAngles[i]) });
+
+            // "walk_fwd": 2초에 +Z 로 2유닛(루프당 순 변위 2).
+            AnimClip walk;
+            walk.name = "walk_fwd";
+            walk.duration = 2.0f;
+            walk.ticksPerSecond = 1.0f;
+            AnimChannel walkRoot;
+            walkRoot.boneIndex = 0;
+            walkRoot.pos.push_back({ 0.0f, Vector3(0.0f, 0.0f, 0.0f) });
+            walkRoot.pos.push_back({ 2.0f, Vector3(0.0f, 0.0f, 2.0f) });
+            walk.channels.push_back(std::move(walkRoot));
+            walk.channels.push_back(wave);
+            clips.push_back(std::move(walk));
+
+            // "turn_left": 2초에 Y축 +90°(루프당 순 회전 90°).
+            AnimClip turn;
+            turn.name = "turn_left";
+            turn.duration = 2.0f;
+            turn.ticksPerSecond = 1.0f;
+            AnimChannel turnRoot;
+            turnRoot.boneIndex = 0;
+            for (int i = 0; i < 3; ++i)
+                turnRoot.rot.push_back({ i * 1.0f,
+                    Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), ToRadians(45.0f * i)) });
+            turn.channels.push_back(std::move(turnRoot));
+            turn.channels.push_back(std::move(wave));
+            clips.push_back(std::move(turn));
         }
 
         return WriteSkinnedMesh(_path, vertices, indices, skeleton, clips);
