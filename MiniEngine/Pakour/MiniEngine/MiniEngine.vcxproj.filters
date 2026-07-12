@@ -211,7 +211,7 @@
     <ClInclude Include="Asset\RootMotion.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\CharacaterControllerComponent.h">
+    <ClInclude Include="Scene\CharacterControllerComponent.h">
       <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -324,7 +324,7 @@
     <ClCompile Include="Asset\RootMotion.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\CharacaterControllerComponent.cpp">
+    <ClCompile Include="Scene\CharacterControllerComponent.cpp">
       <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClCompile>
   </ItemGroup>

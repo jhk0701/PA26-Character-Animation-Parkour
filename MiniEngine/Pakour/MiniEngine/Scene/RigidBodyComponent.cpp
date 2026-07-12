@@ -5,10 +5,16 @@
 
 #include <physx/PxPhysicsAPI.h>
 #include "Physics/PhysicsWorld.h"
-#include "CharacaterControllerComponent.h"
+#include "CharacterControllerComponent.h"
 
 namespace MiniEngine
 {
+	void RigidBodyComponent::FixedTick(float _dt)
+	{
+		Component::FixedTick(_dt);
+		SyncTransform();
+	}
+
 	void RigidBodyComponent::Init(Physics::PhysicsWorld& _world, EBodyType _type, const Vector3& _halfExtents, float _denity, const std::shared_ptr<SceneComponent>& _target)
 	{
 		// root 컴포넌트를 대상으로 Rigidbody가 Transform을 사용할 것

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 
 namespace MiniEngine
@@ -12,7 +12,8 @@ namespace MiniEngine
         virtual ~Component() = default;
 
         virtual void OnAttach() {}
-        virtual void Tick(float /*dt*/) {}
+        virtual void Tick(float _dt) {}
+        virtual void FixedTick(float _dt) {}
         virtual void Render(Graphics::RenderContext& _context) {}
     
         std::weak_ptr<Actor> owner;

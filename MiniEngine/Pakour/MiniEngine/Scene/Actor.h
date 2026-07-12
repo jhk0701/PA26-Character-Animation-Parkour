@@ -18,6 +18,7 @@ namespace MiniEngine
 
         virtual void BeginPlay() {}
         virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
+        virtual void FixedTick(float _dt); // 물리 호출용 FixedTick
         virtual void Render(Graphics::RenderContext& _context);
         virtual void EndPlay() {}
 

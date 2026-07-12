@@ -10,9 +10,11 @@ namespace MiniEngine
 {
 	class SceneComponent;
     class SkeletalMeshComponent;
-	class CharacaterControllerComponent : public Component
+	class CharacterControllerComponent : public Component
 	{
 	public:
+        void FixedTick(float _dt) override;
+
 		void Init(Physics::PhysicsWorld& _world, const Physics::CapsuleControllerDesc& _desc,
 			const std::shared_ptr<SceneComponent>& _target = nullptr);
 

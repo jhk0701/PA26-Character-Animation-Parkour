@@ -7,6 +7,7 @@ namespace MiniEngine
 {
 	class RigidBodyComponent;
 	class SkeletalMeshComponent;
+	class CharacterControllerComponent;
 	class Animator;
 	class BlendClip;
 	class ActionClip;
@@ -53,6 +54,7 @@ private:
 	
 	std::weak_ptr<SceneComponent> m_cameraHolder;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
+	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
 	// tag - action 맵
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;

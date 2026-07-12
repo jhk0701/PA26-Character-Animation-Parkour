@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <vector>
 #include <memory>
 #include <type_traits>
@@ -11,7 +11,7 @@ namespace MiniEngine
 {
     namespace Graphics { struct RenderContext; }
 
-    struct Light // ·»´õ¸µ¿ë °£ÀÌ µğ·º¼Å³Î ¶óÀÌÆ®
+    struct Light // ë Œë”ë§ìš© ê°„ì´ ë””ë ‰ì…”ë„ ë¼ì´íŠ¸
     {
         Vector3 m_dir;
         Vector3 m_color;
@@ -57,16 +57,16 @@ namespace MiniEngine
         Light& GetLight() { return m_light; }
 
     private:
-        // °ü¸®ÇÒ ¾×ÅÍ ÀÎ½ºÅÏ½º
+        // ê´€ë¦¬í•  ì•¡í„° ì¸ìŠ¤í„´ìŠ¤
         std::vector<std::shared_ptr<Actor>> m_actors;
 
-        // ¹°¸® ¿£Áø
-        std::shared_ptr<Physics::PhysicsWorld> m_physics;   // ¾À¸¶´Ù ¼³Ä¡ÇØµÑ °Í
-        float m_physicsAcuum{ 0.0f };                       // °íÁ¤ 60Hz·Î ½ºÅÜÇÒ °Í
+        // ë¬¼ë¦¬ ì—”ì§„
+        std::shared_ptr<Physics::PhysicsWorld> m_physics;   // ì”¬ë§ˆë‹¤ ì„¤ì¹˜í•´ë‘˜ ê²ƒ
+        float m_physicsAcuum{ 0.0f };                       // ê³ ì • 60Hzë¡œ ìŠ¤í…í•  ê²ƒ
 
-        // ¾À ·»´õ¸µ
+        // ì”¬ ë Œë”ë§
         Light m_light;
-        std::shared_ptr<CameraComponent> m_defaultCam; // m_mainCamÀÌ ¾øÀ»¶§ »ç¿ëÇÒ ¿øÁ¡ À§Ä¡ÀÇ Ä«¸Ş¶ó
+        std::shared_ptr<CameraComponent> m_defaultCam; // m_mainCamì´ ì—†ì„ë•Œ ì‚¬ìš©í•  ì›ì  ìœ„ì¹˜ì˜ ì¹´ë©”ë¼
         std::shared_ptr<CameraComponent> m_mainCam;
 
         void WriteCameraData(Graphics::RenderContext& _outContext);

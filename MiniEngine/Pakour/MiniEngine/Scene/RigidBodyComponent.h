@@ -19,6 +19,8 @@ namespace MiniEngine
 	public:
 		enum class EBodyType { Static, Dynamic };
 
+		void FixedTick(float _dt) override;
+
 		void Init(Physics::PhysicsWorld& _world, EBodyType _type, 
 			const Vector3& _halfExtents, float _denity = 10.0f,
 			const std::shared_ptr<SceneComponent>& _target = nullptr);

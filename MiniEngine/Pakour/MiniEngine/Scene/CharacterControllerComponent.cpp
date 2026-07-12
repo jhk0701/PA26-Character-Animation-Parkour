@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Scene/CharacaterControllerComponent.h"
+#include "Scene/CharacterControllerComponent.h"
 #include "Scene/Actor.h"
 #include "Scene/SceneComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
@@ -8,14 +8,22 @@
 
 namespace MiniEngine
 {
-	void CharacaterControllerComponent::CheckParented(const std::shared_ptr<SceneComponent>& _target)
+	void CharacterControllerComponent::CheckParented(const std::shared_ptr<SceneComponent>& _target)
 	{
 		// RigidBody 처럼 Global Transform이어야 하므로 확인 코드 추가
 		if (_target && _target->GetParent())
-			MG_LOG_WARN("[CharacaterControllerComponent] target에 부모가 있음");
+			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
-	void CharacaterControllerComponent::Init(Physics::PhysicsWorld& _world, 
+	void CharacterControllerComponent::FixedTick(float _dt)
+	{
+		Component::FixedTick(_dt);
+
+		Move(_dt);
+		SyncTransform();
+	}
+
+	void CharacterControllerComponent::Init(Physics::PhysicsWorld& _world,
 		const Physics::CapsuleControllerDesc& _desc, const std::shared_ptr<SceneComponent>& _target)
 	{
 		std::shared_ptr<SceneComponent> target = _target;
@@ -49,12 +57,12 @@ namespace MiniEngine
 			actor->userData = o.get();
 	}
 
-	void CharacaterControllerComponent::AddMovementInput(const Vector3& _worldDelta)
+	void CharacterControllerComponent::AddMovementInput(const Vector3& _worldDelta)
 	{
 		m_pendingMove += _worldDelta;
 	}
 
-	void CharacaterControllerComponent::AddYaw(const Quaternion& _deltaRotation)
+	void CharacterControllerComponent::AddYaw(const Quaternion& _deltaRotation)
 	{
 		std::shared_ptr<SceneComponent> target = m_target.lock();
 		if (!target)
@@ -64,7 +72,7 @@ namespace MiniEngine
 		target->localTransform.rotation.Normalize();
 	}
 
-	void CharacaterControllerComponent::Jump(float _speed)
+	void CharacterControllerComponent::Jump(float _speed)
 	{
 		if (!m_grounded)
 			return;
@@ -73,7 +81,7 @@ namespace MiniEngine
 		m_grounded = false;
 	}
 
-	void CharacaterControllerComponent::Move(float _dt)
+	void CharacterControllerComponent::Move(float _dt)
 	{
 		std::shared_ptr<SceneComponent> target = m_target.lock();
 		if (!m_controller || !target)
@@ -113,7 +121,7 @@ namespace MiniEngine
 		m_pendingMove = Vector3(0.0f);
 	}
 
-	void CharacaterControllerComponent::SyncTransform()
+	void CharacterControllerComponent::SyncTransform()
 	{
 		std::shared_ptr<SceneComponent> target = m_target.lock();
 		if (!m_controller || !target)
@@ -124,21 +132,21 @@ namespace MiniEngine
 		target->localTransform.position = Vector3(foot.x, foot.y, foot.z);
 	}
 
-	void CharacaterControllerComponent::SetRootMotionSource(const std::shared_ptr<SkeletalMeshComponent>& _skeletal)
+	void CharacterControllerComponent::SetRootMotionSource(const std::shared_ptr<SkeletalMeshComponent>& _skeletal)
 	{
 		m_rootMotionSource = _skeletal;
 		if (!_skeletal)
 			return;
 
 		if (!_skeletal->IsRootMotionEnabled())
-			MG_LOG_WARN("[CharactorControllerComp] 소스에 RootMotionEnable이 true가 아님");
+			MG_LOG_WARN("[CharacterControllerComp] 소스에 RootMotionEnable이 true가 아님");
 
 		const Quaternion& r = _skeletal->localTransform.rotation;
 		if (fabsf(fabsf(r.w) - 1.0f) > 1e-4f)
-			MG_LOG_WARN("[CharactorControllerComp] 루트 모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
+			MG_LOG_WARN("[CharacterControllerComp] 루트 모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
 	}
 
-	Vector3 CharacaterControllerComponent::GetFootPosition() const
+	Vector3 CharacterControllerComponent::GetFootPosition() const
 	{
 		if (!m_controller)
 			return Vector3(0.0f);

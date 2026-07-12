@@ -1,11 +1,8 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Core/Log.h"
 #include "Core/Graphics.h"
 #include "Scene/Scene.h"
 #include "Scene/CameraComponent.h"
-
-// Å×½ºÆ®¿ë ÀÓ½Ã Ãß°¡
-#include "Scene/RigidBodyComponent.h"
 
 namespace MiniEngine
 {
@@ -20,12 +17,12 @@ namespace MiniEngine
             return;
         }
 
-        // main camÀÌ »ı¼ºµÇÁö ¾ÊÀ»¶§¸¦ ´ëºñÇÑ ±âº» Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ®
+        // main camì´ ìƒì„±ë˜ì§€ ì•Šì„ë•Œë¥¼ ëŒ€ë¹„í•œ ê¸°ë³¸ ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸
         m_defaultCam = std::make_shared<CameraComponent>();
         m_defaultCam->aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
         m_defaultCam->localTransform.position = Vector3(0.0f);
 
-        // ¶óÀÌÆ® ±âº»°ª
+        // ë¼ì´íŠ¸ ê¸°ë³¸ê°’
         m_light.m_dir = Vector3(-0.4f, -1.0f, -0.5f);
         m_light.m_dir.Normalize();
         m_light.m_ambient = 0.3f;
@@ -48,11 +45,9 @@ namespace MiniEngine
             m_physicsAcuum -= FIXED_DT;
         }
 
-        // ¹°¸® °­Ã¼ °ü·ÃÇØ¼­ ¾ïÁö·Î Á¶Á¤Áß -> ÄÄÆ÷³ÍÆ® À§°è¸¦ ÅëÇÑ º¸Á¤À¸·Î º¯°æÇÏ±â
         for (std::shared_ptr<Actor> pActor : GetActors())
         {
-            if (std::shared_ptr<RigidBodyComponent> pRB = pActor->GetComponent<RigidBodyComponent>())
-                pRB->SyncTransform();
+            pActor->FixedTick(_dt);
         }
     }
 
@@ -65,7 +60,7 @@ namespace MiniEngine
     void Scene::Render(Graphics::RenderContext& _context)
     {
         WriteCameraData(_context);
-        WriteFrameCB(_context); // ¶óÀÌÆ® µî
+        WriteFrameCB(_context); // ë¼ì´íŠ¸ ë“±
 
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Render(_context);
@@ -81,7 +76,7 @@ namespace MiniEngine
 
     void Scene::WriteCameraData(Graphics::RenderContext& _outContext)
     {
-        // ·»´õ¸µ ÄÁÅØ½ºÆ®¿¡ ÇöÀç Ä«¸Ş¶ó Á¤º¸ ±âÀÔ
+        // ë Œë”ë§ ì»¨í…ìŠ¤íŠ¸ì— í˜„ì¬ ì¹´ë©”ë¼ ì •ë³´ ê¸°ì…
         if (!m_mainCam)
         {
             _outContext.m_camView = m_defaultCam->GetViewMatrix();

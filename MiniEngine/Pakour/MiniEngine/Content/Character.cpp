@@ -12,6 +12,7 @@
 #include "Scene/CameraComponent.h"
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
+#include "Scene/CharacterControllerComponent.h"
 #include "Animation/Animator.h"
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
@@ -97,6 +98,14 @@ void Character::Construct()
 
 	{
 		// 캐릭터 컨트롤러 설정
+		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
+		Physics::CapsuleControllerDesc desc;
+		desc.radius = 0.5f;
+		desc.height = 3.0f;
+		desc.stepOffset = 0.3f;
+		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
+		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
+		m_charCont = pCharCont;
 	}
 }
 
@@ -113,7 +122,7 @@ void Character::Tick(float _dt)
 
 	Actor::Tick(_dt);
 
-	ProcessRootMotion();
+	// ProcessRootMotion();
 }
 
 void Character::ProcessInput(float _dt)
@@ -159,18 +168,18 @@ void Character::ProcessInput(float _dt)
 
 void Character::ProcessRootMotion()
 {
-	// TODO : 캐릭터 컨트롤러로 이동
+	// 캐릭터 컨트롤러로 이동
 	// 추출한 루트모션 적용
-	std::shared_ptr<SceneComponent> pRoot = GetRoot();
-	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
-	RootMotionDelta d = pSkin->GetAnim().lock()->ConsumeRootMotionDelta();
+	//std::shared_ptr<SceneComponent> pRoot = GetRoot();
+	//std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	//RootMotionDelta d = pSkin->GetAnim().lock()->ConsumeRootMotionDelta();
 
-	const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
-	Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
+	//const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
+	//Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
 
-	pRoot->localTransform.position += movement;
-	pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
-	pRoot->localTransform.rotation.Normalize();
+	//pRoot->localTransform.position += movement;
+	//pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
+	//pRoot->localTransform.rotation.Normalize();
 }
 
 void Character::SetInputDir(const Vector2& _dir)
@@ -320,6 +329,8 @@ void Character::InitInput()
 		{
 			std::shared_ptr<ActionClip> pJump = GetActions((uint8_t)Content::Config::ETagAct::Jump);
 			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
+
+			m_charCont.lock()->Jump(10.0f);
 		});
 
 	// 레이캐스트
