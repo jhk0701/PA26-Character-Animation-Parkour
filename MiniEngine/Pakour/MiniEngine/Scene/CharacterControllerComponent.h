@@ -3,6 +3,7 @@
 #include "Scene/Component.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Math.h"
+#include "Physics/CollsionLayer.h"
 
 namespace physx { class PxController; }
 
@@ -33,6 +34,8 @@ namespace MiniEngine
 
         void SetGravity(float _gravity) { m_gravity = _gravity; }
         std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
+
+        void SetLayer(Physics::Layer _layer);
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);

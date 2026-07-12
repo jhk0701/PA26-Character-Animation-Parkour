@@ -28,7 +28,7 @@ Character::~Character()
 void Character::Construct()
 {
 	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
-	pRoot->localTransform.position = Vector3(0.0f, 10.0f, -1.0f);
+	pRoot->localTransform.position = Vector3(0.0f, 1.0f, -1.0f);
 	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
@@ -105,6 +105,8 @@ void Character::Construct()
 		desc.stepOffset = 0.3f;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
+		pCharCont->SetLayer(MiniEngine::Physics::Layer::Character);
+
 		m_charCont = pCharCont;
 	}
 }
@@ -328,7 +330,7 @@ void Character::InitInput()
 			std::shared_ptr<ActionClip> pJump = GetActions((uint8_t)Content::Config::ETagAct::Jump);
 			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
 
-			m_charCont.lock()->Jump(10.0f);
+			m_charCont.lock()->Jump(m_jumpSpeed);
 		});
 
 	// 레이캐스트

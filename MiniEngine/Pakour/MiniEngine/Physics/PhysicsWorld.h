@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Core/Math.h"
+#include "Physics/CollsionLayer.h"
 
 namespace physx
 {
@@ -81,7 +82,8 @@ namespace MiniEngine::Physics
 
         void ToggleDebugMode(bool _bIsOn);
 
-        bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult);
+        bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
 
     private:
         bool m_bIsDebugging{ false };

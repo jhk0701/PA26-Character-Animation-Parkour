@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Scene/Component.h"
 #include "Core/Math.h"
+#include "Physics/CollsionLayer.h"
 
 namespace physx { class PxRigidActor; }
 
@@ -35,6 +36,8 @@ namespace MiniEngine
 
 		void SyncTransform(); // PhysX -> Actor Transform
 		void PushTransform(); // Actor Transform -> PhysX
+
+		void SetLayer(Physics::Layer _layer);
 
 	private:
 		void CheckParented(const std::shared_ptr<SceneComponent>& _target);

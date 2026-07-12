@@ -93,6 +93,14 @@ namespace MiniEngine
 		}
 	}
 
+	void RigidBodyComponent::SetLayer(Physics::Layer _layer)
+	{
+		if (!m_actor)
+			return;
+
+		Physics::PhysicsWorld::SetQueryLayer(*m_actor, Physics::ToMask(_layer));
+	}
+
 	void RigidBodyComponent::CheckParented(const std::shared_ptr<SceneComponent>& _target)
 	{
 		if (_target && _target->GetParent())

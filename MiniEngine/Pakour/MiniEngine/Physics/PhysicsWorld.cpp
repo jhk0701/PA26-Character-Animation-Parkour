@@ -19,6 +19,19 @@ namespace MiniEngine::Physics
 
 	void* RaycastResult::GetActor() const { return m_hitActor->userData; }
 
+	void PhysicsWorld::SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask)
+	{
+		// shape 수는 현재 팩토리가 만드는 액터 기준 항상 1, 
+		// 복합 셰이프로 확장돼도 동작하도록 전부 순회
+		const PxU32 count = _actor.getNbShapes();
+		std::vector<PxShape*> shapes(count);
+		_actor.getShapes(shapes.data(), count);
+
+		const PxFilterData filterData(_layerMask, 0, 0, 0);
+		for (PxShape* shape : shapes)
+			shape->setQueryFilterData(filterData);
+	}
+
 	PhysicsWorld::PhysicsWorld() { }
 	PhysicsWorld::~PhysicsWorld()
 	{
@@ -148,6 +161,9 @@ namespace MiniEngine::Physics
 		if (body == nullptr)
 			return nullptr;
 
+		// word0 = 0 인 shape는 마스크가 있는 모든 레이에 안맞을 것
+		// 그러니 마스크를 활용하려거든 SetQueryLayer 설정
+		SetQueryLayer(*body, ToMask(Layer::Default));
 		m_scene->addActor(*body);
 		return body;
 	}
@@ -166,6 +182,7 @@ namespace MiniEngine::Physics
 		if (body == nullptr)
 			return nullptr;
 
+		SetQueryLayer(*body, ToMask(Layer::Default));
 		m_scene->addActor(*body);
 		return body;
 	}
@@ -216,6 +233,10 @@ namespace MiniEngine::Physics
 		// 캡슐 중심 위치 설정
 		// 씬에 생성 직후라 텔레포트 관련해서 안전
 		cont->setFootPosition(d.position);
+
+		if (PxRigidDynamic* actor = cont->getActor())
+			SetQueryLayer(*actor, ToMask(Layer::Default));
+
 		return cont;
 	}
 
@@ -245,26 +266,44 @@ namespace MiniEngine::Physics
 			PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, i, false);
 	}
 
-	bool PhysicsWorld::Raycast(const RaycastParam& _inParam, RaycastResult& _outResult)
+	bool PhysicsWorld::Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask) const
 	{
-		if (!m_scene)
+		// query filter 활용 _layerMask 에 비트가 켜진 레이어의 shape만 탐지 
+		// ToMask(Layer::Character) → 캐릭터
+		// Layer::Ground|Layer::Prop → 지형과 소품만
+
+		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
 			return false;
 
-		PxRaycastBuffer hit;
+		// 필터없음은 모두 통과될 것이므로 애초에 쏘지 않을 것
+		if (_layerMask == LayerMask::NONE)
+			return false;
 
+		// 쿼리 필터 생성
+		// word0 자리에 layerMask
+		const PxQueryFilterData filter(
+			PxFilterData(_layerMask, 0, 0, 0),
+			PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC
+		);
+
+		PxRaycastBuffer hit;
 		bool bIsHit = m_scene->raycast(
 			ToPx(_inParam.m_origin), 
 			ToPx(_inParam.m_dir), 
 			physx::PxReal(_inParam.m_maxDistance),
-			hit);
+			hit,
+			PxHitFlag::eDEFAULT,
+			filter) 
+			&& hit.hasBlock;
 
 		if (bIsHit) 
 		{
-			_outResult.m_pos = ToVec3(hit.block.position);
-			_outResult.m_nrm = ToVec3(hit.block.normal);
-			_outResult.m_distance = hit.block.distance;
-			_outResult.m_hitActor = hit.block.actor;
-			_outResult.m_hitShape = hit.block.shape;
+			const PxRaycastHit& block = hit.block;
+			_outResult.m_pos = ToVec3(block.position);
+			_outResult.m_nrm = ToVec3(block.normal);
+			_outResult.m_distance = block.distance;
+			_outResult.m_hitActor = block.actor;
+			_outResult.m_hitShape = block.shape;
 		}
 
 		return bIsHit;

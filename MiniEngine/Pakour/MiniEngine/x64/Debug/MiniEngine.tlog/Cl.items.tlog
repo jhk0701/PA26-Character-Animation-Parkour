@@ -17,6 +17,7 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\DirectX
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\GameCore.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\GameCore.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Core\Log.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Log.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Core\Timer.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Timer.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Physics\CollsionLayer.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\CollsionLayer.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Physics\PhysicsWorld.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\PhysicsWorld.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Platform\Input.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Input.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\CharacterControllerComponent.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\CharacterControllerComponent.obj

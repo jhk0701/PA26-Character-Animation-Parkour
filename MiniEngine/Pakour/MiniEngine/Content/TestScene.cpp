@@ -45,6 +45,7 @@ void TestScene::Construct()
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
 		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, 10.0f, pMeshComp);
+		pRB->SetLayer(MiniEngine::Physics::Layer::Ground);
 	}
 
 	{
@@ -118,8 +119,9 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vect
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetPhysics().lock();
 
-	std::shared_ptr<RigidBodyComponent> rbComp = ObstacleActor->AddComponent<RigidBodyComponent>();
-	rbComp->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale, 10.0f, staticMeshComp);
+	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale, 10.0f, staticMeshComp);
+	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle);
 
 	return ObstacleActor;
 }

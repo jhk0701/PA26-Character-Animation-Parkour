@@ -138,6 +138,7 @@
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Manager\UIManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Physics\CollsionLayer.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Scene\CharacterControllerComponent.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="GameCore.cpp" />
     <ClCompile Include="Core\Log.cpp" />
     <ClCompile Include="Core\Timer.cpp" />
+    <ClCompile Include="Physics\CollsionLayer.cpp" />
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Platform\Input.cpp" />
     <ClCompile Include="Scene\CharacterControllerComponent.cpp" />

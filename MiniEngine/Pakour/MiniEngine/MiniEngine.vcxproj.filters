@@ -214,6 +214,9 @@
     <ClInclude Include="Scene\CharacterControllerComponent.h">
       <Filter>Engine\07.Object\Component\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Physics\CollsionLayer.h">
+      <Filter>Engine\02.Core\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -326,6 +329,9 @@
     </ClCompile>
     <ClCompile Include="Scene\CharacterControllerComponent.cpp">
       <Filter>Engine\07.Object\Component\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CollsionLayer.cpp">
+      <Filter>Engine\02.Core\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
