@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Character.h"
 
 #include "Content/ContentConfig.h"
@@ -40,12 +40,12 @@ void Character::Construct()
 	charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	{
-		// ¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤
+		// ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •
 		std::shared_ptr<Animator> pAnim = skinComp->GetAnim().lock();
-		// ·ÎÄÚ¸ğ¼Ç ±¸Çö
+		// ë¡œì½”ëª¨ì…˜ êµ¬í˜„
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
-		// ¸ğ¼Ç ÀÔ·Â 
-		// TODO : Editor¿¡¼­ Á» »ç¿ëÇÏ±â ½±°Ô °³¼±ÇØ¾ßÇÔ
+		// ëª¨ì…˜ ì…ë ¥ 
+		// TODO : Editorì—ì„œ ì¢€ ì‚¬ìš©í•˜ê¸° ì‰½ê²Œ ê°œì„ í•´ì•¼í•¨
 		pBlend->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
 		pBlend->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
 		pBlend->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
@@ -59,7 +59,7 @@ void Character::Construct()
 		pAnim->ReserveBaseLocomotion(1);
 		pAnim->AddBaseLocomotion(pBlend);
 
-		// ´ÜÀÏ Àç»ı
+		// ë‹¨ì¼ ì¬ìƒ
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump]->AddClip(skinnedMesh->GetClipPtr(10));
 		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpOver] = std::make_shared<ActionClip>();
@@ -79,7 +79,7 @@ void Character::Construct()
 	}
 
 	{
-		// Ä³¸¯ÅÍ Ä«¸Ş¶ó ¼³Á¤
+		// ìºë¦­í„° ì¹´ë©”ë¼ ì„¤ì •
 		std::shared_ptr<MiniEngine::SceneComponent> pCamHolder = AddComponent<MiniEngine::SceneComponent>();
 		pCamHolder->AttachTo(GetRoot());
 		pCamHolder->localTransform.position = Vector3(0.0f, 1.5f, 0.0f);
@@ -95,7 +95,7 @@ void Character::Construct()
 	}
 
 	{
-		// RigidBody ¼³Á¤
+		// RigidBody ì„¤ì •
 		// m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
 		// Vector2 capsuleExtent(1.0f, 1.8f);
 		// m_rigidBodyComp.lock()->InitDynamicCapsule(*GetScene()->GetPhysics().lock(), capsuleExtent * 0.5f);
@@ -120,7 +120,7 @@ void Character::Tick(float _dt)
 
 void Character::ProcessInput(float _dt)
 {
-	// ÀÓ½Ã Ä«¸Ş¶ó Á¦¾î
+	// ì„ì‹œ ì¹´ë©”ë¼ ì œì–´
 	if (m_camRotDir.LengthSquared() > 0)
 	{
 		const float deltaSpeed = _dt * m_camRotateSpeed;
@@ -132,12 +132,12 @@ void Character::ProcessInput(float _dt)
 			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
 	}
 
-	// Å°º¸µå ÀÌµ¿Å°
+	// í‚¤ë³´ë“œ ì´ë™í‚¤
 	{
 		if (GetAnim().lock()->IsActionClipPlaying())
 			return;
 
-		// ÀÓ½Ã ÀÌµ¿ ÄÚµå
+		// ì„ì‹œ ì´ë™ ì½”ë“œ
 		Vector2 input = m_inputDir;
 		input.Normalize();
 
@@ -146,7 +146,7 @@ void Character::ProcessInput(float _dt)
 		const float deltaSpeed = _dt * m_moveSpeed;
 		std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
-		// Ä³¸¯ÅÍ Á¤¸é ±âÁØ ÀÌµ¿
+		// ìºë¦­í„° ì •ë©´ ê¸°ì¤€ ì´ë™
 		const Vector3& fwd = pRoot->localTransform.Forward();
 		const Vector3& rht = pRoot->localTransform.Right();
 
@@ -161,8 +161,8 @@ void Character::ProcessInput(float _dt)
 
 void Character::ProcessRootMotion()
 {
-	// TODO : Ä³¸¯ÅÍ ÄÁÆ®·Ñ·¯·Î ÀÌµ¿
-	// ÃßÃâÇÑ ·çÆ®¸ğ¼Ç Àû¿ë
+	// TODO : ìºë¦­í„° ì»¨íŠ¸ë¡¤ëŸ¬ë¡œ ì´ë™
+	// ì¶”ì¶œí•œ ë£¨íŠ¸ëª¨ì…˜ ì ìš©
 	std::shared_ptr<SceneComponent> pRoot = GetRoot();
 	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
 	RootMotionDelta d = pSkin->GetAnim().lock()->ConsumeRootMotionDelta();
@@ -192,7 +192,7 @@ std::weak_ptr<Animator> Character::GetAnim() const
 
 void Character::InitInput()
 {
-	// ¹ÙÀÎµù
+	// ë°”ì¸ë”©
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
@@ -316,7 +316,7 @@ void Character::InitInput()
 			SetCamRotDir(dir);
 		});
 
-	// Å×½ºÆ®¿ë Á¡ÇÁ
+	// í…ŒìŠ¤íŠ¸ìš© ì í”„
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
@@ -324,7 +324,7 @@ void Character::InitInput()
 			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
 		});
 
-	// ·¹ÀÌÄ³½ºÆ®
+	// ë ˆì´ìºìŠ¤íŠ¸
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
 		[this](float _dt) 
 		{

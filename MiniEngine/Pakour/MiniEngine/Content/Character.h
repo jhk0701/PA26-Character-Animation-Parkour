@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Scene/Actor.h"
 
 #include <unordered_map>
@@ -42,7 +42,7 @@ private:
 	void InitInput();
 	bool RaycastObstacle(Tag& _outTag);
 
-	// ÀÌµ¿ ±â´É -> ½Ã°£ ³²À¸¸é CharacterMovementComponent·Î ¸®ÆÑÅÍ¸µ
+	// ì´ë™ ê¸°ëŠ¥ -> ì‹œê°„ ë‚¨ìœ¼ë©´ CharacterMovementComponentë¡œ ë¦¬íŒ©í„°ë§
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
 	float m_lerpWeight{ 2.0f };
@@ -56,7 +56,7 @@ private:
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	// std::shared_ptr<BlendClip> m_tempLoco;
 
-	// tag - action ¸Ê
+	// tag - action ë§µ
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 };
 

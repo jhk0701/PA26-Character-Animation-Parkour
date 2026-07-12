@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 
 namespace Content::Config 
 {
-	extern constexpr uint8_t TAG_TYPE_ENV		= 0;
-	extern constexpr uint8_t TAG_TYPE_ACT		= 1;
-	extern constexpr uint8_t TAG_TYPE_HEIGHT	= 2;
+	inline constexpr uint8_t TAG_TYPE_ENV		= 0;
+	inline constexpr uint8_t TAG_TYPE_ACT		= 1;
+	inline constexpr uint8_t TAG_TYPE_HEIGHT	= 2;
 
 	enum class ETagEnv : uint8_t
 	{
@@ -18,7 +18,7 @@ namespace Content::Config
 	{
 		Landing,
 		Jump,
-		JumpOver, // ´ã³Ñ±â valut
+		JumpOver, // ë‹´ë„˜ê¸° valut
 
 		End
 	};
