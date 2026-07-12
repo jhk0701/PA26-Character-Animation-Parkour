@@ -4,6 +4,7 @@
 #include "Content/ContentConfig.h"
 #include "Core/Math.h"
 #include "Core/Log.h"
+#include "Physics/CollsionLayer.h"
 #include "Platform/Input.h"
 #include "Manager/AssetManager.h"
 #include "Manager/PathManager.h"
@@ -365,7 +366,7 @@ bool Character::RaycastObstacle(Tag& _outTag)
 	rayParam.m_maxDistance = 2.0f;
 
 	Physics::RaycastResult hitResult;
-	if (!pPhysics->Raycast(rayParam, hitResult))
+	if (!pPhysics->Raycast(rayParam, hitResult, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle))) // ToMask(Layer::Character)
 		return false;
 
 	Actor* pHit = reinterpret_cast<Actor*>(hitResult.GetActor());
