@@ -28,7 +28,7 @@ Character::~Character()
 void Character::Construct()
 {
 	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
-	pRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
+	pRoot->localTransform.position = Vector3(0.0f, 10.0f, -1.0f);
 	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
@@ -157,9 +157,7 @@ void Character::ProcessInput(float _dt)
 		const Vector3& fwd = pRoot->localTransform.Forward();
 		const Vector3& rht = pRoot->localTransform.Right();
 
-		pRoot->localTransform.position +=
-			deltaSpeed * m_lerpInputDir.y * fwd +
-			deltaSpeed * -m_lerpInputDir.x * rht;
+		m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
 
 		GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 		MG_LOG_INFO("[Anim Log] m_lerpInput {0}, {1}", m_lerpInputDir.x, m_lerpInputDir.y);

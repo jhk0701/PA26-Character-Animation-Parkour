@@ -102,7 +102,7 @@ namespace MiniEngine
 		}
 
 		// 중력 가속도 계산 적용
-		m_verticalVelocity == m_gravity * _dt;
+		m_verticalVelocity += m_gravity * _dt;
 		if (m_grounded && m_verticalVelocity < 0.0f)
 			m_verticalVelocity = -STICK_TO_GROUND_SPEED; // 지면에 계속 붙여 eCollsion_down 유지
 
