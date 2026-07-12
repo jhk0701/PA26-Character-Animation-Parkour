@@ -1,4 +1,4 @@
-#pragma once
+癤�#pragma once
 #include "Scene/Component.h"
 #include "Core/Math.h"
 
@@ -6,6 +6,8 @@ namespace physx { class PxRigidActor; }
 
 namespace MiniEngine 
 {
+	class SceneComponent;
+
 	namespace Physics 
 	{ 
 		enum ECollisionGroup : uint16_t;
@@ -17,9 +19,14 @@ namespace MiniEngine
 	public:
 		enum class EBodyType { Static, Dynamic };
 
-		void Init(Physics::PhysicsWorld& _world, EBodyType _type, const Vector3& _halfExtents, float _denity = 10.0f);
-		void InitDynamicCapsule(Physics::PhysicsWorld& _world, const Vector2& _capsuleExtent, float _denity = 10.0f);
+		void Init(Physics::PhysicsWorld& _world, EBodyType _type, 
+			const Vector3& _halfExtents, float _denity = 10.0f,
+			const std::shared_ptr<SceneComponent>& _target = nullptr);
+		void InitAsDynamicCapsule(Physics::PhysicsWorld& _world, 
+			const Vector2& _capsuleExtent, float _denity = 10.0f, 
+			const std::shared_ptr<SceneComponent>& _target = nullptr);
 		
+		std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 		EBodyType GetBodyType() const { return m_type; }
 		
 		void SetCollsionGroup(Physics::ECollisionGroup _group);
@@ -27,11 +34,14 @@ namespace MiniEngine
 
 		void SetKinemetic(bool _bIsOn);
 
-		// TODO : 빠른 테스트용 임시 코드 -> 제거하고 위계대로 적용시킬 것
-		void SyncTransform();
+		void SyncTransform(); // PhysX -> Actor Transform
+		void PushTransform(); // Actor Transform -> PhysX
 
 	private:
+		void CheckParented(const std::shared_ptr<SceneComponent>& _target);
+
 		physx::PxRigidActor* m_actor = nullptr;
+		std::weak_ptr<SceneComponent> m_target;
 		EBodyType m_type = EBodyType::Static;
 	};
 }

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "TestScene.h"
 #include "Content/ContentConfig.h"
 #include "Manager/PathManager.h"
@@ -29,7 +29,7 @@ void TestScene::Construct()
 	pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
 
 	{
-		// °­Ã¼ ¹Ù´Ú ¼³Ä¡
+		// ê°•ì²´ ë°”ë‹¥ ì„¤ì¹˜
 		const Vector3 size(100.0f, 0.5f, 100.0f);
 		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
 		pGround->SetName("Ground");
@@ -44,11 +44,11 @@ void TestScene::Construct()
 		pMeshComp->localTransform.scale = size;
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, 10.0f, pMeshComp);
 	}
 
 	{
-		// ³«ÇÏÇÒ Å¥ºê »ı¼º
+		// ë‚™í•˜í•  íë¸Œ ìƒì„±
 		const Vector3 size(1.0f, 1.0f, 1.0f);
 		std::shared_ptr<Actor> pCube = SpawnActor<Actor>();
 		pCube->SetName("Falling Box");
@@ -59,24 +59,24 @@ void TestScene::Construct()
 		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
 
 		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, size, 1.f);
-		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll); // Ãæµ¹±×·ì È®ÀÎ¿ë Å×½ºÆ®
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, size, 1.f, pMeshComp);
+		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll); // ì¶©ëŒê·¸ë£¹ í™•ì¸ìš© í…ŒìŠ¤íŠ¸
 	}
 
 	{	
-		// Áß°£ Àå¾Ö¹°
+		// ì¤‘ê°„ ì¥ì• ë¬¼
 		Vector3 scale(2.0f, 1.0f, 0.5f);
 		std::shared_ptr<Actor> pObsMid = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsMidRoot = pObsMid->GetRoot();
 		pObsMidRoot->localTransform.position = Vector3(0.0f, 0.5f, 0.0f);
 
-		// »ç¶÷ Å©±â Àå¾Ö¹°
+		// ì‚¬ëŒ í¬ê¸° ì¥ì• ë¬¼
 		scale = {2.0f, 2.0f, 0.5f};
 		std::shared_ptr<Actor> pObsHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsHeadRoot = pObsHead->GetRoot();
 		pObsHeadRoot->localTransform.position = Vector3(-5.0f, 1.0f, 2.0f);
 		
-		// »ç¶÷º¸´Ù Å« Àå¾Ö¹°
+		// ì‚¬ëŒë³´ë‹¤ í° ì¥ì• ë¬¼
 		scale = { 4.0f, 4.0f, 0.5f };
 		std::shared_ptr<Actor> pObsOverHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
 		std::shared_ptr<SceneComponent> pObsOverHeadRoot = pObsOverHead->GetRoot();
@@ -84,7 +84,7 @@ void TestScene::Construct()
 	}
 
 	{
-		// ÀÓ½Ã Ä³¸¯ÅÍ »ı¼º
+		// ì„ì‹œ ìºë¦­í„° ìƒì„±
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
 		pChar->Construct();
@@ -119,7 +119,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vect
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetPhysics().lock();
 
 	std::shared_ptr<RigidBodyComponent> rbComp = ObstacleActor->AddComponent<RigidBodyComponent>();
-	rbComp->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale);
+	rbComp->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale, 10.0f, staticMeshComp);
 
 	return ObstacleActor;
 }

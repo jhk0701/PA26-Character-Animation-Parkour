@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <memory>
 #include <string>
@@ -29,6 +29,7 @@ namespace MiniEngine
         template<typename T>
         std::shared_ptr<T> GetComponent() const; 
 
+        void SetRoot(std::shared_ptr<SceneComponent>& _newRoot);
         // 루트 트랜스폼(비소유 참조). 만료 시 nullptr.
         std::shared_ptr<SceneComponent> GetRoot() const { return m_root.lock(); }
 

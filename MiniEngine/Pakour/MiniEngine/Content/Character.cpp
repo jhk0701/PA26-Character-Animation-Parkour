@@ -26,6 +26,10 @@ Character::~Character()
 
 void Character::Construct()
 {
+	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
+	pRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
+	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
@@ -34,10 +38,7 @@ void Character::Construct()
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
 	skinComp->SetMesh(skinnedMesh);
-
-	std::shared_ptr<SceneComponent> charRoot = GetRoot();
-	charRoot->localTransform.position = Vector3(0.0f, 0.0f, -1.0f);
-	charRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+	skinComp->AttachTo(GetRoot());
 
 	{
 		// 애니메이션 설정
@@ -96,9 +97,9 @@ void Character::Construct()
 
 	{
 		// RigidBody 설정
-		// m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
-		// Vector2 capsuleExtent(1.0f, 1.8f);
-		// m_rigidBodyComp.lock()->InitDynamicCapsule(*GetScene()->GetPhysics().lock(), capsuleExtent * 0.5f);
+		m_rigidBodyComp = AddComponent<MiniEngine::RigidBodyComponent>();
+		Vector2 capsuleExtent(1.0f, 1.8f);
+		m_rigidBodyComp.lock()->InitAsDynamicCapsule(*GetScene()->GetPhysics().lock(), capsuleExtent * 0.5f, 10.0f, GetRoot());
 	}
 }
 
