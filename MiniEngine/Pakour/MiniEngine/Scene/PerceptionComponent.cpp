@@ -50,12 +50,16 @@ namespace MiniEngine
 			pFindObstacle->SetCondition(
 				[this](TravelContext& _ctx)
 				{
-					RaycastParam rayParam;
-					rayParam.m_origin = _ctx.m_owner->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
-					rayParam.m_dir = _ctx.m_owner->GetRoot()->localTransform.Forward();
-					rayParam.m_maxDistance = m_maxObsDist;
+					CapsulecastParam capParam;
+					capParam.m_startPos = _ctx.m_owner->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
+					capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+					capParam.m_radius = _ctx.m_owner->GetCapsuleRadius();
+					capParam.m_halfHeight = _ctx.m_owner->GetCapsuleHeight();
 
-					return _ctx.m_physics->Raycast(rayParam, _ctx.m_raycastResult, ToMask(Layer::Obstacle));
+					capParam.m_dir = _ctx.m_owner->GetRoot()->localTransform.Forward();
+					capParam.m_maxDistance = m_maxObsDist;
+
+					return _ctx.m_physics->CapsuleCast(capParam, _ctx.m_raycastResult, ToMask(Layer::Obstacle));
 				},
 				pIsClimbable,	// 찾은 경우 오를(넘을) 수 있는지 확인
 				pContinue		// 찾지 못한 경우 continue return 
@@ -83,29 +87,28 @@ namespace MiniEngine
 					pSetHanging				// 넘을 수 없음
 				);
 
-				pObstableIsLandable->SetCondition(
-					[this](TravelContext& _ctx) 
-					{
-						MG_LOG_INFO("Check Obstable Is Landable");
-						return CheckLandable(_ctx);
-					}, 
-					pReturn,
-					pSetInAir
-				);
+					pObstableIsLandable->SetCondition(
+						[this](TravelContext& _ctx) 
+						{
+							MG_LOG_INFO("Check Obstable Is Landable");
+							return CheckLandable(_ctx);
+						}, 
+						pReturn,
+						pSetInAir
+					);
 
-				pReturn->SetTask([](TravelContext& _context) 
-					{
-						TravelResult result;
-						result.m_bIsEmpty = false;
-						result.m_actTag = _context.m_predictedActTag;
-						result.m_pActor = _context.m_raycastResult.GetActor();
+						pReturn->SetTask([](TravelContext& _context) 
+							{
+								TravelResult result;
+								result.m_bIsEmpty = false;
+								result.m_actTag = _context.m_predictedActTag;
+								result.m_pActor = _context.m_raycastResult.GetActor();
 
-						return result;
-					}
-				);
+								return result;
+							}
+						);
 
 		// pIsHanging 처리
-
 
 		m_QueryTree = pRootQuery;
 	}

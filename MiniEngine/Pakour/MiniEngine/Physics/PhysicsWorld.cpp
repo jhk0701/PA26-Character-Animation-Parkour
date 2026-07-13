@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Log.h"
 #include <physx/PxPhysicsAPI.h>
@@ -268,7 +268,6 @@ namespace MiniEngine::Physics
 		// query filter 활용 _layerMask 에 비트가 켜진 레이어의 shape만 탐지 
 		// ToMask(Layer::Character) → 캐릭터
 		// Layer::Ground|Layer::Prop → 지형과 소품만
-
 		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
 			return false;
 
@@ -283,19 +282,19 @@ namespace MiniEngine::Physics
 			PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC
 		);
 
-		PxRaycastBuffer hit;
+		PxRaycastBuffer hitBuffer;
 		bool bIsHit = m_scene->raycast(
 			ToPx(_inParam.m_origin), 
 			ToPx(_inParam.m_dir), 
 			physx::PxReal(_inParam.m_maxDistance),
-			hit,
+			hitBuffer,
 			PxHitFlag::eDEFAULT,
 			filter) 
-			&& hit.hasBlock;
+			&& hitBuffer.hasBlock;
 
 		if (bIsHit) 
 		{
-			const PxRaycastHit& block = hit.block;
+			const PxRaycastHit& block = hitBuffer.block;
 			_outResult.m_pos = ToVec3(block.position);
 			_outResult.m_nrm = ToVec3(block.normal);
 			_outResult.m_distance = block.distance;
@@ -306,6 +305,48 @@ namespace MiniEngine::Physics
 		RecordQueryLine(_inParam.m_origin, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
 		return bIsHit;
 	}
+
+	bool PhysicsWorld::CapsuleCast(const CapsulecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask/* = LayerMask::ALL*/) const
+	{
+		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
+			return false;
+
+		// 필터없음은 모두 통과될 것이므로 애초에 쏘지 않을 것
+		if (_layerMask == LayerMask::NONE)
+			return false;
+
+		// 레이캐스트와 동일하게 마스크 설정
+		const PxQueryFilterData filter(
+			PxFilterData(_layerMask, 0, 0, 0),
+			PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC
+		);
+		PxCapsuleGeometry capsule(_inParam.m_radius, _inParam.m_halfHeight);
+		PxTransform pose(ToPx(_inParam.m_startPos), ToPx(_inParam.m_startRot));
+
+		PxSweepBuffer hitBuffer;
+		bool bIsHit = m_scene->sweep(
+			capsule, pose,
+			ToPx(_inParam.m_dir),
+			physx::PxReal(_inParam.m_maxDistance),
+			hitBuffer,
+			PxHitFlag::eDEFAULT,
+			filter)
+			&& hitBuffer.hasBlock;
+
+		if (bIsHit) 
+		{
+			const PxSweepHit& block = hitBuffer.block;
+			_outResult.m_pos = ToVec3(block.position);
+			_outResult.m_nrm = ToVec3(block.normal);
+			_outResult.m_distance = block.distance;
+			_outResult.m_hitActor = block.actor;
+			_outResult.m_hitShape = block.shape;
+		}
+
+		RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
+		return bIsHit;
+	}
+	
 
 	namespace
 	{

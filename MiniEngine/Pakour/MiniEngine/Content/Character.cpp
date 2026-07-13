@@ -102,8 +102,8 @@ void Character::Construct()
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
 		Physics::CapsuleControllerDesc desc;
-		desc.radius = 0.25f;
-		desc.height = 1.5f;
+		desc.radius = m_capsuleRadius;
+		desc.height = m_capsuleHeight;
 		desc.stepOffset = 0.2f;
 		desc.contactOffset = 0.05f;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
@@ -142,7 +142,8 @@ void Character::ProcessInput(float _dt)
 		const float deltaSpeed = _dt * m_camRotateSpeed;
 		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
 
-		Quaternion rotDt = Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x); /* *
+		Quaternion rotDt = Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x); 
+		/* *
 			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y)*/;
 		// rotDt.z = 0.0f;
 		rotDt.Normalize();
@@ -329,18 +330,19 @@ void Character::InitInput()
 	/*input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
 		[this](float _dt) 
 		{
-			Tag actorTag;
-			if (RaycastObstacle(actorTag) == false)
-				return;
+			TravelResult result = m_perception.lock()->Travel();
 
-			uint8_t actTag = 0;
-			if (actorTag.GetTagAt((uint8_t)Content::Config::TAG_TYPE_ACT, actTag) == false)
-				return;
+			if(result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault))
+				MG_LOG_INFO("[Character] Play Valut!");
+			else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle))
+				MG_LOG_INFO("[Character] Play Mantle!");
+			else
+				MG_LOG_INFO("[Character] Can't Found!");
 
-			std::shared_ptr<ActionClip> pAction = GetActions(actTag);
-			GetAnim().lock()->PlayActionClip(pAction, 0.3f);
+			std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
+			if(pAction)
+				GetAnim().lock()->PlayActionClip(pAction, 0.3f);
 
-			MG_LOG_INFO("[Character] Play Valut!");
 		}, std::placeholders::_1);
 		*/
 
@@ -362,28 +364,4 @@ void Character::InitInput()
 		}
 	);
 
-}
-
-bool Character::RaycastObstacle(Tag& _outTag)
-{
-	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
-	
-	Transform& localTrs = GetRoot()->localTransform;
-
-	Physics::RaycastParam rayParam;
-	rayParam.m_origin = localTrs.position + Vector3(0.0f, 1.0f, 0.0f);
-	rayParam.m_dir = localTrs.Forward();
-	rayParam.m_maxDistance = 2.0f;
-
-	Physics::RaycastResult hitResult;
-	if (!pPhysics->Raycast(rayParam, hitResult, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle))) // ToMask(Layer::Character)
-		return false;
-
-	Actor* pHit = reinterpret_cast<Actor*>(hitResult.GetActor());
-	_outTag = pHit->GetTag();
-
-	return pHit->GetTag().Match(
-		Content::Config::TAG_TYPE_ENV, 
-		(uint8_t)Content::Config::ETagEnv::Obstacle
-	);
 }

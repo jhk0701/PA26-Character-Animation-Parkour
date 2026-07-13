@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Core/Math.h"
 #include <vector>
 #include "Core/DebugLine.h"
@@ -18,7 +18,7 @@ namespace physx
     class PxControllerManager;
 }
 
-namespace MiniEngine::Physics 
+namespace MiniEngine::Physics
 {
     struct CapsuleControllerDesc
     {
@@ -44,7 +44,7 @@ namespace MiniEngine::Physics
         END = 32
     };
 
-    struct RaycastParam 
+    struct RaycastParam
     {
         Vector3 m_origin;
         Vector3 m_dir;
@@ -61,6 +61,16 @@ namespace MiniEngine::Physics
         physx::PxRigidActor* m_hitActor;
         physx::PxShape* m_hitShape;
         void* GetActor() const;
+    };
+
+    struct CapsulecastParam
+    {
+        float m_radius;
+        float m_halfHeight;
+        float m_maxDistance;
+        Vector3 m_startPos;     // origin
+        Quaternion m_startRot;  // 회전각
+        Vector3 m_dir;
     };
 
     class PhysicsWorld
@@ -85,6 +95,8 @@ namespace MiniEngine::Physics
         physx::PxController* CreateCapsuleController(const CapsuleControllerDesc& _desc);
 
         bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        bool CapsuleCast(const CapsulecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+
         static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
 
         void SetDebugVisualization(bool _enable, float _scale = 1.0f);

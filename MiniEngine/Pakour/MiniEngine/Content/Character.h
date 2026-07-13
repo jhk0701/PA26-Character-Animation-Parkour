@@ -46,10 +46,11 @@ public:
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
 	
 	EState GetCharState() const { return m_state; }
+	float GetCapsuleRadius() const { return m_capsuleRadius; }
+	float GetCapsuleHeight() const { return m_capsuleHeight; }
 
 private:
 	void InitInput();
-	bool RaycastObstacle(Tag& _outTag);
 
 	// 이동 기능 -> 시간 남으면 CharacterMovementComponent로 리팩터링
 	Vector2 m_inputDir;
@@ -60,6 +61,9 @@ private:
 
 	Vector2 m_camRotDir;
 	float m_camRotateSpeed{ 1.0f };
+
+	float m_capsuleRadius{ 0.25f };
+	float m_capsuleHeight{ 1.5f };
 
 	EState m_state{ EState::Landing };
 	
