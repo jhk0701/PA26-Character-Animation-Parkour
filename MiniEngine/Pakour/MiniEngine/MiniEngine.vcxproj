@@ -128,9 +128,11 @@
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\TestScene.h" />
+    <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXBase.h" />
+    <ClInclude Include="Editor\DebugDraw.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="Manager\AssetManager.h" />
@@ -141,6 +143,7 @@
     <ClInclude Include="Physics\CollsionLayer.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Scene\CharacterControllerComponent.h" />
+    <ClInclude Include="Scene\PerceptionComponent.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="Scene\Tag.h" />
     <ClInclude Include="targetver.h" />
@@ -176,6 +179,7 @@
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
+    <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
     <ClCompile Include="Manager\PathManager.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
@@ -192,6 +196,7 @@
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Platform\Input.cpp" />
     <ClCompile Include="Scene\CharacterControllerComponent.cpp" />
+    <ClCompile Include="Scene\PerceptionComponent.cpp" />
     <ClCompile Include="Scene\RigidBodyComponent.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\Actor.cpp" />

@@ -14,6 +14,7 @@
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
 #include "Scene/CharacterControllerComponent.h"
+#include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
@@ -111,6 +112,11 @@ void Character::Construct()
 
 		m_charCont = pCharCont;
 	}
+
+	{
+		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
+		m_perception = pPerceptComp;
+	}
 }
 
 void Character::BeginPlay()
@@ -135,10 +141,12 @@ void Character::ProcessInput(float _dt)
 		const float deltaSpeed = _dt * m_camRotateSpeed;
 		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
 
-		pRoot->localTransform.rotation *=
-			Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x);
-		pRoot->localTransform.rotation *=
-			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y);
+		Quaternion rotDt = Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x); /* *
+			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y)*/;
+		// rotDt.z = 0.0f;
+		rotDt.Normalize();
+
+		pRoot->localTransform.rotation *= rotDt;
 	}
 
 	// 키보드 이동키
@@ -317,7 +325,7 @@ void Character::InitInput()
 		});
 
 	// 레이캐스트
-	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
+	/*input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
 		[this](float _dt) 
 		{
 			Tag actorTag;
@@ -333,6 +341,14 @@ void Character::InitInput()
 
 			MG_LOG_INFO("[Character] Play Valut!");
 		}, std::placeholders::_1);
+		*/
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
+		[this]() 
+		{
+			m_perception.lock()->StartTravel();
+		}
+	);
 
 }
 

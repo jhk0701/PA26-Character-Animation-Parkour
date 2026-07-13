@@ -85,6 +85,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 	tag += (uint8_t)Content::Config::ETagAct::JumpOver;
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
+	staticMeshComp->SetColor(Vector3(0.7f, 0.7f, 0.2f));
 	staticMeshComp->SetMesh(pMesh);
 	staticMeshComp->localTransform.position = _pos;
 	staticMeshComp->localTransform.scale = _scale * 0.5f;

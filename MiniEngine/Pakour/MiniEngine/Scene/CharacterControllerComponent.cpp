@@ -143,7 +143,7 @@ namespace MiniEngine
 
 		const Quaternion& r = _skeletal->localTransform.rotation;
 		if (fabsf(fabsf(r.w) - 1.0f) > 1e-4f)
-			MG_LOG_WARN("[CharacterControllerComp] 루트 모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
+			MG_LOG_WARN("[CharacterControllerComp] 루트모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
 	}
 
 	Vector3 CharacterControllerComponent::GetFootPosition() const
