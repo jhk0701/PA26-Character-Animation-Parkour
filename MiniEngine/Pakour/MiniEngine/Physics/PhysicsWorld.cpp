@@ -32,6 +32,17 @@ namespace MiniEngine::Physics
 			shape->setQueryFilterData(filterData);
 	}
 
+	void PhysicsWorld::SetCollisionLayer(physx::PxRigidActor& _actor, uint32_t _layerMask)
+	{
+		const PxU32 count = _actor.getNbShapes();
+		std::vector<PxShape*> shapes(count);
+		_actor.getShapes(shapes.data(), count);
+
+		const PxFilterData filterData(_layerMask, 0, 0, 0);
+		for (PxShape* shape : shapes)
+			shape->setSimulationFilterData(filterData);
+	}
+
 	PhysicsWorld::PhysicsWorld() { }
 	PhysicsWorld::~PhysicsWorld()
 	{
@@ -268,7 +279,7 @@ namespace MiniEngine::Physics
 	{
 		// query filter 활용 _layerMask 에 비트가 켜진 레이어의 shape만 탐지 
 		// ToMask(Layer::Character) → 캐릭터
-		// Layer::Ground|Layer::Prop → 지형과 소품만
+		// Layer::Ground | Layer::Prop → 지형과 소품만
 		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
 			return false;
 

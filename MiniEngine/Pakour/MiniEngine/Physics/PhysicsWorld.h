@@ -98,6 +98,7 @@ namespace MiniEngine::Physics
         bool CapsuleCast(const CapsulecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
 
         static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
+        static void SetCollisionLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
 
         void SetDebugVisualization(bool _enable, float _scale = 1.0f);
         void SetDrawQueries(bool _enable);

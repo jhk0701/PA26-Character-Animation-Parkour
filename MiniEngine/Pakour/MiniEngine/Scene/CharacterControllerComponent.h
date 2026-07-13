@@ -35,8 +35,8 @@ namespace MiniEngine
         void SetGravity(float _gravity) { m_gravity = _gravity; }
         std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 
-        void SetLayer(Physics::Layer _layer);
-        void SetCollisionMask(uint32_t _mask);
+        void SetQueryLayer(Physics::Layer _layer);
+        void SetCollisionLayer(Physics::Layer _layer);
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;

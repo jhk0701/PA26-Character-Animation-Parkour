@@ -35,7 +35,8 @@ namespace MiniEngine
 		void SyncTransform(); // PhysX -> Actor Transform
 		void PushTransform(); // Actor Transform -> PhysX
 
-		void SetLayer(Physics::Layer _layer);
+		void SetQueryLayer(Physics::Layer _layer);
+		void SetCollisionLayer(Physics::Layer _layer);
 
 	private:
 		void CheckParented(const std::shared_ptr<SceneComponent>& _target);

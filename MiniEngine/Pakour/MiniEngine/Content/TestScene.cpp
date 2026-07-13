@@ -45,14 +45,18 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
 		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, 10.0f, pMeshComp);
-		pRB->SetLayer(MiniEngine::Physics::Layer::Ground);
+		pRB->SetQueryLayer(MiniEngine::Physics::Layer::Ground);
 	}
 
 	{	
-		// 중간 장애물
-		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 0.0f), Vector3(2.0f, 1.0f, 0.5f));
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 0.0f), Vector3(2.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 2.0f), Vector3(2.0f, 2.0f, 0.5f));
+		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 3.0f), Vector3(3.0f, 1.0f, 0.5f));
+		
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 5.0f), Vector3(3.0f, 1.0f, 5.0f));
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 7.5f),	Vector3(3.0f, 2.0f, 0.5f));
+
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 0.5f, 5.0f), Vector3(3.0f, 1.0f, 5.0f));
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 1.0f, 6.0f), Vector3(3.0f, 2.0f, 3.0f));
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 2.0f, 7.0f),	Vector3(3.0f, 1.0f, 1.0f));
 	}
 
 	{
@@ -100,7 +104,8 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 
 	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale * 0.5f, 10.0f, staticMeshComp);
-	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle); 
+	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
+	pRB->SetCollisionLayer(MiniEngine::Physics::Layer::Obstacle);
 
 	return ObstacleActor;
 }
