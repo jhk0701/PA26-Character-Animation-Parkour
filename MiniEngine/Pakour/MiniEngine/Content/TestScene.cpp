@@ -61,13 +61,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pChar->SetName("Character");
 		pChar->Construct();
 	}
-
-
 }
 
 void TestScene::BeginPlay()
 {
 	Scene::BeginPlay();
+
+#ifdef MG_DEBUG
+
+	ApplyPhysicsDebug(true);
+
+#endif // MG_DEBUG
+
+
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const Vector3& _scale)
