@@ -15,5 +15,5 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _scale);
+	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const MiniEngine::Vector3& _scale);
 };

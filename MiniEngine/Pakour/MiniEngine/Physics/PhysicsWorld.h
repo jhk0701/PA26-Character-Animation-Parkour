@@ -32,10 +32,11 @@ namespace MiniEngine::Physics
     enum ECollisionGroup : uint16_t
     {
         Player,
-        
+
         Land,       // 착지할 공간
         Obstacle,   // 액터가 지나가지 못하는 장애물
-        
+        InAction,
+
         IgnoreAll = 31,
         END = 32
     };

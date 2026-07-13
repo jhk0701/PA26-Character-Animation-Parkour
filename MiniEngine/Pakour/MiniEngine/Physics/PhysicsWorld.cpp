@@ -250,17 +250,24 @@ namespace MiniEngine::Physics
 			Player - Player			O
 			Player - Land			O
 			Player - Obstacle		O
+			Player - InAction		0
 
 			Land - Land				O
 			Land - Obstacle			X
+			Land - InAction			0
 
 			Obstacle - Obstacle		X
+			Obstacle - InAction		X
+
+			InAction - InAction		X
 		*/
 
 		// 기본적으로 0~31 레이어 모두 true
 		// false만 명시
 		PxSetGroupCollisionFlag(ECollisionGroup::Land,		ECollisionGroup::Obstacle,		false);
 		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::Obstacle,		false);
+		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::InAction,		false);
+		PxSetGroupCollisionFlag(ECollisionGroup::InAction,	ECollisionGroup::InAction,		false);
 
 		for (uint16_t i = 0; i < ECollisionGroup::END; ++i)
 			PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, i, false);

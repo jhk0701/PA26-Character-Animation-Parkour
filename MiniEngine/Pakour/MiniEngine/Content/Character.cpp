@@ -106,6 +106,7 @@ void Character::Construct()
 		desc.stepOffset = 0.3f;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
+		pCharCont->SetCollsionGroup(MiniEngine::Physics::ECollisionGroup::InAction);
 		pCharCont->SetLayer(MiniEngine::Physics::Layer::Character);
 
 		m_charCont = pCharCont;
@@ -124,8 +125,6 @@ void Character::Tick(float _dt)
 	ProcessInput(_dt);
 
 	Actor::Tick(_dt);
-
-	// ProcessRootMotion();
 }
 
 void Character::ProcessInput(float _dt)
@@ -163,24 +162,7 @@ void Character::ProcessInput(float _dt)
 		m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
 
 		GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
-		MG_LOG_INFO("[Anim Log] m_lerpInput {0}, {1}", m_lerpInputDir.x, m_lerpInputDir.y);
 	}
-}
-
-void Character::ProcessRootMotion()
-{
-	// 캐릭터 컨트롤러로 이동
-	// 추출한 루트모션 적용
-	//std::shared_ptr<SceneComponent> pRoot = GetRoot();
-	//std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
-	//RootMotionDelta d = pSkin->GetAnim().lock()->ConsumeRootMotionDelta();
-
-	//const Vector3 scaled = d.translation * pRoot->localTransform.scale * pSkin->localTransform.scale;
-	//Vector3 movement = Vector3::Transform(scaled, pRoot->localTransform.rotation);
-
-	//pRoot->localTransform.position += movement;
-	//pRoot->localTransform.rotation = d.rotation * pRoot->localTransform.rotation;
-	//pRoot->localTransform.rotation.Normalize();
 }
 
 void Character::SetInputDir(const Vector2& _dir)

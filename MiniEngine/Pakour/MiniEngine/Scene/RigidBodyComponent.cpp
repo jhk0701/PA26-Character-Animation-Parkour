@@ -21,12 +21,15 @@ namespace MiniEngine
 		std::shared_ptr<SceneComponent> target = _target;
 		if (target == nullptr) 
 		{
-			if (std::shared_ptr<Actor> o = owner.lock())
+			if  (std::shared_ptr<Actor> o = owner.lock())
 				target = o->GetRoot();
 		}
 
 		if (target == nullptr)
+		{
+			MG_LOG_ERROR("[RigidBodyComponent::Init] target SceneComponent가 유효하지 않음");
 			return;
+		}
 		
 		CheckParented(target);
 
@@ -41,7 +44,8 @@ namespace MiniEngine
 			_world.CreateStaticBox(pos, rot, _halfExtents);
 
 		// UserData로 owner 액터 포인터 적용
-		m_actor->userData = owner.lock().get();
+		if (std::shared_ptr<Actor> o = owner.lock())
+			m_actor->userData = o.get();
 	}
 
 	void RigidBodyComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
@@ -107,10 +111,4 @@ namespace MiniEngine
 			MG_LOG_WARN("[RigidBodyComp] target에 부모가 있음");
 	}
 	
-	void RigidBodyComponent::SetKinemetic(bool _bIsOn)
-	{
-		/*physx::PxRigidBody* pRb = dynamic_cast<physx::PxRigidBody>(m_actor);
-		if (pRb)
-			pRb->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, _bIsOn);*/
-	}
 }

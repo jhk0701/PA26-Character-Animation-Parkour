@@ -32,8 +32,6 @@ namespace MiniEngine
 		void SetCollsionGroup(Physics::ECollisionGroup _group);
 		Physics::ECollisionGroup GetCollsionGroup() const;
 
-		void SetKinemetic(bool _bIsOn);
-
 		void SyncTransform(); // PhysX -> Actor Transform
 		void PushTransform(); // Actor Transform -> PhysX
 

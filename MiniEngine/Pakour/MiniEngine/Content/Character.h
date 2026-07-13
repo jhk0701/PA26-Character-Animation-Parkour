@@ -26,7 +26,6 @@ public:
 	virtual void Tick(float _dt) override;
 
 	void ProcessInput(float _dt);
-	void ProcessRootMotion();
 
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);

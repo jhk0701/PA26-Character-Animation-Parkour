@@ -48,40 +48,11 @@ void TestScene::Construct()
 		pRB->SetLayer(MiniEngine::Physics::Layer::Ground);
 	}
 
-	{
-		// 낙하할 큐브 생성
-		const Vector3 size(1.0f, 1.0f, 1.0f);
-		std::shared_ptr<Actor> pCube = SpawnActor<Actor>();
-		pCube->SetName("Falling Box");
-
-		std::shared_ptr<StaticMeshComponent> pMeshComp = pCube->AddComponent<StaticMeshComponent>();
-		pMeshComp->SetMesh(pCubeMesh);
-		pMeshComp->localTransform.position = Vector3(5.0f, 10.0f, 0.0f);
-		pMeshComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(30.f, 45.0f, 15.0f);
-
-		std::shared_ptr<RigidBodyComponent> pRB = pCube->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Dynamic, size, 1.f, pMeshComp);
-		// pRB->SetCollsionGroup(Physics::ECollisionGroup::IgnoreAll); // 충돌그룹 확인용 테스트
-	}
-
 	{	
 		// 중간 장애물
-		Vector3 scale(2.0f, 1.0f, 0.5f);
-		std::shared_ptr<Actor> pObsMid = BuildObstacle(L"Cube.mini", scale * 0.5f);
-		std::shared_ptr<SceneComponent> pObsMidRoot = pObsMid->GetRoot();
-		pObsMidRoot->localTransform.position = Vector3(0.0f, 0.5f, 0.0f);
-
-		// 사람 크기 장애물
-		scale = {2.0f, 2.0f, 0.5f};
-		std::shared_ptr<Actor> pObsHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
-		std::shared_ptr<SceneComponent> pObsHeadRoot = pObsHead->GetRoot();
-		pObsHeadRoot->localTransform.position = Vector3(-5.0f, 1.0f, 2.0f);
-		
-		// 사람보다 큰 장애물
-		scale = { 4.0f, 4.0f, 0.5f };
-		std::shared_ptr<Actor> pObsOverHead = BuildObstacle(L"Cube.mini", scale * 0.5f);
-		std::shared_ptr<SceneComponent> pObsOverHeadRoot = pObsOverHead->GetRoot();
-		pObsOverHeadRoot->localTransform.position = Vector3(5.0f, 2.0f, 4.0f);
+		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 0.0f), Vector3(2.0f, 1.0f, 0.5f));
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 0.0f), Vector3(2.0f, 1.0f, 5.0f));
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 2.0f), Vector3(2.0f, 2.0f, 0.5f));
 	}
 
 	{
@@ -97,7 +68,7 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 }
 
-std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vector3& _scale)
+std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const Vector3& _scale)
 {
 	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(_path);
 	std::shared_ptr<StaticMesh> pMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
@@ -115,13 +86,15 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Vect
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetMesh(pMesh);
-	staticMeshComp->localTransform.scale = _scale;
+	staticMeshComp->localTransform.position = _pos;
+	staticMeshComp->localTransform.scale = _scale * 0.5f;
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetPhysics().lock();
 
 	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
-	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale, 10.0f, staticMeshComp);
-	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle);
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale * 0.5f, 10.0f, staticMeshComp);
+	pRB->SetCollsionGroup(MiniEngine::Physics::ECollisionGroup::Obstacle);
+	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle); // 레이캐스트용
 
 	return ObstacleActor;
 }

@@ -154,6 +154,7 @@ namespace MiniEngine
 		const physx::PxVec3 foot = physx::toVec3(m_controller->getFootPosition());
 		return Vector3(foot.x, foot.y, foot.z);
 	}
+
 	void CharacterControllerComponent::SetLayer(Physics::Layer _layer)
 	{
 		if (!m_controller)
@@ -161,5 +162,15 @@ namespace MiniEngine
 
 		if (physx::PxRigidDynamic* actor = m_controller->getActor())
 			Physics::PhysicsWorld::SetQueryLayer(*actor, Physics::ToMask(_layer));
+	}
+	
+	void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
+	{
+		physx::PxSetGroup(*m_controller->getActor(), _group);
+	}
+
+	Physics::ECollisionGroup CharacterControllerComponent::GetCollsionGroup() const
+	{
+		return Physics::ECollisionGroup();
 	}
 }

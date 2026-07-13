@@ -37,6 +37,9 @@ namespace MiniEngine
 
         void SetLayer(Physics::Layer _layer);
 
+        void SetCollsionGroup(Physics::ECollisionGroup _group);
+        Physics::ECollisionGroup GetCollsionGroup() const;
+
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);
 
