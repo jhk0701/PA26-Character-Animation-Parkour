@@ -61,6 +61,8 @@ void TestScene::Construct()
 		pChar->SetName("Character");
 		pChar->Construct();
 	}
+
+
 }
 
 void TestScene::BeginPlay()

@@ -187,16 +187,6 @@ namespace MiniEngine::Physics
 		return body;
 	}
 
-	void PhysicsWorld::ToggleDebugMode(bool _bIsOn)
-	{
-		if (!m_physics || !m_scene || !m_material)
-			return;
-
-		m_bIsDebugging = _bIsOn;
-
-		m_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, m_bIsDebugging);
-		m_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, m_bIsDebugging);
-	}
 
 	physx::PxController* PhysicsWorld::CreateCapsuleController(const CapsuleControllerDesc& _desc)
 	{
@@ -314,5 +304,78 @@ namespace MiniEngine::Physics
 		}
 
 		return bIsHit;
+	}
+
+	namespace
+	{
+		// 히트 지점에서 표면 법선을 얼마나 길게 그릴지(월드 단위).
+		constexpr float QUERY_NORMAL_LENGTH = 0.25f;
+		// 드레인 누락 시 무한 증가 방지 상한. 초과분은 조용히 버린다.
+		constexpr size_t MAX_QUERY_LINES = 4096;
+	}
+
+
+	void PhysicsWorld::SetDebugVisualization(bool _enable, float _scale)
+	{
+		if (!m_scene)
+			return;
+
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, _enable ? 1.0f : 0.0f);
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, _scale);
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, _scale);
+	}
+
+	void PhysicsWorld::SetDrawQueries(bool _enable)
+	{
+		m_drawQueries = _enable;
+		if (!_enable)
+			m_queryLines.clear();
+	}
+
+	void PhysicsWorld::CollectDebugLines(std::vector<DebugLine>& _out)
+	{
+		if (!m_scene)
+			return;
+
+		const PxRenderBuffer& buffer = m_scene->getRenderBuffer();
+
+		const PxU32 lineCnt = buffer.getNbLines();
+		const PxDebugLine* lines = buffer.getLines();
+
+		_out.reserve(_out.size() + lineCnt + m_queryLines.size());
+
+		for (PxU32 i = 0; i < lineCnt; ++i)
+		{
+			const PxDebugLine& line = lines[i];
+			_out.push_back({ 
+				Vector3(line.pos0.x, line.pos0.y, line.pos0.z), 
+				Vector3(line.pos1.x, line.pos1.y, line.pos1.z), 
+				line.color0 
+				});
+		}
+
+		_out.insert(_out.end(), m_queryLines.begin(), m_queryLines.end());
+		m_queryLines.clear();
+	}
+
+	void PhysicsWorld::RecordQueryLine(const Vector3& _origin, const Vector3& _unitDir, float _maxDistance,
+		bool _hit, const RaycastResult& _hitInfo) const
+	{
+		if (!m_drawQueries || m_queryLines.size() + 3 > MAX_QUERY_LINES)
+			return;
+
+		const Vector3 end = _origin + _unitDir * _maxDistance;
+		if (!_hit)
+		{
+			m_queryLines.push_back({ _origin, end, DebugColor::RED }); // 미스: 전 구간 빨강
+			return;
+		}
+
+		// 히트: origin→히트점 초록, 히트점→끝 빨강(레이가 어디까지 갈 예정이었는지), 법선 파랑.
+		m_queryLines.push_back({ _origin, _hitInfo.m_pos, DebugColor::GREEN });
+		m_queryLines.push_back({ _hitInfo.m_pos, end, DebugColor::RED });
+		m_queryLines.push_back({ _hitInfo.m_pos,
+								 _hitInfo.m_pos + _hitInfo.m_nrm * QUERY_NORMAL_LENGTH,
+								 DebugColor::BLUE });
 	}
 }

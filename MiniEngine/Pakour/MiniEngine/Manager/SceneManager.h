@@ -1,4 +1,5 @@
 #pragma once
+#include <d3d11.h>
 
 namespace MiniEngine
 {
@@ -10,7 +11,7 @@ namespace MiniEngine
 		SINGLETON(SceneManager)
 
 	public:
-		void Init();
+		void Init(ID3D11Device* _device, ID3D11DeviceContext* _context);
 
 		void BeginPlay();
 		void FixedUpdate(float _dt);

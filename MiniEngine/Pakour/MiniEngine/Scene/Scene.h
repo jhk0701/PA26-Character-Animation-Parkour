@@ -3,9 +3,14 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <d3d11.h>
 
 #include "Scene/Actor.h"
 #include "Physics/PhysicsWorld.h"
+
+// 콜라이더 및 레이캐스트 디버깅용
+#include "Core/DebugLine.h"
+#include "Editor/DebugDraw.h"
 
 namespace MiniEngine
 {
@@ -38,7 +43,7 @@ namespace MiniEngine
             return actor;
         }
 
-        virtual void Construct();
+        virtual void Construct(ID3D11Device* _device, ID3D11DeviceContext* _context);
         virtual void BeginPlay();
         virtual void FixedTick(float _dt);
         virtual void Tick(float _dt);
@@ -52,6 +57,8 @@ namespace MiniEngine
         std::weak_ptr<CameraComponent> GetMainCamera() const { return m_mainCam; }
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
         std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
+
+        void ApplyPhysicsDebug(bool _enable);
 
     protected:
         Light& GetLight() { return m_light; }
@@ -71,5 +78,10 @@ namespace MiniEngine
 
         void WriteCameraData(Graphics::RenderContext& _outContext);
         void WriteFrameCB(Graphics::RenderContext& _outContext);
+
+        // 물리엔진 디버깅 렌더러
+        bool m_PhysicsDebug{ false };
+        MiniEngine::DebugDrawer m_debugDraw;
+        std::vector<MiniEngine::DebugLine> m_debugLines;
     };
 }

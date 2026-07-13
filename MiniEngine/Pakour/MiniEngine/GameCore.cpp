@@ -103,10 +103,11 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     PathManager::GetInstance()->Init();
     AssetManager::GetInstance()->Init(m_device.Get());
-    SceneManager::GetInstance()->Init();
+    SceneManager::GetInstance()->Init(m_device.Get(), m_context.Get());
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
     m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
+
     UIManager::GetInstance()->Init(_hWnd, m_device.Get(), m_context.Get());
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
@@ -254,6 +255,7 @@ void GameCore::Render()
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
     m_editor.Render();
     UIManager::GetInstance()->Render();
+
 
     RenderEnd();
 }

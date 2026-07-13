@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Core/Math.h"
+#include <vector>
+#include "Core/DebugLine.h"
+#include "Core/Math.h"
 #include "Physics/CollsionLayer.h"
 
 namespace physx
@@ -81,13 +84,14 @@ namespace MiniEngine::Physics
         
         physx::PxController* CreateCapsuleController(const CapsuleControllerDesc& _desc);
 
-        void ToggleDebugMode(bool _bIsOn);
-
         bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
         static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
 
+        void SetDebugVisualization(bool _enable, float _scale = 1.0f);
+        void SetDrawQueries(bool _enable);
+        void CollectDebugLines(std::vector<DebugLine>& _out);
+
     private:
-        bool m_bIsDebugging{ false };
 
         physx::PxFoundation* m_foundation = nullptr;
         physx::PxPhysics* m_physics = nullptr;
@@ -97,6 +101,12 @@ namespace MiniEngine::Physics
         physx::PxControllerManager* m_controllerManager = nullptr; // 자신이 만든 PxController 를 모두 소유 — scene 보다 먼저 release
 
         void SetDefaultCollisionGroup();
+
+        bool m_drawQueries = false;
+        mutable std::vector<DebugLine> m_queryLines;
+
+        void RecordQueryLine(const Vector3& _origin, const Vector3& _unitDir, float _maxDistance,
+            bool _hit, const RaycastResult& _hitInfo) const;
     };
 
 

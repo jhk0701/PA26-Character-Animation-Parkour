@@ -10,13 +10,13 @@ namespace MiniEngine
 	SceneManager::SceneManager() {};
 	SceneManager::~SceneManager() {};
 
-	void SceneManager::Init() 
+	void SceneManager::Init(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	{
 		// TODO : Config 읽어오기
 		m_pCurScene = std::make_shared<TestScene>();
 		
 		if (m_pCurScene)
-			m_pCurScene->Construct();
+			m_pCurScene->Construct(_device, _context);
 	}
 
 	void SceneManager::BeginPlay()

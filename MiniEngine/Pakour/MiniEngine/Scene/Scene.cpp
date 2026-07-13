@@ -3,12 +3,13 @@
 #include "Core/Graphics.h"
 #include "Scene/Scene.h"
 #include "Scene/CameraComponent.h"
+#include "Physics/PhysicsWorld.h"
 
 namespace MiniEngine
 {
     static constexpr float FIXED_DT = 1.0f / 60.0f;
 
-    void Scene::Construct()
+    void Scene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
     {
         m_physics = std::make_shared<Physics::PhysicsWorld>();
         if (m_physics && m_physics->Init() == false)
@@ -27,6 +28,12 @@ namespace MiniEngine
         m_light.m_dir.Normalize();
         m_light.m_ambient = 0.3f;
         m_light.m_color = Vector3(1.0f, 1.0f, 1.0f);
+
+#ifdef MG_DEBUG || WITH_EDITOR
+        m_debugDraw.Init(_device, _context);
+
+#endif // DEBUG
+
     }
 
     void Scene::BeginPlay()
@@ -64,6 +71,19 @@ namespace MiniEngine
 
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Render(_context);
+
+#ifdef MG_DEBUG || WITH_EDITOR
+        if (m_PhysicsDebug)
+        {
+            m_debugLines.clear();
+            m_physics->CollectDebugLines(m_debugLines);
+
+            std::shared_ptr<CameraComponent> mainCam = GetMainCamera().lock();
+
+            m_debugDraw.Draw(m_debugLines, mainCam->GetViewMatrix() * mainCam->GetProjectionMatrix());
+        }
+
+#endif 
     }
 
     void Scene::EndPlay()
@@ -72,6 +92,18 @@ namespace MiniEngine
             actor->EndPlay();
 
         m_physics->Shutdown();
+    }
+
+    void Scene::ApplyPhysicsDebug(bool _enable)
+    {
+        if (m_PhysicsDebug == _enable)
+            return;
+
+        m_PhysicsDebug = _enable;
+        
+        m_physics->SetDebugVisualization(_enable);
+        m_physics->SetDrawQueries(_enable);
+        MG_LOG_INFO("[Scene]::Apply Physics Debug {}", _enable ? "On" : "Off");
     }
 
     void Scene::WriteCameraData(Graphics::RenderContext& _outContext)
