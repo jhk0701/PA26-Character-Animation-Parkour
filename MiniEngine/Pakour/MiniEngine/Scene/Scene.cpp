@@ -79,7 +79,6 @@ namespace MiniEngine
             m_physics->CollectDebugLines(m_debugLines);
 
             std::shared_ptr<CameraComponent> mainCam = GetMainCamera().lock();
-
             m_debugDraw.Draw(m_debugLines, mainCam->GetViewMatrix() * mainCam->GetProjectionMatrix());
         }
 

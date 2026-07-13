@@ -11,7 +11,7 @@ public:
 	TestScene();
 	virtual ~TestScene();
 
-	virtual void Construct() override;
+	virtual void Construct(ID3D11Device* _device, ID3D11DeviceContext* _context) override;
 	virtual void BeginPlay() override;
 
 private:

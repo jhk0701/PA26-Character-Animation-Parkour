@@ -18,9 +18,9 @@ TestScene::~TestScene()
 {
 }
 
-void TestScene::Construct()
+void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 {
-	Scene::Construct();
+	Scene::Construct(_device, _context);
 
 	std::shared_ptr<Physics::PhysicsWorld> physics = GetPhysics().lock();
 
