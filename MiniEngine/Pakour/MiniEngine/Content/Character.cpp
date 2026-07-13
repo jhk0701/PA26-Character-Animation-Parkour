@@ -109,7 +109,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetCollisionLayer(MiniEngine::Physics::Layer::Obstacle);
+		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
 
 		m_charCont = pCharCont;
 	}

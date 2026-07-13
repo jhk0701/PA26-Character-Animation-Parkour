@@ -7,6 +7,7 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\ContentConfig.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\ContentConfig.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\TestScene.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\TestScene.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Core\Graphics.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Graphics.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Editor\DebugDraw.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\DebugDraw.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Manager\AssetManager.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\AssetManager.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Manager\PathManager.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\PathManager.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Manager\SceneManager.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\SceneManager.obj
@@ -21,6 +22,7 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Physics
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Physics\PhysicsWorld.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\PhysicsWorld.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Platform\Input.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Input.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\CharacterControllerComponent.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\CharacterControllerComponent.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\PerceptionComponent.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\PerceptionComponent.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\RigidBodyComponent.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\RigidBodyComponent.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\SceneComponent.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\SceneComponent.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Scene\Actor.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Actor.obj

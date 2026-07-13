@@ -36,7 +36,10 @@ namespace MiniEngine
         std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 
         void SetQueryLayer(Physics::Layer _layer);
-        void SetCollisionLayer(Physics::Layer _layer);
+        
+        void SetCollisionMask(uint32_t _mask);
+        // _enable = false -> 충돌하지 않도록 설정
+        void SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled);
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;

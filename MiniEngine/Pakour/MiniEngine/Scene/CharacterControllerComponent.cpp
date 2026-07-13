@@ -108,11 +108,11 @@ namespace MiniEngine
 
 		// 이동
 		const Vector3 disp = m_pendingMove + Vector3(0.0f, m_verticalVelocity * _dt, 0.0f);
-		/*const physx::PxFilterData filterData(m_collisionMask, 0, 0, 0);
-		const physx::PxControllerFilters filters(&filterData);*/
+		const physx::PxFilterData filterData(m_collisionMask, 0, 0, 0);
+		const physx::PxControllerFilters filters(&filterData);
 
 		const physx::PxControllerCollisionFlags flags = m_controller->move(
-			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, physx::PxControllerFilters());
+			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, filters);
 
 		m_grounded = flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 		if (m_grounded && m_verticalVelocity < 0.0f)
@@ -167,15 +167,18 @@ namespace MiniEngine
 			Physics::PhysicsWorld::SetQueryLayer(*actor, Physics::ToMask(_layer));
 	}
 
-	void CharacterControllerComponent::SetCollisionLayer(Physics::Layer _layer)
+	void CharacterControllerComponent::SetCollisionMask(uint32_t _mask)
 	{
-		if (!m_controller)
-			return;
+		m_collisionMask = _mask;
+	}
 
-		if (physx::PxRigidDynamic* actor = m_controller->getActor())
-			Physics::PhysicsWorld::SetCollisionLayer(*actor, Physics::ToMask(_layer));
-
-		m_collisionMask = Physics::ToMask(_layer);
+	void CharacterControllerComponent::SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled)
+	{
+		const uint32_t bit = Physics::ToMask(_layer);
+		if (_enabled) 
+			m_collisionMask |= bit;
+		else          
+			m_collisionMask &= ~bit;
 	}
 
 	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)

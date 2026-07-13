@@ -105,7 +105,6 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale * 0.5f, 10.0f, staticMeshComp);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
-	pRB->SetCollisionLayer(MiniEngine::Physics::Layer::Obstacle);
 
 	return ObstacleActor;
 }
