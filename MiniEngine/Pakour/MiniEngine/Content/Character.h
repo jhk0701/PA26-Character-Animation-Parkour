@@ -47,7 +47,7 @@ public:
 	
 	EState GetCharState() const { return m_state; }
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
-	float GetCapsuleHeight() const { return m_capsuleHeight; }
+	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 
 private:
 	void InitInput();

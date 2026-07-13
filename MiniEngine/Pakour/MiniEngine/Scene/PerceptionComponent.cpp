@@ -54,8 +54,7 @@ namespace MiniEngine
 					capParam.m_startPos = _ctx.m_owner->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
 					capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 					capParam.m_radius = _ctx.m_owner->GetCapsuleRadius();
-					capParam.m_halfHeight = _ctx.m_owner->GetCapsuleHeight();
-
+					capParam.m_halfHeight = _ctx.m_owner->GetCapsuleHalfHeight();
 					capParam.m_dir = _ctx.m_owner->GetRoot()->localTransform.Forward();
 					capParam.m_maxDistance = m_maxObsDist;
 
@@ -115,20 +114,23 @@ namespace MiniEngine
 
 	bool PerceptionComponent::CheckClimbableByUnit(TravelContext& _context, float _unitAmount)
 	{
-		RaycastParam rayParam;
-		rayParam.m_dir = _context.m_owner->GetRoot()->localTransform.Forward();
-		rayParam.m_origin = _context.m_raycastResult.m_pos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
-		rayParam.m_maxDistance = m_unit;
-		
+		CapsulecastParam capParam;
+		capParam.m_startPos = _context.m_raycastResult.m_pos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
+		capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		capParam.m_dir = _context.m_owner->GetRoot()->localTransform.Forward();
+		capParam.m_radius = _context.m_owner->GetCapsuleRadius();
+		capParam.m_halfHeight = _context.m_owner->GetCapsuleHalfHeight();
+		capParam.m_maxDistance = m_unit;
+
 		RaycastResult rayResult;
-		bool bIsHit = _context.m_physics->Raycast(rayParam, rayResult, ToMask(Layer::Obstacle));
+		bool bIsHit = _context.m_physics->CapsuleCast(capParam, rayResult, ToMask(Layer::Obstacle));
 		
 		// 1 단위만큼 높여서 테스트했지만 장애물이 닿았음
 		// 체크한 단위를 저장
 		if (bIsHit)
-			_context.m_raycastResult.m_pos = rayParam.m_origin;
+			_context.m_raycastResult.m_pos = capParam.m_startPos;
 		else // 넘을 수 있었음 -> 진행방향으로 1단위만큼 이동
-			_context.m_raycastResult.m_pos = rayParam.m_origin + _context.m_owner->GetRoot()->localTransform.Forward() * m_unit;
+			_context.m_raycastResult.m_pos = capParam.m_startPos + _context.m_owner->GetRoot()->localTransform.Forward() * m_unit;
 
 		return bIsHit;
 	}
