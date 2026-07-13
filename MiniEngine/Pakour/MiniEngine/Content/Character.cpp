@@ -102,9 +102,10 @@ void Character::Construct()
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
 		Physics::CapsuleControllerDesc desc;
-		desc.radius = 0.5f;
-		desc.height = 3.0f;
-		desc.stepOffset = 0.3f;
+		desc.radius = 0.25f;
+		desc.height = 1.5f;
+		desc.stepOffset = 0.2f;
+		desc.contactOffset = 0.05f;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetCollsionGroup(MiniEngine::Physics::ECollisionGroup::InAction);
