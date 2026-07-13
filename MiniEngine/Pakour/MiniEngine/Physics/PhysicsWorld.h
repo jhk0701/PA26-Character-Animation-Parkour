@@ -85,6 +85,8 @@ namespace MiniEngine::Physics
         bool Init();
         void Shutdown();
 
+        // PxFilterFlags FilterShader
+
         void Step(float _fixedDt);
         bool IsInitialized() const { return m_scene != nullptr; }
 

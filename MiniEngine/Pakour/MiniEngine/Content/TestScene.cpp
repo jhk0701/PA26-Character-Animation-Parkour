@@ -49,14 +49,14 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	}
 
 	{	
-		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 3.0f), Vector3(3.0f, 1.0f, 0.5f));
+		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
 		
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 5.0f), Vector3(3.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 7.5f),	Vector3(3.0f, 2.0f, 0.5f));
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 7.5f),	Vector3(4.0f, 2.0f, 0.5f));
 
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 0.5f, 5.0f), Vector3(3.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 1.0f, 6.0f), Vector3(3.0f, 2.0f, 3.0f));
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 2.0f, 7.0f),	Vector3(3.0f, 1.0f, 1.0f));
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 3.0f, 3.0f));
+		BuildObstacle(L"Cube.mini", Vector3(10.0f, 3.0f, 7.5f),	Vector3(4.0f, 1.0f, 0.5f));
 	}
 
 	{
