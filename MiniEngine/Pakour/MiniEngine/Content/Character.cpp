@@ -137,52 +137,47 @@ void Character::Tick(float _dt)
 void Character::ProcessInput(float _dt)
 {
 	// 임시 카메라 제어
-	if (m_camRotDir.LengthSquared() > 0)
-	{
-		const float deltaSpeed = _dt * m_camRotateSpeed;
-		std::shared_ptr<SceneComponent> pRoot = m_cameraHolder.lock();
+	Input& input = InputManager::GetInstance()->GetInput();
 
-		Quaternion rotDt = Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), deltaSpeed * m_camRotDir.x); 
-		/* *
-			Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), deltaSpeed * m_camRotDir.y)*/;
-		// rotDt.z = 0.0f;
-		rotDt.Normalize();
+	// 마우스 델타에 이미 델타타임이 곱해져 있음
+	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
+	m_camRotate.x += CamRotSpeed.x;
+	m_camRotate.y += CamRotSpeed.y;
+	m_camRotate.y = std::clamp(m_camRotate.y, -80.0f, 80.0f); // 회전각 제한
 
-		pRoot->localTransform.rotation *= rotDt;
-	}
+	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
+	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
+	qYaw.Normalize();
+	qPitch.Normalize();
+	GetRoot()->localTransform.rotation = qYaw;
 
+	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
+	pCamHolderRoot->localTransform.rotation = qPitch;
+	
 	// 키보드 이동키
-	{
-		if (GetAnim().lock()->IsActionClipPlaying())
-			return;
+	if (GetAnim().lock()->IsActionClipPlaying())
+		return;
 
-		// 임시 이동 코드
-		Vector2 input = m_inputDir;
-		input.Normalize();
+	// 임시 이동 코드
+	Vector2 inputDir = m_inputDir;
+	inputDir.Normalize();
 
-		m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, input, m_lerpWeight * _dt);
+	m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
 
-		const float deltaSpeed = _dt * m_moveSpeed;
-		std::shared_ptr<SceneComponent> pRoot = GetRoot();
+	const float deltaSpeed = _dt * m_moveSpeed;
+	std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
-		// 캐릭터 정면 기준 이동
-		const Vector3& fwd = pRoot->localTransform.Forward();
-		const Vector3& rht = pRoot->localTransform.Right();
+	// 캐릭터 정면 기준 이동
+	const Vector3& fwd = pRoot->localTransform.Forward();
+	const Vector3& rht = pRoot->localTransform.Right();
+	m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
 
-		m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
-
-		GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
-	}
+	GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 }
 
 void Character::SetInputDir(const Vector2& _dir)
 {
 	m_inputDir = _dir;
-}
-
-void Character::SetCamRotDir(const Vector2& _dir)
-{
-	m_camRotDir = _dir;
 }
 
 std::weak_ptr<Animator> Character::GetAnim() const
@@ -196,14 +191,14 @@ void Character::InitInput()
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
-	input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnPressed = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
 			inputDir.y = 1.0f;
 			SetInputDir(inputDir);
 		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::Up).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
@@ -211,14 +206,14 @@ void Character::InitInput()
 			SetInputDir(inputDir);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnPressed = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
 			inputDir.y = -1.0f;
 			SetInputDir(inputDir);
 		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::Down).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
@@ -226,29 +221,14 @@ void Character::InitInput()
 			SetInputDir(inputDir);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnPressed = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
 			inputDir.x = 1.0f;
 			SetInputDir(inputDir);
 		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::Right).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = -1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::Left).OnReleased = std::bind(
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
 		[this]()
 		{
 			Vector2 inputDir = GetInputDir();
@@ -257,64 +237,20 @@ void Character::InitInput()
 		});
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnPressed = std::bind(
-		[this]() 
+		[this]()
 		{
-			Vector2 dir = GetCamRotDir();
-			dir.x = -1.0f;
-			SetCamRotDir(dir);
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = -1.0f;
+			SetInputDir(inputDir);
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnReleased = std::bind(
 		[this]()
 		{
-			Vector2 dir = GetCamRotDir();
-			dir.x = 0.0f;
-			SetCamRotDir(dir);
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = 0.0f;
+			SetInputDir(inputDir);
 		});
 
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.x = 1.0f;
-			SetCamRotDir(dir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.x = 0.0f;
-			SetCamRotDir(dir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.y = -1.0f;
-			SetCamRotDir(dir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.y = 0.0f;
-			SetCamRotDir(dir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.y = 1.0f;
-			SetCamRotDir(dir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 dir = GetCamRotDir();
-			dir.y = 0.0f;
-			SetCamRotDir(dir);
-		});
 
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
