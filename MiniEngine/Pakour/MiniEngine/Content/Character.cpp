@@ -347,7 +347,8 @@ void Character::InitInput()
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]() 
 		{
-			m_perception.lock()->StartTravel();
+			if (GetInputDir().LengthSquared() > 0.0f)
+				m_perception.lock()->StartTravel(GetRoot()->localTransform.Forward());
 		}
 	);
 

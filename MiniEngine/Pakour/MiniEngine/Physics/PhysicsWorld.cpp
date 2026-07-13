@@ -323,7 +323,7 @@ namespace MiniEngine::Physics
 
 		m_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, _enable ? 1.0f : 0.0f);
 		m_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, _scale);
-		m_scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, _scale);
+		// m_scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, _scale);
 	}
 
 	void PhysicsWorld::SetDrawQueries(bool _enable)

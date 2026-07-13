@@ -72,8 +72,6 @@ void TestScene::BeginPlay()
 	ApplyPhysicsDebug(true);
 
 #endif // MG_DEBUG
-
-
 }
 
 std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const Vector3& _scale)

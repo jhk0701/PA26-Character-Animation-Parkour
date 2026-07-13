@@ -1,13 +1,12 @@
 #pragma once
 #include "Scene/Component.h"
-#include <functional>
-#include <vector>
+#include <list>
 
 namespace MiniEngine 
 {
 	namespace Physics { class PhysicsWorld; }
 
-	// Àå¾Ö¹° Ãæµ¹ ½Ã ¿ìÈ¸ÇÏ´Â ¹æÇâ
+	// ì¥ì• ë¬¼ ì¶©ëŒ ì‹œ ìš°íšŒí•˜ëŠ” ë°©í–¥
 	enum class EDirection : uint8_t
 	{
 		UP,
@@ -22,25 +21,36 @@ namespace MiniEngine
 	{
 		EDirection m_dir;
 		Vector3 m_pos;
+		uint8_t m_envTag; // íƒìƒ‰í•œ ê²°ê³¼ ë§ˆì£¼ì¹œ íƒœê·¸
+		void* m_pActor;
 	};
 
 	class PerceptionComponent : public Component
 	{
+		enum Config
+		{
+			MAX_PERCEPTION_STEP = 8, // ì´ ëª‡ë²ˆ ë ˆì´ë¥¼ ì˜ì•„ í™•ì¸í•  ì§€
+		};
+
 	public:
 		void OnAttach() override;
 		void Tick(float _dt) override;
-		void StartTravel(); // Å½»ö
+		void StartTravel(const Vector3& _moveDir); // íƒìƒ‰
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
 		
-		float m_unit{ 1.0f }; // Å½»ö ´ÜÀ§
+		float m_unit{ 1.0f }; // íƒìƒ‰ ë‹¨ìœ„
+		Vector3 m_ownerDir;
 
-		// 1. ÆòÁö ÀÌµ¿ ½Ã, Àå¾Ö¹° Å½»ö
-		// Å½»ö ¹üÀ§ 
+		// 1. í‰ì§€ ì´ë™ ì‹œ, ì¥ì• ë¬¼ íƒìƒ‰
+		// íƒìƒ‰ ë²”ìœ„ 
 		float m_maxObsDist{ 2.0f };
-		float m_maxLandDist{ 1000.0f }; // ¹Ù´Ú Å½»ö
+		float m_maxLandDist{ 1000.0f }; // ë°”ë‹¥ íƒìƒ‰
 
+		std::list<TravelResult> m_travelResult;
 
+		void Travel(int _curDepth);
+		void FirstTravel();
 	};
 }

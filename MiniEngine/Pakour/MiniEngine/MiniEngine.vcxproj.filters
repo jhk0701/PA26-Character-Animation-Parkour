@@ -80,8 +80,8 @@
     <Filter Include="Engine\08.UI">
       <UniqueIdentifier>{573eff2b-139e-49b9-8e64-34673a681771}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\07.Object\Component\Parkour">
-      <UniqueIdentifier>{7a67f7ef-f621-4d47-bec9-e4d86a22a573}</UniqueIdentifier>
+    <Filter Include="Content\04.Component">
+      <UniqueIdentifier>{9a46ea7e-5f70-42a5-9d07-77b719b554a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -220,14 +220,14 @@
     <ClInclude Include="Physics\CollsionLayer.h">
       <Filter>Engine\02.Core\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\PerceptionComponent.h">
-      <Filter>Engine\07.Object\Component\Parkour</Filter>
-    </ClInclude>
     <ClInclude Include="Editor\DebugDraw.h">
       <Filter>Engine\04.Editor</Filter>
     </ClInclude>
     <ClInclude Include="Core\DebugLine.h">
       <Filter>Engine\02.Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\PerceptionComponent.h">
+      <Filter>Content\04.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -345,11 +345,11 @@
     <ClCompile Include="Physics\CollsionLayer.cpp">
       <Filter>Engine\02.Core\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\PerceptionComponent.cpp">
-      <Filter>Engine\07.Object\Component\Parkour</Filter>
-    </ClCompile>
     <ClCompile Include="Editor\DebugDraw.cpp">
       <Filter>Engine\04.Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PerceptionComponent.cpp">
+      <Filter>Content\04.Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
