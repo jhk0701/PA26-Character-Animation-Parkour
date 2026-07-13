@@ -1,5 +1,7 @@
-﻿#pragma once
+#pragma once
 #include "Asset/AnimClip.h"
+#include "Animation/IAnimNotify.h"
+#include <functional>
 
 namespace MiniEngine
 {
@@ -19,8 +21,8 @@ namespace MiniEngine
 		AnimClip* GetClip() const { return m_clip; }
 
 		const float GetTickPerSec() const;
-
 		void AddClip(AnimClip* _clip);
+		void AddNotify(std::shared_ptr<IAnimNotify> _notify);
 
 	private:
 		bool m_bIsPlaying{ false };
@@ -28,6 +30,6 @@ namespace MiniEngine
 		float m_duration{ 0.0f };
 
 		AnimClip* m_clip{ nullptr };
-		// std::vector<AnimClip*> m_clips;
+		std::vector<std::shared_ptr<IAnimNotify>> m_vecNotify;
 	};
 }

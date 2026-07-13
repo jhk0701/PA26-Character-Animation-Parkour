@@ -122,8 +122,9 @@
   <ItemGroup>
     <ClInclude Include="Animation\ActionClip.h" />
     <ClInclude Include="Animation\Animator.h" />
+    <ClInclude Include="Animation\AnimNotify.h" />
     <ClInclude Include="Animation\BlendClip.h" />
-    <ClInclude Include="Animation\IAnimatorClip.h" />
+    <ClInclude Include="Animation\IAnimNotify.h" />
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\ContentConfig.h" />
@@ -172,8 +173,9 @@
   <ItemGroup>
     <ClCompile Include="Animation\ActionClip.cpp" />
     <ClCompile Include="Animation\Animator.cpp" />
+    <ClCompile Include="Animation\AnimNotify.cpp" />
     <ClCompile Include="Animation\BlendClip.cpp" />
-    <ClCompile Include="Animation\IAnimatorClip.cpp" />
+    <ClCompile Include="Animation\IAnimNotify.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />

@@ -1,7 +1,8 @@
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\ActionClip.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\ActionClip.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\Animator.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Animator.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\AnimNotify.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\AnimNotify.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\BlendClip.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\BlendClip.obj
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\IAnimatorClip.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\IAnimatorClip.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Animation\IAnimNotify.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\IAnimNotify.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Asset\RootMotion.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\RootMotion.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\Character.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Character.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\ContentConfig.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\ContentConfig.obj

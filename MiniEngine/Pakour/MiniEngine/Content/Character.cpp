@@ -18,6 +18,7 @@
 #include "Animation/Animator.h"
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
+#include "Animation/AnimNotify.h"
 
 
 Character::Character()
@@ -64,10 +65,17 @@ void Character::Construct()
 		pAnim->AddBaseLocomotion(pBlend);
 
 		// 단일 재생
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump]->AddClip(skinnedMesh->GetClipPtr(10));
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault] = std::make_shared<ActionClip>();
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault]->AddClip(skinnedMesh->GetClipPtr(11));
+		{
+			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+			pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
+		}
+		{
+			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+			
+			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault] = pActionClip;
+		}
 
 		pAnim->SetEnableRootMotion(true);
 
@@ -158,7 +166,6 @@ void Character::ProcessInput(float _dt)
 	if (GetAnim().lock()->IsActionClipPlaying())
 		return;
 
-	// 임시 이동 코드
 	Vector2 inputDir = m_inputDir;
 	inputDir.Normalize();
 

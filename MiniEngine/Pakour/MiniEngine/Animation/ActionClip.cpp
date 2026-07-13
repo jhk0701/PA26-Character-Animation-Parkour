@@ -11,6 +11,9 @@ namespace MiniEngine
 	{
 		m_bIsPlaying = true;
 		m_playTime = 0.0f;
+
+		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
+			n->Init();
 	}
 
 	void ActionClip::Stop()
@@ -33,13 +36,16 @@ namespace MiniEngine
 		m_playTime += _dt;
 		if (m_playTime > m_duration)
 		{
-			// Àç»ý Á¾·á
+			// ìž¬ìƒ ì¢…ë£Œ
 			Stop();
 			return;
 		}
 
-		// Æ÷Áî´Â ¹Ù·Î Àû¿ëÇÒ °Í
+		// í¬ì¦ˆëŠ” ë°”ë¡œ ì ìš©í•  ê²ƒ
 		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
+
+		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
+			n->Update(_dt);
 	}
 
 	const float ActionClip::GetTickPerSec() const
@@ -51,5 +57,10 @@ namespace MiniEngine
 	{
 		m_duration += _clip->ClipDurationSec();
 		m_clip = _clip;
+	}
+
+	void ActionClip::AddNotify(std::shared_ptr<IAnimNotify> _notify)
+	{
+		m_vecNotify.push_back(_notify);
 	}
 }
