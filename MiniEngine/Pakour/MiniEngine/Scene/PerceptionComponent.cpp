@@ -69,16 +69,12 @@ namespace MiniEngine
 					{ 
 						MG_LOG_INFO("Check Obstable Is Climbable");
 				
-						if (CheckClimbableByUnit(_ctx, m_unit) == false) 
-						{
-							_ctx.m_predictedActTag = static_cast<uint8_t>(ETagAct::Vault);
-							return true; // valut로 넘을 수 있는 높이
-						}
-						else if (CheckClimbableByUnit(_ctx, m_unit) == false) // 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
-						{
-							_ctx.m_predictedActTag = static_cast<uint8_t>(ETagAct::Mantle);
-							return true; // mantle로 넘을 수 있는 높이
-						}
+						if (CheckClimbableByUnit(_ctx, m_unit) == false)
+							return true; // vault로 넘을 수 있는 높이
+						
+						 // 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
+						if (CheckClimbableByUnit(_ctx, m_unit) == false)
+							return true; // vault보단 높음
 
 						return false; // 2회 단위 체크에도 끝이 보이지 않음 -> 매달려야함
 					},
@@ -90,7 +86,11 @@ namespace MiniEngine
 						[this](TravelContext& _ctx) 
 						{
 							MG_LOG_INFO("Check Obstable Is Landable");
-							return CheckLandable(_ctx);
+							bool bIsLandable = CheckLandable(_ctx);
+
+							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ? ETagAct::Vault : ETagAct::Mantle);
+
+							return bIsLandable;
 						}, 
 						pReturn,
 						pSetInAir

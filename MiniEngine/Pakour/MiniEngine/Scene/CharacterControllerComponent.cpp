@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene/CharacterControllerComponent.h"
 #include "Scene/Actor.h"
 #include "Scene/SceneComponent.h"
@@ -108,9 +108,11 @@ namespace MiniEngine
 
 		// 이동
 		const Vector3 disp = m_pendingMove + Vector3(0.0f, m_verticalVelocity * _dt, 0.0f);
+		const physx::PxFilterData filterData(m_collisionMask, 0, 0, 0);
+		const physx::PxControllerFilters filters(&filterData);
+
 		const physx::PxControllerCollisionFlags flags = m_controller->move(
-			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, physx::PxControllerFilters()
-		);
+			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, filters);
 
 		m_grounded = flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 		if (m_grounded && m_verticalVelocity < 0.0f)
@@ -146,6 +148,7 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComp] 루트모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
 	}
 
+
 	Vector3 CharacterControllerComponent::GetFootPosition() const
 	{
 		if (!m_controller)
@@ -163,14 +166,19 @@ namespace MiniEngine
 		if (physx::PxRigidDynamic* actor = m_controller->getActor())
 			Physics::PhysicsWorld::SetQueryLayer(*actor, Physics::ToMask(_layer));
 	}
-	
-	void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
+
+	void CharacterControllerComponent::SetCollisionMask(uint32_t _mask)
 	{
-		physx::PxSetGroup(*m_controller->getActor(), _group);
+		m_collisionMask = _mask;
 	}
 
-	Physics::ECollisionGroup CharacterControllerComponent::GetCollsionGroup() const
-	{
-		return Physics::ECollisionGroup();
-	}
+	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
+	//{
+	//	physx::PxSetGroup(*m_controller->getActor(), _group);
+	//}
+
+	//Physics::ECollisionGroup CharacterControllerComponent::GetCollsionGroup() const
+	//{
+	//	return (Physics::ECollisionGroup)physx::PxGetGroup(*m_controller->getActor());
+	//}
 }

@@ -108,8 +108,10 @@ void Character::Construct()
 		desc.contactOffset = 0.05f;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
-		pCharCont->SetCollsionGroup(MiniEngine::Physics::ECollisionGroup::InAction);
 		pCharCont->SetLayer(MiniEngine::Physics::Layer::Character);
+
+		// uint32_t CollisionMasks = MiniEngine::Physics::LayerMask::ALL | ~static_cast<uint32_t>(MiniEngine::Physics::Layer::Obstacle);
+		pCharCont->SetCollisionMask(MiniEngine::Physics::LayerMask::ALL);
 
 		m_charCont = pCharCont;
 	}

@@ -91,7 +91,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 	tag += (uint8_t)Content::Config::ETagAct::Vault;
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
-	staticMeshComp->SetColor(Vector3(0.7f, 0.7f, 0.2f));
+	staticMeshComp->SetColor(Vector3(0.7f, 0.5f, 0.2f));
 	staticMeshComp->SetMesh(pMesh);
 	staticMeshComp->localTransform.position = _pos;
 	staticMeshComp->localTransform.scale = _scale * 0.5f;
@@ -100,8 +100,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 
 	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale * 0.5f, 10.0f, staticMeshComp);
-	pRB->SetCollsionGroup(MiniEngine::Physics::ECollisionGroup::Obstacle);
-	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle); // 레이캐스트용
+	pRB->SetLayer(MiniEngine::Physics::Layer::Obstacle); 
 
 	return ObstacleActor;
 }

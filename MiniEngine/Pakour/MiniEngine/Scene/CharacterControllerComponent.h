@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <memory>
 #include "Scene/Component.h"
 #include "Physics/PhysicsWorld.h"
@@ -36,9 +36,11 @@ namespace MiniEngine
         std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 
         void SetLayer(Physics::Layer _layer);
-
+        void SetCollisionMask(uint32_t _mask);
+        /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
+        */
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);
@@ -46,7 +48,8 @@ namespace MiniEngine
         physx::PxController* m_controller = nullptr;
         std::weak_ptr<SceneComponent> m_target;
         std::weak_ptr<SkeletalMeshComponent> m_rootMotionSource;
-
+       
+        uint32_t m_collisionMask = Physics::LayerMask::ALL;
         Vector3 m_pendingMove{ 0.0f, 0.0f, 0.0f };
         float   m_gravity = -9.81f;
         float   m_verticalVelocity = 0.0f;
