@@ -25,5 +25,15 @@ namespace MiniEngine
 			return;
 
 		MG_LOG_INFO("Perception Travel");
+
+		std::shared_ptr<SceneComponent> pRoot = owner.lock()->GetRoot();
+
+		Physics::RaycastParam rayParam;
+		rayParam.m_dir = pRoot->localTransform.Forward();
+		rayParam.m_maxDistance = m_maxObsDist;
+		rayParam.m_origin = pRoot->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
+		Physics::RaycastResult rayResult;
+
+		m_physics.lock()->Raycast(rayParam, rayResult);
 	}
 }

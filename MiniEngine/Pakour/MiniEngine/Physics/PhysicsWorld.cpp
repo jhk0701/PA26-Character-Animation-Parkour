@@ -303,6 +303,7 @@ namespace MiniEngine::Physics
 			_outResult.m_hitShape = block.shape;
 		}
 
+		RecordQueryLine(_inParam.m_origin, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
 		return bIsHit;
 	}
 
