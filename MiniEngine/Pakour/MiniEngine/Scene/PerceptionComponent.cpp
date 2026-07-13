@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "Scene/PerceptionComponent.h"
-#include "Scene/Actor.h"
+#include "Content/Character.h"
+
 #include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Log.h"
 #include "Content/ContentConfig.h"
+
+using namespace MiniEngine::Physics;
+using namespace Content::Config;
 
 namespace MiniEngine 
 {
@@ -13,6 +17,87 @@ namespace MiniEngine
 		Component::OnAttach();
 
 		m_physics = owner.lock()->GetScene()->GetPhysics();
+	
+		ConstructConditionTree();
+	}
+
+	void PerceptionComponent::ConstructConditionTree()
+	{
+		std::shared_ptr<ConditionNode> pRootQuery = std::make_shared<ConditionNode>();
+		std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
+		std::shared_ptr<ConditionNode> pIsClimbable = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
+		std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
+		std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
+
+		std::shared_ptr<LeafNode> pContinue = std::make_shared<LeafNode>(); // 무응답 -> 탐색 계속 신호
+		std::shared_ptr<LeafNode> pSetLanding = std::make_shared<LeafNode>(); // 캐릭터를 Landing 상태로 전환
+		std::shared_ptr<LeafNode> pSetHanging = std::make_shared<LeafNode>(); // 캐릭터를 Hanging 상태로 전환
+		std::shared_ptr<LeafNode> pSetInAir = std::make_shared<LeafNode>(); // 캐릭터를 InAir 상태로 전환
+
+		pRootQuery->SetCondition(
+			[](TravelContext& _ctx) 
+			{ 
+				if (_ctx.m_owner)
+					return _ctx.m_owner->GetCharState() == Character::EState::Landing;
+				else
+					return false; 
+			},
+			pFindObstacle,
+			pIsHanging
+		);
+
+		pFindObstacle->SetCondition(
+			[this](TravelContext& _ctx)
+			{
+				RaycastParam rayParam;
+				rayParam.m_origin = _ctx.m_owner->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
+				rayParam.m_dir = _ctx.m_owner->GetRoot()->localTransform.Forward();
+				rayParam.m_maxDistance = m_maxObsDist;
+
+				return _ctx.m_physics->Raycast(rayParam, _ctx.m_raycastResult, ToMask(Layer::Obstacle));
+			},
+			pIsClimbable,	// 찾은 경우 오를(넘을) 수 있는지 확인
+			pContinue		// 찾지 못한 경우 continue return 
+		);
+
+		pIsClimbable->SetCondition(
+			[this](TravelContext& _ctx) 
+			{ 
+				MG_LOG_INFO("Check Obstable Is Climbable");
+				
+				bool bHitOnOneUnit = CheckByUnit(_ctx, m_unit);
+				bool bHitOnTwoUnit = CheckByUnit(_ctx, m_unit * 2.0f);
+
+				if (bHitOnOneUnit == false || 
+					bHitOnTwoUnit == false)
+				{
+					if (bHitOnOneUnit == false)
+						_ctx.m_predictedActTag = static_cast<uint8_t>(ETagAct::Vault);
+					else if (bHitOnTwoUnit == false)
+						_ctx.m_predictedActTag = static_cast<uint8_t>(ETagAct::Mantle);
+
+					return true;
+				}
+
+				return false;
+			},
+			pSetLanding,
+			pSetHanging
+		);
+
+		// pIsHanging 처리
+		m_QueryTree = pRootQuery;
+	}
+
+	bool PerceptionComponent::CheckByUnit(const TravelContext& _context, float _unitAmount)
+	{
+		RaycastParam rayParam;
+		rayParam.m_dir = _context.m_owner->GetRoot()->localTransform.Forward();
+		rayParam.m_origin = _context.m_raycastResult.m_pos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
+		rayParam.m_maxDistance = m_unit;
+		RaycastResult rayResult;
+
+		return _context.m_physics->Raycast(rayParam, rayResult, ToMask(Layer::Obstacle));
 	}
 
 	void PerceptionComponent::Tick(float _dt)
@@ -25,95 +110,19 @@ namespace MiniEngine
 		if (m_physics.expired())
 			return;
 
-		MG_LOG_INFO("Perception Travel");
-
 		m_ownerDir = _moveDir;
 		m_travelResult.clear();
-		Travel(0);
+
+		Travel();
 	}
 
-	void PerceptionComponent::Travel(int _curDepth)
+	void PerceptionComponent::Travel()
 	{
-		if (_curDepth >= MAX_PERCEPTION_STEP)
-			return;
+		TravelContext context;
+		context.m_owner = std::dynamic_pointer_cast<Character>(owner.lock());
+		context.m_physics = owner.lock()->GetScene()->GetPhysics().lock();
 
-		if (m_travelResult.empty())
-		{
-			FirstTravel(); // 최초 탐색
-			return;
-		}
-
-		const TravelResult& lastResult = m_travelResult.back();
-
-		if (lastResult.m_envTag
-			== static_cast<uint8_t>(Content::Config::ETagEnv::Obstacle)) 
-		{
-			std::shared_ptr<SceneComponent> pRoot = owner.lock()->GetRoot();
-			// 직전 탐색한 지형이 장애물인 경우
-			// 넘을 수 있는지 확인 (Up 방향으로 탐색 + 정면 레이캐스트 확인)
-			// 고정단위만큼 레이캐스트 조사
-			
-			// 1,2 단위까지 탐색
-			for (int i = 1; i <= 2; ++i)
-			{
-				Physics::RaycastParam rayParam;
-				rayParam.m_origin = lastResult.m_pos;
-				rayParam.m_origin.y += m_unit * i ; // 최초 장애물을 발견한 위치에서 단위량 만큼 +y축으로 이동
-				rayParam.m_dir = pRoot->localTransform.Forward();
-				rayParam.m_maxDistance = m_unit; // 단위량만큼 진행방향을 향해 레이캐스트
-
-				Physics::RaycastResult rayResult;
-				if (m_physics.lock()->Raycast(rayParam, rayResult, Physics::ToMask(Physics::Layer::Obstacle)))
-				{
-
-
-				}
-			}
-
-			// 3 단위부터는 매달려야 함
-		}
-		else if (lastResult.m_envTag
-			== static_cast<uint8_t>(Content::Config::ETagEnv::Land)) 
-		{
-			// 직전 탐색한 지형이 땅인 경우
-			// 착지
-			// 착지 후 다시 정면을 향해 탐색 개시
-		}
+		m_QueryTree->Execute(context);
 	}
-
-	void PerceptionComponent::FirstTravel()
-	{
-		// 기본 이동방향, 바닥 체크
-		std::shared_ptr<SceneComponent> pRoot = owner.lock()->GetRoot();
-
-		Physics::RaycastParam rayParam;
-		rayParam.m_dir = pRoot->localTransform.Forward();
-		rayParam.m_maxDistance = m_maxObsDist;
-		rayParam.m_origin = pRoot->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
-
-		Physics::RaycastResult rayResult;
-
-		bool bIsHit = m_physics.lock()->Raycast(rayParam, rayResult, Physics::ToMask(Physics::Layer::Obstacle));
-		if (!bIsHit)
-			return; // 탐색된 객체가 없음
-
-		MG_LOG_INFO("Obstacle Hit");
-
-		if (MiniEngine::Actor* pActor = static_cast<MiniEngine::Actor*>(rayResult.GetActor()))
-		{
-			uint8_t tagEnv;
-			pActor->GetTag().GetTagAt(Content::Config::TAG_TYPE_ENV, tagEnv);
-			m_travelResult.push_back(
-				TravelResult
-				{
-					EDirection::UP,
-					rayResult.m_pos,
-					tagEnv,
-					rayResult.GetActor()
-				}
-			);
-
-			Travel(1); // 다음 차례에서 넘을 수 있는지 확인
-		}
-	}
+	
 }

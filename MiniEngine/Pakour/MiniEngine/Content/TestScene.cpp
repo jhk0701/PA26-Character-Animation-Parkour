@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestScene.h"
 #include "Content/ContentConfig.h"
 #include "Manager/PathManager.h"
@@ -88,7 +88,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 	
 	Tag& tag = ObstacleActor->GetTag();
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
-	tag += (uint8_t)Content::Config::ETagAct::JumpOver;
+	tag += (uint8_t)Content::Config::ETagAct::Vault;
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetColor(Vector3(0.7f, 0.7f, 0.2f));

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Content::Config 
 {
@@ -18,7 +18,9 @@ namespace Content::Config
 	{
 		Landing,
 		Jump,
-		JumpOver, // 담넘기 valut
+		Vault, // 담넘기 valut
+		Mantle,
+		Hurdle,
 
 		End
 	};

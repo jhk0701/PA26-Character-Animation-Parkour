@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Scene/Actor.h"
 
 #include <unordered_map>
@@ -19,6 +19,13 @@ using namespace MiniEngine;
 class Character : public MiniEngine::Actor
 {
 public:
+	enum class EState 
+	{
+		Landing,
+		Hanging,
+		InAir,
+	};
+
 	Character();
 	virtual ~Character();
 
@@ -36,8 +43,9 @@ public:
 	Vector2 GetCamRotDir() const { return m_camRotDir; }
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
-
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
+	
+	EState GetCharState() const { return m_state; }
 
 private:
 	void InitInput();
@@ -52,6 +60,8 @@ private:
 
 	Vector2 m_camRotDir;
 	float m_camRotateSpeed{ 1.0f };
+
+	EState m_state{ EState::Landing };
 	
 	std::weak_ptr<SceneComponent> m_cameraHolder;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;

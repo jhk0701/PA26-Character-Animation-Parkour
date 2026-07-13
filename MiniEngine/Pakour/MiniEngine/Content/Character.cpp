@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Character.h"
 
 #include "Content/ContentConfig.h"
@@ -66,8 +66,8 @@ void Character::Construct()
 		// 단일 재생
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = std::make_shared<ActionClip>();
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump]->AddClip(skinnedMesh->GetClipPtr(10));
-		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpOver] = std::make_shared<ActionClip>();
-		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpOver]->AddClip(skinnedMesh->GetClipPtr(11));
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault] = std::make_shared<ActionClip>();
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault]->AddClip(skinnedMesh->GetClipPtr(11));
 
 		pAnim->SetEnableRootMotion(true);
 
