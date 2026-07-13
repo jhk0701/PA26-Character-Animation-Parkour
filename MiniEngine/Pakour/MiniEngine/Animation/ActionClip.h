@@ -1,10 +1,10 @@
-#pragma once
-#include "Animation/IAnimatorClip.h"
+Ôªø#pragma once
+#include "Asset/AnimClip.h"
 
 namespace MiniEngine
 {
-	// ¥‹πﬂ ¿Áª˝øÎ
-	class ActionClip : public IAnimatorClip
+	// Îã®Î∞ú Ïû¨ÏÉùÏö©
+	class ActionClip
 	{
 	public:
 		ActionClip();
@@ -14,9 +14,9 @@ namespace MiniEngine
 		void Play();
 		void Stop();
 
-		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
-		float GetDuration() const override { return m_duration; }
-		AnimClip* GetClip() const override { return m_clip; }
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
+		float GetDuration() const { return m_duration; }
+		AnimClip* GetClip() const { return m_clip; }
 
 		const float GetTickPerSec() const;
 

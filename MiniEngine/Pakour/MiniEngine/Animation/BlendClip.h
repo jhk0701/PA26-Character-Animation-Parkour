@@ -1,11 +1,12 @@
-#pragma once
-
-#include "Animation/IAnimatorClip.h"
+ï»¿#pragma once
+#include "Asset/AnimClip.h"
 
 namespace MiniEngine
 {
-	// ·ÎÄÚ¸ğ¼Ç Àç»ı¿ë (loop)
-	class BlendClip : public IAnimatorClip
+	// í”¼ë“œë°± ë°˜ì˜
+	// ì–¸ë¦¬ì–¼ ë°©ì‹ ë“¤ë¡œë„¤ ì‚¼ê°ë¶„í•  + ì§ˆëŸ‰ì¤‘ì‹¬ì¢Œí‘œ(barycentric)
+	// ë¡œì½”ëª¨ì…˜ ì¬ìƒìš© (loop)
+	class BlendClip
 	{
 		struct Axis
 		{
@@ -16,12 +17,12 @@ namespace MiniEngine
 
 		struct Placement 
 		{
-			// ¹èÄ¡ ÁÂÇ¥
-			Vector2 m_coord{0.0f, 0.0f};
-			// Àç»ıÇÒ Å¬¸³
+			// ë°°ì¹˜ ì¢Œí‘œ
+			Vector2 m_coord{ 0.0f, 0.0f };
+			// ì¬ìƒí•  í´ë¦½
 			AnimClip* m_pClip{ nullptr };
 
-			float m_weight{0.0f}; // Àç»ı °¡ÁßÄ¡ 0 ~ 1°ª
+			float m_weight{0.0f}; // ì¬ìƒ ê°€ì¤‘ì¹˜ 0 ~ 1ê°’
 		};
 
 	public:
@@ -29,10 +30,9 @@ namespace MiniEngine
 		BlendClip(int _reserveCnt);
 		~BlendClip() { m_placements.clear(); }
 
-		// ÇöÀç ÀÔ·ÂµÈ ÁÂÇ¥ ÃàÀ» °¡Áö°í ¾Ö´Ï¸ŞÀÌ¼Ç °¡ÁßÄ¡ °è»ê
-		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose) override;
-		float GetDuration() const override { return m_duration; }
-		AnimClip* GetClip() const override { return nullptr; }
+		// í˜„ì¬ ì…ë ¥ëœ ì¢Œí‘œ ì¶•ì„ ê°€ì§€ê³  ì• ë‹ˆë©”ì´ì…˜ ê°€ì¤‘ì¹˜ ê³„ì‚°
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
+		// float GetDuration() const { return m_duration; }
 
 		bool ComputeWeight(int& _outMatchedIdx);
 
@@ -43,15 +43,40 @@ namespace MiniEngine
 		void AddAnimClip(Vector2 _coord, AnimClip* _pClip);
 
 	private:
+		struct Tri 
+		{ 
+			int i0 = -1, i1 = -1, i2 = -1; 
+		};
+		// ì‚¼ê°ë¶„í•  ê²°ê³¼
+		enum class EFallback 
+		{ 
+			Triangulated, Empty, Single, Segment 
+		}; 
+
+		float Cross(const Vector2& _a, const Vector2& _b) { return _a.Cross(_b).x; }
+
+		// ì‚¼ê°í˜• abcê°€ ì  pë¥¼ í¬í•¨í•˜ëŠ”ì§€
+		// Bowyer-Watsonì˜ bad triangle íŒì •
+		bool InCircumcircle(const Vector2& _a, const Vector2& _b, const Vector2& _c, const Vector2& _p) const;
+		
+		// ì  pì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ ì‚¼ê°í˜•ì— ëŒ€í•œ ì§ˆëŸ‰ë“¤ì˜ ê°€ì¤‘ì¹˜ê°’ ë°˜í™˜
+		void ClosestPointBary(const Vector2& _a, const Vector2& _b, const Vector2& _c, const Vector2& _p,
+			float& _u, float& _v, float& _w);
+
+		void EnsureTriangluated();
+
+		std::vector<Tri> m_tris;
+		EFallback m_fallback = EFallback::Empty;
+		bool m_triDirty = true; // AddAnimClip í˜¸ì¶œ ì‹œ, tri ì¬êµ¬ì„± í•„ìš”
+
 		Axis m_AxisX;
 		Axis m_AxisY;
-		LocalPoseTRS m_blendedPose;	// ½ÇÁ¦·Î Àü´ŞÇÒ Æ÷Áî
-		LocalPoseTRS m_poseScratch; // ÀÓ½Ã º¸°ü¿ë
+		LocalPoseTRS m_blendedPose;	// ì‹¤ì œë¡œ ì „ë‹¬í•  í¬ì¦ˆ
+		LocalPoseTRS m_poseScratch; // ì„ì‹œ ë³´ê´€ìš©
 
 		float m_playTime{ 0.0f };
-		float m_duration{ 0.0f }; // Å¬¸³µé Áß Á¦ÀÏ ±ä °ÍÀ» º¸°ü
 
-		// x, yÃà Æ¯Á¤ À§Ä¡¿¡ ¾Ö´Ï¸ŞÀÌ¼Ç Å¬¸³ ¹èÄ¡
+		// x, yì¶• íŠ¹ì • ìœ„ì¹˜ì— ì• ë‹ˆë©”ì´ì…˜ í´ë¦½ ë°°ì¹˜
 		std::vector<Placement> m_placements;
 	};
 }
