@@ -72,7 +72,25 @@ void Character::Construct()
 		}
 		{
 			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-			
+
+			std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f, 
+				[this]() 
+				{
+					GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
+					MG_LOG_INFO("Set Ignore Obstacle");
+				}
+			);
+			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
+
+			std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.7f, 
+				[this]() 
+				{
+					GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, true);
+					MG_LOG_INFO("Collide Obstacle");
+				}
+			);
+			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
+
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
 			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault] = pActionClip;
 		}

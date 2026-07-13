@@ -41,6 +41,7 @@ public:
 	Vector2 GetInputDir() const { return m_inputDir; }
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
+	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
 	
 	EState GetCharState() const { return m_state; }
