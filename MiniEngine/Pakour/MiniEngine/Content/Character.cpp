@@ -347,8 +347,18 @@ void Character::InitInput()
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]() 
 		{
-			if (GetInputDir().LengthSquared() > 0.0f)
-				m_perception.lock()->StartTravel(GetRoot()->localTransform.Forward());
+			TravelResult result = m_perception.lock()->Travel();
+			
+			if(result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault))
+				MG_LOG_INFO("[Character] Play Valut!");
+			else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle))
+				MG_LOG_INFO("[Character] Play Mantle!");
+			else
+				MG_LOG_INFO("[Character] Can't Found!");
+
+			std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
+			if(pAction)
+				GetAnim().lock()->PlayActionClip(pAction, 0.3f);
 		}
 	);
 

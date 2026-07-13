@@ -23,7 +23,6 @@ namespace MiniEngine
 	{
 		bool m_bIsEmpty{ true };
 		Vector3 m_pos;
-		uint8_t m_envTag; // 탐색한 결과 마주친 태그
 		uint8_t m_actTag; // 탐색한 결과 취해야할 행동 태그
 		void* m_pActor;
 	};
@@ -68,10 +67,18 @@ namespace MiniEngine
 	class LeafNode : public NodeBase 
 	{
 	public:
+		void SetTask(std::function<TravelResult(TravelContext&)>&& _newTask) { m_task = _newTask; }
+
 		virtual TravelResult Execute(TravelContext& _context) override
 		{
-			return TravelResult();
+			if (!m_task)
+				return TravelResult();
+
+			return m_task(_context);
 		};
+
+	private:
+		std::function<TravelResult(TravelContext&)> m_task;
 	};
 
 	class PerceptionComponent : public Component
@@ -84,10 +91,12 @@ namespace MiniEngine
 	public:
 		void OnAttach() override;
 		void Tick(float _dt) override;
-		void StartTravel(const Vector3& _moveDir); // 탐색
+
+		TravelResult Travel();// 탐색
 		void ConstructConditionTree();
 
-		bool CheckByUnit(const TravelContext& _context, float _yOffset);
+		bool CheckClimbableByUnit(TravelContext& _context, float _yOffset);
+		bool CheckLandable(TravelContext& _context);
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
@@ -102,6 +111,5 @@ namespace MiniEngine
 		std::shared_ptr<NodeBase> m_QueryTree;
 		std::list<TravelResult> m_travelResult;
 
-		void Travel();
 	};
 }
