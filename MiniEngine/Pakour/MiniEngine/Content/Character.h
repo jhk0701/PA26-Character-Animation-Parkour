@@ -43,18 +43,21 @@ public:
 
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);
+	void SetState(EState _state) { m_state = _state; }
 
 	Vector2 GetInputDir() const { return m_inputDir; }
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<Animator> GetAnim() const;
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
-
 	EState GetCharState() const { return m_state; }
+	
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 
 	void SetEnableCollisionObstacle(bool _bEnable);
+
+	void SetHangingState(bool _bIsOn);
 
 private:
 	void InitInput();

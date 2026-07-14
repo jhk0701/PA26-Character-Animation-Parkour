@@ -39,11 +39,12 @@ namespace MiniEngine
         void SetQueryLayer(Physics::Layer _layer);
         
         void SetCollisionMask(uint32_t _mask);
-        // _enable = false -> 충돌하지 않도록 설정
+        // _enable = false : 충돌하지 않도록 설정
         void SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled);
 
         void SetFallingSecondThreshold(float _sec) { m_fallingSecThreshold = _sec; };
         void SetForceFalling();
+        void SetUseGravity(bool _bUse) { m_bUseGravity = _bUse; }
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
@@ -59,6 +60,8 @@ namespace MiniEngine
        
         uint32_t m_collisionMask = Physics::LayerMask::ALL;
         Vector3 m_pendingMove{ 0.0f, 0.0f, 0.0f };
+
+        bool    m_bUseGravity { true };
         float   m_gravity = -9.81f;
         float   m_verticalVelocity = 0.0f;
         bool    m_grounded = false;

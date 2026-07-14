@@ -110,7 +110,6 @@ namespace MiniEngine
 		float m_maxLandDist{ 1000.0f }; // 바닥 탐색
 
 		std::shared_ptr<NodeBase> m_QueryTree;
-		std::list<TravelResult> m_travelResult;
 
 	};
 }

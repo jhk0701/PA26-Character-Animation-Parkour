@@ -108,7 +108,8 @@ namespace MiniEngine
 						pReturn
 					);
 
-						pReturn->SetTask([](TravelContext& _context) 
+						pReturn->SetTask(
+							[](TravelContext& _context) 
 							{
 								TravelResult result;
 								result.m_bIsEmpty = false;
@@ -119,6 +120,18 @@ namespace MiniEngine
 							}
 						);
 
+					pSetHanging->SetTask(
+						[](TravelContext& _ctx) 
+						{
+							TravelResult result;
+							result.m_bIsEmpty = false;
+							result.m_pActor = _ctx.m_raycastResult.GetActor();
+							result.m_actTag = (uint8_t)ETagAct::IdleToHang;
+
+							return result;
+						}
+					);
+
 		// pIsHanging 처리
 		pIsHanging->SetCondition(
 			[](TravelContext& _ctx) 
@@ -128,8 +141,9 @@ namespace MiniEngine
 				
 				return false;
 			},
-			pContinue, // TODO : 매달렸을 때 처리
-			pContinue);
+			pContinue,	// TODO : 매달렸을 때 처리
+			pContinue	// false는 공중에서 떨어지는 상태일 것
+		);
 
 		m_QueryTree = pRootQuery;
 	}

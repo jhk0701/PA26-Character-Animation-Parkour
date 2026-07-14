@@ -170,6 +170,28 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->SetApplyRootBone(false);
 		m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand] = pActionClip;
 	}
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(15)); // 벽 매달리기 (시작)
+
+		std::shared_ptr<AnimNotify> pSetHanging = std::make_shared<AnimNotify>(0.2f, 
+			[this]() { SetHangingState(true); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetHanging));
+
+		m_mapActions[(uint8_t)Content::Config::ETagAct::IdleToHang] = pActionClip;
+	}
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
+
+		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.2f,
+			[this]() { SetHangingState(false); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
+
+		m_mapActions[(uint8_t)Content::Config::ETagAct::HangToIdle] = pActionClip;
+	}
 
 	pAnim->SetEnableRootMotion(true);
 
@@ -295,6 +317,7 @@ void Character::CheckCharacterState()
 		return;
 	}
 
+	if(m_state == EState::Hanging) // PerceptionComp에서 인식하고 반영해줄 것
 	{
 		// 벽에 매달린 상황일 때
 	}
@@ -318,6 +341,12 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 		MG_LOG_INFO("Collide With Obstacle");
 	else
 		MG_LOG_INFO("Ignore Obstacle");
+}
+
+void Character::SetHangingState(bool _bIsOn)
+{
+	SetState(_bIsOn ? EState::Hanging : EState::Landing);
+	m_charCont.lock()->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
 }
 
 void Character::InitInput()
