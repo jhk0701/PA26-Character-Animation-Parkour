@@ -16,6 +16,7 @@ namespace MiniEngine
 		float m_timeToCall{ 0.0f };
 		float m_playElapsed{ 0.0f };
 		bool m_bIsCalled{ false };
+
 		std::function<void()> m_event;
 	};
 }

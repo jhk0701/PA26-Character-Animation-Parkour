@@ -123,6 +123,7 @@
     <ClInclude Include="Animation\ActionClip.h" />
     <ClInclude Include="Animation\Animator.h" />
     <ClInclude Include="Animation\AnimNotify.h" />
+    <ClInclude Include="Animation\AnimStateMachine.h" />
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimNotify.h" />
     <ClInclude Include="Asset\RootMotion.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Animation\ActionClip.cpp" />
     <ClCompile Include="Animation\Animator.cpp" />
     <ClCompile Include="Animation\AnimNotify.cpp" />
+    <ClCompile Include="Animation\AnimStateMachine.cpp" />
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimNotify.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />

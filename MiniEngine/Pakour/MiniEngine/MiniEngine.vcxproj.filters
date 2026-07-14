@@ -83,6 +83,9 @@
     <Filter Include="Content\04.Component">
       <UniqueIdentifier>{9a46ea7e-5f70-42a5-9d07-77b719b554a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\05.AnimInstance">
+      <UniqueIdentifier>{a758dcc4-be18-4c22-b728-8c33f7ce0489}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -226,8 +229,15 @@
     <ClInclude Include="Scene\PerceptionComponent.h">
       <Filter>Content\04.Component</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimNotify.h" />
-    <ClInclude Include="Animation\IAnimNotify.h" />
+    <ClInclude Include="Animation\AnimNotify.h">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\IAnimNotify.h">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimStateMachine.h">
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -348,10 +358,13 @@
       <Filter>Content\04.Component</Filter>
     </ClCompile>
     <ClCompile Include="Animation\AnimNotify.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Animation\IAnimNotify.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\07.Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimStateMachine.cpp">
+      <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
