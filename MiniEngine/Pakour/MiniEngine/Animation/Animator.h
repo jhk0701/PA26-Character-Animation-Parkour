@@ -12,6 +12,8 @@ namespace MiniEngine
 	struct AnimLayer
 	{
 		bool m_bIsPlaying{ false };
+		uint8_t m_curPriority = 0; // 높을수록 바로 재생
+
 		// 레이어간 페이드 인아웃
 		float m_fadeElapsed = 0.0f;
 		float m_fadeDuration = 0.0f;	// 0 = 페이드 없음
@@ -45,7 +47,7 @@ namespace MiniEngine
 		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }
 		void AddBaseLocomotion(std::shared_ptr<BlendClip>& _loco) { m_baseTrack.AddState(_loco); }
 
-		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f);
+		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f, uint8_t _priority = 0);
 
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
 		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }

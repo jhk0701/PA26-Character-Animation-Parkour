@@ -89,6 +89,7 @@ namespace MiniEngine
 		{
 			m_overrideTrack.m_bIsPlaying = false;
 			m_overrideTrack.m_pClip = nullptr;
+			m_overrideTrack.m_curPriority = 0;
 		}
 	}
 
@@ -108,12 +109,13 @@ namespace MiniEngine
 		skeleton.ComputeBoneMatrices(m_localPose, *m_pBoneMatrices);
 	}
 
-	void Animator::PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration)
+	void Animator::PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration, uint8_t _priority)
 	{
-		if (m_overrideTrack.m_bIsPlaying)
+		if (m_overrideTrack.m_bIsPlaying && m_overrideTrack.m_curPriority >= _priority)
 			return;
 
 		m_overrideTrack.m_bIsPlaying = true;
+		m_overrideTrack.m_curPriority = _priority;
 		m_overrideTrack.m_pClip = _action;
 		m_overrideTrack.m_fadeDuration = _fadeDuration;
 		m_overrideTrack.m_fadeElapsed = 0.0f;
