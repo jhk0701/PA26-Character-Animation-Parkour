@@ -202,9 +202,6 @@
     <ClInclude Include="Animation\ActionClip.h">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\IAnimatorClip.h">
-      <Filter>Engine\07.Object\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Content\ContentConfig.h">
       <Filter>Content\01.Config</Filter>
     </ClInclude>
@@ -229,6 +226,8 @@
     <ClInclude Include="Scene\PerceptionComponent.h">
       <Filter>Content\04.Component</Filter>
     </ClInclude>
+    <ClInclude Include="Animation\AnimNotify.h" />
+    <ClInclude Include="Animation\IAnimNotify.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -327,9 +326,6 @@
     <ClCompile Include="Animation\ActionClip.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\IAnimatorClip.cpp">
-      <Filter>Engine\07.Object\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Content\ContentConfig.cpp">
       <Filter>Content\01.Config</Filter>
     </ClCompile>
@@ -350,6 +346,12 @@
     </ClCompile>
     <ClCompile Include="Scene\PerceptionComponent.cpp">
       <Filter>Content\04.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimNotify.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\IAnimNotify.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

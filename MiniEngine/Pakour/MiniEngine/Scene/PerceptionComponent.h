@@ -17,6 +17,7 @@ namespace MiniEngine
 		Physics::RaycastResult m_raycastResult;
 
 		uint8_t m_predictedActTag;
+		uint8_t m_units;
 	};
 
 	struct TravelResult 

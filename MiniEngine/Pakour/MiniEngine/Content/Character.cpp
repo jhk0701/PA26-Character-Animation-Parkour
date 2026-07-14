@@ -37,7 +37,7 @@ void Character::Construct()
 	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"YBot.mini");
+	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
 	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
@@ -73,26 +73,23 @@ void Character::Construct()
 		{
 			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 
-			std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f, 
-				[this]() 
-				{
-					GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
-					MG_LOG_INFO("Set Ignore Obstacle");
-				}
+			std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f,
+				[this]() { SetEnableCollisionObstacle(false); }
 			);
 			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
 
 			std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.7f, 
-				[this]() 
-				{
-					GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, true);
-					MG_LOG_INFO("Collide Obstacle");
-				}
+				[this]() { SetEnableCollisionObstacle(true); }
 			);
 			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
 
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault] = pActionClip;
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
+		}
+		{
+			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+			pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
 		}
 
 		pAnim->SetEnableRootMotion(true);
@@ -169,7 +166,7 @@ void Character::ProcessInput(float _dt)
 	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
 	m_camRotate.x += CamRotSpeed.x;
 	m_camRotate.y += CamRotSpeed.y;
-	m_camRotate.y = std::clamp(m_camRotate.y, -80.0f, 80.0f); // 회전각 제한
+	m_camRotate.y = std::clamp(m_camRotate.y, -m_camMaxPitchDeg, m_camMaxPitchDeg); // 회전각 제한
 
 	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
@@ -200,6 +197,22 @@ void Character::ProcessInput(float _dt)
 	GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 }
 
+void Character::ProcessPerceptionResult()
+{
+	TravelResult result = m_perception.lock()->Travel();
+
+	if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault_Mid))
+		MG_LOG_INFO("[Character] Play Valut!");
+	else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle_Mid))
+		MG_LOG_INFO("[Character] Play Mantle!");
+	else
+		MG_LOG_INFO("[Character] Can't Found!");
+
+	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
+	if (pAction)
+		GetAnim().lock()->PlayActionClip(pAction, 0.2f);
+}
+
 void Character::SetInputDir(const Vector2& _dir)
 {
 	m_inputDir = _dir;
@@ -208,6 +221,16 @@ void Character::SetInputDir(const Vector2& _dir)
 std::weak_ptr<Animator> Character::GetAnim() const
 {
 	return m_skinMeshComp.lock()->GetAnim();
+}
+
+void Character::SetEnableCollisionObstacle(bool _bEnable)
+{
+	GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+
+	if(_bEnable)
+		MG_LOG_INFO("Collide With Obstacle");
+	else
+		MG_LOG_INFO("Ignore Obstacle");
 }
 
 void Character::InitInput()
@@ -287,42 +310,8 @@ void Character::InitInput()
 			m_charCont.lock()->Jump(m_jumpSpeed);
 		});
 
-	// 레이캐스트
-	/*input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).Pressing = std::bind(
-		[this](float _dt) 
-		{
-			TravelResult result = m_perception.lock()->Travel();
-
-			if(result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault))
-				MG_LOG_INFO("[Character] Play Valut!");
-			else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle))
-				MG_LOG_INFO("[Character] Play Mantle!");
-			else
-				MG_LOG_INFO("[Character] Can't Found!");
-
-			std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
-			if(pAction)
-				GetAnim().lock()->PlayActionClip(pAction, 0.3f);
-
-		}, std::placeholders::_1);
-		*/
-
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() 
-		{
-			TravelResult result = m_perception.lock()->Travel();
-			
-			if(result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault))
-				MG_LOG_INFO("[Character] Play Valut!");
-			else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle))
-				MG_LOG_INFO("[Character] Play Mantle!");
-			else
-				MG_LOG_INFO("[Character] Can't Found!");
-
-			std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
-			if(pAction)
-				GetAnim().lock()->PlayActionClip(pAction, 0.3f);
-		}
+		[this]() { ProcessPerceptionResult(); }
 	);
 
 }

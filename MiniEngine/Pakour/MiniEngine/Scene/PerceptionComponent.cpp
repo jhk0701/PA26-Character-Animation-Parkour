@@ -25,7 +25,8 @@ namespace MiniEngine
 	{
 		std::shared_ptr<ConditionNode> pRootQuery = std::make_shared<ConditionNode>();
 		std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
-		std::shared_ptr<ConditionNode> pIsClimbable = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
+		std::shared_ptr<ConditionNode> pIsClimbableFirst = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
+		std::shared_ptr<ConditionNode> pIsClimbableSecond = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
 		std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 		std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
 
@@ -35,6 +36,7 @@ namespace MiniEngine
 		std::shared_ptr<LeafNode> pSetHanging = std::make_shared<LeafNode>(); // 캐릭터를 Hanging 상태로 전환
 		std::shared_ptr<LeafNode> pSetInAir = std::make_shared<LeafNode>(); // 캐릭터를 InAir 상태로 전환
 
+		// 1번 확인 : 평지에 있는 상황인지
 		pRootQuery->SetCondition(
 			[](TravelContext& _ctx) 
 			{ 
@@ -46,7 +48,7 @@ namespace MiniEngine
 			pFindObstacle,
 			pIsHanging
 		);
-
+			// 평지에 있는데, 장애물을 발견했는지
 			pFindObstacle->SetCondition(
 				[this](TravelContext& _ctx)
 				{
@@ -60,26 +62,38 @@ namespace MiniEngine
 
 					return _ctx.m_physics->CapsuleCast(capParam, _ctx.m_raycastResult, ToMask(Layer::Obstacle));
 				},
-				pIsClimbable,	// 찾은 경우 오를(넘을) 수 있는지 확인
+				pIsClimbableFirst,	// 찾은 경우 오를(넘을) 수 있는지 확인
 				pContinue		// 찾지 못한 경우 continue return 
 			);
-
-				pIsClimbable->SetCondition(
+				// 장애물을 오를 수 있는지
+				pIsClimbableFirst->SetCondition(
 					[this](TravelContext& _ctx) 
 					{ 
 						MG_LOG_INFO("Check Obstable Is Climbable");
-				
 						if (CheckClimbableByUnit(_ctx, m_unit) == false)
-							return true; // vault로 넘을 수 있는 높이
-						
-						 // 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
+							return true; // 1단위 넘을 수 있는 높이
+
+						_ctx.m_units = 1;
+
+						return false; // 2단위 체크 시도
+					},
+					pObstableIsLandable,	// 넘을 수 있음
+					pIsClimbableSecond		// 넘을 수 없음. 다음 단위 체크
+				);
+
+				pIsClimbableSecond->SetCondition(
+					[this](TravelContext& _ctx) 
+					{
+						// 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
 						if (CheckClimbableByUnit(_ctx, m_unit) == false)
-							return true; // vault보단 높음
+							return true; // 2단위로 넘을 수 있는 높이
+
+						_ctx.m_units = 2;
 
 						return false; // 2회 단위 체크에도 끝이 보이지 않음 -> 매달려야함
 					},
-					pObstableIsLandable,	// 넘을 수 있음
-					pSetHanging				// 넘을 수 없음
+					pObstableIsLandable,
+					pSetHanging
 				);
 
 					pObstableIsLandable->SetCondition(
@@ -88,7 +102,7 @@ namespace MiniEngine
 							MG_LOG_INFO("Check Obstable Is Landable");
 							bool bIsLandable = CheckLandable(_ctx);
 
-							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ? ETagAct::Vault : ETagAct::Mantle);
+							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ? ETagAct::Vault : ETagAct::Mantle) + _ctx.m_units;
 
 							return bIsLandable;
 						}, 
@@ -166,6 +180,7 @@ namespace MiniEngine
 		TravelContext context;
 		context.m_owner = std::dynamic_pointer_cast<Character>(owner.lock());
 		context.m_physics = owner.lock()->GetScene()->GetPhysics().lock();
+		context.m_units = 0;
 
 		return m_QueryTree->Execute(context);
 	}

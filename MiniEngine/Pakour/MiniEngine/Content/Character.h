@@ -34,6 +34,7 @@ public:
 	virtual void Tick(float _dt) override;
 
 	void ProcessInput(float _dt);
+	void ProcessPerceptionResult();
 
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);
@@ -48,6 +49,8 @@ public:
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 
+	void SetEnableCollisionObstacle(bool _bEnable);
+
 private:
 	void InitInput();
 
@@ -57,8 +60,9 @@ private:
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
-	float m_camRotateSpeed{ 0.5f };
+	float m_camRotateSpeed{ 0.3f };
 	Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
+	float m_camMaxPitchDeg{ 85.0f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };

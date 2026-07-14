@@ -18,9 +18,18 @@ namespace Content::Config
 	{
 		Landing,
 		Jump,
-		Vault, // 담넘기 valut
+		
+		Vault,
+		Vault_Low = Vault, // 뛰어 넘고, 절벽으로 떨어짐
+		Vault_Mid,
+		Vault_High, 
+
+		Hurdle, // 뛰어 넘고, 계속 달림
+
 		Mantle,
-		Hurdle,
+		Mantle_Low = Mantle, // 오르기
+		Mantle_Mid,
+		Mantle_High,
 
 		End
 	};
