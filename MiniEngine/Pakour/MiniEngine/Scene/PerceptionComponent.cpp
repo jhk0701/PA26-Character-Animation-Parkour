@@ -100,14 +100,15 @@ namespace MiniEngine
 						[this](TravelContext& _ctx) 
 						{
 							MG_LOG_INFO("Check Obstable Is Landable");
-							bool bIsLandable = CheckLandable(_ctx);
+							bool bIsLandable = CheckLandableOnObstacle(_ctx);
 
-							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ? ETagAct::Vault : ETagAct::Mantle) + _ctx.m_units;
+							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ? 
+								ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
 
 							return bIsLandable;
 						}, 
 						pReturn,
-						pSetInAir
+						pReturn
 					);
 
 						pReturn->SetTask([](TravelContext& _context) 
@@ -149,7 +150,7 @@ namespace MiniEngine
 		return bIsHit;
 	}
 
-	bool PerceptionComponent::CheckLandable(TravelContext& _context)
+	bool PerceptionComponent::CheckLandableOnObstacle(TravelContext& _context)
 	{
 		// climbing 테스트를 완료하고 호출될 것
 		
@@ -160,11 +161,7 @@ namespace MiniEngine
 		rayParam.m_maxDistance = m_maxLandDist;
 		
 		RaycastResult rayResult;
-		bool bIsHit = _context.m_physics->Raycast(rayParam, rayResult, ToMask(static_cast<Layer>(Layer::Obstacle | Layer::Ground)));
-		
-		// 레이와 닿은 거리가 2단위 이하라면 landable
-		// 그 이상은 InAir
-		return rayResult.m_distance <= m_unit * 2.0f;
+		return _context.m_physics->Raycast(rayParam, rayResult, ToMask(static_cast<Layer>(Layer::Obstacle)));
 	}
 
 	void PerceptionComponent::Tick(float _dt)

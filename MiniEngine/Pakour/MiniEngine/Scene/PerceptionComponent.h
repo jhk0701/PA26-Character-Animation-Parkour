@@ -97,7 +97,7 @@ namespace MiniEngine
 		void ConstructConditionTree();
 
 		bool CheckClimbableByUnit(TravelContext& _context, float _yOffset);
-		bool CheckLandable(TravelContext& _context);
+		bool CheckLandableOnObstacle(TravelContext& _context);
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;

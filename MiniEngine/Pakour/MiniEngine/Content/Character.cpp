@@ -89,7 +89,8 @@ void Character::Construct()
 		{
 			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
 		}
 
 		pAnim->SetEnableRootMotion(true);
@@ -201,14 +202,8 @@ void Character::ProcessPerceptionResult()
 {
 	TravelResult result = m_perception.lock()->Travel();
 
-	if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Vault_Mid))
-		MG_LOG_INFO("[Character] Play Valut!");
-	else if (result.m_actTag == static_cast<uint8_t>(Content::Config::ETagAct::Mantle_Mid))
-		MG_LOG_INFO("[Character] Play Mantle!");
-	else
-		MG_LOG_INFO("[Character] Can't Found!");
-
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
+
 	if (pAction)
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f);
 }
