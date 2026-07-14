@@ -64,7 +64,7 @@ private:
 
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
-	float m_lerpWeight{ 2.0f };
+	float m_lerpWeight{ 5.0f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 

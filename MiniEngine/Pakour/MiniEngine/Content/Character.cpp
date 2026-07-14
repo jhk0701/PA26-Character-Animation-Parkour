@@ -347,6 +347,17 @@ void Character::SetHangingState(bool _bIsOn)
 {
 	SetState(_bIsOn ? EState::Hanging : EState::Landing);
 	m_charCont.lock()->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
+
+	if (_bIsOn)
+	{
+		MG_LOG_INFO("Start Hanging");
+		GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+	}
+	else
+	{
+		MG_LOG_INFO("End Hanging");
+		GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+	}
 }
 
 void Character::InitInput()
