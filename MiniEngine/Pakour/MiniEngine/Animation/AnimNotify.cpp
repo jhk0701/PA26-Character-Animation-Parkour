@@ -25,4 +25,24 @@ namespace MiniEngine
 		if (m_event)
 			m_event();
 	}
+
+	AnimNotifyState::AnimNotifyState(float _start, float _end, std::function<void(float)>&& _event)	:
+		m_start(_start), m_end(_end), m_event(_event)
+	{
+	}
+
+	void AnimNotifyState::Init()
+	{
+		m_playElapsed = 0.0f;
+	}
+	void AnimNotifyState::Update(float _dt)
+	{
+		m_playElapsed += _dt;
+
+		if (m_playElapsed < m_start || m_playElapsed > m_end)
+			return;
+
+		if (m_event)
+			m_event(_dt);
+	}
 }

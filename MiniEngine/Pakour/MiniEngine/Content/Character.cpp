@@ -85,10 +85,6 @@ void Character::Construct()
 		pPerceptComp->SetQuertTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
-
-	m_moveSpeeds.resize(static_cast<uint8_t>(EState::END));
-	m_moveSpeeds[static_cast<uint8_t>(EState::Landing)] = 6.0f;
-	m_moveSpeeds[static_cast<uint8_t>(EState::Hanging)] = 2.0f;
 }
 
 void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
@@ -202,6 +198,18 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
 	}
 	{
+		// HangToIdle
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
+
+		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.2f,
+			[this]() { SetHangingState(false); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
+
+		m_mapActions[(uint8_t)ETagAct::HangToMantle] = pActionClip;
+	}
+	{
 		// Hanging 중 이동 모션
 		std::shared_ptr<ActionClip> pHangMoveUp = std::make_shared<ActionClip>();
 		pHangMoveUp->AddClip(skinnedMesh->GetClipPtr(20));
@@ -286,7 +294,7 @@ void Character::InputMovement(float _dt)
 			inputDir.Normalize();
 			m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
 
-			const float deltaSpeed = _dt * m_moveSpeeds[(uint8_t)m_state];
+			const float deltaSpeed = _dt * m_moveSpeed;
 			std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
 			// 캐릭터 정면 기준 이동
@@ -311,7 +319,7 @@ void Character::InputCamRotate()
 	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
 	m_camRotate.x += CamRotSpeed.x;
 	m_camRotate.y += CamRotSpeed.y;
-	m_camRotate.y = std::clamp(m_camRotate.y, -m_camMaxPitchDeg, m_camMaxPitchDeg); // 회전각 제한
+	// m_camRotate.y = std::clamp(m_camRotate.y, -m_camMaxPitchDeg, m_camMaxPitchDeg); // 회전각 제한
 
 	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
@@ -331,7 +339,7 @@ void Character::ProcessPerceptionResult()
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
 
 	if (pAction)
-		GetAnim().lock()->PlayActionClip(pAction, 0.2f);
+		GetAnim().lock()->PlayActionClip(pAction, 0.2f, 1);
 }
 
 void Character::CheckCharacterState()

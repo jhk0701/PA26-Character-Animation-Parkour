@@ -42,9 +42,7 @@ namespace
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
 		capParam.m_maxDistance = UNIT;
 
-		RaycastResult rayResult;
-		bool bIsHit = _context.m_physics->CapsuleCast(capParam, rayResult, ToMask(Layer::Obstacle));
-		return bIsHit;
+		return _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::Obstacle));
 	}
 
 	bool CheckLandable(TravelContext& _context, uint32_t _layerMask, float _dist)
@@ -86,7 +84,11 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			TravelResult result;
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
-			result.m_pActor = _context.m_raycastResult.GetActor();
+			
+			if (_context.m_raycastResult.m_bIsHit)
+				result.m_pActor = _context.m_raycastResult.GetActor();
+			else
+				result.m_pActor = nullptr;
 
 			return result;
 		}
@@ -227,6 +229,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 위를 향함
 					// 1유닛 장애물 테스트 결과 통과 가능
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
+					MG_LOG_INFO("Character Hang To Mantle");
 					return true;
 				}
 

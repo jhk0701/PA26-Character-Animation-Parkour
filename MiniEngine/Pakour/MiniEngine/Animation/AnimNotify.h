@@ -19,4 +19,20 @@ namespace MiniEngine
 
 		std::function<void()> m_event;
 	};
+
+	class AnimNotifyState : public IAnimNotify 
+	{
+	public:
+		AnimNotifyState(float _start, float _end, std::function<void(float)>&& _event);
+
+		void Init() override;
+		void Update(float _dt) override;
+
+	private:
+		float m_start{ 0.0f };
+		float m_end{ 0.0f };
+		float m_playElapsed{ 0.0f };
+
+		std::function<void(float)> m_event;
+	};
 }

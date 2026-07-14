@@ -42,7 +42,7 @@ public:
 	
 	void ProcessPerceptionResult();
 
-	void SetMoveSpeed(EState _state, float _newSpeed) { m_moveSpeeds[(uint8_t)_state] = _newSpeed; }
+	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);
 	void SetState(EState _state) { m_state = _state; }
 
@@ -66,7 +66,7 @@ private:
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
 	float m_lerpWeight{ 5.0f };
-	std::vector<float> m_moveSpeeds; // float m_moveSpeed{ 6.0f };
+	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
 	float m_camRotateSpeed{ 0.3f };

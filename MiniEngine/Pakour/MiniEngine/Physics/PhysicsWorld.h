@@ -55,6 +55,7 @@ namespace MiniEngine::Physics
 
     struct RaycastResult // 레이캐스트 후 결과
     {
+        bool m_bIsHit{ false };
         Vector3 m_pos;
         Vector3 m_nrm;
         float m_distance;

@@ -17,7 +17,10 @@ namespace MiniEngine::Physics
 		inline Vector3 ToVec3(const physx::PxVec3& v) { return Vector3(v.x, v.y, v.z); }
 	}
 
-	void* RaycastResult::GetActor() const { return m_hitActor->userData; }
+	void* RaycastResult::GetActor() const 
+	{ 
+		return m_hitActor->userData;
+	}
 
 	void PhysicsWorld::SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask)
 	{
@@ -304,6 +307,7 @@ namespace MiniEngine::Physics
 			filter) 
 			&& hitBuffer.hasBlock;
 
+		_outResult.m_bIsHit = bIsHit;
 		if (bIsHit) 
 		{
 			const PxRaycastHit& block = hitBuffer.block;
@@ -345,6 +349,7 @@ namespace MiniEngine::Physics
 			filter)
 			&& hitBuffer.hasBlock;
 
+		_outResult.m_bIsHit = bIsHit;
 		if (bIsHit) 
 		{
 			const PxSweepHit& block = hitBuffer.block;
