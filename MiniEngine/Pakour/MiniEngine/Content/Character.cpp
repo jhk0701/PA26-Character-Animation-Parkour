@@ -83,6 +83,10 @@ void Character::Construct()
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
 		m_perception = pPerceptComp;
 	}
+
+	m_moveSpeeds.resize(static_cast<uint8_t>(EState::END));
+	m_moveSpeeds[static_cast<uint8_t>(EState::Landing)] = 6.0f;
+	m_moveSpeeds[static_cast<uint8_t>(EState::Hanging)] = 2.0f;
 }
 
 void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
@@ -251,16 +255,34 @@ void Character::ProcessInput(float _dt)
 
 	Vector2 inputDir = m_inputDir;
 	inputDir.Normalize();
-
 	m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
 
-	const float deltaSpeed = _dt * m_moveSpeed;
+	const float deltaSpeed = _dt * m_moveSpeeds[(uint8_t)m_state];
 	std::shared_ptr<SceneComponent> pRoot = GetRoot();
 
-	// 캐릭터 정면 기준 이동
-	const Vector3& fwd = pRoot->localTransform.Forward();
-	const Vector3& rht = pRoot->localTransform.Right();
-	m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
+	// TODO : 추후 리팩토링
+	switch (m_state)
+	{
+		case EState::Hanging:
+		{
+			// 벽면 이동 기준
+			const Vector3& up = pRoot->localTransform.Up();
+			const Vector3& rht = pRoot->localTransform.Right();
+			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * up + deltaSpeed * -m_lerpInputDir.x * rht);
+
+			break;
+		}
+		case EState::Landing: __fallthrough;
+		default:
+		{
+			// 캐릭터 정면 기준 이동
+			const Vector3& fwd = pRoot->localTransform.Forward();
+			const Vector3& rht = pRoot->localTransform.Right();
+			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
+
+			break;
+		}
+	}
 
 	GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 }
@@ -277,6 +299,9 @@ void Character::ProcessPerceptionResult()
 
 void Character::CheckCharacterState()
 {
+	if (m_state == EState::Hanging) // PerceptionComp에서 인식하고 반영해줄 것
+		return; // 벽에 매달린 상황일 때
+
 	std::shared_ptr<Animator> pAnim = GetAnim().lock();
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
 
@@ -315,11 +340,6 @@ void Character::CheckCharacterState()
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 
 		return;
-	}
-
-	if(m_state == EState::Hanging) // PerceptionComp에서 인식하고 반영해줄 것
-	{
-		// 벽에 매달린 상황일 때
 	}
 }
 
