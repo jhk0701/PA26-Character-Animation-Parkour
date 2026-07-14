@@ -37,9 +37,11 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
-	void ProcessInput(float _dt);
-	void ProcessPerceptionResult();
+	void InputCamRotate();
+	void InputMovement(float _dt);
 	void CheckCharacterState();
+	
+	void ProcessPerceptionResult();
 
 	void SetMoveSpeed(EState _state, float _newSpeed) { m_moveSpeeds[(uint8_t)_state] = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);

@@ -21,20 +21,25 @@ namespace Content::Config
 		FallingToLand,
 		
 		Vault,
-		Vault_Low = Vault, // 뛰어 넘기
-		Vault_Mid,
-		Vault_High, 
+		VaultLow = Vault, // 뛰어 넘기
+		VaultMid,
+		VaultHigh, 
 
 		// Hurdle, // 뛰어 넘고, 계속 달림 -> Valut와 차이가 없음
 		Mantle,
-		Mantle_Low = Mantle, // 오르기
-		Mantle_Mid,
-		Mantle_High,
+		MantleLow = Mantle, // 오르기
+		MantleMid,
+		MantleHigh,
 
 		IdleToHang,		// 매달리기 시작
 		HangToIdle,		// 매달리기에서 내려옴
 		HangToMantle,	// 매달린 상태에서 꼭대기에 오름
 		HangToJump,		// 매달린 상태에서 점프
+
+		HangingMoveUp,
+		HangingMoveDown,
+		HangingMoveLeft,
+		HangingMoveRight,
 
 		End
 	};

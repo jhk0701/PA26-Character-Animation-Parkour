@@ -20,6 +20,7 @@
 #include "Animation/ActionClip.h"
 #include "Animation/AnimNotify.h"
 
+using namespace Content::Config;
 
 Character::Character()
 {
@@ -122,18 +123,20 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	}
 	{
 		// Hanging
-		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(5);
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
 		// 모션 입력 
+		// 블렌드 모션이 생각보다 별로라 루트모션으로 대체
 		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
-		pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(19)); // Braced Hang Drop
-		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(20)); // Braced Hang Hop Up
-		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(21)); // Braced Hang Shimmy Left
-		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(22)); // Braced Hang Shimmy Right
+		//pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(19)); // Braced Hang Drop
+		//pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(20)); // Braced Hang Hop Up
+		//pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(21)); // Braced Hang Shimmy Left
+		//pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(22)); // Braced Hang Shimmy Right
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 
 	// ActionClip 구성
 	{
+		// 테스트 Jump
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
 		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
@@ -145,6 +148,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
 	}
 	{
+		// Jump Valut
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 
 		std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f,
@@ -158,23 +162,26 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
 
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Valut 낮은 모션 적용 Jumping valut
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
 	}
 	{
+		// Mantle Mid
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Mantle_Mid 넘어 오르는 모션 Sprint To Wall Climb
 
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
 	}
 	{
+		// FallingToLand
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
 		pActionClip->SetApplyRootBone(false);
-		m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::FallingToLand] = pActionClip;
 	}
 	{
+		// IdleToHang
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(15)); // 벽 매달리기 (시작)
 
@@ -183,9 +190,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		);
 		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetHanging));
 
-		m_mapActions[(uint8_t)Content::Config::ETagAct::IdleToHang] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::IdleToHang] = pActionClip;
 	}
 	{
+		// HangToIdle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
 
@@ -194,7 +202,25 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		);
 		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
 
-		m_mapActions[(uint8_t)Content::Config::ETagAct::HangToIdle] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
+	}
+	{
+		// Hanging 중 이동 모션
+		std::shared_ptr<ActionClip> pHangMoveUp = std::make_shared<ActionClip>();
+		pHangMoveUp->AddClip(skinnedMesh->GetClipPtr(20));
+		m_mapActions[(uint8_t)ETagAct::HangingMoveUp] = pHangMoveUp;
+
+		std::shared_ptr<ActionClip> pHangMoveDown = std::make_shared<ActionClip>();
+		pHangMoveDown->AddClip(skinnedMesh->GetClipPtr(19));
+		m_mapActions[(uint8_t)ETagAct::HangingMoveDown] = pHangMoveDown;
+
+		std::shared_ptr<ActionClip> pHangMoveRight = std::make_shared<ActionClip>();
+		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(21));
+		m_mapActions[(uint8_t)ETagAct::HangingMoveRight] = pHangMoveRight;
+
+		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
+		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(22));
+		m_mapActions[(uint8_t)ETagAct::HangingMoveLeft] = pHangMoveLeft;
 	}
 
 	pAnim->SetEnableRootMotion(true);
@@ -219,19 +245,69 @@ void Character::BeginPlay()
 
 void Character::Tick(float _dt)
 {
-	ProcessInput(_dt);
+	InputCamRotate();
+	InputMovement(_dt);
 	
 	Actor::Tick(_dt);
 
 	// 판단 절차
 	// 내용 적용은 다음 tick에서 반영
 	CheckCharacterState();
-
 }
 
-void Character::ProcessInput(float _dt)
+void Character::InputMovement(float _dt)
 {
-	// 임시 카메라 제어
+	// 키보드 이동키
+	if (GetAnim().lock()->IsActionClipPlaying())
+		return;
+
+	// TODO : 전체 구조에서 FSM 고려해볼 것
+	switch (m_state)
+	{
+	case EState::Hanging: 
+		{
+			// 4 방향 중 하나만 골라야 함
+			ETagAct eAct = ETagAct::End;
+			if (m_inputDir.y > 0)
+				eAct = ETagAct::HangingMoveUp;
+			else if (m_inputDir.y < 0)
+				eAct = ETagAct::HangingMoveDown;
+			else if (m_inputDir.x < 0)
+				eAct = ETagAct::HangingMoveRight;
+			else if (m_inputDir.x > 0)
+				eAct = ETagAct::HangingMoveLeft;
+
+			if (std::shared_ptr<ActionClip> pAct = m_mapActions[(uint8_t)eAct])
+				GetAnim().lock()->PlayActionClip(pAct, 0.1f);
+
+			break;
+		}
+	case EState::Landing: __fallthrough;
+	default:
+		{
+			Vector2 inputDir = m_inputDir;
+			inputDir.Normalize();
+			m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
+
+			const float deltaSpeed = _dt * m_moveSpeeds[(uint8_t)m_state];
+			std::shared_ptr<SceneComponent> pRoot = GetRoot();
+
+			// 캐릭터 정면 기준 이동
+			const Vector3& fwd = pRoot->localTransform.Forward();
+			const Vector3& rht = pRoot->localTransform.Right();
+			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
+
+			GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
+			break;
+		}
+	}
+}
+
+void Character::InputCamRotate()
+{
+	if (m_state != EState::Landing)
+		return;
+
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	// 마우스 델타에 이미 델타타임이 곱해져 있음
@@ -248,44 +324,8 @@ void Character::ProcessInput(float _dt)
 
 	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
 	pCamHolderRoot->localTransform.rotation = qPitch;
-	
-	// 키보드 이동키
-	if (GetAnim().lock()->IsActionClipPlaying())
-		return;
-
-	Vector2 inputDir = m_inputDir;
-	inputDir.Normalize();
-	m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
-
-	const float deltaSpeed = _dt * m_moveSpeeds[(uint8_t)m_state];
-	std::shared_ptr<SceneComponent> pRoot = GetRoot();
-
-	// TODO : 추후 리팩토링
-	switch (m_state)
-	{
-		case EState::Hanging:
-		{
-			// 벽면 이동 기준
-			const Vector3& up = pRoot->localTransform.Up();
-			const Vector3& rht = pRoot->localTransform.Right();
-			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * up + deltaSpeed * -m_lerpInputDir.x * rht);
-
-			break;
-		}
-		case EState::Landing: __fallthrough;
-		default:
-		{
-			// 캐릭터 정면 기준 이동
-			const Vector3& fwd = pRoot->localTransform.Forward();
-			const Vector3& rht = pRoot->localTransform.Right();
-			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
-
-			break;
-		}
-	}
-
-	GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 }
+
 
 void Character::ProcessPerceptionResult()
 {

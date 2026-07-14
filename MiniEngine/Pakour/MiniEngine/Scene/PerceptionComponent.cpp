@@ -188,7 +188,6 @@ namespace MiniEngine
 	void PerceptionComponent::Tick(float _dt)
 	{
 		Component::Tick(_dt);
-
 	}
 
 	TravelResult PerceptionComponent::Travel()
