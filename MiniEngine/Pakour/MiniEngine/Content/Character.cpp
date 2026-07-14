@@ -63,7 +63,6 @@ void Character::Construct()
 
 		m_cameraHolder = pCamHolder;
 	}
-
 	{
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();

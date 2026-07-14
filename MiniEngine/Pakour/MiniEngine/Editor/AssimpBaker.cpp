@@ -2,7 +2,7 @@
 #include "Editor/AssimpBaker.h"
 
 #if defined(WITH_EDITOR)
-// ─── Editor 구성: 실제 Assimp 구현 ──────────────────────────────────────────
+// Editor 구성: 실제 Assimp 구현
 #include "Asset/MiniFormat.h"
 #include "Asset/MiniLoader.h" // WriteStaticMesh/WriteSkinnedMesh (+Skeleton/AnimClip 타입)
 #include "Asset/BoneNaming.h" // NormalizeBoneName/ResolveHumanoidBone (런타임과 공용)

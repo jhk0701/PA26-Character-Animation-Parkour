@@ -217,6 +217,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 아래를 향하는데
 					// 1 단위만큼 거리에 바닥이나 착지할 수 있는 장애물이 있음
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToIdle;
+					MG_LOG_INFO("Character Hang To Idle");
 					return true;
 				}
 

@@ -20,7 +20,7 @@ namespace MiniEngine
 
     void Input::Update(float _dt)
     {
-        // ¸¶¿ì½º ÀÔ·Â ¾÷µ¥ÀÌÆ®
+        // ë§ˆìš°ìŠ¤ ìž…ë ¥ ì—…ë°ì´íŠ¸
         m_mouseState = DirectX::Mouse::Get().GetState();
         m_mouseTracker.Update(m_mouseState);
 
@@ -31,7 +31,7 @@ namespace MiniEngine
         m_prevMouseX = MouseX();
         m_prevMouseY = MouseY();
 
-        // Å°º¸µå ÀÔ·Â ¾÷µ¥ÀÌÆ®
+        // í‚¤ë³´ë“œ ìž…ë ¥ ì—…ë°ì´íŠ¸
         m_keyState = DirectX::Keyboard::Get().GetState();
         m_keyTracker.Update(m_keyState);
 
@@ -39,7 +39,7 @@ namespace MiniEngine
         {
             if (it->second.bIsPressed == false && m_keyTracker.IsKeyPressed(it->first))
             {
-                // Pressed Å°¸¦ ´­·¶À» ¶§ 1È¸
+                // Pressed í‚¤ë¥¼ ëˆŒë €ì„ ë•Œ 1íšŒ
                 it->second.bIsPressed = true;
 
                 if (it->second.OnPressed)
@@ -47,13 +47,13 @@ namespace MiniEngine
             }
             else if (it->second.bIsPressed && m_keyState.IsKeyDown(it->first))
             {
-                // Pressing ´©¸£°í ÀÖ´Ù¸é ¸Å ÇÁ·¹ÀÓ¸¶´Ù
+                // Pressing ëˆ„ë¥´ê³  ìžˆë‹¤ë©´ ë§¤ í”„ë ˆìž„ë§ˆë‹¤
                 if (it->second.Pressing)
                     it->second.Pressing(_dt);
             }
             else if (it->second.bIsPressed && m_keyTracker.IsKeyReleased(it->first))
             {
-                // Released Å°¿¡¼­ ¼ÕÀ» ¶ÂÀ» ¶§ 1È¸
+                // Released í‚¤ì—ì„œ ì†ì„ ë—ì„ ë•Œ 1íšŒ
                 it->second.bIsPressed = false;
 
                 if (it->second.OnReleased)

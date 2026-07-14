@@ -38,25 +38,9 @@ namespace MiniEngine
 	public:
 		void SetCondition(std::function<bool(TravelContext&)>&& _cond,
 			std::shared_ptr<QueryNodeBase> _nodeOnTrue,
-			std::shared_ptr<QueryNodeBase> _nodeOnFalse)
-		{ 
-			m_condition = _cond; 
-			
-			m_child.resize(2);
-			m_child[0] = _nodeOnTrue;
-			m_child[1] = _nodeOnFalse;
-		}
+			std::shared_ptr<QueryNodeBase> _nodeOnFalse);
 
-		virtual TravelResult Execute(TravelContext& _context) override
-		{
-			if (!m_condition)
-				return TravelResult();
-
-			if (m_condition(_context))
-				return m_child[0]->Execute(_context);
-			else
-				return m_child[1]->Execute(_context);
-		};
+		TravelResult Execute(TravelContext& _context) override;
 
 	private:
 		std::function<bool(TravelContext&)> m_condition;
@@ -68,13 +52,7 @@ namespace MiniEngine
 	public:
 		void SetTask(std::function<TravelResult(TravelContext&)>&& _newTask) { m_task = _newTask; }
 
-		virtual TravelResult Execute(TravelContext& _context) override
-		{
-			if (!m_task)
-				return TravelResult();
-
-			return m_task(_context);
-		};
+		TravelResult Execute(TravelContext& _context) override;
 
 	private:
 		std::function<TravelResult(TravelContext&)> m_task;

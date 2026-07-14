@@ -7,6 +7,37 @@ using namespace MiniEngine::Physics;
 
 namespace MiniEngine 
 {
+	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 
+		std::shared_ptr<QueryNodeBase> _nodeOnTrue, 
+		std::shared_ptr<QueryNodeBase> _nodeOnFalse)
+	{
+		m_condition = _cond;
+
+		m_child.resize(2);
+		m_child[0] = _nodeOnTrue;
+		m_child[1] = _nodeOnFalse;
+	}
+
+	TravelResult ConditionNode::Execute(TravelContext& _context)
+	{
+		if (!m_condition)
+			return TravelResult();
+
+		if (m_condition(_context))
+			return m_child[0]->Execute(_context);
+		else
+			return m_child[1]->Execute(_context);
+	};
+
+	TravelResult LeafNode::Execute(TravelContext& _context)
+	{
+		if (!m_task)
+			return TravelResult();
+
+		return m_task(_context);
+	}
+
+
 	void PerceptionComponent::OnAttach()
 	{
 		Component::OnAttach();
@@ -25,5 +56,5 @@ namespace MiniEngine
 
 		return m_queryTree->Execute(context);
 	}
-	
+
 }
