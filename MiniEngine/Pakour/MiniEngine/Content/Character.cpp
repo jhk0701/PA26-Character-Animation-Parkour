@@ -246,7 +246,7 @@ void Character::CheckCharacterState()
 	
 	// 공중인지 판단
 	const bool bIsGrounded = pCharCont->IsGrounded();
-	const bool bIsFalling = !pCharCont && pCharCont->GetVerticalVelocity() < 0.0f;
+	const bool bIsFalling = !bIsGrounded && pCharCont->GetVerticalVelocity() < 0.0f;
 	if (bIsFalling)
 	{
 		if (m_state == EState::InAir)

@@ -38,7 +38,10 @@ namespace MiniEngine
 		m_states[m_curStateIdx]->Sample(_dt, _skeleton, m_poseNext); // 메인 포즈
 		m_states[m_prevIdx]->Sample(_dt, _skeleton, m_posePrev); // 이전 포즈
 
-		const float w = m_fadeElapsed / m_fadeDuration;
+		const float w = std::clamp(m_fadeElapsed / m_fadeDuration, 0.0f, 1.0f);
 		BlendPose(m_posePrev, m_poseNext, w, _outPose);
+
+		if (m_fadeElapsed >= m_fadeDuration)
+			m_fadeDuration = 0.0f; // 완료시 초기화
 	}
 }
