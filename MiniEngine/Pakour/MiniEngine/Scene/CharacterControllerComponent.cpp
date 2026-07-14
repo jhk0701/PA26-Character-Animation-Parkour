@@ -97,6 +97,8 @@ namespace MiniEngine
 		if (!m_grounded)
 			return;
 
+		SetForceFalling();
+
 		m_verticalVelocity = _speed;
 		m_grounded = false;
 	}
@@ -201,6 +203,12 @@ namespace MiniEngine
 			m_collisionMask |= bit;
 		else          
 			m_collisionMask &= ~bit;
+	}
+
+	void CharacterControllerComponent::SetForceFalling()
+	{
+		m_bIsFalling = true;
+		m_fallingElapsed = 0.0f;
 	}
 
 	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)

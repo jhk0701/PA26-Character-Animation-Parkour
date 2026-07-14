@@ -29,12 +29,9 @@ namespace MiniEngine
 		std::shared_ptr<ConditionNode> pIsClimbableSecond = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
 		std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 		std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
-
 		std::shared_ptr<LeafNode> pContinue = std::make_shared<LeafNode>(); // 무응답 -> 탐색 계속 신호
 		std::shared_ptr<LeafNode> pReturn = std::make_shared<LeafNode>(); // 결과 리턴
-		std::shared_ptr<LeafNode> pSetLanding = std::make_shared<LeafNode>(); // 캐릭터를 Landing 상태로 전환
 		std::shared_ptr<LeafNode> pSetHanging = std::make_shared<LeafNode>(); // 캐릭터를 Hanging 상태로 전환
-		std::shared_ptr<LeafNode> pSetInAir = std::make_shared<LeafNode>(); // 캐릭터를 InAir 상태로 전환
 
 		// 1번 확인 : 평지에 있는 상황인지
 		pRootQuery->SetCondition(
@@ -42,8 +39,8 @@ namespace MiniEngine
 			{ 
 				if (_ctx.m_owner)
 					return _ctx.m_owner->GetCharState() == Character::EState::Landing;
-				else
-					return false; 
+				
+				return false; 
 			},
 			pFindObstacle,
 			pIsHanging
@@ -123,6 +120,16 @@ namespace MiniEngine
 						);
 
 		// pIsHanging 처리
+		pIsHanging->SetCondition(
+			[](TravelContext& _ctx) 
+			{
+				if (_ctx.m_owner)
+					return _ctx.m_owner->GetCharState() == Character::EState::Hanging;
+				
+				return false;
+			},
+			pContinue, // TODO : 매달렸을 때 처리
+			pContinue);
 
 		m_QueryTree = pRootQuery;
 	}
@@ -167,6 +174,7 @@ namespace MiniEngine
 	void PerceptionComponent::Tick(float _dt)
 	{
 		Component::Tick(_dt);
+
 	}
 
 	TravelResult PerceptionComponent::Travel()

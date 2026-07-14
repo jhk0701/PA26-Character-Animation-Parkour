@@ -43,6 +43,7 @@ namespace MiniEngine
         void SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled);
 
         void SetFallingSecondThreshold(float _sec) { m_fallingSecThreshold = _sec; };
+        void SetForceFalling();
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;

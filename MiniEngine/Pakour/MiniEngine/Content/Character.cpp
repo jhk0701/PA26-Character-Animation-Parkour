@@ -73,7 +73,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetFallingSecondThreshold(0.3f); // 낙하 인정 시간 0.3초
+		pCharCont->SetFallingSecondThreshold(0.4f); // 낙하 인정 시간 설정
 		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
 
 		m_charCont = pCharCont;
@@ -145,16 +145,22 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		);
 		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
 
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Valut 낮은 모션 적용 Jumping valut
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
 	}
 	{
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
-		// m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Mantle_Mid 넘어 오르는 모션 Sprint To Wall Climb
+
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
+	}
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
+		pActionClip->SetApplyRootBone(false);
+		m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand] = pActionClip;
 	}
 
 	pAnim->SetEnableRootMotion(true);
@@ -183,13 +189,10 @@ void Character::Tick(float _dt)
 	
 	Actor::Tick(_dt);
 
-	// 판단 필요
-	// 판단 내용 적용은 다음 tick에서 반영
+	// 판단 절차
+	// 내용 적용은 다음 tick에서 반영
 	CheckCharacterState();
 
-	/*float verticalVel = m_charCont.lock()->GetVerticalVelocity();
-	if (verticalVel < 0.0f)
-		MG_LOG_INFO("Character Fall {}", verticalVel);*/
 }
 
 void Character::ProcessInput(float _dt)
@@ -250,6 +253,8 @@ void Character::CheckCharacterState()
 	if (!pAnim || !pCharCont)
 		return;
 	
+	// 애니메이션 baseTrack의 상태만 전환하기 위한 용도
+
 	// 공중인지 판단
 	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
 	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
@@ -269,16 +274,22 @@ void Character::CheckCharacterState()
 		if (m_state == EState::Landing)
 			return;
 
+		if (m_state == EState::InAir)
+		{
+			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
+				pAnim->PlayActionClip(pClip, 0.2f);
+		}
+			
+
 		m_state = EState::Landing;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 
 		return;
 	}
-	else
+
 	{
 		// 벽에 매달린 상황일 때
 	}
-
 }
 
 void Character::SetInputDir(const Vector2& _dir)

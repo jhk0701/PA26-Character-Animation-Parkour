@@ -18,6 +18,7 @@ namespace Content::Config
 	{
 		Landing,
 		Jump,
+		FallingToLand,
 		
 		Vault,
 		Vault_Low = Vault, // 뛰어 넘고, 절벽으로 떨어짐
