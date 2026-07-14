@@ -1,21 +1,19 @@
 #pragma once
 #include "Scene/Component.h"
 #include <functional>
-#include <list>
 #include "Physics/PhysicsWorld.h"
-
-class Character;
 
 namespace MiniEngine 
 {
 	namespace Physics { class PhysicsWorld; }
+	class Actor;
 
 	struct TravelContext 
 	{
-		std::shared_ptr<Character> m_owner;
+		std::shared_ptr<Actor> m_owner;
 		std::shared_ptr<Physics::PhysicsWorld> m_physics;
 		Physics::RaycastResult m_raycastResult;
-
+		Vector3 m_raycastPos;
 		uint8_t m_predictedActTag;
 		uint8_t m_units;
 	};
@@ -28,19 +26,19 @@ namespace MiniEngine
 		void* m_pActor;
 	};
 
-	class NodeBase
+	class QueryNodeBase
 	{
 	public:
-		virtual ~NodeBase() {};
+		virtual ~QueryNodeBase() {};
 		virtual TravelResult Execute(TravelContext& _context) = 0;
 	};
 
-	class ConditionNode : public NodeBase
+	class ConditionNode : public QueryNodeBase
 	{
 	public:
 		void SetCondition(std::function<bool(TravelContext&)>&& _cond,
-			std::shared_ptr<NodeBase> _nodeOnTrue, 
-			std::shared_ptr<NodeBase> _nodeOnFalse) 
+			std::shared_ptr<QueryNodeBase> _nodeOnTrue,
+			std::shared_ptr<QueryNodeBase> _nodeOnFalse)
 		{ 
 			m_condition = _cond; 
 			
@@ -62,10 +60,10 @@ namespace MiniEngine
 
 	private:
 		std::function<bool(TravelContext&)> m_condition;
-		std::vector<std::shared_ptr<NodeBase>> m_child;
+		std::vector<std::shared_ptr<QueryNodeBase>> m_child;
 	};
 
-	class LeafNode : public NodeBase 
+	class LeafNode : public QueryNodeBase
 	{
 	public:
 		void SetTask(std::function<TravelResult(TravelContext&)>&& _newTask) { m_task = _newTask; }
@@ -84,20 +82,12 @@ namespace MiniEngine
 
 	class PerceptionComponent : public Component
 	{
-		enum Config
-		{
-			MAX_PERCEPTION_STEP = 8, // 총 몇번 레이를 쏘아 확인할 지
-		};
-
 	public:
 		void OnAttach() override;
-		void Tick(float _dt) override;
 
 		TravelResult Travel();// 탐색
-		void ConstructConditionTree();
-
-		bool CheckClimbableByUnit(TravelContext& _context, float _yOffset);
-		bool CheckLandableOnObstacle(TravelContext& _context);
+		void SetQuertTree(std::shared_ptr<QueryNodeBase>&& _newTree) { m_queryTree = _newTree; };
+		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
@@ -106,10 +96,10 @@ namespace MiniEngine
 
 		// 1. 평지 이동 시, 장애물 탐색
 		// 탐색 범위 
-		float m_maxObsDist{ 2.0f };
+		float m_maxObsDist{ 1.0f };
 		float m_maxLandDist{ 1000.0f }; // 바닥 탐색
 
-		std::shared_ptr<NodeBase> m_QueryTree;
+		std::shared_ptr<QueryNodeBase> m_queryTree;
 
 	};
 }

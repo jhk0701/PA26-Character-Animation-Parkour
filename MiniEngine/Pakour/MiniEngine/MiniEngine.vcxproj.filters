@@ -80,11 +80,8 @@
     <Filter Include="Engine\08.UI">
       <UniqueIdentifier>{573eff2b-139e-49b9-8e64-34673a681771}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\04.Component">
-      <UniqueIdentifier>{9a46ea7e-5f70-42a5-9d07-77b719b554a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content\05.AnimInstance">
-      <UniqueIdentifier>{a758dcc4-be18-4c22-b728-8c33f7ce0489}</UniqueIdentifier>
+    <Filter Include="Engine\07.Object\Component\Perception">
+      <UniqueIdentifier>{50e01388-3c70-4832-9176-679801933469}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -226,9 +223,6 @@
     <ClInclude Include="Core\DebugLine.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\PerceptionComponent.h">
-      <Filter>Content\04.Component</Filter>
-    </ClInclude>
     <ClInclude Include="Animation\AnimNotify.h">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
@@ -237,6 +231,12 @@
     </ClInclude>
     <ClInclude Include="Animation\AnimStateMachine.h">
       <Filter>Engine\07.Object\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\PerceptionComponent.h">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\PerceptionQueryTree.h">
+      <Filter>Content</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -354,9 +354,6 @@
     <ClCompile Include="Editor\DebugDraw.cpp">
       <Filter>Engine\04.Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\PerceptionComponent.cpp">
-      <Filter>Content\04.Component</Filter>
-    </ClCompile>
     <ClCompile Include="Animation\AnimNotify.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
@@ -365,6 +362,12 @@
     </ClCompile>
     <ClCompile Include="Animation\AnimStateMachine.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PerceptionComponent.cpp">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\PerceptionQueryTree.cpp">
+      <Filter>Content</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

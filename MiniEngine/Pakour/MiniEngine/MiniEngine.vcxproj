@@ -129,6 +129,7 @@
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\ContentConfig.h" />
+    <ClInclude Include="Content\PerceptionQueryTree.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
+    <ClCompile Include="Content\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />

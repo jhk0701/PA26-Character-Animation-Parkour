@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Character.h"
 
-#include "Content/ContentConfig.h"
 #include "Core/Math.h"
 #include "Core/Log.h"
 #include "Physics/CollsionLayer.h"
@@ -19,6 +18,8 @@
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
 #include "Animation/AnimNotify.h"
+
+#include "Content/ContentConfig.h"
 
 using namespace Content::Config;
 
@@ -82,6 +83,7 @@ void Character::Construct()
 
 	{
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
+		pPerceptComp->SetQuertTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
 
@@ -127,10 +129,6 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// 모션 입력 
 		// 블렌드 모션이 생각보다 별로라 루트모션으로 대체
 		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
-		//pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(19)); // Braced Hang Drop
-		//pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(20)); // Braced Hang Hop Up
-		//pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(21)); // Braced Hang Shimmy Left
-		//pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(22)); // Braced Hang Shimmy Right
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 
@@ -409,15 +407,11 @@ void Character::SetHangingState(bool _bIsOn)
 	m_charCont.lock()->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
 
 	if (_bIsOn)
-	{
 		MG_LOG_INFO("Start Hanging");
-		GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-	}
 	else
-	{
 		MG_LOG_INFO("End Hanging");
-		GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-	}
+
+	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 }
 
 void Character::InitInput()

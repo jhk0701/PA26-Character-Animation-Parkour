@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene/Actor.h"
-
+#include "Content/PerceptionQueryTree.h"
 #include <unordered_map>
 
 namespace MiniEngine 
@@ -15,8 +15,7 @@ namespace MiniEngine
 }
 
 using namespace MiniEngine;
-
-class Character : public MiniEngine::Actor
+class Character : public Actor
 {
 public:
 	enum class EState : uint8_t
@@ -82,6 +81,8 @@ private:
 	std::weak_ptr<SceneComponent> m_cameraHolder;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
+
+	PerceptionQueryTree m_perceptQueryTree;
 	std::weak_ptr<PerceptionComponent> m_perception;
 
 	// tag - action 맵
