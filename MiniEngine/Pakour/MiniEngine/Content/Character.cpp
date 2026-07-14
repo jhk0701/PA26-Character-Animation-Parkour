@@ -84,6 +84,7 @@ void Character::Construct()
 			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
 
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
 			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
 		}
 		{

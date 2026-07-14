@@ -88,9 +88,12 @@ namespace MiniEngine
 			return;
 
 		// 루트모션 적용
+		bool bRootMotionApplied = false;
+
 		if (std::shared_ptr<SkeletalMeshComponent> sk = m_rootMotionSource.lock()) 
 		{
 			const RootMotionDelta d = sk->ConsumeRootMotionDelta();
+			bRootMotionApplied = d.isValid;
 
 			// 회전 갱신 전 회전값으로 먼저 translation 변환
 			// 루트모션은 기본적인 이동 이후에 회전할 것
@@ -107,10 +110,9 @@ namespace MiniEngine
 			m_verticalVelocity = -STICK_TO_GROUND_SPEED; // 지면에 계속 붙여 eCollsion_down 유지
 
 		// 이동
-		const Vector3 disp = m_pendingMove + Vector3(0.0f, m_verticalVelocity * _dt, 0.0f);
+		const Vector3 disp = m_pendingMove + (bRootMotionApplied ? Vector3(0.0f) : Vector3(0.0f, m_verticalVelocity * _dt, 0.0f));
 		const physx::PxFilterData filterData(m_collisionMask, 0, 0, 0);
 		const physx::PxControllerFilters filters(&filterData);
-
 		const physx::PxControllerCollisionFlags flags = m_controller->move(
 			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, filters);
 

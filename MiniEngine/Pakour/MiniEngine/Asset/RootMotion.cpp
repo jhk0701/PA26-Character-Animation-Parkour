@@ -6,7 +6,7 @@ namespace MiniEngine
 	namespace
 	{
 		const Quaternion kIdentity(0.0f, 0.0f, 0.0f, 1.0f);
-		Quaternion Inv(const Quaternion& _q)  // ´ÜÀ§ ÄõÅÍ´Ï¾ğ ¿ª
+		Quaternion Inv(const Quaternion& _q)  // ë‹¨ìœ„ ì¿¼í„°ë‹ˆì–¸ ì—­
 		{
 			Quaternion out;
 			_q.Conjugate(out);
@@ -19,7 +19,7 @@ namespace MiniEngine
 		Quaternion yaw(0.0f, _q.y, 0.0f, _q.w);
 
 		if (yaw.y * yaw.y + yaw.w * yaw.w < 1e-12f)
-			return kIdentity;  // Á¤È®È÷ 180µµ ÀÎ °æ¿ì
+			return kIdentity;  // ì •í™•íˆ 180ë„ ì¸ ê²½ìš°
 
 		yaw.Normalize();
 		return yaw;
@@ -50,7 +50,7 @@ namespace MiniEngine
 		const float t0 = _t0 * tps;
 		const float t1 = _t1 * tps;
 
-		// ½Ã°£ Á¤±ÔÈ­
+		// ì‹œê°„ ì •ê·œí™”
 		const float n0 = std::floor(t0 / dur);
 		const float n1 = std::floor(t1 / dur);
 		const int n = static_cast<int>(n1 - n0);
@@ -64,7 +64,7 @@ namespace MiniEngine
 
 		if (n != 0) 
 		{
-			//  ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ·çÇÁ¶ó ÇÑ ¹ÙÄû¸¦ ´õ µ· °æ¿ì
+			//  ì• ë‹ˆë©”ì´ì…˜ì´ ë£¨í”„ë¼ í•œ ë°”í€´ë¥¼ ë” ëˆ ê²½ìš°
 			BoneTRS bStart, bEnd;
 			_clip.SampleTRS(_rootBone, 0.0f, _skel, bStart);
 			_clip.SampleTRS(_rootBone, dur, _skel, bEnd);
@@ -77,8 +77,10 @@ namespace MiniEngine
 		}
 
 		rot.Normalize();
+
 		_outDelta.translation = trans;
 		_outDelta.rotation = rot;
+		_outDelta.isValid = trans.LengthSquared() > 0.0f || rot.LengthSquared() > 0.0f;
 	}
 
 	void ApplyRootMotionMask(const RootMotionConfig& _config, RootMotionDelta& _inout)
@@ -102,16 +104,16 @@ namespace MiniEngine
 
 		BoneTRS& bone = _inoutPose[_rootBone];
 		
-		// x,z ÃàÀº »ó½Ã ÃßÃâ
+		// x,z ì¶•ì€ ìƒì‹œ ì¶”ì¶œ
 		bone.pos.x = bindPos.x;
 		bone.pos.z = bindPos.z;
-		// yÃàÀº ¼±ÅÃÀû ÃßÃâ
+		// yì¶•ì€ ì„ íƒì  ì¶”ì¶œ
 		if (_config.extractY) 
-			bone.pos.y = bindPos.y; // position y°ª ÃßÃâ
+			bone.pos.y = bindPos.y; // position yê°’ ì¶”ì¶œ
 
 		if (_config.extractYaw) 
 		{
-			// yaw Ãà È¸Àü Á¦°Å
+			// yaw ì¶• íšŒì „ ì œê±°
 			bone.rot = bone.rot * Inv(ExtractYaw(bone.rot));
 			bone.rot.Normalize();
 		}

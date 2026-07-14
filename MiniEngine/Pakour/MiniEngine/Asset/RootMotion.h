@@ -5,48 +5,51 @@
 
 namespace MiniEngine
 {
-	// ·çÆ®¸ğ¼Ç Ã³¸® ¹æ¹ı
-	// 1. ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-	// 2. ½ÇÇàµÈ Æ÷Áî¿¡¼­ ·çÆ®¿¡ ÇØ´çÇÏ´Â º»ÀÇ Transform µ¨Å¸°ª ÃßÃâ
-	// 3. ¾Ö´Ï¸ŞÀÌ¼Ç -> In Place Æ÷Áî »óÅÂ
-	// 4. Á¦°ÅÇÑ µ¨Å¸°ªÀ» CPU¿¡¼­ Á÷Á¢ localTransform¿¡ Àû¿ë
+	// ë£¨íŠ¸ëª¨ì…˜ ì²˜ë¦¬ ë°©ë²•
+	// 1. ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
+	// 2. ì‹¤í–‰ëœ í¬ì¦ˆì—ì„œ ë£¨íŠ¸ì— í•´ë‹¹í•˜ëŠ” ë³¸ì˜ Transform ë¸íƒ€ê°’ ì¶”ì¶œ
+	// 3. ì• ë‹ˆë©”ì´ì…˜ -> In Place í¬ì¦ˆ ìƒíƒœ
+	// 4. ì œê±°í•œ ë¸íƒ€ê°’ì„ CPUì—ì„œ ì§ì ‘ localTransformì— ì ìš©
 
-	// ·çÆ®¸ğ¼Ç¿¡¼­ ÃßÃâÇÒ µ¨Å¸°ª
+	// ë£¨íŠ¸ëª¨ì…˜ì—ì„œ ì¶”ì¶œí•  ë¸íƒ€ê°’
 	struct RootMotionDelta
 	{
+		bool isValid{ true };
 		Vector3 translation = Vector3(0.0f, 0.0f, 0.0f);
 		Quaternion rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
 		void Reset() 
 		{
+			isValid = false;
 			translation = Vector3(0.0f);
 			rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 	};
 
-	// ÃßÃâ ´ë»ó
+	// ì¶”ì¶œ ëŒ€ìƒ
 	struct RootMotionConfig 
 	{
-		// x,z Ãà¿¡ ÇØ´çÇÏ´Â À§Ä¡°ªÀº ±âº»ÀûÀ¸·Î ÃßÃâ
+		// x,z ì¶•ì— í•´ë‹¹í•˜ëŠ” ìœ„ì¹˜ê°’ì€ ê¸°ë³¸ì ìœ¼ë¡œ ì¶”ì¶œ
 		bool extractY{ true };
-		bool extractYaw{ false }; // yÃà È¸Àü°ª ÃßÃâ
+		bool extractYaw{ false }; // yì¶• íšŒì „ê°’ ì¶”ì¶œ
 
-		// ½ÇÁ¦ Àû¿ë ¿©ºÎ
+		// ì‹¤ì œ ì ìš© ì—¬ë¶€
 		bool applyY{ true };
 		bool applyYaw{ true };
 	};
 
-	Quaternion ExtractYaw(const Quaternion& _q); // ÄõÅÍ´Ï¾ğ¿¡¼­ yaw È¸Àü°¢ ÃßÃâ
+	Quaternion ExtractYaw(const Quaternion& _q); // ì¿¼í„°ë‹ˆì–¸ì—ì„œ yaw íšŒì „ê° ì¶”ì¶œ
 
-	// Å¬¸³¿¡¼­ ·çÆ®¸ğ¼Ç µ¨Å¸°ª ÃßÃâ
+	// í´ë¦½ì—ì„œ ë£¨íŠ¸ëª¨ì…˜ ë¸íƒ€ê°’ ì¶”ì¶œ
 	void ExtractClipRootMotion(const AnimClip& _clip, const Skeleton& _skel, float _t0, float _t1, RootMotionDelta& _outDelta, int _rootBone = 0);
 
-	// ¼³Á¤ÇÑ ÃßÃâ ´ë»ó¿¡ µû¶ó ¸¶½ºÅ·
+	// ì„¤ì •í•œ ì¶”ì¶œ ëŒ€ìƒì— ë”°ë¼ ë§ˆìŠ¤í‚¹
 	void ApplyRootMotionMask(const RootMotionConfig& _config, RootMotionDelta& _inout);
 
-	// ¾Ö´Ï¸ŞÀÌ¼Ç »ùÇÃ¸µÀÌ ³¡³­ ÈÄ, ·çÆ®¿¡¼­ ¸ğ¼Ç µ¨Å¸°ª ÃßÃâ
+	// ì• ë‹ˆë©”ì´ì…˜ ìƒ˜í”Œë§ì´ ëë‚œ í›„, ë£¨íŠ¸ì—ì„œ ëª¨ì…˜ ë¸íƒ€ê°’ ì¶”ì¶œ
 	void StripRootMotionFromPose(const Skeleton& _skel, const RootMotionConfig& _config, LocalPoseTRS& _inoutPose, int _rootBone = 0);
 
 
-	// ÃßÃâÇÑ µ¨Å¸°ª °£ ºí·»µå
+	// ì¶”ì¶œí•œ ë¸íƒ€ê°’ ê°„ ë¸”ë Œë“œ
 	void BlendRootMotion(const RootMotionDelta& _a, const RootMotionDelta& _b, float _t, RootMotionDelta& _out);
 }
