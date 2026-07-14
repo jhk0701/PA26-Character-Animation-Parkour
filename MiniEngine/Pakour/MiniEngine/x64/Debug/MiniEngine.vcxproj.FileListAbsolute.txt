@@ -20,3 +20,4 @@ D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Shaders\SceneCol
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Shaders\StaticMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Shaders\SkinnedMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Assets\pyramid.obj
+D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\Debug\MiniEngine.vcxproj.CopyComplete

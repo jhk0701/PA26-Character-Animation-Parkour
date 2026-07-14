@@ -71,7 +71,5 @@ namespace MiniEngine
         bool    m_bIsFalling{ false };
         float   m_fallingSecThreshold{ 0.3f }; // 일정시간 동안 지속적으로 떨어져야 낙하인정
         float   m_fallingElapsed{ 0.0f };
-
-        
 	};
 }

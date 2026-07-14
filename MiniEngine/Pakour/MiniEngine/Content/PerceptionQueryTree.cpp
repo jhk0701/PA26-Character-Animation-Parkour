@@ -57,8 +57,7 @@ namespace
 		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 		rayParam.m_maxDistance = _dist;
 
-		RaycastResult rayResult;
-		return _context.m_physics->Raycast(rayParam, rayResult, _layerMask); // ToMask(static_cast<Layer>(Layer::Obstacle))
+		return _context.m_physics->Raycast(rayParam, _context.m_raycastResult, _layerMask); // ToMask(static_cast<Layer>(Layer::Obstacle))
 	}
 
 }
@@ -101,7 +100,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		},
 		pFindObstacle,
 		pIsHanging
-		);
+	);
 
 		// 평지에 있는데, 장애물을 발견했는지
 		pFindObstacle->SetCondition(
@@ -124,7 +123,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			},
 			pIsClimbableFirst,	// 찾은 경우 오를(넘을) 수 있는지 확인
 			pContinue		// 찾지 못한 경우 continue return 
-			);
+		);
 
 			// 장애물을 오를 수 있는지
 			pIsClimbableFirst->SetCondition(
@@ -148,7 +147,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				},
 				pObstableIsLandable,	// 넘을 수 있음
 				pIsClimbableSecond		// 넘을 수 없음. 다음 단위 체크
-				);
+			);
 
 				pIsClimbableSecond->SetCondition(
 					[this](TravelContext& _ctx)
@@ -166,7 +165,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					},
 					pObstableIsLandable,
 					pSetHanging
-					);
+				);
 
 					pObstableIsLandable->SetCondition(
 						[this](TravelContext& _ctx)
@@ -181,7 +180,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						},
 						pReturn,
 						pReturn
-						);
+					);
 
 					pSetHanging->SetTask(
 						[](TravelContext& _ctx)
@@ -222,17 +221,19 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				}
 
 				if (inputDir.y > 0 &&
-					CheckClimbableByUnit(_ctx, UNIT))
+					CheckClimbableByUnit(_ctx, UNIT) == false)
 				{
 					// 위를 향함
-					// 1유닛 장애물 테스트
+					// 1유닛 장애물 테스트 결과 통과 가능
+					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
+					return true;
 				}
 
-				return true;
+				return false;
 			},
 			pReturn,
 			pContinue
-			);
+		);
 	
 	return pRootQuery;
 }

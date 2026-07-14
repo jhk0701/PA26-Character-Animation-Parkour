@@ -36,11 +36,11 @@ void Character::Construct()
 	pRoot->localTransform.position = Vector3(0.0f, 1.0f, -1.0f);
 	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
-	m_skinMeshComp = AddComponent<MiniEngine::SkeletalMeshComponent>();
+	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
 	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
-	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
+	std::shared_ptr<SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
 	skinComp->SetMesh(skinnedMesh);
@@ -50,7 +50,7 @@ void Character::Construct()
 
 	{
 		// 캐릭터 카메라 설정
-		std::shared_ptr<MiniEngine::SceneComponent> pCamHolder = AddComponent<MiniEngine::SceneComponent>();
+		std::shared_ptr<SceneComponent> pCamHolder = AddComponent<SceneComponent>();
 		pCamHolder->AttachTo(GetRoot());
 		pCamHolder->localTransform.position = Vector3(0.0f, 1.5f, 0.0f);
 
