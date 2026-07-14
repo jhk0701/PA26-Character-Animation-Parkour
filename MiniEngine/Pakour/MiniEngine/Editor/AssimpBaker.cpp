@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Editor/AssimpBaker.h"
 
 #if defined(WITH_EDITOR)

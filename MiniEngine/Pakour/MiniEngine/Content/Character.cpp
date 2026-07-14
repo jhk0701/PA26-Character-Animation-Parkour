@@ -93,7 +93,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::END));
 
-	// 로코모션 구현
+	// 로코모션 구현 (순서 유의 - EState 값 순서대로 할당하고 찾을 것)
 	{
 		// Landing
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
@@ -118,6 +118,14 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	}
 	{
 		// Hanging
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(5);
+		// 모션 입력 
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
+		pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(19)); // Braced Hang Drop
+		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(20)); // Braced Hang Hop Up
+		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(21)); // Braced Hang Shimmy Left
+		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(22)); // Braced Hang Shimmy Right
+		pAnim->AddBaseLocomotion(pBlend);
 	}
 
 	// ActionClip 구성
