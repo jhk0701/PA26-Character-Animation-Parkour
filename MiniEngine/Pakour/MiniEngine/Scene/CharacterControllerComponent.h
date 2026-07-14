@@ -28,6 +28,7 @@ namespace MiniEngine
         void SyncTransform();
         void SetRootMotionSource(const std::shared_ptr<SkeletalMeshComponent>& _skeletal);
 
+        bool IsFalling() const { return m_bIsFalling; }
         bool IsGrounded() const { return m_grounded; }
         float GetVerticalVelocity() const { return m_verticalVelocity; }
         Vector3 GetFootPosition() const;
@@ -40,6 +41,8 @@ namespace MiniEngine
         void SetCollisionMask(uint32_t _mask);
         // _enable = false -> 충돌하지 않도록 설정
         void SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled);
+
+        void SetFallingSecondThreshold(float _sec) { m_fallingSecThreshold = _sec; };
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
@@ -47,6 +50,7 @@ namespace MiniEngine
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);
+        void CheckFalling(float _fixedDt);
 
         physx::PxController* m_controller = nullptr;
         std::weak_ptr<SceneComponent> m_target;
@@ -59,5 +63,11 @@ namespace MiniEngine
         bool    m_grounded = false;
 
         static constexpr float STICK_TO_GROUND_SPEED = 2.0f;
+
+        bool    m_bIsFalling{ false };
+        float   m_fallingSecThreshold{ 0.3f }; // 일정시간 동안 지속적으로 떨어져야 낙하인정
+        float   m_fallingElapsed{ 0.0f };
+
+        
 	};
 }

@@ -62,7 +62,8 @@ namespace MiniEngine
 		const float t0 = m_overrideTrack.m_actionElapsed;
 		float t1 = m_overrideTrack.m_actionElapsed + _dt;
 
-		if (m_bEnableRootMotion)
+		if (m_bEnableRootMotion && 
+			m_overrideTrack.m_pClip->IsApplyingRootBone())
 		{
 			m_rootMotionDt.Reset();
 			ExtractClipRootMotion(*m_overrideTrack.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);

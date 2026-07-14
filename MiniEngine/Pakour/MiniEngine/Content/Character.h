@@ -33,7 +33,7 @@ public:
 
 	void Construct();
 	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
-	
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
@@ -49,7 +49,7 @@ public:
 	std::weak_ptr<Animator> GetAnim() const;
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
-	
+
 	EState GetCharState() const { return m_state; }
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }

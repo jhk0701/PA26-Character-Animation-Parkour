@@ -73,6 +73,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
+		pCharCont->SetFallingSecondThreshold(0.3f); // 낙하 인정 시간 0.3초
 		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
 
 		m_charCont = pCharCont;
@@ -123,6 +124,12 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	{
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
+		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
+		
+		std::shared_ptr<AnimNotify> pJump = std::make_shared<AnimNotify>(0.5f, 
+			[this]() { GetController().lock()->Jump(m_jumpSpeed); });
+		pActionClip->AddNotify(pJump);
+
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
 	}
 	{
@@ -149,7 +156,6 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
 	}
-
 
 	pAnim->SetEnableRootMotion(true);
 
@@ -245,15 +251,15 @@ void Character::CheckCharacterState()
 		return;
 	
 	// 공중인지 판단
-	const bool bIsGrounded = pCharCont->IsGrounded();
-	const bool bIsFalling = !bIsGrounded && pCharCont->GetVerticalVelocity() < 0.0f;
+	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
+	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
 	if (bIsFalling)
 	{
 		if (m_state == EState::InAir)
 			return;
 
 		m_state = EState::InAir;
-		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.3f);
+		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 
 		return;
 	}
@@ -264,7 +270,7 @@ void Character::CheckCharacterState()
 			return;
 
 		m_state = EState::Landing;
-		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.3f);
+		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 
 		return;
 	}
@@ -368,8 +374,6 @@ void Character::InitInput()
 		{
 			std::shared_ptr<ActionClip> pJump = GetActions((uint8_t)Content::Config::ETagAct::Jump);
 			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
-
-			m_charCont.lock()->Jump(m_jumpSpeed);
 		});
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(

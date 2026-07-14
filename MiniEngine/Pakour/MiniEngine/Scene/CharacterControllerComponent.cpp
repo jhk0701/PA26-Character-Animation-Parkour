@@ -15,12 +15,32 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
+	void CharacterControllerComponent::CheckFalling(float _fixedDt)
+	{
+		if (m_grounded == false &&
+			m_verticalVelocity < 0.0f &&
+			m_bIsFalling == false)
+		{
+			m_fallingElapsed += _fixedDt;
+			if (m_fallingElapsed >= m_fallingSecThreshold)
+			{
+				m_fallingElapsed = 0.0f;
+				m_bIsFalling = true;
+			}
+		}
+
+		if (m_bIsFalling && (m_grounded || m_verticalVelocity >= 0.0f))
+			m_bIsFalling = false;
+	}
+
 	void CharacterControllerComponent::FixedTick(float _dt)
 	{
 		Component::FixedTick(_dt);
 
 		Move(_dt);
 		SyncTransform();
+
+		CheckFalling(_dt);
 	}
 
 	void CharacterControllerComponent::Init(Physics::PhysicsWorld& _world,

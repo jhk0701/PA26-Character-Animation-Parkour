@@ -10,7 +10,6 @@ namespace MiniEngine
 	{
 	public:
 		ActionClip();
-		// ActonClip(int _reserveCnt);
 		~ActionClip() { m_clip = nullptr; }
 
 		void Play();
@@ -19,13 +18,18 @@ namespace MiniEngine
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
 		float GetDuration() const { return m_duration; }
 		AnimClip* GetClip() const { return m_clip; }
-
 		const float GetTickPerSec() const;
+		
 		void AddClip(AnimClip* _clip);
 		void AddNotify(std::shared_ptr<IAnimNotify> _notify);
+		
+		void SetApplyRootBone(bool _bEnable) { m_bApplyRootBone = _bEnable; }
+		bool IsApplyingRootBone() const { return m_bApplyRootBone; }
 
 	private:
 		bool m_bIsPlaying{ false };
+		bool m_bApplyRootBone{ true };
+
 		float m_playTime{ 0.0f };
 		float m_duration{ 0.0f };
 

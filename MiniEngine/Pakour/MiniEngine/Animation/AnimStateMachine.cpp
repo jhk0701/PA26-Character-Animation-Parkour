@@ -14,6 +14,7 @@ namespace MiniEngine
 
 	void AnimStateMachine::Transition(int _newIdx, float _duration)
 	{
+		m_fadeElapsed = 0.0f;
 		m_fadeDuration = _duration;
 		m_prevIdx = m_curStateIdx;
 		m_curStateIdx = _newIdx;
@@ -42,6 +43,6 @@ namespace MiniEngine
 		BlendPose(m_posePrev, m_poseNext, w, _outPose);
 
 		if (m_fadeElapsed >= m_fadeDuration)
-			m_fadeDuration = 0.0f; // 완료시 초기화
+			m_fadeDuration = 0.0f; // 완료 시 초기화
 	}
 }
