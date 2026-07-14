@@ -19,22 +19,27 @@ using namespace MiniEngine;
 class Character : public MiniEngine::Actor
 {
 public:
-	enum class EState 
+	enum class EState : uint8_t
 	{
 		Landing,
-		Hanging,
 		InAir,
+		Hanging,
+
+		END
 	};
 
 	Character();
 	virtual ~Character();
 
 	void Construct();
+	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
 	void ProcessInput(float _dt);
 	void ProcessPerceptionResult();
+	void CheckCharacterState();
 
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir);

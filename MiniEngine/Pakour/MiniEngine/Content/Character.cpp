@@ -44,69 +44,7 @@ void Character::Construct()
 	skinComp->SetMesh(skinnedMesh);
 	skinComp->AttachTo(GetRoot());
 
-	{
-		// 애니메이션 설정
-		std::shared_ptr<Animator> pAnim = skinComp->GetAnim().lock();
-		// 로코모션 구현
-		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
-		// 모션 입력 
-		pBlend->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
-		pBlend->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ -0.5, 1 },	skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ 0, -1 },		skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ 0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ -0.5, -1 },	skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ 1, 0 },		skinnedMesh->GetClipPtr(8));	// right strafe
-		pBlend->AddAnimClip({ -1, 0 },		skinnedMesh->GetClipPtr(7));	// left strafe
-
-		pAnim->ReserveBaseLocomotion(1);
-		pAnim->AddBaseLocomotion(pBlend);
-
-		// ActionClip 구성
-		{
-			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-			pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
-		}
-		{
-			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-
-			std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f,
-				[this]() { SetEnableCollisionObstacle(false); }
-			);
-			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
-
-			std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.7f, 
-				[this]() { SetEnableCollisionObstacle(true); }
-			);
-			pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
-
-			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
-		}
-		{
-			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-			pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
-			// m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
-		}
-
-
-		pAnim->SetEnableRootMotion(true);
-
-		RootMotionConfig rmCfg;
-		rmCfg.extractY = true;
-		rmCfg.extractYaw = false;
-		rmCfg.applyY = true;
-		rmCfg.applyYaw = false;
-		pAnim->SetRootMotionConfig(rmCfg);
-		pAnim->SetRootBoneIdx(1); // hips
-
-		pAnim->Init(0);
-	}
+	InitAnimation(skinComp);
 
 	{
 		// 캐릭터 카메라 설정
@@ -146,6 +84,86 @@ void Character::Construct()
 	}
 }
 
+void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
+{
+	// 애니메이션 설정
+	std::shared_ptr<Animator> pAnim = _skinComp->GetAnim().lock();
+	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = _skinComp->GetMesh().lock();
+	
+	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::END));
+
+	// 로코모션 구현
+	{
+		// Landing
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
+		// 모션 입력 
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
+		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
+		pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
+		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));	// right strafe
+		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));	// left strafe
+		pAnim->AddBaseLocomotion(pBlend);
+	}
+	{
+		// InAir
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
+		// 모션 입력 
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(13));	// Falling Idle
+		pAnim->AddBaseLocomotion(pBlend);
+	}
+	{
+		// Hanging
+	}
+
+	// ActionClip 구성
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
+	}
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+
+		std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f,
+			[this]() { SetEnableCollisionObstacle(false); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
+
+		std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.7f,
+			[this]() { SetEnableCollisionObstacle(true); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
+
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+	}
+	{
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
+		// m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
+	}
+
+
+	pAnim->SetEnableRootMotion(true);
+
+	RootMotionConfig rmCfg;
+	rmCfg.extractY = true;
+	rmCfg.extractYaw = false;
+	rmCfg.applyY = true;
+	rmCfg.applyYaw = false;
+	pAnim->SetRootMotionConfig(rmCfg);
+	pAnim->SetRootBoneIdx(1); // hips
+
+	pAnim->Init(0);
+}
+
 void Character::BeginPlay()
 {
 	Actor::BeginPlay();
@@ -156,8 +174,12 @@ void Character::BeginPlay()
 void Character::Tick(float _dt)
 {
 	ProcessInput(_dt);
-
+	
 	Actor::Tick(_dt);
+
+	// 판단 필요
+	// 판단 내용 적용은 다음 tick에서 반영
+	CheckCharacterState();
 
 	/*float verticalVel = m_charCont.lock()->GetVerticalVelocity();
 	if (verticalVel < 0.0f)
@@ -212,6 +234,45 @@ void Character::ProcessPerceptionResult()
 
 	if (pAction)
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f);
+}
+
+void Character::CheckCharacterState()
+{
+	std::shared_ptr<Animator> pAnim = GetAnim().lock();
+	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
+
+	if (!pAnim || !pCharCont)
+		return;
+	
+	// 공중인지 판단
+	const bool bIsGrounded = pCharCont->IsGrounded();
+	const bool bIsFalling = !pCharCont && pCharCont->GetVerticalVelocity() < 0.0f;
+	if (bIsFalling)
+	{
+		if (m_state == EState::InAir)
+			return;
+
+		m_state = EState::InAir;
+		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.3f);
+
+		return;
+	}
+
+	if (bIsGrounded) 
+	{
+		if (m_state == EState::Landing)
+			return;
+
+		m_state = EState::Landing;
+		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.3f);
+
+		return;
+	}
+	else
+	{
+		// 벽에 매달린 상황일 때
+	}
+
 }
 
 void Character::SetInputDir(const Vector2& _dir)

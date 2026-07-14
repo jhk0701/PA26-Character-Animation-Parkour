@@ -144,6 +144,11 @@ namespace MiniEngine
 		m_baseTrack.SetInputAxis(_axis);
 	}
 
+	void Animator::TranstionBaseTrack(int _nextIdx, float _duration)
+	{
+		m_baseTrack.Transition(_nextIdx, _duration);
+	}
+
 	const Skeleton& Animator::GetSkeleton() const
 	{
 		return m_meshComp.lock()->GetMesh().lock()->GetSkeleton();

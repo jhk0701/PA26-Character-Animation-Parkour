@@ -54,11 +54,12 @@ namespace MiniEngine
 		const bool GetIsEnableRootMotion() const { return m_bEnableRootMotion; }
 		const RootMotionDelta& GetRootMotionDelta() const { return m_rootMotionDt; }
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionCfg; }
-		
 		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 비움
+
 		bool IsActionClipPlaying() const { return m_overrideTrack.m_bIsPlaying; }
 
 		void SetBaseTrackInputAxis(const Vector2& _axis);
+		void TranstionBaseTrack(int _nextIdx, float _duration = 0.5f);
 
 	private:
 		bool m_bIsInitialized{ false };

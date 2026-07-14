@@ -33,9 +33,8 @@ namespace MiniEngine
 
 		float m_fadeElapsed{ 0.0f };
 		float m_fadeDuration{ 0.0f };	// 0 = 페이드 없음
+		bool IsFading() const { return m_fadeDuration > 0.0f; }
 
 		LocalPoseTRS m_posePrev, m_poseNext; // 트랜지션 간 각각 사용
-
-		bool IsFading() const { return m_fadeDuration > 0.0f; }
 	};
 }
