@@ -50,7 +50,6 @@ void Character::Construct()
 		// 로코모션 구현
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
 		// 모션 입력 
-		// TODO : Editor에서 좀 사용하기 쉽게 개선해야함
 		pBlend->AddAnimClip({ 0, 0 },		skinnedMesh->GetClipPtr(1));	// idle
 		pBlend->AddAnimClip({ 0, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
 		pBlend->AddAnimClip({ 0.5, 1 },		skinnedMesh->GetClipPtr(6));	// Walking
@@ -64,7 +63,7 @@ void Character::Construct()
 		pAnim->ReserveBaseLocomotion(1);
 		pAnim->AddBaseLocomotion(pBlend);
 
-		// 단일 재생
+		// ActionClip 구성
 		{
 			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
@@ -86,13 +85,15 @@ void Character::Construct()
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
 			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Low] = pActionClip;
 			m_mapActions[(uint8_t)Content::Config::ETagAct::Vault_Mid] = pActionClip;
+			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
 		}
 		{
 			std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 			pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
-			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
+			// m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Low] = pActionClip;
 			m_mapActions[(uint8_t)Content::Config::ETagAct::Mantle_Mid] = pActionClip;
 		}
+
 
 		pAnim->SetEnableRootMotion(true);
 
@@ -157,6 +158,10 @@ void Character::Tick(float _dt)
 	ProcessInput(_dt);
 
 	Actor::Tick(_dt);
+
+	/*float verticalVel = m_charCont.lock()->GetVerticalVelocity();
+	if (verticalVel < 0.0f)
+		MG_LOG_INFO("Character Fall {}", verticalVel);*/
 }
 
 void Character::ProcessInput(float _dt)

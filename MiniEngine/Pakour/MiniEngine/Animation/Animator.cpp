@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Animation/Animator.h"
 #include "Core/Log.h"
 #include "Animation/BlendClip.h"
@@ -106,9 +106,15 @@ namespace MiniEngine
 			ExtractClipRootMotion(*m_overrideTrack.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
 		}
 
-		// 액션 클립 재생
 		m_overrideTrack.m_actionElapsed = t1;
-		m_overrideTrack.m_fadeElapsed += m_overrideTrack.IsEndArea() ? -_dt : _dt;
+		
+		// 페이드 인아웃 처리
+		if (m_overrideTrack.IsEndArea())
+			m_overrideTrack.m_fadeElapsed -= _dt; // 페이드 아웃
+		else if (m_overrideTrack.m_fadeElapsed < m_overrideTrack.m_fadeDuration)
+			m_overrideTrack.m_fadeElapsed += _dt; // 페이드 인
+		
+		// 액션 클립 재생
 		m_overrideTrack.m_pClip->Sample(_dt, skeleton, m_overrideTrack.m_layerPose);	// m_poseTarget
 
 		float w = m_overrideTrack.GetProgress();
@@ -151,7 +157,7 @@ namespace MiniEngine
 		m_overrideTrack.m_actionElapsed = 0.0f;
 		m_overrideTrack.m_actionDuration = _action->GetDuration();
 
-		m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - _fadeDuration * (1.0f / _action->GetTickPerSec());
+		m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - _fadeDuration; //  /** (1.0f / _action->GetTickPerSec())*/
 		if (m_overrideTrack.m_actionEndTime < 0.0f)
 			m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - 0.01f;
 
