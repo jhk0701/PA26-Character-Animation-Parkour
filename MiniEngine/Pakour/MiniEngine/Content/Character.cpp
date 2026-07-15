@@ -291,6 +291,19 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(22));
 		m_mapActions[(uint8_t)ETagAct::HangingMoveLeft] = pHangMoveLeft;
 	}
+	{
+		// 벽에서 매달린 상태에서 점프
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(23)); // Jump From Wall
+
+		// 벽에서 매달렸을 것. 상태 전환
+		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
+		pSetIdle->SetTime(0.5f);
+		pSetIdle->SetEnable(false);
+		pActionClip->AddNotify(pSetIdle);
+
+		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpFromWall] = pActionClip;
+	}
 
 	pAnim->SetEnableRootMotion(true);
 
@@ -402,9 +415,11 @@ void Character::ProcessPerceptionResult()
 		return; // 이미 행동 중이라면 탐색하지 않도록
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	
-	pPercept->Travel();
-	const TravelResult& result = pPercept->GetLastestTravelResult();
+	pPercept->Travel(); // 탐색 개시
+	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
+	if (result.m_bIsEmpty) // 빈 결과는 리턴
+		return;
+
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
 	
 	if (result.m_pFirstObstacle)
@@ -486,6 +501,20 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 void Character::Jump()
 {
 	m_charCont.lock()->Jump(m_jumpSpeed);
+}
+
+void Character::InputJump()
+{
+	// TODO : FSM 정리 대상
+	if (m_state == EState::InAir)
+		return;
+	
+	uint8_t tag = m_state == EState::Landing ? 
+		(uint8_t)Content::Config::ETagAct::Jump :
+		(uint8_t)Content::Config::ETagAct::JumpFromWall;
+
+	std::shared_ptr<ActionClip> pJump = GetActions(tag);
+	GetAnim().lock()->PlayActionClip(pJump, 0.2f);
 }
 
 void Character::SetHangingState(bool _bIsOn)
@@ -570,8 +599,7 @@ void Character::InitInput()
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
-			std::shared_ptr<ActionClip> pJump = GetActions((uint8_t)Content::Config::ETagAct::Jump);
-			GetAnim().lock()->PlayActionClip(pJump, 0.3f);
+			InputJump();
 		});
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(

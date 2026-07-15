@@ -41,9 +41,11 @@ public:
 	void InputCamRotate();
 	void InputMovement(float _dt);
 	void CheckCharacterState();
-	
 	void ProcessPerceptionResult();
 
+	void InputJump();
+
+	// getter setter
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
 	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	void SetState(EState _state) { m_state = _state; }
