@@ -141,7 +141,6 @@ namespace MiniEngine
 
 		if (m_grounded && m_verticalVelocity < 0.0f)
 			m_verticalVelocity = -STICK_TO_GROUND_SPEED; // 지면에 계속 붙여 eCollsion_down 유지
-		
 
 		// 이동
 		const Vector3 disp = m_pendingMove + (bRootMotionApplied ? Vector3(0.0f) : Vector3(0.0f, m_verticalVelocity * _dt, 0.0f));
@@ -185,7 +184,6 @@ namespace MiniEngine
 		if (fabsf(fabsf(r.w) - 1.0f) > 1e-4f)
 			MG_LOG_WARN("[CharacterControllerComp] 루트모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
 	}
-
 
 	Vector3 CharacterControllerComponent::GetFootPosition() const
 	{

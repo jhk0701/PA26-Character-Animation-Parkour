@@ -14,6 +14,7 @@ namespace MiniEngine
 		std::shared_ptr<Physics::PhysicsWorld> m_physics;
 		Physics::RaycastResult m_raycastResult;
 		Vector3 m_raycastPos;
+		void* m_firstObstacle{ nullptr };
 		uint8_t m_predictedActTag;
 		uint8_t m_units;
 	};
@@ -23,7 +24,7 @@ namespace MiniEngine
 		bool m_bIsEmpty{ true };
 		Vector3 m_pos;
 		uint8_t m_actTag; // 탐색한 결과 취해야할 행동 태그
-		void* m_pActor;
+		void* m_pActor{ nullptr };
 
 		void Reset();
 	};

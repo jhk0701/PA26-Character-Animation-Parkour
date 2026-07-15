@@ -24,6 +24,7 @@
 #include "Content/JumpTiming.h"
 #include "Content/EnableCollisionObstacle.h"
 #include "Content/EnableHangingState.h"
+#include "Content/CorrectRootMotion.h"
 
 using namespace Content::Config;
 
@@ -159,6 +160,11 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCollideObstacle->SetTime(0.7f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
+
+		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.4f);
+		pCorrectRM->SetProperDistance(2.0f);
+		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
@@ -358,6 +364,17 @@ void Character::ProcessPerceptionResult()
 	pPercept->Travel();
 	const TravelResult& result = pPercept->GetLastestTravelResult();
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
+	
+	if (result.m_pActor)
+		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pActor);
+	else
+	{
+		m_pCurObstacle = nullptr;
+
+		if (result.m_bIsEmpty == false)
+			MG_LOG_WARN("[Character] Travel Result returned but CurObstacle is null");
+	}
+	
 
 	if (pAction)
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f, 1);
@@ -509,7 +526,6 @@ void Character::InitInput()
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]()
 		{ 
-
 			ProcessPerceptionResult(); 
 		}
 	);

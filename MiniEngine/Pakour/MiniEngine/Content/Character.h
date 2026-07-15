@@ -36,6 +36,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
+	void Jump();
 	void InputCamRotate();
 	void InputMovement(float _dt);
 	void CheckCharacterState();
@@ -57,12 +58,13 @@ public:
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 
 	void SetEnableCollisionObstacle(bool _bEnable);
-	void Jump();
-
 	void SetHangingState(bool _bIsOn);
+	Actor* GetCurObstacle() const { return m_pCurObstacle; }
 
 private:
 	void InitInput();
+	// tag - action 맵
+	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
@@ -85,8 +87,6 @@ private:
 
 	PerceptionQueryTree m_perceptQueryTree;
 	std::weak_ptr<PerceptionComponent> m_perception;
-
-	// tag - action 맵
-	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
+	Actor* m_pCurObstacle{ nullptr }; // 정리 필요
 };
 

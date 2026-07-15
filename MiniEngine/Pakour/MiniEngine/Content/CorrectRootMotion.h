@@ -3,7 +3,7 @@
 
 class Character;
 
-class CorrectRootMotion : MiniEngine::AnimNotifyState
+class CorrectRootMotion : public MiniEngine::AnimNotifyState
 {
 public:
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;

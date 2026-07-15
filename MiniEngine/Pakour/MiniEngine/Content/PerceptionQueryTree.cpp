@@ -93,11 +93,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			TravelResult result;
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
-			
-			if (_context.m_raycastResult.m_bIsHit)
-				result.m_pActor = _context.m_raycastResult.GetActor();
-			else
-				result.m_pActor = nullptr;
+			result.m_pActor = _context.m_firstObstacle;
 
 			return result;
 		}
@@ -129,6 +125,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 				bool bIsHit = _ctx.m_physics->CapsuleCast(capParam, _ctx.m_raycastResult, ToMask(Layer::Obstacle));
 				_ctx.m_raycastPos = _ctx.m_raycastResult.m_pos;
+
+				if (bIsHit)
+					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
 
 				return bIsHit;
 			},
@@ -206,7 +205,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						{
 							TravelResult result;
 							result.m_bIsEmpty = false;
-							result.m_pActor = _ctx.m_raycastResult.GetActor();
+							result.m_pActor = _ctx.m_firstObstacle;
 							result.m_actTag = (uint8_t)ETagAct::IdleToHang;
 
 							return result;
