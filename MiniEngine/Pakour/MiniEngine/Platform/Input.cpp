@@ -11,6 +11,13 @@ namespace MiniEngine
         
         m_keyTracker.Reset();
         m_mouseTracker.Reset();
+
+        // 첫 실행 시, 마우스 델타가 크게 튀어
+        // 초기화시 현재 마우스 위치 가져오기
+        m_mouseState = DirectX::Mouse::Get().GetState();
+        m_mouseTracker.Update(m_mouseState);
+        m_prevMouseX = MouseX();
+        m_prevMouseY = MouseY();
     }
 
     void Input::Clear()

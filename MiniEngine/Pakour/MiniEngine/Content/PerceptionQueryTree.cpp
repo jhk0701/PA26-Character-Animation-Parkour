@@ -13,13 +13,22 @@ using namespace Content::Config;
 
 namespace 
 {
-	constexpr float UNIT = 1.0f;
 	constexpr float MAX_LAND_DETECT_DIST = 1000.0f;
-	constexpr float MAX_OBSTACLE_DETECT_DIST = UNIT;
+	constexpr float MAX_OBSTACLE_DETECT_DIST = 1.0f;
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
 		return std::dynamic_pointer_cast<Character>(_actor);
+	}
+
+	float GetCharHeight(TravelContext& _context)
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+
+		if (!pChar)
+			return 1.0f;
+		
+		return pChar->GetCapsuleHalfHeight() * 2.0f; // 캡슐 원본 높이
 	}
 
 	bool CheckOwnerState(TravelContext& _context, uint8_t _state)
@@ -40,7 +49,7 @@ namespace
 		capParam.m_dir = pChar->GetRoot()->localTransform.Forward();
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
-		capParam.m_maxDistance = UNIT;
+		capParam.m_maxDistance = 1.0f;
 
 		return _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::Obstacle));
 	}
@@ -111,7 +120,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 
 				CapsulecastParam capParam;
-				capParam.m_startPos = _ctx.m_owner->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f);
+				capParam.m_startPos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f) * pChar->GetCapsuleHalfHeight();
 				capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 				capParam.m_radius = pChar->GetCapsuleRadius();
 				capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
@@ -132,17 +141,20 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[this](TravelContext& _ctx)
 				{
 					MG_LOG_INFO("Check Obstable Is Climbable");
-
-					if (CheckClimbableByUnit(_ctx, UNIT) == false)
+					const float charHeight = GetCharHeight(_ctx);
+					if (CheckClimbableByUnit(_ctx, charHeight) == false)
 					{
 						// 넘을 수 있었음 -> 1단위 넘을 수 있는 높이
 						// 진행방향으로 1단위만큼 이동
-						_ctx.m_raycastPos += Vector3(0.0f, 1.0f, 0.0f) * UNIT + _ctx.m_owner->GetRoot()->localTransform.Forward() * UNIT;
+						_ctx.m_raycastPos += 
+							Vector3(0.0f, 1.0f, 0.0f) * charHeight + 
+							_ctx.m_owner->GetRoot()->localTransform.Forward() * MAX_OBSTACLE_DETECT_DIST;
+
 						return true;
 					}
 
 					// 1 단위만큼 높여서 테스트했지만 장애물이 닿았음
-					_ctx.m_raycastPos += Vector3(0.0f, 1.0f, 0.0f) * UNIT;
+					_ctx.m_raycastPos += Vector3(0.0f, 1.0f, 0.0f) * charHeight;
 					_ctx.m_units = 1;
 
 					return false; // 2단위 체크 시도
@@ -154,11 +166,15 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				pIsClimbableSecond->SetCondition(
 					[this](TravelContext& _ctx)
 					{
+						const float charHeight = GetCharHeight(_ctx);
+
 						// 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
-						if (CheckClimbableByUnit(_ctx, UNIT) == false)
+						if (CheckClimbableByUnit(_ctx, charHeight) == false)
 						{
 							// 2단위로 넘을 수 있는 높이
-							_ctx.m_raycastPos += Vector3(0.0f, 1.0f, 0.0f) * UNIT + _ctx.m_owner->GetRoot()->localTransform.Forward() * UNIT;
+							_ctx.m_raycastPos += 
+								Vector3(0.0f, 1.0f, 0.0f) * charHeight + 
+								_ctx.m_owner->GetRoot()->localTransform.Forward() * 1.0f;
 							return true;
 						}
 
@@ -215,9 +231,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				Vector2 inputDir = pChar->GetInputDir();
 
 				_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
+				const float charHeight = GetCharHeight(_ctx);
 
 				if (inputDir.y < 0 &&
-					CheckLandable(_ctx, Layer::Obstacle | Layer::Ground, UNIT))
+					CheckLandable(_ctx, Layer::Obstacle | Layer::Ground, charHeight))
 				{
 					// 아래를 향하는데
 					// 1 단위만큼 거리에 바닥이나 착지할 수 있는 장애물이 있음
@@ -227,10 +244,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				}
 
 				if (inputDir.y > 0 &&
-					CheckClimbableByUnit(_ctx, UNIT * 2) == false)
+					CheckClimbableByUnit(_ctx, charHeight * 1.5f) == false)
 				{
-					// 위를 향함
-					// 1유닛 장애물 테스트 결과 통과 가능
+					// 위를 향함 -> 위를 향할 시, 이미 이동하는 상태이므로 2 단위로 호출
+					// 2유닛 장애물 테스트 결과 통과 가능
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
 					MG_LOG_INFO("Character Hang To Mantle");
 					return true;
