@@ -43,4 +43,10 @@ namespace Content::Config
 
 		End
 	};
+
+	enum class EActionPriority : uint8_t 
+	{
+		Default,
+		Override
+	};
 }

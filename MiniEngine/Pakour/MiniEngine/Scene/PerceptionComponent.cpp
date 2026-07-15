@@ -12,7 +12,8 @@ namespace MiniEngine
 		m_bIsEmpty = true;
 		m_actTag = 0;
 		m_pos = Vector3(0.0f);
-		m_pActor = nullptr;
+		m_pFirstObstacle = nullptr;
+		m_distanceObstacle = 0.0f;
 	}
 
 	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 

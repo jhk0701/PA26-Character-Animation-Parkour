@@ -163,7 +163,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.4f);
-		pCorrectRM->SetProperDistance(2.0f);
+		pCorrectRM->SetProperDistance(1.75f); // 적정거리 2.0 ~ 1.5
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
@@ -359,14 +359,20 @@ void Character::InputCamRotate()
 
 void Character::ProcessPerceptionResult()
 {
+	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
+		return; // 이미 행동 중이라면 탐색하지 않도록
+
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
 	
 	pPercept->Travel();
 	const TravelResult& result = pPercept->GetLastestTravelResult();
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
 	
-	if (result.m_pActor)
-		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pActor);
+	if (result.m_pFirstObstacle)
+	{
+		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
+		m_curObstacleDistance = result.m_distanceObstacle;
+	}
 	else
 	{
 		m_pCurObstacle = nullptr;
@@ -377,7 +383,7 @@ void Character::ProcessPerceptionResult()
 	
 
 	if (pAction)
-		GetAnim().lock()->PlayActionClip(pAction, 0.2f, 1);
+		GetAnim().lock()->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void Character::CheckCharacterState()
@@ -429,6 +435,11 @@ std::weak_ptr<Animator> Character::GetAnim() const
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+
+	if (_bEnable)
+		MG_LOG_INFO("[Character] Enable Collision Obstacle");
+	else
+		MG_LOG_INFO("[Character] Disable Collision Obstacle");
 
 }
 

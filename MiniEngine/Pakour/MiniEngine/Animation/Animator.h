@@ -58,7 +58,14 @@ namespace MiniEngine
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionCfg; }
 		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 비움
 
+		// 단순 재생 여부 확인
 		bool IsActionClipPlaying() const { return m_overrideTrack.m_bIsPlaying; }
+		// 특정 우선순위 이상이 재생중인지 확인
+		bool IsActionClipPlaying(uint8_t _priority) const 
+		{ 
+			return m_overrideTrack.m_bIsPlaying && 
+				m_overrideTrack.m_curPriority >= _priority;
+		}
 
 		void SetBaseTrackInputAxis(const Vector2& _axis);
 		void TranstionBaseTrack(int _nextIdx, float _duration = 0.5f);

@@ -14,7 +14,7 @@ using namespace Content::Config;
 namespace 
 {
 	constexpr float MAX_LAND_DETECT_DIST = 1000.0f;
-	constexpr float MAX_OBSTACLE_DETECT_DIST = 1.0f;
+	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.0f;
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
@@ -93,7 +93,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			TravelResult result;
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
-			result.m_pActor = _context.m_firstObstacle;
+			result.m_pFirstObstacle = _context.m_firstObstacle;
+			result.m_distanceObstacle = _context.m_distance;
 
 			return result;
 		}
@@ -127,7 +128,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				_ctx.m_raycastPos = _ctx.m_raycastResult.m_pos;
 
 				if (bIsHit)
+				{
 					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
+					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
+				}
 
 				return bIsHit;
 			},
@@ -205,7 +209,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						{
 							TravelResult result;
 							result.m_bIsEmpty = false;
-							result.m_pActor = _ctx.m_firstObstacle;
+							result.m_pFirstObstacle = _ctx.m_firstObstacle;
 							result.m_actTag = (uint8_t)ETagAct::IdleToHang;
 
 							return result;

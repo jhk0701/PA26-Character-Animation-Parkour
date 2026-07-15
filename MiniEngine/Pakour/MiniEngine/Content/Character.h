@@ -59,7 +59,9 @@ public:
 
 	void SetEnableCollisionObstacle(bool _bEnable);
 	void SetHangingState(bool _bIsOn);
+	
 	Actor* GetCurObstacle() const { return m_pCurObstacle; }
+	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 
 private:
 	void InitInput();
@@ -87,6 +89,9 @@ private:
 
 	PerceptionQueryTree m_perceptQueryTree;
 	std::weak_ptr<PerceptionComponent> m_perception;
-	Actor* m_pCurObstacle{ nullptr }; // 정리 필요
+	
+	// 정리 필요
+	Actor* m_pCurObstacle{ nullptr };
+	float m_curObstacleDistance{ 0.0f };
 };
 
