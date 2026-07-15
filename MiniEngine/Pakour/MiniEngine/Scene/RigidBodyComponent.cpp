@@ -48,16 +48,6 @@ namespace MiniEngine
 			m_actor->userData = o.get();
 	}
 
-	//void RigidBodyComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
-	//{
-	//	physx::PxSetGroup(*m_actor, _group);
-	//}
-
-	//Physics::ECollisionGroup RigidBodyComponent::GetCollsionGroup() const
-	//{
-	//	return (Physics::ECollisionGroup)physx::PxGetGroup(*m_actor);
-	//}
-
 	void RigidBodyComponent::SyncTransform()
 	{
 		if (m_type != EBodyType::Dynamic || !m_actor)

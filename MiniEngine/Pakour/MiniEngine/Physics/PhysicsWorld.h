@@ -30,20 +30,6 @@ namespace MiniEngine::Physics
         float slopeLimitDeg = 45.0f; // 걸어 올라갈 수 있는 경사각
     };
 
-    // 충돌을 감지할 그룹 종류 (레이어)
-    // 레이캐스트 쿼리와는 별개임
-    //enum ECollisionGroup : uint16_t
-    //{
-    //    Player,
-
-    //    Land,       // 착지할 공간
-    //    Obstacle,   // 액터가 지나가지 못하는 장애물
-    //    InAction,
-
-    //    IgnoreAll = 31,
-    //    END = 32
-    //};
-
     struct RaycastParam
     {
         Vector3 m_origin;
@@ -86,8 +72,6 @@ namespace MiniEngine::Physics
         bool Init();
         void Shutdown();
 
-        // PxFilterFlags FilterShader
-
         void Step(float _fixedDt);
         bool IsInitialized() const { return m_scene != nullptr; }
 
@@ -115,8 +99,6 @@ namespace MiniEngine::Physics
         physx::PxScene* m_scene = nullptr;
         physx::PxMaterial* m_material = nullptr; // m_physics 소유(함께 해제)
         physx::PxControllerManager* m_controllerManager = nullptr; // 자신이 만든 PxController 를 모두 소유 — scene 보다 먼저 release
-
-        void SetDefaultCollisionGroup();
 
         bool m_drawQueries = false;
         mutable std::vector<DebugLine> m_queryLines;

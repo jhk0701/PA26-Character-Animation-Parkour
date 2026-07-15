@@ -10,6 +10,7 @@ namespace MiniEngine::Physics
 		Ground = 1u << 1,
 		Character = 1u << 2,
 		Obstacle = 1u << 3,
+		ObstacleLedge = 1u << 4,
 	};
 	
 	constexpr uint32_t ToMask(Layer _layer) { return static_cast<uint32_t>(_layer); }

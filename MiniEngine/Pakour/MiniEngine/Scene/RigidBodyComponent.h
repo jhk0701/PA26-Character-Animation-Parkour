@@ -28,9 +28,6 @@ namespace MiniEngine
 		
 		std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 		EBodyType GetBodyType() const { return m_type; }
-		
-		/*void SetCollsionGroup(Physics::ECollisionGroup _group);
-		Physics::ECollisionGroup GetCollsionGroup() const;*/
 
 		void SyncTransform(); // PhysX -> Actor Transform
 		void PushTransform(); // Actor Transform -> PhysX

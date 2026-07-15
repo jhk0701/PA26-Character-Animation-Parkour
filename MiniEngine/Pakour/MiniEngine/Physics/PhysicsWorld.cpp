@@ -95,8 +95,6 @@ namespace MiniEngine::Physics
 		if (!m_controllerManager)
 			MG_LOG_ERROR("PhysX : PxCreateControllerManager failed");
 
-		// SetDefaultCollisionGroup();
-
 		return true;
 	}
 
@@ -242,40 +240,6 @@ namespace MiniEngine::Physics
 			SetQueryLayer(*actor, ToMask(Layer::Default));
 
 		return cont;
-	}
-
-	void PhysicsWorld::SetDefaultCollisionGroup()
-	{
-		// 가급적 런타임 중에 동적으로 이 부분을 제어할 일이 없어야 함
-		// 그러므로 별도 인터페이스를 만들지 않을 것
-
-		// 프로젝트 공통적으로 적용할 기본 충돌 레이어 설정
-		/*
-			Player - Player			O
-			Player - Land			O
-			Player - Obstacle		O
-			Player - InAction		0
-
-			Land - Land				O
-			Land - Obstacle			X
-			Land - InAction			0
-
-			Obstacle - Obstacle		X
-			Obstacle - InAction		X
-
-			InAction - InAction		X
-		*/
-
-		// CharacterController 호환을 위해서 Layer 방식으로 변경
-		// 기본적으로 0~31 레이어 모두 true
-		// false만 명시
-	/*	PxSetGroupCollisionFlag(ECollisionGroup::Land,		ECollisionGroup::Obstacle,		false);
-		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::Obstacle,		false);
-		PxSetGroupCollisionFlag(ECollisionGroup::Obstacle,	ECollisionGroup::InAction,		false);
-		PxSetGroupCollisionFlag(ECollisionGroup::InAction,	ECollisionGroup::InAction,		false);
-
-		for (uint16_t i = 0; i < ECollisionGroup::END; ++i)
-			PxSetGroupCollisionFlag(ECollisionGroup::IgnoreAll, i, false);*/
 	}
 
 	bool PhysicsWorld::Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask) const
