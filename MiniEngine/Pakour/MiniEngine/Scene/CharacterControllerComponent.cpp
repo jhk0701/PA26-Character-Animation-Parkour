@@ -15,28 +15,6 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
-	void CharacterControllerComponent::CheckFalling(float _dt)
-	{
-		if (m_bIsFalling && (m_grounded || m_verticalVelocity >= 0.0f))
-		{
-			m_bIsFalling = false;
-			m_fallingElapsed = 0.0f;
-			return;
-		}
-
-		if (m_grounded == false &&
-			m_verticalVelocity < 0.0f &&
-			m_bIsFalling == false)
-		{
-			m_fallingElapsed += _dt;
-			if (m_fallingElapsed >= m_fallingSecThreshold)
-			{
-				m_bIsFalling = true;
-				m_fallingElapsed = 0.0f;
-			}
-		}
-	}
-
 	void CharacterControllerComponent::FixedTick(float _dt)
 	{
 		Component::FixedTick(_dt);
@@ -231,6 +209,38 @@ namespace MiniEngine
 	{
 		m_bUseGravity = _bUse;
 	}
+
+	void CharacterControllerComponent::CheckFalling(float _dt)
+	{
+		// 직전까지 falling 상태
+		// 근데, 이번 프레임이 땅에 착지 + m_verticalVelocity >= 0.0f -> falling은 아님
+		if (m_bIsFalling && m_grounded && m_verticalVelocity >= 0.0f)
+		{
+			m_bIsFalling = false;
+			m_fallingElapsed = 0.0f;
+			return;
+		}
+
+		if (m_bIsFalling == false && m_grounded == false && m_verticalVelocity < 0.0f)
+		{
+			// 현재 falling은 아님
+			// 근데, 땅에서 떨어져있고
+			// m_verticalVelocity < 0
+
+			// 지속시간을 확인
+			m_fallingElapsed += _dt;
+
+			// falling이라고 판단하는 기준 시간을 넘김
+			if (m_fallingElapsed >= m_fallingSecThreshold)
+			{
+				m_bIsFalling = true;
+				m_fallingElapsed = 0.0f;
+			}
+		}
+		else
+			m_fallingElapsed = 0.0f;
+	}
+
 
 	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
 	//{

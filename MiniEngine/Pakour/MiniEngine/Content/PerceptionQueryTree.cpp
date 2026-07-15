@@ -58,16 +58,24 @@ namespace
 	bool CheckLandable(TravelContext& _context, uint32_t _layerMask, float _dist)
 	{
 		// climbing 테스트를 완료하고 호출될 것
-
 		// 아래방향을 향해 레이캐스트
 		RaycastParam rayParam;
 		rayParam.m_origin = _context.m_raycastPos;
 		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 		rayParam.m_maxDistance = _dist;
 
-		return _context.m_physics->Raycast(rayParam, _context.m_raycastResult, _layerMask); // ToMask(static_cast<Layer>(Layer::Obstacle))
+		return _context.m_physics->Raycast(rayParam, _context.m_raycastResult, _layerMask);
 	}
 
+	bool CheckFront(TravelContext& _context, uint32_t _layerMask, float _dist)
+	{
+		RaycastParam rayParam;
+		rayParam.m_origin = _context.m_raycastPos;
+		rayParam.m_dir = Vector3(0.0f, 0.0f, 1.0f);
+		rayParam.m_maxDistance = _dist;
+
+		return _context.m_physics->Raycast(rayParam, _context.m_raycastResult, _layerMask);
+	}
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
@@ -101,12 +109,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		}
 	);
 	
-	// 1번 확인 : 평지에 있는 상황인지
+	// 루트 확인 : 평지에 있는 상황인지
 	pRootQuery->SetCondition(
 		[this](TravelContext& _ctx)
-		{
-			return CheckOwnerState(_ctx, (uint8_t)Character::EState::Landing);
-		},
+		{ return CheckOwnerState(_ctx, (uint8_t)Character::EState::Landing); },
 		pFindObstacle,
 		pIsHanging
 	);
@@ -232,6 +238,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 아래를 향하는데
 					// 1 단위만큼 거리에 바닥이나 착지할 수 있는 장애물이 있음
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToIdle;
+					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
+					_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
+					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
+
 					MG_LOG_INFO("Character Hang To Idle");
 					return true;
 				}
@@ -239,9 +249,16 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (inputDir.y > 0 &&
 					CheckClimbableByUnit(_ctx, charHeight * 1.5f) == false)
 				{
-					// 위를 향함 -> 위를 향할 시, 이미 이동하는 상태이므로 2 단위로 호출
-					// 2유닛 장애물 테스트 결과 통과 가능
+					_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
+					if (CheckFront(_ctx, ToMask(Layer::Obstacle), MAX_OBSTACLE_DETECT_DIST))
+					{
+						_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
+						_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
+						_ctx.m_distance = _ctx.m_raycastResult.m_distance;
+					}
+
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
+
 					MG_LOG_INFO("Character Hang To Mantle");
 					return true;
 				}

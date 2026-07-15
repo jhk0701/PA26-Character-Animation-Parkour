@@ -38,7 +38,7 @@ Character::~Character()
 void Character::Construct()
 {
 	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
-	pRoot->localTransform.position = Vector3(0.0f, 1.0f, -1.0f);
+	pRoot->localTransform.position = Vector3(0.0f, 1.0f, 0.0f);
 	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
@@ -79,9 +79,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		
-		pCharCont->SetFallingSecondThreshold(1.0f); // 낙하 인정 시간 설정
-		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
+		pCharCont->SetFallingSecondThreshold(0.75f); // 낙하 인정 시간 설정
 
 		m_charCont = pCharCont;
 	}
@@ -206,6 +204,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// HangToIdle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
+		pActionClip->SetApplyRootBone(false);
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreObstacle->SetTime(0.1f);
@@ -222,9 +221,16 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
+		std::shared_ptr<CorrectRootMotion> pCorretRM = std::make_shared<CorrectRootMotion>();
+		pCorretRM->SetTime(0.0f, 0.5f);
+		pCorretRM->SetProperDistance(0.01f);
+		pCorretRM->SetLerpWeight(0.8f);
+		pCorretRM->SetCorrectAxis(CorrectRootMotion::YZ);
+
 		pActionClip->AddNotify(pIgnoreObstacle);
 		pActionClip->AddNotify(pCollideObstacle);
 		pActionClip->AddNotify(pSetIdle);
+		pActionClip->AddNotify(pCorretRM);
 
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
 	}
@@ -238,8 +244,19 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreObstacle);
+
+		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
+		pCollideObstacle->SetTime(0.5f);
+		pCollideObstacle->SetEnable(true);
+		pActionClip->AddNotify(pCollideObstacle);
+
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetLerpWeight(0.9f);
 		pCorrectRM->SetProperDistance(0.1f);
 		pActionClip->AddNotify(pCorrectRM);
 
@@ -421,6 +438,8 @@ void Character::CheckCharacterState()
 		m_state = EState::InAir;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 
+		MG_LOG_INFO("[Character] fall start.");
+
 		return;
 	}
 
@@ -430,7 +449,10 @@ void Character::CheckCharacterState()
 		{
 			// 공중 -> 착지
 			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
+			{
 				pAnim->PlayActionClip(pClip, 0.2f);
+				MG_LOG_INFO("[Character] play land motion.");
+			}
 		}
 
 		m_state = EState::Landing;
