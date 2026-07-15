@@ -37,7 +37,7 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	dir.Normalize();
 
 	Vector3 properPoint = obsPos - dir * m_properDistance;
-	Vector3 lerped = Vector3::Lerp(charPos, properPoint, _dt * m_lerpWeight);
+	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
 
 	Vector3 correctMovementDt = lerped - charPos;
 
@@ -46,7 +46,12 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	//else
 	//	// correctMovementDt = _dt * -dir;
 
-	correctMovementDt *= _dt;
+	float duration = GetDuration();
+	if (duration < 0.0f)
+		duration = 1.0f;
+
+	correctMovementDt *= _dt * (1 / duration);
 	MG_LOG_INFO("Correct Movement Dt : {}, {}, {}", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
+
 	m_pChar->GetController().lock()->AddMovementInput(correctMovementDt);
 }

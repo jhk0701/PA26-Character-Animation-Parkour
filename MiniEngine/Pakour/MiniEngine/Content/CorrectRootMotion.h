@@ -15,5 +15,5 @@ public:
 private:
 	Character* m_pChar{ nullptr };
 	float m_properDistance{ 1.0f };
-	float m_lerpWeight{ 1.0f };
+	float m_lerpWeight{ 0.5f };
 };
