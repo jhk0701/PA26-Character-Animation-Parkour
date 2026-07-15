@@ -15,6 +15,7 @@ namespace MiniEngine
 	{
 	public:
         void FixedTick(float _dt) override;
+        void Tick(float _dt) override;
 
 		void Init(Physics::PhysicsWorld& _world, const Physics::CapsuleControllerDesc& _desc,
 			const std::shared_ptr<SceneComponent>& _target = nullptr);
@@ -43,9 +44,11 @@ namespace MiniEngine
         void SetLayerCollisionEnabled(Physics::Layer _layer, bool _enabled);
 
         void SetFallingSecondThreshold(float _sec) { m_fallingSecThreshold = _sec; };
-        void SetForceFalling();
-        void ResetFalling();
+        void SetForceFalling(bool _bIsFalling);
         void SetUseGravity(bool _bUse);
+
+        // 디버그용 멤버 변수 getter
+        float GetFallingElapsed() const { return m_fallingElapsed; }
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
@@ -53,7 +56,7 @@ namespace MiniEngine
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);
-        void CheckFalling(float _fixedDt);
+        void CheckFalling(float _dt);
 
         physx::PxController* m_controller = nullptr;
         std::weak_ptr<SceneComponent> m_target;

@@ -28,7 +28,7 @@ namespace
 		if (!pChar)
 			return 1.0f;
 		
-		return pChar->GetCapsuleHalfHeight() * 2.0f; // 캡슐 원본 높이
+		return pChar->GetCapsuleHalfHeight() * 2.0f; // 캡슐 원본 높이 -> 일반적으로 캐릭터의 높이 맞게 캡슐의 높이가 결정될 것
 	}
 
 	bool CheckOwnerState(TravelContext& _context, uint8_t _state)

@@ -15,22 +15,26 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
-	void CharacterControllerComponent::CheckFalling(float _fixedDt)
+	void CharacterControllerComponent::CheckFalling(float _dt)
 	{
+		if (m_bIsFalling && (m_grounded || m_verticalVelocity >= 0.0f))
+		{
+			m_bIsFalling = false;
+			m_fallingElapsed = 0.0f;
+			return;
+		}
+
 		if (m_grounded == false &&
 			m_verticalVelocity < 0.0f &&
 			m_bIsFalling == false)
 		{
-			m_fallingElapsed += _fixedDt;
+			m_fallingElapsed += _dt;
 			if (m_fallingElapsed >= m_fallingSecThreshold)
 			{
-				m_fallingElapsed = 0.0f;
 				m_bIsFalling = true;
+				m_fallingElapsed = 0.0f;
 			}
 		}
-
-		if (m_bIsFalling && (m_grounded || m_verticalVelocity >= 0.0f))
-			m_bIsFalling = false;
 	}
 
 	void CharacterControllerComponent::FixedTick(float _dt)
@@ -39,6 +43,11 @@ namespace MiniEngine
 
 		Move(_dt);
 		SyncTransform();
+	}
+
+	void CharacterControllerComponent::Tick(float _dt)
+	{
+		Component::Tick(_dt);
 
 		CheckFalling(_dt);
 	}
@@ -97,7 +106,7 @@ namespace MiniEngine
 		if (!m_grounded)
 			return;
 
-		SetForceFalling();
+		SetForceFalling(true);
 
 		m_verticalVelocity = _speed;
 		m_grounded = false;
@@ -208,15 +217,9 @@ namespace MiniEngine
 			m_collisionMask &= ~bit;
 	}
 
-	void CharacterControllerComponent::SetForceFalling()
+	void CharacterControllerComponent::SetForceFalling(bool _bIsFalling)
 	{
-		m_bIsFalling = true;
-		m_fallingElapsed = 0.0f;
-	}
-
-	void CharacterControllerComponent::ResetFalling()
-	{
-		m_bIsFalling = false;
+		m_bIsFalling = _bIsFalling;
 		m_fallingElapsed = 0.0f;
 	}
 

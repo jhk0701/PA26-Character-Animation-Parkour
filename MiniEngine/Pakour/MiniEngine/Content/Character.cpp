@@ -74,12 +74,12 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetFallingSecondThreshold(0.5f); // 낙하 인정 시간 설정
+		
+		pCharCont->SetFallingSecondThreshold(1.0f); // 낙하 인정 시간 설정
 		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
 
 		m_charCont = pCharCont;
 	}
-
 	{
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
 		pPerceptComp->SetQuertTree(m_perceptQueryTree.ConstructTree());
@@ -365,14 +365,22 @@ void Character::CheckCharacterState()
 		return;
 	
 	// 애니메이션 baseTrack의 상태만 전환하기 위한 용도
-
 	// 공중인지 판단
 	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
 	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
-	if (bIsFalling && m_state != EState::InAir)
+
+	MG_LOG_INFO("Check Falling : is fall : {}, is grounded : {}, fall elapsed : {}, vert velocity : {}",
+		pCharCont->IsFalling() ? "yes" : "no",
+		pCharCont->IsGrounded() ? "yes" : "no",
+		pCharCont->GetFallingElapsed(),
+		pCharCont->GetVerticalVelocity());
+
+	if (bIsFalling && 
+		m_state != EState::InAir)
 	{
 		m_state = EState::InAir;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+
 		return;
 	}
 
@@ -384,7 +392,6 @@ void Character::CheckCharacterState()
 			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
 				pAnim->PlayActionClip(pClip, 0.2f);
 		}
-			
 
 		m_state = EState::Landing;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
@@ -419,7 +426,7 @@ void Character::SetHangingState(bool _bIsOn)
 
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
 	pCharCont->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
-	pCharCont->ResetFalling();
+	pCharCont->SetForceFalling(false);
 
 	if (_bIsOn)
 		MG_LOG_INFO("Start Hanging");
