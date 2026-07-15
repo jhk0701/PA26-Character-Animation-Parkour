@@ -173,6 +173,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.4f);
 		pCorrectRM->SetProperDistance(1.75f); // 적정거리 2.0 ~ 1.5
+		pCorrectRM->SetLerpWeight(0.7f);
+		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
@@ -204,9 +206,9 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pSetHanging);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetProperDistance(0.1f);
-		pCorrectRM->SetLerpWeight(1.0);
+		pCorrectRM->SetTime(0.0f, 1.0f);
+		pCorrectRM->SetProperDistance(0.05f);
+		pCorrectRM->SetLerpWeight(0.95f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::IdleToHang] = pActionClip;
@@ -236,11 +238,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorretRM->SetTime(0.0f, 0.5f);
 		pCorretRM->SetProperDistance(0.01f);
 		pCorretRM->SetLerpWeight(0.8f);
+		pCorretRM->SetDeltaIntensity(5.0f);
 		pCorretRM->SetCorrectAxis(CorrectRootMotion::YZ);
-
-		pActionClip->AddNotify(pIgnoreObstacle);
-		pActionClip->AddNotify(pCollideObstacle);
-		pActionClip->AddNotify(pSetIdle);
 		pActionClip->AddNotify(pCorretRM);
 
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
