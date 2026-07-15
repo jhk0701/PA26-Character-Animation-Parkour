@@ -76,9 +76,7 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 
 #ifdef MG_DEBUG
-
 	ApplyPhysicsDebug(true);
-
 #endif // MG_DEBUG
 }
 

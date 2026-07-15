@@ -7,6 +7,14 @@ using namespace MiniEngine::Physics;
 
 namespace MiniEngine 
 {
+	void TravelResult::Reset()
+	{
+		m_bIsEmpty = true;
+		m_actTag = 0;
+		m_pos = Vector3(0.0f);
+		m_pActor = nullptr;
+	}
+
 	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 
 		std::shared_ptr<QueryNodeBase> _nodeOnTrue, 
 		std::shared_ptr<QueryNodeBase> _nodeOnFalse)
@@ -44,17 +52,21 @@ namespace MiniEngine
 		m_physics = owner.lock()->GetScene()->GetPhysics();
 	}
 
-	TravelResult PerceptionComponent::Travel()
+	void PerceptionComponent::Travel()
 	{
 		if (m_physics.expired() || IsInitialized() == false)
-			return TravelResult();
+		{
+			m_result.Reset();
+			return;
+		}
 
 		TravelContext context;
 		context.m_owner = owner.lock();
 		context.m_physics = owner.lock()->GetScene()->GetPhysics().lock();
 		context.m_units = 0;
 
-		return m_queryTree->Execute(context);
+		m_result = m_queryTree->Execute(context);
+		return;
 	}
 
 }

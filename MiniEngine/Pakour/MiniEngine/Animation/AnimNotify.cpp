@@ -3,17 +3,13 @@
 
 namespace MiniEngine 
 {
-	AnimNotify::AnimNotify(float _time, std::function<void()>&& _event) :
-		m_timeToCall(_time), m_event(_event)
-	{}
-
 	void AnimNotify::Init() 
 	{
 		m_bIsCalled = false;
 		m_playElapsed = 0.0f;
 	}
 
-	void AnimNotify::Update(float _dt) 
+	void AnimNotify::Update(float _dt, AnimNotifyParam& _param)
 	{
 		m_playElapsed += _dt;
 		
@@ -22,27 +18,20 @@ namespace MiniEngine
 
 		m_bIsCalled = true;
 
-		if (m_event)
-			m_event();
-	}
-
-	AnimNotifyState::AnimNotifyState(float _start, float _end, std::function<void(float)>&& _event)	:
-		m_start(_start), m_end(_end), m_event(_event)
-	{
+		Activate(_param);
 	}
 
 	void AnimNotifyState::Init()
 	{
 		m_playElapsed = 0.0f;
 	}
-	void AnimNotifyState::Update(float _dt)
+	void AnimNotifyState::Update(float _dt, AnimNotifyParam& _param)
 	{
 		m_playElapsed += _dt;
 
 		if (m_playElapsed < m_start || m_playElapsed > m_end)
 			return;
 
-		if (m_event)
-			m_event(_dt);
+		Activate(_dt, _param);
 	}
 }

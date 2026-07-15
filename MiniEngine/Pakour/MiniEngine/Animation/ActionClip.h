@@ -15,7 +15,7 @@ namespace MiniEngine
 		void Play();
 		void Stop();
 
-		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose);
+		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, AnimNotifyParam& _notifyParam);
 		float GetDuration() const { return m_duration; }
 		AnimClip* GetClip() const { return m_clip; }
 		const float GetTickPerSec() const;

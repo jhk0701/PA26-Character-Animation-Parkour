@@ -151,8 +151,10 @@ namespace MiniEngine
 			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, filters);
 
 		m_grounded = flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
+		
 		if (m_grounded && m_verticalVelocity < 0.0f)
 			m_verticalVelocity = 0.0f; // 착지한 경우, vertical velocity 초기화
+
 		if (flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_UP) && m_verticalVelocity > 0.0f)
 			m_verticalVelocity = 0.0f; // 천장 등등 머리가 접촉한 경우, 상승 초기화
 

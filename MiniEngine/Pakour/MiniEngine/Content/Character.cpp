@@ -21,6 +21,10 @@
 
 #include "Content/ContentConfig.h"
 
+#include "Content/JumpTiming.h"
+#include "Content/EnableCollisionObstacle.h"
+#include "Content/EnableHangingState.h"
+
 using namespace Content::Config;
 
 Character::Character()
@@ -96,6 +100,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::END));
 
 	// 로코모션 구현 (순서 유의 - EState 값 순서대로 할당하고 찾을 것)
+	// TODO : 데이터화
 	{
 		// Landing
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
@@ -134,37 +139,37 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
 		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
 		
-		std::shared_ptr<AnimNotify> pJump = std::make_shared<AnimNotify>(0.5f, 
-			[this]() { GetController().lock()->Jump(m_jumpSpeed); });
-		pActionClip->AddNotify(pJump);
+		std::shared_ptr<JumpTiming> pJumpNotify = std::make_shared<JumpTiming>();
+		pJumpNotify->SetTime(0.5f);
+		pActionClip->AddNotify(pJumpNotify);
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Jump] = pActionClip;
 	}
 	{
 		// Jump Valut
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Jumping valut
 
-		std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.2f,
-			[this]() { SetEnableCollisionObstacle(false); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreObstacle->SetTime(0.2f);
+		pIgnoreObstacle->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreObstacle);
 
-		std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.7f,
-			[this]() { SetEnableCollisionObstacle(true); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pCollideObstacle));
+		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
+		pCollideObstacle->SetTime(0.7f);
+		pCollideObstacle->SetEnable(true);
+		pActionClip->AddNotify(pCollideObstacle);
 
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Valut 낮은 모션 적용 Jumping valut
-		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip; // TODO : 중간 지점 오르는 애니메이션 필요
 	}
 	{
 		// Mantle Mid
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Mantle_Mid 넘어 오르는 모션 Sprint To Wall Climb
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
 
-		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; // Mantle_Mid 넘어 오르는 모션
 	}
 	{
 		// FallingToLand
@@ -178,10 +183,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(15)); // 벽 매달리기 (시작)
 
-		std::shared_ptr<AnimNotify> pSetHanging = std::make_shared<AnimNotify>(0.2f, 
-			[this]() { SetHangingState(true); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetHanging));
+		std::shared_ptr<EnableHangingState> pSetHanging = std::make_shared<EnableHangingState>();
+		pSetHanging->SetTime(0.2f);
+		pSetHanging->SetEnable(true);
+		pActionClip->AddNotify(pSetHanging);
 
 		m_mapActions[(uint8_t)ETagAct::IdleToHang] = pActionClip;
 	}
@@ -190,21 +195,24 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
 
-		std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.1f,
-			[this]() { SetEnableCollisionObstacle(false); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreObstacle);
 
-		std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.5f,
-			[this]() { SetEnableCollisionObstacle(true); }
-		);
+		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
+		pCollideObstacle->SetTime(0.5f);
+		pCollideObstacle->SetEnable(true);
+		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.5f,
-			[this]() { SetHangingState(false); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pIgnoreObstacle));
-		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pCollideObstacle));
-		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
+		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
+		pSetIdle->SetTime(0.5f);
+		pSetIdle->SetEnable(false);
+		pActionClip->AddNotify(pSetIdle);
+
+		pActionClip->AddNotify(pIgnoreObstacle);
+		pActionClip->AddNotify(pCollideObstacle);
+		pActionClip->AddNotify(pSetIdle);
 
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
 	}
@@ -213,10 +221,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
 
-		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.5f,
-			[this]() { SetHangingState(false); }
-		);
-		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
+		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
+		pSetIdle->SetTime(0.5f);
+		pSetIdle->SetEnable(false);
+		pActionClip->AddNotify(pSetIdle);
 
 		m_mapActions[(uint8_t)ETagAct::HangToMantle] = pActionClip;
 	}
@@ -261,6 +269,8 @@ void Character::BeginPlay()
 
 void Character::Tick(float _dt)
 {
+	// TODO : FSM으로 리팩터링
+
 	InputCamRotate();
 	InputMovement(_dt);
 	
@@ -327,7 +337,6 @@ void Character::InputCamRotate()
 	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
 	m_camRotate.x += CamRotSpeed.x;
 	m_camRotate.y += CamRotSpeed.y;
-	// m_camRotate.y = std::clamp(m_camRotate.y, -m_camMaxPitchDeg, m_camMaxPitchDeg); // 회전각 제한
 
 	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
@@ -342,11 +351,12 @@ void Character::InputCamRotate()
 	pCamHolderRoot->localTransform.rotation = qPitch;
 }
 
-
 void Character::ProcessPerceptionResult()
 {
-	TravelResult result = m_perception.lock()->Travel();
-
+	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
+	
+	pPercept->Travel();
+	const TravelResult& result = pPercept->GetLastestTravelResult();
 	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
 
 	if (pAction)
@@ -368,12 +378,6 @@ void Character::CheckCharacterState()
 	// 공중인지 판단
 	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
 	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
-
-	MG_LOG_INFO("Check Falling : is fall : {}, is grounded : {}, fall elapsed : {}, vert velocity : {}",
-		pCharCont->IsFalling() ? "yes" : "no",
-		pCharCont->IsGrounded() ? "yes" : "no",
-		pCharCont->GetFallingElapsed(),
-		pCharCont->GetVerticalVelocity());
 
 	if (bIsFalling && 
 		m_state != EState::InAir)
@@ -400,11 +404,6 @@ void Character::CheckCharacterState()
 	}
 }
 
-void Character::SetInputDir(const Vector2& _dir)
-{
-	m_inputDir = _dir;
-}
-
 std::weak_ptr<Animator> Character::GetAnim() const
 {
 	return m_skinMeshComp.lock()->GetAnim();
@@ -414,10 +413,11 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 
-	if(_bEnable)
-		MG_LOG_INFO("Collide With Obstacle");
-	else
-		MG_LOG_INFO("Ignore Obstacle");
+}
+
+void Character::Jump()
+{
+	m_charCont.lock()->Jump(m_jumpSpeed);
 }
 
 void Character::SetHangingState(bool _bIsOn)
@@ -427,11 +427,6 @@ void Character::SetHangingState(bool _bIsOn)
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
 	pCharCont->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
 	pCharCont->SetForceFalling(false);
-
-	if (_bIsOn)
-		MG_LOG_INFO("Start Hanging");
-	else
-		MG_LOG_INFO("End Hanging");
 
 	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 }
@@ -512,7 +507,11 @@ void Character::InitInput()
 		});
 
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() { ProcessPerceptionResult(); }
+		[this]()
+		{ 
+
+			ProcessPerceptionResult(); 
+		}
 	);
 
 }

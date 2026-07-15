@@ -83,6 +83,12 @@
     <Filter Include="Engine\07.Object\Component\Perception">
       <UniqueIdentifier>{50e01388-3c70-4832-9176-679801933469}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\04.Animation">
+      <UniqueIdentifier>{ba7d20b4-bedf-4fae-9e30-9469bd25ba9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\04.Animation\Nofity">
+      <UniqueIdentifier>{accdedc6-9851-4655-94c5-fd00a568f228}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -238,6 +244,16 @@
     <ClInclude Include="Content\PerceptionQueryTree.h">
       <Filter>Content</Filter>
     </ClInclude>
+    <ClInclude Include="IgnoreCollisionObstacle.h" />
+    <ClInclude Include="Content\EnableCollisionObstacle.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\JumpTiming.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\EnableHangingState.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -368,6 +384,15 @@
     </ClCompile>
     <ClCompile Include="Content\PerceptionQueryTree.cpp">
       <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\EnableCollisionObstacle.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\JumpTiming.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\EnableHangingState.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

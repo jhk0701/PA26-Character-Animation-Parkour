@@ -78,7 +78,9 @@ namespace MiniEngine
 			m_overrideTrack.m_fadeElapsed += _dt; // 페이드 인
 		
 		// 액션 클립 재생
-		m_overrideTrack.m_pClip->Sample(_dt, skeleton, m_overrideTrack.m_layerPose);	// m_poseTarget
+		AnimNotifyParam notifyParam;
+		notifyParam.m_pActor = m_meshComp.lock()->owner.lock().get();
+		m_overrideTrack.m_pClip->Sample(_dt, skeleton, m_overrideTrack.m_layerPose, notifyParam);	// m_poseTarget
 
 		float w = m_overrideTrack.GetProgress();
 		w = std::clamp(w, 0.0f, 1.0f);

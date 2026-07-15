@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Actor.h"
 #include "Content/PerceptionQueryTree.h"
+#include "Scene/PerceptionComponent.h"
 #include <unordered_map>
 
 namespace MiniEngine 
@@ -8,7 +9,6 @@ namespace MiniEngine
 	class RigidBodyComponent;
 	class SkeletalMeshComponent;
 	class CharacterControllerComponent;
-	class PerceptionComponent;
 	class Animator;
 	class BlendClip;
 	class ActionClip;
@@ -43,7 +43,7 @@ public:
 	void ProcessPerceptionResult();
 
 	void SetMoveSpeed(float _newSpeed) { m_moveSpeed = _newSpeed; }
-	void SetInputDir(const Vector2& _dir);
+	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	void SetState(EState _state) { m_state = _state; }
 
 	Vector2 GetInputDir() const { return m_inputDir; }
@@ -57,6 +57,7 @@ public:
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 
 	void SetEnableCollisionObstacle(bool _bEnable);
+	void Jump();
 
 	void SetHangingState(bool _bIsOn);
 

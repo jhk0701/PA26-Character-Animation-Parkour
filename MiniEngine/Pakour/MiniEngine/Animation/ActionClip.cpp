@@ -22,7 +22,7 @@ namespace MiniEngine
 		m_playTime = 0.0f;
 	}
 
-	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose)
+	void ActionClip::Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, AnimNotifyParam& _notifyParam)
 	{
 		if (!m_bIsPlaying)
 			return;
@@ -45,7 +45,7 @@ namespace MiniEngine
 		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
 
 		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
-			n->Update(_dt);
+			n->Update(_dt, _notifyParam);
 	}
 
 	const float ActionClip::GetTickPerSec() const

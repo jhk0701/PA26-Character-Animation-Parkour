@@ -24,6 +24,8 @@ namespace MiniEngine
 		Vector3 m_pos;
 		uint8_t m_actTag; // 탐색한 결과 취해야할 행동 태그
 		void* m_pActor;
+
+		void Reset();
 	};
 
 	class QueryNodeBase
@@ -63,21 +65,15 @@ namespace MiniEngine
 	public:
 		void OnAttach() override;
 
-		TravelResult Travel();// 탐색
+		void Travel();// 탐색
 		void SetQuertTree(std::shared_ptr<QueryNodeBase>&& _newTree) { m_queryTree = _newTree; };
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
+		const TravelResult& GetLastestTravelResult() const { return m_result; }
+
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
-		float m_unit{ 1.0f }; // 탐색 단위
-		Vector3 m_ownerDir;
-
-		// 1. 평지 이동 시, 장애물 탐색
-		// 탐색 범위 
-		float m_maxObsDist{ 1.0f };
-		float m_maxLandDist{ 1000.0f }; // 바닥 탐색
-
 		std::shared_ptr<QueryNodeBase> m_queryTree;
-
+		TravelResult m_result; // 가장 마지막으로 인식한 데이터
 	};
 }

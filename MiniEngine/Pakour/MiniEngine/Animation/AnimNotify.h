@@ -1,38 +1,39 @@
 #pragma once
 #include "Animation/IAnimNotify.h"
-#include <functional>
 
 namespace MiniEngine 
 {
 	class AnimNotify : public IAnimNotify
 	{
 	public:
-		AnimNotify(float _time, std::function<void()>&& _event);
+		AnimNotify() {};
+		virtual ~AnimNotify() {}
 
 		void Init() override;
-		void Update(float _dt) override;
+		void Update(float _dt, AnimNotifyParam& _param) override;
+		void SetTime(float _time) { m_timeToCall = _time; }
+		virtual void Activate(AnimNotifyParam& _param) = 0;
 
 	private:
 		float m_timeToCall{ 0.0f };
 		float m_playElapsed{ 0.0f };
 		bool m_bIsCalled{ false };
-
-		std::function<void()> m_event;
 	};
 
 	class AnimNotifyState : public IAnimNotify 
 	{
 	public:
-		AnimNotifyState(float _start, float _end, std::function<void(float)>&& _event);
+		AnimNotifyState() {}
+		virtual ~AnimNotifyState() {}
 
 		void Init() override;
-		void Update(float _dt) override;
+		void Update(float _dt, AnimNotifyParam& _param) override;
+		void SetTimeToCall(float _start, float _end) { m_start = _start; m_end = _end; }
+		virtual void Activate(float _dt, AnimNotifyParam& _param)  = 0;
 
 	private:
 		float m_start{ 0.0f };
 		float m_end{ 0.0f };
 		float m_playElapsed{ 0.0f };
-
-		std::function<void(float)> m_event;
 	};
 }

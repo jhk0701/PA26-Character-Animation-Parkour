@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene/SkeletalMeshComponent.h"
 #include "Animation/Animator.h"
 #include "Core/Graphics.h"
