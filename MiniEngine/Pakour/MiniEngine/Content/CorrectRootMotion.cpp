@@ -28,10 +28,24 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	//MG_LOG_INFO("Correct dist : {}", dist);
 
 	// 캐릭터와 장애물의 적정거리 보정
-	Vector3 obsPos = pCurObs->GetRoot()->localTransform.position;
+	Vector3 obsPos = m_pChar->GetCurObstacleHitPos(); //pCurObs->GetRoot()->localTransform.position;
 	Vector3 charPos = m_pChar->GetRoot()->localTransform.position;
-	obsPos.y = 0.0f;
-	charPos.y = 0.0f;
+	
+	switch (m_corrextAxis)
+	{
+	case XZ:
+		obsPos.y = 0.0f;
+		charPos.y = 0.0f;
+		break;
+	case XY:
+		obsPos.z = 0.0f;
+		charPos.z = 0.0f;
+		break;
+	case YZ:
+		obsPos.x = 0.0f;
+		charPos.x = 0.0f;
+		break;
+	}
 	
 	Vector3 dir = obsPos - charPos;
 	dir.Normalize();
@@ -40,18 +54,12 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
 
 	Vector3 correctMovementDt = lerped - charPos;
-
-	//if (dist > m_properDistance)
-	//	// correctMovementDt = _dt * dir;
-	//else
-	//	// correctMovementDt = _dt * -dir;
-
+	
 	float duration = GetDuration();
 	if (duration < 0.0f)
 		duration = 1.0f;
 
 	correctMovementDt *= _dt * (1 / duration);
 	MG_LOG_INFO("Correct Movement Dt : {}, {}, {}", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
-
 	m_pChar->GetController().lock()->AddMovementInput(correctMovementDt);
 }

@@ -62,6 +62,7 @@ public:
 	
 	Actor* GetCurObstacle() const { return m_pCurObstacle; }
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
+	Vector3 GetCurObstacleHitPos() const { return m_curObstacleHitPos; }
 
 private:
 	void InitInput();
@@ -93,5 +94,6 @@ private:
 	// 정리 필요
 	Actor* m_pCurObstacle{ nullptr };
 	float m_curObstacleDistance{ 0.0f };
+	Vector3 m_curObstacleHitPos{ 0.0f };
 };
 

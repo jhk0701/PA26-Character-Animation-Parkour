@@ -85,7 +85,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 	std::shared_ptr<LeafNode> pContinue = std::make_shared<LeafNode>(); // 무응답 -> 탐색 계속 신호
 	std::shared_ptr<LeafNode> pReturn = std::make_shared<LeafNode>(); // 결과 리턴
-	std::shared_ptr<LeafNode> pSetHanging = std::make_shared<LeafNode>(); // 캐릭터를 Hanging 상태로 전환
 
 	pReturn->SetTask(
 		[](TravelContext& _context)
@@ -94,8 +93,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
 			result.m_pFirstObstacle = _context.m_firstObstacle;
+			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_distanceObstacle = _context.m_distance;
-
 			return result;
 		}
 	);
@@ -130,6 +129,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit)
 				{
 					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
+					_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
 					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
 				}
 
@@ -182,10 +182,11 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						}
 
 						_ctx.m_units = 2;
+						_ctx.m_predictedActTag = (uint8_t)ETagAct::IdleToHang;
 						return false; // 2회 단위 체크에도 끝이 보이지 않음 -> 매달려야함
 					},
 					pObstableIsLandable,
-					pSetHanging
+					pReturn
 				);
 
 					pObstableIsLandable->SetCondition(
@@ -202,18 +203,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						},
 						pReturn,
 						pReturn
-					);
-
-					pSetHanging->SetTask(
-						[](TravelContext& _ctx)
-						{
-							TravelResult result;
-							result.m_bIsEmpty = false;
-							result.m_pFirstObstacle = _ctx.m_firstObstacle;
-							result.m_actTag = (uint8_t)ETagAct::IdleToHang;
-
-							return result;
-						}
 					);
 
 	// pIsHanging 처리

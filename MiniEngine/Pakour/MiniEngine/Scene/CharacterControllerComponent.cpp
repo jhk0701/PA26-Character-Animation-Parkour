@@ -118,6 +118,8 @@ namespace MiniEngine
 		if (!m_controller || !target)
 			return;
 
+		// MG_LOG_INFO("[CCT] Move called");
+
 		// 루트모션 적용
 		bool bRootMotionApplied = false;
 		if (std::shared_ptr<SkeletalMeshComponent> sk = m_rootMotionSource.lock()) 

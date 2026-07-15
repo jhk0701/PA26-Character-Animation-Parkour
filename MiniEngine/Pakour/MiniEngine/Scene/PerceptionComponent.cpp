@@ -11,8 +11,8 @@ namespace MiniEngine
 	{
 		m_bIsEmpty = true;
 		m_actTag = 0;
-		m_pos = Vector3(0.0f);
 		m_pFirstObstacle = nullptr;
+		m_firstObstacleHitPos = Vector3(0.0f);
 		m_distanceObstacle = 0.0f;
 	}
 

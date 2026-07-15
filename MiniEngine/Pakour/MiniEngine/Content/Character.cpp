@@ -194,6 +194,12 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetHanging->SetEnable(true);
 		pActionClip->AddNotify(pSetHanging);
 
+		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.5f);
+		pCorrectRM->SetProperDistance(0.1f);
+		pCorrectRM->SetLerpWeight(1.0);
+		pActionClip->AddNotify(pCorrectRM);
+
 		m_mapActions[(uint8_t)ETagAct::IdleToHang] = pActionClip;
 	}
 	{
@@ -231,6 +237,11 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetTime(0.5f);
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
+
+		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetProperDistance(0.1f);
+		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::HangToMantle] = pActionClip;
 	}
@@ -371,6 +382,7 @@ void Character::ProcessPerceptionResult()
 	if (result.m_pFirstObstacle)
 	{
 		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
+		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
 	}
 	else
