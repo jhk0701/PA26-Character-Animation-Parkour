@@ -58,8 +58,8 @@ void Character::Construct()
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, 4.0f);
-		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -4.0f);
+		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;
 	}
@@ -74,7 +74,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetFallingSecondThreshold(0.4f); // 낙하 인정 시간 설정
+		pCharCont->SetFallingSecondThreshold(0.5f); // 낙하 인정 시간 설정
 		// pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, false);
 
 		m_charCont = pCharCont;
@@ -190,9 +190,20 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
 
-		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.2f,
+		std::shared_ptr<AnimNotify> pIgnoreObstacle = std::make_shared<AnimNotify>(0.1f,
+			[this]() { SetEnableCollisionObstacle(false); }
+		);
+		pActionClip->AddNotify(std::static_pointer_cast<IAnimNotify>(pIgnoreObstacle));
+
+		std::shared_ptr<AnimNotify> pCollideObstacle = std::make_shared<AnimNotify>(0.5f,
+			[this]() { SetEnableCollisionObstacle(true); }
+		);
+
+		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.5f,
 			[this]() { SetHangingState(false); }
 		);
+		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pIgnoreObstacle));
+		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pCollideObstacle));
 		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
 
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
@@ -202,7 +213,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
 
-		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.2f,
+		std::shared_ptr<AnimNotify> pSetIdle = std::make_shared<AnimNotify>(0.5f,
 			[this]() { SetHangingState(false); }
 		);
 		pActionClip->AddNotify(std::static_pointer_cast<AnimNotify>(pSetIdle));
@@ -310,9 +321,6 @@ void Character::InputMovement(float _dt)
 
 void Character::InputCamRotate()
 {
-	if (m_state != EState::Landing)
-		return;
-
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	// 마우스 델타에 이미 델타타임이 곱해져 있음
@@ -325,9 +333,12 @@ void Character::InputCamRotate()
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
 	qYaw.Normalize();
 	qPitch.Normalize();
-	GetRoot()->localTransform.rotation = qYaw;
 
 	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
+
+	if (m_state == EState::Landing)
+		GetRoot()->localTransform.rotation = qYaw;
+
 	pCamHolderRoot->localTransform.rotation = qPitch;
 }
 
@@ -358,24 +369,18 @@ void Character::CheckCharacterState()
 	// 공중인지 판단
 	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
 	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
-	if (bIsFalling)
+	if (bIsFalling && m_state != EState::InAir)
 	{
-		if (m_state == EState::InAir)
-			return;
-
 		m_state = EState::InAir;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-
 		return;
 	}
 
-	if (bIsGrounded) 
+	if (bIsGrounded && m_state != EState::Landing)
 	{
-		if (m_state == EState::Landing)
-			return;
-
 		if (m_state == EState::InAir)
 		{
+			// 공중 -> 착지
 			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
 				pAnim->PlayActionClip(pClip, 0.2f);
 		}
@@ -411,7 +416,10 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 void Character::SetHangingState(bool _bIsOn)
 {
 	SetState(_bIsOn ? EState::Hanging : EState::Landing);
-	m_charCont.lock()->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
+
+	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
+	pCharCont->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
+	pCharCont->ResetFalling();
 
 	if (_bIsOn)
 		MG_LOG_INFO("Start Hanging");

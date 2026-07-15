@@ -60,7 +60,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		// 높은 벽
 		BuildObstacle(L"Cube.mini", Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(15.0f, 5.0f, 6.0f), Vector3(4.0f, 10.0f, 3.0f));
+		BuildObstacle(L"Cube.mini", Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
 	}
 
 	{

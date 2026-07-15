@@ -37,7 +37,7 @@ namespace
 		CapsulecastParam capParam;
 		capParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
 		capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-		capParam.m_dir = _context.m_owner->GetRoot()->localTransform.Forward();
+		capParam.m_dir = pChar->GetRoot()->localTransform.Forward();
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
 		capParam.m_maxDistance = UNIT;
@@ -51,7 +51,7 @@ namespace
 
 		// 아래방향을 향해 레이캐스트
 		RaycastParam rayParam;
-		rayParam.m_origin = _context.m_raycastResult.m_pos;
+		rayParam.m_origin = _context.m_raycastPos;
 		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 		rayParam.m_maxDistance = _dist;
 
@@ -173,6 +173,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						[this](TravelContext& _ctx)
 						{
 							MG_LOG_INFO("Check Obstable Is Landable");
+							
 							bool bIsLandable = CheckLandable(_ctx, ToMask(Layer::Obstacle), MAX_LAND_DETECT_DIST);
 
 							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ?
@@ -213,6 +214,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 				Vector2 inputDir = pChar->GetInputDir();
 
+				_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
+
 				if (inputDir.y < 0 &&
 					CheckLandable(_ctx, Layer::Obstacle | Layer::Ground, UNIT))
 				{
@@ -224,7 +227,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				}
 
 				if (inputDir.y > 0 &&
-					CheckClimbableByUnit(_ctx, UNIT) == false)
+					CheckClimbableByUnit(_ctx, UNIT * 2) == false)
 				{
 					// 위를 향함
 					// 1유닛 장애물 테스트 결과 통과 가능

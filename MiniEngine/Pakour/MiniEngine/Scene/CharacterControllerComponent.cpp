@@ -214,6 +214,17 @@ namespace MiniEngine
 		m_fallingElapsed = 0.0f;
 	}
 
+	void CharacterControllerComponent::ResetFalling()
+	{
+		m_bIsFalling = false;
+		m_fallingElapsed = 0.0f;
+	}
+
+	void CharacterControllerComponent::SetUseGravity(bool _bUse)
+	{
+		m_bUseGravity = _bUse;
+	}
+
 	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
 	//{
 	//	physx::PxSetGroup(*m_controller->getActor(), _group);

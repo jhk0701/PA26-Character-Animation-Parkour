@@ -44,7 +44,8 @@ namespace MiniEngine
 
         void SetFallingSecondThreshold(float _sec) { m_fallingSecThreshold = _sec; };
         void SetForceFalling();
-        void SetUseGravity(bool _bUse) { m_bUseGravity = _bUse; }
+        void ResetFalling();
+        void SetUseGravity(bool _bUse);
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
