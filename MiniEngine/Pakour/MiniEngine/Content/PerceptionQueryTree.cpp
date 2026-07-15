@@ -13,6 +13,7 @@ using namespace Content::Config;
 
 namespace 
 {
+	// 헬퍼 메서드 모음
 	constexpr float MAX_LAND_DETECT_DIST = 1000.0f;
 	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.0f;
 
@@ -70,6 +71,7 @@ namespace
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
+// TODO: 데이터 객체로 정리할 것
 std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 {
 	// Landing
@@ -98,7 +100,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			return result;
 		}
 	);
-
+	
 	// 1번 확인 : 평지에 있는 상황인지
 	pRootQuery->SetCondition(
 		[this](TravelContext& _ctx)
@@ -108,7 +110,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pFindObstacle,
 		pIsHanging
 	);
-
 		// 평지에 있는데, 장애물을 발견했는지
 		pFindObstacle->SetCondition(
 			[this](TravelContext& _ctx)

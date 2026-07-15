@@ -70,7 +70,7 @@ namespace MiniEngine
 		void OnAttach() override;
 
 		void Travel();// 탐색
-		void SetQuertTree(std::shared_ptr<QueryNodeBase>&& _newTree) { m_queryTree = _newTree; };
+		void SetQueryTree(std::shared_ptr<QueryNodeBase>&& _newTree) { m_queryTree = _newTree; };
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 		const TravelResult& GetLastestTravelResult() const { return m_result; }

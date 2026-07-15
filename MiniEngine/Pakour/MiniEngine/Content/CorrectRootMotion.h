@@ -10,7 +10,8 @@ public:
 	{
 		XZ,
 		XY,
-		YZ
+		YZ,
+		None
 	};
 
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;

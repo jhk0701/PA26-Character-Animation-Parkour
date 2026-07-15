@@ -87,7 +87,7 @@ void Character::Construct()
 	}
 	{
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
-		pPerceptComp->SetQuertTree(m_perceptQueryTree.ConstructTree());
+		pPerceptComp->SetQueryTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
 }
@@ -271,6 +271,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	rmCfg.extractYaw = false;
 	rmCfg.applyY = true;
 	rmCfg.applyYaw = false;
+
 	pAnim->SetRootMotionConfig(rmCfg);
 	pAnim->SetRootBoneIdx(1); // hips
 
