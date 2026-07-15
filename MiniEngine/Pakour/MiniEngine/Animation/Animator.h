@@ -2,6 +2,7 @@
 #include "Animation/AnimStateMachine.h"
 #include "Asset/AnimClip.h"
 #include "Asset/RootMotion.h"
+#include <functional>
 
 namespace MiniEngine 
 {
@@ -24,11 +25,13 @@ namespace MiniEngine
 		std::shared_ptr<ActionClip> m_pClip; // 재생할 클립 타입 // 여러 개 사용될 것 - 테스트용 1개
 		LocalPoseTRS m_layerPose;				// 재생한 클립의 좌표가 이 값에 저장될 것
 
+		std::function<void()> m_onClipStarted;
+		std::function<void()> m_onClipEnded;
+
 		bool IsEnd() const { return m_actionElapsed >= m_actionDuration; }
 		bool IsEndArea() const { return m_actionElapsed >= m_actionEndTime; }
 		float GetProgress() const { return m_fadeElapsed / m_fadeDuration; }
 	};
-
 
 	// Animator : 애니메이션 총괄 관리
 	class Animator
@@ -44,19 +47,26 @@ namespace MiniEngine
 		void SampleOverrideTrack(float _dt);
 		void FinalizePose();
 
-		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }
-		void AddBaseLocomotion(std::shared_ptr<BlendClip>& _loco) { m_baseTrack.AddState(_loco); }
+		
 
-		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f, uint8_t _priority = 0);
-
+		// 루트모션 api
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
 		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }
 		void SetRootMotionConfig(RootMotionConfig& _config) { m_rootMotionCfg = _config; }
-
 		const bool GetIsEnableRootMotion() const { return m_bEnableRootMotion; }
 		const RootMotionDelta& GetRootMotionDelta() const { return m_rootMotionDt; }
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionCfg; }
-		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 비움
+		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 
+
+		// base track api
+		void SetBaseTrackInputAxis(const Vector2& _axis);
+		void TranstionBaseTrack(int _nextIdx, float _duration = 0.5f);
+		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }
+		void AddBaseLocomotion(std::shared_ptr<BlendClip>& _loco) { m_baseTrack.AddState(_loco); }
+
+		// override track api
+		void PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration = 0.5f, uint8_t _priority = 0);
+		void StopActionClip();
 
 		// 단순 재생 여부 확인
 		bool IsActionClipPlaying() const { return m_overrideTrack.m_bIsPlaying; }
@@ -67,8 +77,8 @@ namespace MiniEngine
 				m_overrideTrack.m_curPriority >= _priority;
 		}
 
-		void SetBaseTrackInputAxis(const Vector2& _axis);
-		void TranstionBaseTrack(int _nextIdx, float _duration = 0.5f);
+		void SetOverrideTrackStartEvent(std::function<void()>&& _event) { m_overrideTrack.m_onClipStarted = _event; }
+		void SetOverrideTrackEndEvent(std::function<void()>&& _event) { m_overrideTrack.m_onClipEnded = _event; }
 
 	private:
 		bool m_bIsInitialized{ false };

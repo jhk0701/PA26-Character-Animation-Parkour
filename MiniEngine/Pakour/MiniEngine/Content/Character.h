@@ -31,6 +31,7 @@ public:
 	virtual ~Character();
 
 	void Construct();
+	void PostConstruct();
 	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
 
 	virtual void BeginPlay() override;

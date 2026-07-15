@@ -88,11 +88,7 @@ namespace MiniEngine
 		BlendPose(m_poseTarget, m_overrideTrack.m_layerPose, w, m_poseTarget);
 
 		if (m_overrideTrack.IsEnd())
-		{
-			m_overrideTrack.m_bIsPlaying = false;
-			m_overrideTrack.m_pClip = nullptr;
-			m_overrideTrack.m_curPriority = 0;
-		}
+			StopActionClip();
 	}
 
 	void Animator::FinalizePose()
@@ -129,7 +125,21 @@ namespace MiniEngine
 			m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - 0.01f;
 
 		_action->Play();
+
+		if (m_overrideTrack.m_onClipStarted)
+			m_overrideTrack.m_onClipStarted();
 	}
+
+	void Animator::StopActionClip()
+	{
+		m_overrideTrack.m_bIsPlaying = false;
+		m_overrideTrack.m_pClip = nullptr;
+		m_overrideTrack.m_curPriority = 0;
+
+		if (m_overrideTrack.m_onClipEnded)
+			m_overrideTrack.m_onClipEnded();
+	}
+
 
 	RootMotionDelta Animator::ConsumeRootMotionDelta()
 	{

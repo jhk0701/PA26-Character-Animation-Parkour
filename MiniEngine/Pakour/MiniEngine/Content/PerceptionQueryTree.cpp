@@ -82,18 +82,18 @@ namespace
 // TODO: 데이터 객체로 정리할 것
 std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 {
-	// Landing
+	// Condition
 	std::shared_ptr<ConditionNode> pRootQuery = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
-	std::shared_ptr<ConditionNode> pIsClimbableFirst = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
-	std::shared_ptr<ConditionNode> pIsClimbableSecond = std::make_shared<ConditionNode>(); // 장애물을 넘을 수 있는지
+	std::shared_ptr<ConditionNode> pIsClimbableFirst = std::make_shared<ConditionNode>();	// 장애물을 넘을 수 있는지 1 단위
+	std::shared_ptr<ConditionNode> pIsClimbableSecond = std::make_shared<ConditionNode>();	// 장애물을 넘을 수 있는지 2 단위
 	std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 
-	// Hanging
 	std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pCheckAroundOnHaning = std::make_shared<ConditionNode>();
 
-	std::shared_ptr<LeafNode> pContinue = std::make_shared<LeafNode>(); // 무응답 -> 탐색 계속 신호
+	// Leaf
+	std::shared_ptr<LeafNode> pEmpty = std::make_shared<LeafNode>(); // 빈 결과 리턴, 탐색 계속 신호
 	std::shared_ptr<LeafNode> pReturn = std::make_shared<LeafNode>(); // 결과 리턴
 
 	pReturn->SetTask(
@@ -143,7 +143,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				return bIsHit;
 			},
 			pIsClimbableFirst,	// 찾은 경우 오를(넘을) 수 있는지 확인
-			pContinue		// 찾지 못한 경우 continue return 
+			pEmpty		// 찾지 못한 경우 empty return 
 		);
 
 			// 장애물을 오를 수 있는지
@@ -218,8 +218,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		{
 			return CheckOwnerState(_ctx, (uint8_t)Character::EState::Hanging);
 		},
-		pCheckAroundOnHaning,	// TODO : 매달렸을 때 처리
-		pContinue	// false는 공중에서 떨어지는 상태일 것
+		pCheckAroundOnHaning,	// 매달렸을 때 처리
+		pEmpty					// false는 공중에서 떨어지는 상태일 것 // TODO : 허공상태일 때 인식하려면 여기서 이어서 작업
 	);
 
 		pCheckAroundOnHaning->SetCondition(
@@ -266,7 +266,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				return false;
 			},
 			pReturn,
-			pContinue
+			pEmpty
 		);
 	
 	return pRootQuery;

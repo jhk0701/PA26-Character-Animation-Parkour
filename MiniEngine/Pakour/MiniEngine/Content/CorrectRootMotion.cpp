@@ -63,6 +63,6 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 		duration = 1.0f;
 
 	correctMovementDt *= _dt * (1 / duration);
-	MG_LOG_INFO("Correct Movement Dt : {}, {}, {}", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
+	// MG_LOG_INFO("Correct Movement Dt : {}, {}, {}", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
 	m_pChar->GetController().lock()->AddMovementInput(correctMovementDt);
 }

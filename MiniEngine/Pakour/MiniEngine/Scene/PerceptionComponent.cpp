@@ -46,7 +46,6 @@ namespace MiniEngine
 		return m_task(_context);
 	}
 
-
 	void PerceptionComponent::OnAttach()
 	{
 		Component::OnAttach();

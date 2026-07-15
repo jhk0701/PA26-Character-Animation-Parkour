@@ -79,7 +79,7 @@ void Character::Construct()
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetFallingSecondThreshold(0.75f); // 낙하 인정 시간 설정
+		pCharCont->SetFallingSecondThreshold(0.3f); // 낙하 인정 시간 설정
 
 		m_charCont = pCharCont;
 	}
@@ -88,6 +88,17 @@ void Character::Construct()
 		pPerceptComp->SetQueryTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
+
+	PostConstruct();
+}
+
+void Character::PostConstruct()
+{
+	// 컴포넌트들 초기화 이후 호출
+	// 컴포넌트 간 연결 사항 정리
+	std::shared_ptr<Animator> pAnim = GetAnim().lock();
+	pAnim->SetOverrideTrackStartEvent([this]() { GetController().lock()->SetCheckFalling(false); });
+	pAnim->SetOverrideTrackEndEvent([this]() { GetController().lock()->SetCheckFalling(true); });
 }
 
 void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
@@ -305,7 +316,6 @@ void Character::BeginPlay()
 void Character::Tick(float _dt)
 {
 	// TODO : FSM으로 리팩터링
-
 	InputCamRotate();
 	InputMovement(_dt);
 	
@@ -410,7 +420,6 @@ void Character::ProcessPerceptionResult()
 		if (result.m_bIsEmpty == false)
 			MG_LOG_WARN("[Character] Travel Result returned but CurObstacle is null");
 	}
-	
 
 	if (pAction)
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
@@ -437,9 +446,6 @@ void Character::CheckCharacterState()
 	{
 		m_state = EState::InAir;
 		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-
-		MG_LOG_INFO("[Character] fall start.");
-
 		return;
 	}
 
@@ -451,7 +457,6 @@ void Character::CheckCharacterState()
 			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
 			{
 				pAnim->PlayActionClip(pClip, 0.2f);
-				MG_LOG_INFO("[Character] play land motion.");
 			}
 		}
 

@@ -47,8 +47,13 @@ namespace MiniEngine
         void SetForceFalling(bool _bIsFalling);
         void SetUseGravity(bool _bUse);
 
+        void SetCheckFalling(bool _bCheckFalling);
+
+#ifdef MG_DEBUG
         // 디버그용 멤버 변수 getter
         float GetFallingElapsed() const { return m_fallingElapsed; }
+#endif // DEBUG
+
         /*
         void SetCollsionGroup(Physics::ECollisionGroup _group);
         Physics::ECollisionGroup GetCollsionGroup() const;
@@ -72,6 +77,7 @@ namespace MiniEngine
 
         static constexpr float STICK_TO_GROUND_SPEED = 2.0f;
 
+        bool    m_bCheckFalling{ false };
         bool    m_bIsFalling{ false };
         float   m_fallingSecThreshold{ 0.3f }; // 일정시간 동안 지속적으로 떨어져야 낙하인정
         float   m_fallingElapsed{ 0.0f };

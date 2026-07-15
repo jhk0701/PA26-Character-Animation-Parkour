@@ -210,8 +210,17 @@ namespace MiniEngine
 		m_bUseGravity = _bUse;
 	}
 
+	void CharacterControllerComponent::SetCheckFalling(bool _bCheckFalling)
+	{
+		m_bCheckFalling = _bCheckFalling;
+		SetForceFalling(false); // check를 시작해도 초기화하도록 정리
+	}
+
 	void CharacterControllerComponent::CheckFalling(float _dt)
 	{
+		if (m_bCheckFalling == false)
+			return;
+
 		// 직전까지 falling 상태
 		// 근데, 이번 프레임이 땅에 착지 + m_verticalVelocity >= 0.0f -> falling은 아님
 		if (m_bIsFalling && m_grounded && m_verticalVelocity >= 0.0f)
@@ -229,7 +238,7 @@ namespace MiniEngine
 
 			// 지속시간을 확인
 			m_fallingElapsed += _dt;
-
+			
 			// falling이라고 판단하는 기준 시간을 넘김
 			if (m_fallingElapsed >= m_fallingSecThreshold)
 			{
@@ -238,7 +247,9 @@ namespace MiniEngine
 			}
 		}
 		else
+		{
 			m_fallingElapsed = 0.0f;
+		}
 	}
 
 
