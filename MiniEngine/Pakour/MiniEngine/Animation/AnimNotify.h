@@ -29,9 +29,15 @@ namespace MiniEngine
 		void Init() override;
 		void Update(float _dt, AnimNotifyParam& _param) override;
 		void SetTimeToCall(float _start, float _end) { m_start = _start; m_end = _end; }
+
+		virtual void OnStart(AnimNotifyParam& _param) {};
 		virtual void Activate(float _dt, AnimNotifyParam& _param)  = 0;
+		virtual void OnEnd(AnimNotifyParam& _param) {};
 
 	private:
+		bool m_bStartCalled{ false };
+		bool m_bEndCalled{ false };
+
 		float m_start{ 0.0f };
 		float m_end{ 0.0f };
 		float m_playElapsed{ 0.0f };

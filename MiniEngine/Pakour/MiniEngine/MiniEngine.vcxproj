@@ -133,6 +133,7 @@
     <ClInclude Include="Content\JumpTiming.h" />
     <ClInclude Include="Content\PerceptionQueryTree.h" />
     <ClInclude Include="Content\EnableHangingState.h" />
+    <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
@@ -141,7 +142,6 @@
     <ClInclude Include="Editor\DebugDraw.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameCore.h" />
-    <ClInclude Include="IgnoreCollisionObstacle.h" />
     <ClInclude Include="Manager\AssetManager.h" />
     <ClInclude Include="Manager\PathManager.h" />
     <ClInclude Include="Manager\SceneManager.h" />
@@ -190,6 +190,7 @@
     <ClCompile Include="Content\JumpTiming.cpp" />
     <ClCompile Include="Content\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\EnableHangingState.cpp" />
+    <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />

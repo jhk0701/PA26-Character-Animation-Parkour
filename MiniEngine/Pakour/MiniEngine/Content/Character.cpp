@@ -99,8 +99,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::END));
 
-	// 로코모션 구현 (순서 유의 - EState 값 순서대로 할당하고 찾을 것)
 	// TODO : 데이터화
+	// 로코모션 구현 (순서 유의 - EState 값 순서대로 할당하고 찾을 것)
 	{
 		// Landing
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);

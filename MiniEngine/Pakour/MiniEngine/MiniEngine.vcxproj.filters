@@ -244,7 +244,6 @@
     <ClInclude Include="Content\PerceptionQueryTree.h">
       <Filter>Content</Filter>
     </ClInclude>
-    <ClInclude Include="IgnoreCollisionObstacle.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
@@ -252,6 +251,9 @@
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
     <ClInclude Include="Content\EnableHangingState.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\CorrectRootMotion.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
   </ItemGroup>
@@ -392,6 +394,9 @@
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
     <ClCompile Include="Content\EnableHangingState.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CorrectRootMotion.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
