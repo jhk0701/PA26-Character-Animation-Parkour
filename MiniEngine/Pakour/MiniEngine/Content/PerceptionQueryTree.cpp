@@ -203,6 +203,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 							
 							bool bIsLandable = CheckLandable(_ctx, ToMask(Layer::Obstacle), MAX_LAND_DETECT_DIST);
 
+							// 원래는 여기서 Vault / Hurdle 중에 갈려야함
+							// 모션이 제한적이라 우선 Mantle, Vault를 사용
 							_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ?
 								ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
 
@@ -262,6 +264,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					MG_LOG_INFO("Character Hang To Mantle");
 					return true;
 				}
+
+				// 좌우 양옆을 확인
+				// 갈 곳이 있음 해당 부분으로 이동
 
 				return false;
 			},

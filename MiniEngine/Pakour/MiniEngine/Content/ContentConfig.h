@@ -16,18 +16,22 @@ namespace Content::Config
 
 	enum class ETagAct : uint8_t
 	{
-		Landing,
+		Landing, // 착지
 		Jump,
 		JumpFromWall, // 점프에서 탈출
 		FallingToLand,
 		
-		Vault,
+		Vault, // 장애물을 넘고 떨어져야함
 		VaultLow = Vault, // 뛰어 넘기
 		VaultMid,
 		VaultHigh, 
+		
+		Hurdle, // 뛰어 넘고, 계속 달림 (장애물 너머가 평지인 경우)
+		HurdleLow = Hurdle,
+		HurdleMid,
+		HurdleHigh,
 
-		// Hurdle, // 뛰어 넘고, 계속 달림 -> Valut와 차이가 없음
-		Mantle,
+		Mantle, // 높은 장애물, 기어 올라가야하는 경우
 		MantleLow = Mantle, // 오르기
 		MantleMid,
 		MantleHigh,
