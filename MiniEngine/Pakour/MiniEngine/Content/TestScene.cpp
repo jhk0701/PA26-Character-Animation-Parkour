@@ -106,8 +106,8 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(std::shared_ptr<StaticMesh> _pSt
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
 
-	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x * 0.5f, 0.05f, 0.05f);
-	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z * 0.5f, 0.05f, 0.05f);
+	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.1f, 0.1f);
+	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.1f, 0.1f);
 
 	AddLedgeToObstacle(ObstacleActor, 
 		_pStaticMesh, 
@@ -152,7 +152,7 @@ void TestScene::AddLedgeToObstacle(std::shared_ptr<Actor> _pTarget,
 	pSubMesh->SetColor(Vector3(1.0f));
 	pSubMesh->localTransform.position = _localPos;
 	pSubMesh->localTransform.rotation = _localRot;
-	pSubMesh->localTransform.scale = _halfExtent * 2.0f;
+	pSubMesh->localTransform.scale = _halfExtent;
 
 	std::shared_ptr<RigidBodyComponent> pRB = _pTarget->AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pSubMesh, 10.0f, true);

@@ -610,4 +610,23 @@ void Character::InitInput()
 		}
 	);
 
+	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
+		[this]() 
+		{
+			std::shared_ptr<Physics::PhysicsWorld> pPhy = GetScene()->GetPhysics().lock();
+
+			const Transform& tf = GetRoot()->localTransform;
+			
+			Physics::RaycastParam param;
+			param.m_origin = tf.position + Vector3(0.0f, 2.0f, 0.0f);
+			param.m_dir = tf.Forward();
+			param.m_maxDistance = 5.0f;
+
+			Physics::RaycastResult result;
+			if (pPhy->Raycast(param, result, Physics::ToMask(Physics::Layer::ObstacleLedge)))
+			{
+				MG_LOG_INFO("[Character] :: Check Obstacle Ledge :: Pos {}, {}, {}", result.m_pos.x, result.m_pos.y, result.m_pos.z);
+			}
+		}
+	);
 }
