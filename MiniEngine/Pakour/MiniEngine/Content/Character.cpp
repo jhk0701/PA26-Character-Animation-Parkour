@@ -496,7 +496,6 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 		MG_LOG_INFO("[Character] Enable Collision Obstacle");
 	else
 		MG_LOG_INFO("[Character] Disable Collision Obstacle");
-
 }
 
 void Character::Jump()
@@ -595,21 +594,18 @@ void Character::InitInput()
 			SetInputDir(inputDir);
 		});
 
-
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
 		[this]()
 		{
 			InputJump();
 		});
-
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]()
 		{ 
 			ProcessPerceptionResult(); 
 		}
 	);
-
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
 		[this]() 
 		{

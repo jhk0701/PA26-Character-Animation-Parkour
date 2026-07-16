@@ -14,6 +14,7 @@ namespace physx
     class PxDefaultCpuDispatcher;
     class PxRigidActor;
     class PxShape;
+    class PxGeometry;
     class PxController;
     class PxControllerManager;
 }
@@ -50,14 +51,21 @@ namespace MiniEngine::Physics
         void* GetActor() const;
     };
 
-    struct CapsulecastParam
+    struct SweepCommonParam 
     {
-        float m_radius;
-        float m_halfHeight;
         float m_maxDistance;
         Vector3 m_startPos;     // origin
         Quaternion m_startRot;  // 회전각
         Vector3 m_dir;
+    };
+    struct SpherecastParam : public SweepCommonParam
+    {
+        float m_radius;
+    };
+    struct CapsulecastParam : public SweepCommonParam
+    {
+        float m_radius;
+        float m_halfHeight;
     };
 
     class PhysicsWorld
@@ -83,6 +91,7 @@ namespace MiniEngine::Physics
 
         bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
         bool CapsuleCast(const CapsulecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        bool SphereCast(const SpherecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
 
         static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
         static void SetCollisionLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
@@ -92,7 +101,6 @@ namespace MiniEngine::Physics
         void CollectDebugLines(std::vector<DebugLine>& _out);
 
     private:
-
         physx::PxFoundation* m_foundation = nullptr;
         physx::PxPhysics* m_physics = nullptr;
         physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
@@ -105,6 +113,8 @@ namespace MiniEngine::Physics
 
         void RecordQueryLine(const Vector3& _origin, const Vector3& _unitDir, float _maxDistance,
             bool _hit, const RaycastResult& _hitInfo) const;
+
+        bool SweepGeometry(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
     };
 
 

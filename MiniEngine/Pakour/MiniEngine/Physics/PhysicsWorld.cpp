@@ -295,17 +295,35 @@ namespace MiniEngine::Physics
 		if (_layerMask == LayerMask::NONE)
 			return false;
 
+		PxCapsuleGeometry capsule(_inParam.m_radius, _inParam.m_halfHeight);
+		return SweepGeometry(capsule, _inParam, _outResult, _layerMask);
+	}
+
+	bool PhysicsWorld::SphereCast(const SpherecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask) const
+	{
+		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
+			return false;
+
+		// 필터없음은 모두 통과될 것이므로 애초에 쏘지 않을 것
+		if (_layerMask == LayerMask::NONE)
+			return false;
+
+		PxSphereGeometry sphere(_inParam.m_radius);
+		return SweepGeometry(sphere, _inParam, _outResult, _layerMask);
+	}
+
+	bool PhysicsWorld::SweepGeometry(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask) const
+	{
 		// 레이캐스트와 동일하게 마스크 설정
 		const PxQueryFilterData filter(
 			PxFilterData(_layerMask, 0, 0, 0),
 			PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC
 		);
-		PxCapsuleGeometry capsule(_inParam.m_radius, _inParam.m_halfHeight);
 		PxTransform pose(ToPx(_inParam.m_startPos), ToPx(_inParam.m_startRot));
-
 		PxSweepBuffer hitBuffer;
 		bool bIsHit = m_scene->sweep(
-			capsule, pose,
+			_inGeo, 
+			pose,
 			ToPx(_inParam.m_dir),
 			physx::PxReal(_inParam.m_maxDistance),
 			hitBuffer,
@@ -314,7 +332,7 @@ namespace MiniEngine::Physics
 			&& hitBuffer.hasBlock;
 
 		_outResult.m_bIsHit = bIsHit;
-		if (bIsHit) 
+		if (bIsHit)
 		{
 			const PxSweepHit& block = hitBuffer.block;
 			_outResult.m_pos = ToVec3(block.position);
@@ -325,10 +343,10 @@ namespace MiniEngine::Physics
 		}
 
 		RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
+
 		return bIsHit;
 	}
 	
-
 	namespace
 	{
 		// 히트 지점에서 표면 법선을 얼마나 길게 그릴지(월드 단위).

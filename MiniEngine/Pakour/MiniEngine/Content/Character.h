@@ -69,6 +69,7 @@ public:
 
 private:
 	void InitInput();
+
 	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 0(1)로 찾을 것
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 
