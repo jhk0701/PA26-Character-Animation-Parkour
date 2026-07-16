@@ -613,13 +613,13 @@ void Character::InitInput()
 
 			const Transform& tf = GetRoot()->localTransform;
 			
-			Physics::RaycastParam param;
-			param.m_origin = tf.position + Vector3(0.0f, 2.0f, 0.0f);
+			Physics::SpherecastParam param;
+			param.m_startPos = tf.position + Vector3(0.0f, 2.0f, 0.0f);
 			param.m_dir = tf.Forward();
 			param.m_maxDistance = 5.0f;
 
 			Physics::RaycastResult result;
-			if (pPhy->Raycast(param, result, Physics::ToMask(Physics::Layer::ObstacleLedge)))
+			if (pPhy->SphereCast(param, result, Physics::ToMask(Physics::Layer::ObstacleLedge)))
 			{
 				MG_LOG_INFO("[Character] :: Check Obstacle Ledge :: Pos {}, {}, {}", result.m_pos.x, result.m_pos.y, result.m_pos.z);
 			}

@@ -126,6 +126,7 @@
     <ClInclude Include="Animation\AnimStateMachine.h" />
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimNotify.h" />
+    <ClInclude Include="Asset\DataAsset.h" />
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="Manager\AssetManager.h" />
+    <ClInclude Include="Manager\DataManager.h" />
     <ClInclude Include="Manager\PathManager.h" />
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Manager\UIManager.h" />
@@ -184,6 +186,7 @@
     <ClCompile Include="Animation\AnimStateMachine.cpp" />
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimNotify.cpp" />
+    <ClCompile Include="Asset\DataAsset.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
@@ -197,6 +200,7 @@
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
+    <ClCompile Include="Manager\DataManager.cpp" />
     <ClCompile Include="Manager\PathManager.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Manager\UIManager.cpp" />

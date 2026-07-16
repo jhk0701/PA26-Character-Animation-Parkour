@@ -343,7 +343,6 @@ namespace MiniEngine::Physics
 		}
 
 		RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
-
 		return bIsHit;
 	}
 	
@@ -354,7 +353,6 @@ namespace MiniEngine::Physics
 		// 드레인 누락 시 무한 증가 방지 상한. 초과분은 조용히 버린다.
 		constexpr size_t MAX_QUERY_LINES = 4096;
 	}
-
 
 	void PhysicsWorld::SetDebugVisualization(bool _enable, float _scale)
 	{

@@ -262,6 +262,12 @@
     <ClInclude Include="Content\ActionClipContainer.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\DataAsset.h">
+      <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\DataManager.h">
+      <Filter>Engine\02.Core\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -407,6 +413,12 @@
     </ClCompile>
     <ClCompile Include="Content\ActionClipContainer.cpp">
       <Filter>Content\05.Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\DataAsset.cpp">
+      <Filter>Engine\03.Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\DataManager.cpp">
+      <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
