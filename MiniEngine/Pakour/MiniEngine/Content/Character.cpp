@@ -416,6 +416,7 @@ void Character::ProcessPerceptionResult()
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
 	pPercept->Travel(); // 탐색 개시
+
 	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
 	if (result.m_bIsEmpty) // 빈 결과는 리턴
 		return;
