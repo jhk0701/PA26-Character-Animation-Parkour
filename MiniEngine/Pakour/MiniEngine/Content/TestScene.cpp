@@ -47,22 +47,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, 10.0f, pMeshComp);
 		pRB->SetQueryLayer(MiniEngine::Physics::Layer::Ground);
 	}
-
-	{	
-		BuildObstacle(L"Cube.mini", Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
+	{
+		BuildObstacle(pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
 		
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(5.0f, 1.0, 7.5f),	Vector3(4.0f, 2.0f, 0.5f));
+		BuildObstacle(pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		BuildObstacle(pCubeMesh, Vector3(5.0f, 1.0, 7.5f),	Vector3(4.0f, 2.0f, 0.5f));
 
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f));
-		BuildObstacle(L"Cube.mini", Vector3(10.0f, 3.0f, 7.5f),	Vector3(4.0f, 1.0f, 0.5f));
+		BuildObstacle(pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		BuildObstacle(pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f));
+		BuildObstacle(pCubeMesh, Vector3(10.0f, 3.0f, 7.5f),	Vector3(4.0f, 1.0f, 0.5f));
 
-		// 높은 벽
-		BuildObstacle(L"Cube.mini", Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(L"Cube.mini", Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
+		BuildObstacle(pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		BuildObstacle(pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
 	}
-
 	{
 		// 임시 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
@@ -80,12 +77,9 @@ void TestScene::BeginPlay()
 #endif // MG_DEBUG
 }
 
-std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const Vector3& _scale)
+std::shared_ptr<Actor> TestScene::BuildObstacle(std::shared_ptr<StaticMesh> _pStaticMesh, const MiniEngine::Vector3& _pos, const Vector3& _scale)
 {
-	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(_path);
-	std::shared_ptr<StaticMesh> pMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
-
-	if (pMesh == nullptr)
+	if (_pStaticMesh == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Actor> ObstacleActor;
@@ -97,7 +91,7 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetColor(Vector3(0.7f, 0.5f, 0.2f));
-	staticMeshComp->SetMesh(pMesh);
+	staticMeshComp->SetMesh(_pStaticMesh);
 	staticMeshComp->localTransform.position = _pos;
 	staticMeshComp->localTransform.scale = _scale * 0.5f;
 
@@ -108,5 +102,14 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(const wchar_t* _path, const Mini
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
 
 	return ObstacleActor;
+}
+
+void TestScene::AddLedgeToObstacle(std::shared_ptr<MiniEngine::Actor> _pTarget, float _rotation)
+{
+	// Ledge 구성
+	// box, static rigid body, size, position
+	// scene, rigidbody comp
+
+	
 }
  

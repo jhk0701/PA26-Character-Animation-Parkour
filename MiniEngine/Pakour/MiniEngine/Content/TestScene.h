@@ -3,7 +3,7 @@
 
 class Character;
 
-namespace MiniEngine { class ActionClip; }
+namespace MiniEngine { class StaticMesh;  }
 
 class TestScene : public MiniEngine::Scene
 {
@@ -15,5 +15,10 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-	std::shared_ptr<MiniEngine::Actor> BuildObstacle(const wchar_t* _path, const MiniEngine::Vector3& _pos, const MiniEngine::Vector3& _scale);
+	std::shared_ptr<MiniEngine::Actor> BuildObstacle(
+		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh,
+		const MiniEngine::Vector3& _pos, 
+		const MiniEngine::Vector3& _scale);
+
+	void AddLedgeToObstacle(std::shared_ptr<MiniEngine::Actor> _pTarget, float _rotation = 0.0f); // 0~360f
 };
