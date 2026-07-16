@@ -12,10 +12,16 @@ namespace MiniEngine
 	void RigidBodyComponent::FixedTick(float _dt)
 	{
 		Component::FixedTick(_dt);
+		
 		SyncTransform();
 	}
 
-	void RigidBodyComponent::Init(Physics::PhysicsWorld& _world, EBodyType _type, const Vector3& _halfExtents, float _denity, const std::shared_ptr<SceneComponent>& _target)
+	void RigidBodyComponent::Init(Physics::PhysicsWorld& _world, 
+		EBodyType _type, 
+		const Vector3& _halfExtents, 
+		const std::shared_ptr<SceneComponent>& _target,
+		float _denity, 
+		bool _bIsSub)
 	{
 		// root 컴포넌트를 대상으로 Rigidbody가 Transform을 사용할 것
 		std::shared_ptr<SceneComponent> target = _target;
@@ -35,6 +41,7 @@ namespace MiniEngine
 
 		m_type = _type;
 		m_target = target;
+		m_bIsSub = _bIsSub;
 
 		const Vector3& pos = target->localTransform.position;
 		const Quaternion& rot = target->localTransform.rotation;
@@ -50,6 +57,12 @@ namespace MiniEngine
 
 	void RigidBodyComponent::SyncTransform()
 	{
+		// 메인인 경우에만 적용
+		// 메인 충돌 액터만 위치를 반영하고
+		// 서브 리지드 바디들은 변경된 위치를 내려받음
+		if (m_bIsSub)
+			return;  
+
 		if (m_type != EBodyType::Dynamic || !m_actor)
 			return;
 

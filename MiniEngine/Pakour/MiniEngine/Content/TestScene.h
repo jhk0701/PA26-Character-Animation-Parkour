@@ -20,5 +20,9 @@ private:
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _scale);
 
-	void AddLedgeToObstacle(std::shared_ptr<MiniEngine::Actor> _pTarget, float _rotation = 0.0f); // 0~360f
+	void AddLedgeToObstacle(std::shared_ptr<MiniEngine::Actor> _pTarget, 
+		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh,
+		const MiniEngine::Vector3& _localPos, 
+		const MiniEngine::Vector3& _halfExtent, 
+		const MiniEngine::Quaternion& _localRot); // 0~360f
 };

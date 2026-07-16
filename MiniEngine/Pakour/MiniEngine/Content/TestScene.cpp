@@ -8,6 +8,8 @@
 #include "Scene/Tag.h"
 
 #include "Content/Character.h"
+#include "Core/Log.h"
+
 
 using namespace MiniEngine;
 
@@ -44,10 +46,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pMeshComp->localTransform.scale = size;
 
 		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, 10.0f, pMeshComp);
+		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, pMeshComp);
 		pRB->SetQueryLayer(MiniEngine::Physics::Layer::Ground);
 	}
 	{
+		
 		BuildObstacle(pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
 		
 		BuildObstacle(pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
@@ -59,6 +62,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		BuildObstacle(pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
 		BuildObstacle(pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
+		
 	}
 	{
 		// 임시 캐릭터 생성
@@ -89,27 +93,72 @@ std::shared_ptr<Actor> TestScene::BuildObstacle(std::shared_ptr<StaticMesh> _pSt
 	Tag& tag = ObstacleActor->GetTag();
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
 
+	Vector3 halfExtent = _scale * 0.5f;
+
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = ObstacleActor->AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetColor(Vector3(0.7f, 0.5f, 0.2f));
 	staticMeshComp->SetMesh(_pStaticMesh);
 	staticMeshComp->localTransform.position = _pos;
-	staticMeshComp->localTransform.scale = _scale * 0.5f;
+	staticMeshComp->localTransform.scale = halfExtent;
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetPhysics().lock();
 
 	std::shared_ptr<RigidBodyComponent> pRB = ObstacleActor->AddComponent<RigidBodyComponent>();
-	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _scale * 0.5f, 10.0f, staticMeshComp);
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
+
+	const Vector3 commonLedgeScale = Vector3(halfExtent.x * 0.5f, 0.1f, 0.1f);
+
+	AddLedgeToObstacle(ObstacleActor, 
+		_pStaticMesh, 
+		_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
+		commonLedgeScale,
+		Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+	);
+
+	AddLedgeToObstacle(ObstacleActor,
+		_pStaticMesh,
+		_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
+		commonLedgeScale,
+		Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+	);
+
+	AddLedgeToObstacle(ObstacleActor,
+		_pStaticMesh,
+		_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
+		commonLedgeScale,
+		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f)
+	);
+
+	AddLedgeToObstacle(ObstacleActor,
+		_pStaticMesh,
+		_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
+		commonLedgeScale,
+		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f)
+	);
 
 	return ObstacleActor;
 }
 
-void TestScene::AddLedgeToObstacle(std::shared_ptr<MiniEngine::Actor> _pTarget, float _rotation)
+void TestScene::AddLedgeToObstacle(std::shared_ptr<Actor> _pTarget,
+	std::shared_ptr<StaticMesh> _pStaticMesh,
+	const Vector3& _localPos,
+	const Vector3& _halfExtent,
+	const Quaternion& _localRot)
 {
 	// Ledge 구성
 	// box, static rigid body, size, position
 	// scene, rigidbody comp
+	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetPhysics().lock();
+	std::shared_ptr<StaticMeshComponent> pSubMesh = _pTarget->AddComponent<StaticMeshComponent>();
+	pSubMesh->SetMesh(_pStaticMesh);
+	pSubMesh->SetColor(Vector3(1.0f));
+	pSubMesh->localTransform.position = _localPos;
+	pSubMesh->localTransform.rotation = _localRot;
+	pSubMesh->localTransform.scale = _halfExtent * 2.0f;
 
-	
+	std::shared_ptr<RigidBodyComponent> pRB = _pTarget->AddComponent<RigidBodyComponent>();
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pSubMesh, 10.0f, true);
+	pRB->SetQueryLayer(MiniEngine::Physics::Layer::ObstacleLedge);
 }
  

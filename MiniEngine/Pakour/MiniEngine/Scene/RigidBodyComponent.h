@@ -23,8 +23,10 @@ namespace MiniEngine
 		void FixedTick(float _dt) override;
 
 		void Init(Physics::PhysicsWorld& _world, EBodyType _type, 
-			const Vector3& _halfExtents, float _denity = 10.0f,
-			const std::shared_ptr<SceneComponent>& _target = nullptr);
+			const Vector3& _halfExtents, 
+			const std::shared_ptr<SceneComponent>& _target = nullptr,
+			float _denity = 10.0f,
+			bool _bIsSub = false);
 		
 		std::shared_ptr<SceneComponent> GetTarget() const { return m_target.lock(); }
 		EBodyType GetBodyType() const { return m_type; }
@@ -41,5 +43,7 @@ namespace MiniEngine
 		physx::PxRigidActor* m_actor = nullptr;
 		std::weak_ptr<SceneComponent> m_target;
 		EBodyType m_type = EBodyType::Static;
+
+		bool m_bIsSub{ false };
 	};
 }

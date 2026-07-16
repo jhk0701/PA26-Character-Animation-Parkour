@@ -46,9 +46,6 @@ namespace MiniEngine
 
         Tag& GetTag() { return m_tag; }
 
-        void AddChild(std::weak_ptr<Actor> _child);
-        void RemoveChild(std::weak_ptr<Actor> _child);
-
     private:
         Tag m_tag;
 
@@ -56,11 +53,6 @@ namespace MiniEngine
         std::vector<std::shared_ptr<Component>> m_components;
         std::weak_ptr<SceneComponent> m_root;
         std::string m_name = "Actor";
-
-        std::weak_ptr<Actor> m_parent; // 부모 액터
-        std::vector<std::weak_ptr<Actor>> m_children; // 자식관계 액터 
-
-        void SetParent(std::weak_ptr<Actor> _newParent);
     };
 
     template<typename T, typename ...Args>

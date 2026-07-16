@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Core/Log.h"
 #include "Core/Graphics.h"
 #include "Scene/Scene.h"
@@ -31,9 +31,7 @@ namespace MiniEngine
 
 #ifdef MG_DEBUG || WITH_EDITOR
         m_debugDraw.Init(_device, _context);
-
 #endif // DEBUG
-
     }
 
     void Scene::BeginPlay()
@@ -81,7 +79,6 @@ namespace MiniEngine
             std::shared_ptr<CameraComponent> mainCam = GetMainCamera().lock();
             m_debugDraw.Draw(m_debugLines, mainCam->GetViewMatrix() * mainCam->GetProjectionMatrix());
         }
-
 #endif 
     }
 
