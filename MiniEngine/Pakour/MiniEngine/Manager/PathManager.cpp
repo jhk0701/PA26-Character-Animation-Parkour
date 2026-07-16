@@ -8,11 +8,12 @@ PathManager::~PathManager() {};
 
 void PathManager::Init()
 {
-    // Assets Æú´õ °æ·Î °ËÁõ
-    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr); // ÀÌ¹Ì ÀÖÀ¸¸é ¹«½ÃµÊ
+    // Assets í´ë” ê²½ë¡œ ê²€ì¦ // ì´ë¯¸ ìˆìœ¼ë©´ ë¬´ì‹œë¨
+    CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr);
+    CreateDirectoryW((ExeDir() + L"\\Datas").c_str(), nullptr); 
 }
 
-// ½ÇÇà ÆÄÀÏ À§Ä¡ ±âÁØ µğ·ºÅÍ¸®(ÀÛ¾÷ µğ·ºÅÍ¸® ¹«°ü).
+// ì‹¤í–‰ íŒŒì¼ ìœ„ì¹˜ ê¸°ì¤€ ë””ë ‰í„°ë¦¬(ì‘ì—… ë””ë ‰í„°ë¦¬ ë¬´ê´€).
 std::wstring PathManager::ExeDir()
 {
     wchar_t exePath[MAX_PATH] = {};
@@ -24,14 +25,20 @@ std::wstring PathManager::ExeDir()
     return dir;
 }
 
-// exe ±âÁØ Shaders\<name> Àı´ë °æ·Î.
+// exe ê¸°ì¤€ Shaders\<name> ì ˆëŒ€ ê²½ë¡œ.
 std::wstring PathManager::ResolveShaderPath(const wchar_t* _fileName)
 {
     return ExeDir() + L"\\Shaders\\" + _fileName;
 }
 
-// exe ±âÁØ Assets\<name> Àı´ë °æ·Î.
+// exe ê¸°ì¤€ Assets\<name> ì ˆëŒ€ ê²½ë¡œ.
 std::wstring PathManager::ResolveAssetPath(const wchar_t* _fileName)
 {
     return ExeDir() + L"\\Assets\\" + _fileName;
 }
+
+std::wstring PathManager::ResolveDataPath(const wchar_t* _fileName)
+{
+    return ExeDir() + L"\\Datas\\" + _fileName;
+}
+
