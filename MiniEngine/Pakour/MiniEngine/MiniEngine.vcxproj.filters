@@ -89,6 +89,9 @@
     <Filter Include="Content\04.Animation\Nofity">
       <UniqueIdentifier>{accdedc6-9851-4655-94c5-fd00a568f228}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\05.Data">
+      <UniqueIdentifier>{9f8be4ae-2fc5-4223-91e5-48e2b831d605}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -256,6 +259,9 @@
     <ClInclude Include="Content\CorrectRootMotion.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
+    <ClInclude Include="Content\ActionClipContainer.h">
+      <Filter>Content\05.Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -398,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="Content\CorrectRootMotion.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\ActionClipContainer.cpp">
+      <Filter>Content\05.Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

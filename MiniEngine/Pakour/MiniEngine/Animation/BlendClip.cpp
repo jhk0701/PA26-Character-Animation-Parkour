@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Animation/BlendClip.h"
 
 namespace MiniEngine
@@ -169,6 +169,7 @@ namespace MiniEngine
 		m_triDirty = false;
 		m_tris.clear();
 
+		// 삼각형이 불가한 경우 사전 처리
 		const int n = static_cast<int>(m_placements.size());
 		if (n == 0) 
 		{ 

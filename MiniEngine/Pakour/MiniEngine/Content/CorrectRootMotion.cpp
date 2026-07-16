@@ -57,7 +57,9 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
 
 	Vector3 correctMovementDt = lerped - charPos;
-	correctMovementDt *= _dt * m_deltaIntensity;
+	
+	if (dist > m_properDistance)
+		correctMovementDt *= _dt * m_deltaIntensity; // 먼 경우에는 뚝 끊어지지 않도록 수정
 
 	// MG_LOG_INFO("Correct Movement Dt : {}, {}, {}", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
 	m_pChar->GetController().lock()->AddMovementInput(correctMovementDt);

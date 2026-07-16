@@ -161,7 +161,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Jumping valut
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.2f);
+		pIgnoreObstacle->SetTime(0.15f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -172,13 +172,13 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.4f);
-		pCorrectRM->SetProperDistance(1.75f); // 적정거리 2.0 ~ 1.5
+		pCorrectRM->SetProperDistance(1.0f); // 적정거리 1.5 ~ 1.0
 		pCorrectRM->SetLerpWeight(0.7f);
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
-		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip; // TODO : 중간 지점 오르는 애니메이션 필요
 	}
 	{
@@ -265,9 +265,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.3f);
-		pCorrectRM->SetLerpWeight(0.9f);
-		pCorrectRM->SetProperDistance(0.1f);
+		pCorrectRM->SetTime(0.0f, 0.5f);
+		pCorrectRM->SetLerpWeight(0.99f);
+		pCorrectRM->SetDeltaIntensity(10.0f);
+		pCorrectRM->SetProperDistance(0.05f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::HangToMantle] = pActionClip;

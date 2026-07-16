@@ -127,6 +127,7 @@
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimNotify.h" />
     <ClInclude Include="Asset\RootMotion.h" />
+    <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimNotify.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
+    <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
