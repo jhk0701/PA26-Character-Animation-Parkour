@@ -3,6 +3,7 @@
 #include "Content/ContentConfig.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
+
 #include "Scene/StaticMeshComponent.h"
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Tag.h"
@@ -10,6 +11,7 @@
 #include "Content/Character.h"
 #include "Core/Log.h"
 
+#include "Manager/DataManager.h"
 
 using namespace MiniEngine;
 
