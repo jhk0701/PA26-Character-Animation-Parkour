@@ -44,7 +44,7 @@ void Character::Construct()
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
+	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character_test.mini");
 	std::shared_ptr<SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
@@ -63,7 +63,7 @@ void Character::Construct()
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -4.0f);
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
 		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;
@@ -185,6 +185,17 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// Mantle Mid
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
+
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreObstacle->SetTime(0.4f);
+		pIgnoreObstacle->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreObstacle);
+
+		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
+		pCollideObstacle->SetTime(0.7f);
+		pCollideObstacle->SetEnable(true);
+		pActionClip->AddNotify(pCollideObstacle);
+
 
 		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; // Mantle_Mid 넘어 오르는 모션
 	}
