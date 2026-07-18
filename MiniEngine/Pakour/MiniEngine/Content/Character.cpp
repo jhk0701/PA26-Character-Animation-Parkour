@@ -490,7 +490,9 @@ std::weak_ptr<Animator> Character::GetAnim() const
 
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
-	GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
+	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, _bEnable);
 
 	if (_bEnable)
 		MG_LOG_INFO("[Character] Enable Collision Obstacle");
