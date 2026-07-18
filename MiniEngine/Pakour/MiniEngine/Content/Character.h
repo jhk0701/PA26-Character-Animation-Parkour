@@ -67,6 +67,8 @@ public:
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 	Vector3 GetCurObstacleHitPos() const { return m_curObstacleHitPos; }
 
+	void ResetCamRot() { m_camRotate.x = 180.0f; m_camRotate.y = 180.0f; }
+
 private:
 	void InitInput();
 
@@ -79,9 +81,9 @@ private:
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
-	float m_camRotateSpeed{ 0.3f };
+	float m_camRotateSpeed{ 10.0f };
+	float m_camPitchMaxDeg{ 85.0f };
 	Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
-	float m_camMaxPitchDeg{ 85.0f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };

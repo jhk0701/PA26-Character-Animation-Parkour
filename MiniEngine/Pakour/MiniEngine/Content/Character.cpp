@@ -377,6 +377,8 @@ void Character::InputMovement(float _dt)
 
 			break;
 		}
+	case EState::InAir: 
+		{ break; }
 	case EState::Landing: __fallthrough;
 	default:
 		{
@@ -403,20 +405,19 @@ void Character::InputCamRotate()
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	// 마우스 델타에 이미 델타타임이 곱해져 있음
-	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
-	m_camRotate.x += CamRotSpeed.x;
-	m_camRotate.y += CamRotSpeed.y;
+	const Vector2 camRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
+	m_camRotate.x += camRotSpeed.x;
+	m_camRotate.y += camRotSpeed.y;
+	m_camRotate.y = std::clamp(m_camRotate.y, 180.0f - m_camPitchMaxDeg, 180.0f + m_camPitchMaxDeg);
 
-	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
-	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
+	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(m_camRotate.x));
+	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(m_camRotate.y));
 	qYaw.Normalize();
 	qPitch.Normalize();
 
 	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
 
-	if (m_state == EState::Landing)
-		GetRoot()->localTransform.rotation = qYaw;
-
+	GetRoot()->localTransform.rotation = qYaw;
 	pCamHolderRoot->localTransform.rotation = qPitch;
 }
 
@@ -543,6 +544,8 @@ void Character::SetHangingState(bool _bIsOn)
 
 void Character::InitInput()
 {
+	ResetCamRot();
+
 	// 바인딩
 	Input& input = InputManager::GetInstance()->GetInput();
 
@@ -620,22 +623,6 @@ void Character::InitInput()
 		}
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
-		[this]() 
-		{
-			std::shared_ptr<Physics::PhysicsWorld> pPhy = GetScene()->GetPhysics().lock();
-
-			const Transform& tf = GetRoot()->localTransform;
-			
-			Physics::SpherecastParam param;
-			param.m_startPos = tf.position + Vector3(0.0f, 2.0f, 0.0f);
-			param.m_dir = tf.Forward();
-			param.m_maxDistance = 5.0f;
-
-			Physics::RaycastResult result;
-			if (pPhy->SphereCast(param, result, Physics::ToMask(Physics::Layer::ObstacleLedge)))
-			{
-				MG_LOG_INFO("[Character] :: Check Obstacle Ledge :: Pos {}, {}, {}", result.m_pos.x, result.m_pos.y, result.m_pos.z);
-			}
-		}
+		[this]() { ResetCamRot(); }
 	);
 }
