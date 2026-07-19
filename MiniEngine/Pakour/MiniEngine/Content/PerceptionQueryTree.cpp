@@ -52,37 +52,21 @@ namespace
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
 		capParam.m_maxDistance = 1.0f;
 
-		return _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::Obstacle));
+		return _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::Obstacle)); // 
 	}
 
 	bool CheckClimbableLedge(TravelContext& _context, float _unitAmount)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		
-		//SpherecastParam sphParam;
-		//sphParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
-		//sphParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-		//sphParam.m_dir = pChar->GetRoot()->localTransform.Forward();
-		//sphParam.m_radius = 1.0f;
-		//sphParam.m_maxDistance = 1.0f;
-		CapsulecastParam capParam;
-		capParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
-		capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-		capParam.m_dir = pChar->GetRoot()->localTransform.Forward();
-		capParam.m_radius = 1.0f;
-		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
-		capParam.m_maxDistance = 1.0f;
+		SpherecastParam sphParam;
+		sphParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
+		sphParam.m_dir = pChar->GetRoot()->localTransform.Forward();
+		sphParam.m_radius = 0.5f;
+		sphParam.m_maxDistance = 1.0f;
 
-		bool bIsHit = _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::ObstacleLedge));
-		if (bIsHit)
-		{
-			MG_LOG_INFO("[Test] Check Ledge {}, {}, {}", 
-				_context.m_raycastResult.m_pos.x, 
-				_context.m_raycastResult.m_pos.y, 
-				_context.m_raycastResult.m_pos.z);
-		}
-
-		return bIsHit;
+		RaycastResult result;
+		return _context.m_physics->SphereCast(sphParam, result, ToMask(Layer::ObstacleLedge));
 	}
 
 	bool CheckLandable(TravelContext& _context, uint32_t _layerMask, float _dist)
@@ -194,6 +178,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 							Vector3(0.0f, 1.0f, 0.0f) * charHeight + 
 							_ctx.m_owner->GetRoot()->localTransform.Forward() * MAX_OBSTACLE_DETECT_DIST;
 
+						_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
+
 						return true;
 					}
 					else if(CheckClimbableLedge(_ctx, charHeight))
@@ -224,6 +210,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 							_ctx.m_raycastPos += 
 								Vector3(0.0f, 1.0f, 0.0f) * charHeight + 
 								_ctx.m_owner->GetRoot()->localTransform.Forward() * 1.0f;
+
+							_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
+
 							return true;
 						}
 						else if (CheckClimbableLedge(_ctx, charHeight))

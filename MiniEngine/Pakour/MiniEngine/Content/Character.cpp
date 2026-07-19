@@ -448,11 +448,7 @@ void Character::ProcessPerceptionResult()
 		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
 		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
-
-		if (result.m_actTag >= (uint8_t)Content::Config::ETagAct::Mantle)
-		{
-			MG_LOG_INFO("[Character] Find Ledge Value : {}", result.m_obstacleLedge);
-		}
+		m_curObstacleLedge = result.m_obstacleLedge;
 	}
 	else
 	{
@@ -639,10 +635,11 @@ void Character::InitInput()
 		[this]() 
 		{ 
 			const Transform& tf = GetRoot()->localTransform;
+
 			MiniEngine::Physics::SpherecastParam spParam;
 			spParam.m_dir = tf.Forward();
-			spParam.m_maxDistance = 1.0f;
 			spParam.m_startPos = tf.position + Vector3(0.0f, 1.0f, 0.0f) * GetCapsuleHalfHeight();
+			spParam.m_maxDistance = 1.0f;
 			spParam.m_radius = 0.5f;
 			
 			MiniEngine::Physics::RaycastResult spResult;
