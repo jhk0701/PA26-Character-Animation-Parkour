@@ -449,8 +449,10 @@ void Character::ProcessPerceptionResult()
 		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
 
-		MG_LOG_INFO("[Character] Check Obstacle::{}, Pos: {}, {}, {} ", 
-			m_pCurObstacle->GetName(), m_curObstacleHitPos.x, m_curObstacleHitPos.y, m_curObstacleHitPos.z);
+		if (result.m_actTag >= (uint8_t)Content::Config::ETagAct::Mantle)
+		{
+			MG_LOG_INFO("[Character] Find Ledge Value : {}", result.m_obstacleLedge);
+		}
 	}
 	else
 	{
@@ -515,11 +517,6 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
 	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
-
-	if (_bEnable)
-		MG_LOG_INFO("[Character] Enable Collision Obstacle");
-	else
-		MG_LOG_INFO("[Character] Disable Collision Obstacle");
 }
 
 void Character::Jump()
@@ -636,5 +633,24 @@ void Character::InitInput()
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
 		[this]() { ResetCamRot(); }
+	);
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
+		[this]() 
+		{ 
+			const Transform& tf = GetRoot()->localTransform;
+			MiniEngine::Physics::SpherecastParam spParam;
+			spParam.m_dir = tf.Forward();
+			spParam.m_maxDistance = 1.0f;
+			spParam.m_startPos = tf.position + Vector3(0.0f, 1.0f, 0.0f) * GetCapsuleHalfHeight();
+			spParam.m_radius = 0.5f;
+			
+			MiniEngine::Physics::RaycastResult spResult;
+			bool isHit = GetScene()->GetPhysics().lock()->SphereCast(spParam, spResult, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::ObstacleLedge));
+
+			if (isHit)
+				MG_LOG_INFO("[Test] : Get Ledge by sphere cast :: {}, {}, {}",
+					spResult.m_pos.x, spResult.m_pos.y, spResult.m_pos.z);
+		}
 	);
 }

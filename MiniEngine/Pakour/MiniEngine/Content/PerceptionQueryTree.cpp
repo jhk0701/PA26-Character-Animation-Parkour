@@ -55,6 +55,36 @@ namespace
 		return _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::Obstacle));
 	}
 
+	bool CheckClimbableLedge(TravelContext& _context, float _unitAmount)
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		
+		//SpherecastParam sphParam;
+		//sphParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
+		//sphParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		//sphParam.m_dir = pChar->GetRoot()->localTransform.Forward();
+		//sphParam.m_radius = 1.0f;
+		//sphParam.m_maxDistance = 1.0f;
+		CapsulecastParam capParam;
+		capParam.m_startPos = _context.m_raycastPos + Vector3(0.0f, 1.0f, 0.0f) * _unitAmount;
+		capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		capParam.m_dir = pChar->GetRoot()->localTransform.Forward();
+		capParam.m_radius = 1.0f;
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
+		capParam.m_maxDistance = 1.0f;
+
+		bool bIsHit = _context.m_physics->CapsuleCast(capParam, _context.m_raycastResult, ToMask(Layer::ObstacleLedge));
+		if (bIsHit)
+		{
+			MG_LOG_INFO("[Test] Check Ledge {}, {}, {}", 
+				_context.m_raycastResult.m_pos.x, 
+				_context.m_raycastResult.m_pos.y, 
+				_context.m_raycastResult.m_pos.z);
+		}
+
+		return bIsHit;
+	}
+
 	bool CheckLandable(TravelContext& _context, uint32_t _layerMask, float _dist)
 	{
 		// climbing 테스트를 완료하고 호출될 것
@@ -105,6 +135,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			result.m_pFirstObstacle = _context.m_firstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_distanceObstacle = _context.m_distance;
+			result.m_obstacleLedge = _context.m_ledge;
 			return result;
 		}
 	);
@@ -121,12 +152,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			[this](TravelContext& _ctx)
 			{
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+				const float charHalfHeight = pChar->GetCapsuleHalfHeight();
 
 				CapsulecastParam capParam;
-				capParam.m_startPos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f) * pChar->GetCapsuleHalfHeight();
+				capParam.m_startPos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, 1.0f, 0.0f) * charHalfHeight;
 				capParam.m_startRot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 				capParam.m_radius = pChar->GetCapsuleRadius();
-				capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
+				capParam.m_halfHeight = charHalfHeight;
 				capParam.m_dir = _ctx.m_owner->GetRoot()->localTransform.Forward();
 				capParam.m_maxDistance = MAX_OBSTACLE_DETECT_DIST;
 
@@ -139,7 +171,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
 					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
 
-
+					if (CheckClimbableLedge(_ctx, charHalfHeight))
+						_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
 				}
 
 				return bIsHit;
@@ -152,7 +185,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pIsClimbableFirst->SetCondition(
 				[this](TravelContext& _ctx)
 				{
-					MG_LOG_INFO("Check Obstable Is Climbable");
 					const float charHeight = GetCharHeight(_ctx);
 					if (CheckClimbableByUnit(_ctx, charHeight) == false)
 					{
@@ -163,6 +195,11 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 							_ctx.m_owner->GetRoot()->localTransform.Forward() * MAX_OBSTACLE_DETECT_DIST;
 
 						return true;
+					}
+					else if(CheckClimbableLedge(_ctx, charHeight))
+					{
+						// 닿음 -> 벽 모서리 탐지
+						_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
 					}
 
 					// 1 단위만큼 높여서 테스트했지만 장애물이 닿았음
@@ -189,6 +226,11 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 								_ctx.m_owner->GetRoot()->localTransform.Forward() * 1.0f;
 							return true;
 						}
+						else if (CheckClimbableLedge(_ctx, charHeight))
+						{
+							// 닿음 -> 벽 모서리 탐지
+							_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
+						}
 
 						_ctx.m_units = 2;
 						_ctx.m_predictedActTag = (uint8_t)ETagAct::IdleToHang;
@@ -201,8 +243,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					pObstableIsLandable->SetCondition(
 						[this](TravelContext& _ctx)
 						{
-							MG_LOG_INFO("Check Obstable Is Landable");
-							
 							bool bIsLandable = CheckLandable(_ctx, ToMask(Layer::Obstacle), MAX_LAND_DETECT_DIST);
 
 							// 원래는 여기서 Vault / Hurdle 중에 갈려야함

@@ -82,7 +82,7 @@ private:
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
-	float m_camRotateSpeed{ 10.0f };
+	float m_camRotateSpeed{ 20.0f };
 	float m_camPitchMaxDeg{ 85.0f };
 	Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
 

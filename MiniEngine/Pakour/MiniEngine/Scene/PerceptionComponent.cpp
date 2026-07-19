@@ -14,6 +14,7 @@ namespace MiniEngine
 		m_pFirstObstacle = nullptr;
 		m_firstObstacleHitPos = Vector3(0.0f);
 		m_distanceObstacle = 0.0f;
+		m_obstacleLedge = 0.0f;
 	}
 
 	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 
