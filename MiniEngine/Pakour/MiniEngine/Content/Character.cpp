@@ -315,6 +315,13 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpFromWall] = pActionClip;
 	}
+	{
+		// 벽에서 매달린 상태에서 점프
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(24)); // Jump From Wall
+
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
+	}
 
 	pAnim->SetEnableRootMotion(true);
 
@@ -334,6 +341,7 @@ void Character::BeginPlay()
 {
 	Actor::BeginPlay();
 
+	InitCollisionLayer();
 	InitInput();
 }
 
@@ -440,6 +448,9 @@ void Character::ProcessPerceptionResult()
 		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
 		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
+
+		MG_LOG_INFO("[Character] Check Obstacle::{}, Pos: {}, {}, {} ", 
+			m_pCurObstacle->GetName(), m_curObstacleHitPos.x, m_curObstacleHitPos.y, m_curObstacleHitPos.z);
 	}
 	else
 	{
@@ -504,7 +515,6 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
 	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
-	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, _bEnable);
 
 	if (_bEnable)
 		MG_LOG_INFO("[Character] Enable Collision Obstacle");
@@ -540,6 +550,11 @@ void Character::SetHangingState(bool _bIsOn)
 	pCharCont->SetForceFalling(false);
 
 	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+}
+
+void Character::InitCollisionLayer()
+{
+	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
 }
 
 void Character::InitInput()
@@ -617,10 +632,7 @@ void Character::InitInput()
 			InputJump();
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]()
-		{ 
-			ProcessPerceptionResult(); 
-		}
+		[this]() { ProcessPerceptionResult();  }
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
 		[this]() { ResetCamRot(); }

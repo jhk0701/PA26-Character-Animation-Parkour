@@ -67,12 +67,13 @@ public:
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 	Vector3 GetCurObstacleHitPos() const { return m_curObstacleHitPos; }
 
-	void ResetCamRot() { m_camRotate.x = 180.0f; m_camRotate.y = 180.0f; }
+	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
 
 private:
+	void InitCollisionLayer();
 	void InitInput();
 
-	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 0(1)로 찾을 것
+	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 O(1)로 찾을 것
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 
 	Vector2 m_inputDir;

@@ -138,6 +138,7 @@
     <ClInclude Include="Content\EnableHangingState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
+    <ClInclude Include="Content\UIDebugConsole.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Asset\MiniLoader.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\AssimpBaker.h" />
+    <ClInclude Include="UI\UIBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation\ActionClip.cpp" />
@@ -199,6 +201,7 @@
     <ClCompile Include="Content\EnableHangingState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
+    <ClCompile Include="Content\UIDebugConsole.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
@@ -234,6 +237,7 @@
     <ClCompile Include="Asset\MiniLoader.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\AssimpBaker.cpp" />
+    <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Mecro.hlsli" />

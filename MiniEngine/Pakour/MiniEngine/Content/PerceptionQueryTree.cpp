@@ -138,6 +138,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
 					_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
 					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
+
+
 				}
 
 				return bIsHit;
