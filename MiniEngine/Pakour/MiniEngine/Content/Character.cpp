@@ -176,10 +176,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetLerpWeight(0.7f);
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
-
+		
+		// Valut 낮은 모션 적용 
+		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip; // Valut 낮은 모션 적용 
-		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip; // TODO : 중간 지점 오르는 애니메이션 필요
 	}
 	{
 		// Mantle Mid
@@ -199,11 +199,12 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.2f, 0.6f);
-		pCorrectRM->SetProperDistance(1.5f);
+		pCorrectRM->SetProperDistance(0.5f);
 		pCorrectRM->SetLerpWeight(0.9f);
 		pCorrectRM->SetDeltaIntensity(50.0f);
-
-		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; // Mantle_Mid 넘어 오르는 모션
+		
+		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
 	}
 	{
 		// FallingToLand
@@ -456,12 +457,11 @@ void Character::ProcessPerceptionResult()
 		m_curObstacleDistance = result.m_distanceObstacle;
 		m_curObstacleLedge = result.m_obstacleLedge;
 
-		MG_LOG_WARN("[Character] Check Ledge : {}", m_curObstacleLedge);
+		MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
 	{
 		m_pCurObstacle = nullptr;
-
 		if (result.m_bIsEmpty == false)
 			MG_LOG_WARN("[Character] Travel Result returned but CurObstacle is null");
 	}

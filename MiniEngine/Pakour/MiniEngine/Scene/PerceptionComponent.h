@@ -19,7 +19,6 @@ namespace MiniEngine
 		Vector3 m_raycastPos;
 		float m_distance{ 0.0f };
 		float m_ledge{ 0.0f };
-		Physics::RaycastResult m_raycastResult;
 	};
 
 	struct TravelResult 

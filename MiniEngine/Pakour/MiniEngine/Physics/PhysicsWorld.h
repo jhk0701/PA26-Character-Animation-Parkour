@@ -53,9 +53,9 @@ namespace MiniEngine::Physics
 
     struct SweepCommonParam 
     {
-        float m_maxDistance;
-        Vector3 m_startPos;     // origin
-        Quaternion m_startRot;  // 회전각
+        float m_maxDistance{ 1.0f };
+        Vector3 m_startPos{ 0.0f, 0.0f,0.0f };     // origin
+        Quaternion m_startRot{ 0.0f, 0.0f, 0.0f, 1.0f };  // 회전각
         Vector3 m_dir;
     };
     struct SpherecastParam : public SweepCommonParam
