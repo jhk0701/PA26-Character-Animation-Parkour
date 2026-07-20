@@ -17,8 +17,8 @@ public:
 		const MiniEngine::Vector3& _scale);
 
 private:
-	void AddLedge(std::shared_ptr<Actor> _pTarget,
-		std::shared_ptr<StaticMesh> _pStaticMesh,
+	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
+		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh,
 		const MiniEngine::Vector3& _localPos,
 		const MiniEngine::Vector3& _halfExtent,
 		const MiniEngine::Quaternion& _localRot);
@@ -27,7 +27,7 @@ private:
 class ObstacleFactory 
 {
 public:
-	static std::shared_ptr<Actor> Create(
+	static std::shared_ptr<MiniEngine::Actor> Create(
 		std::shared_ptr<MiniEngine::Scene> _pScene, 
 		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
 		const MiniEngine::Vector3& _pos, 

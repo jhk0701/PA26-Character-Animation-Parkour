@@ -56,21 +56,17 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		std::shared_ptr<Scene> pScene = shared_from_this();
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.0f, 3.0f), Vector3(2.0f));
 
-		/*
-		BuildObstacle(pCubeMesh, Vector3(-5.0f, 1.0f, 3.0f), Vector3(2.0f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
 
-		BuildObstacle(pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
-		
-		BuildObstacle(pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(pCubeMesh, Vector3(5.0f, 1.0, 7.5f),	Vector3(4.0f, 2.0f, 0.5f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 1.0, 7.5f), Vector3(4.0f, 2.0f, 0.5f));
 
-		BuildObstacle(pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f));
-		BuildObstacle(pCubeMesh, Vector3(10.0f, 3.0f, 7.5f), Vector3(4.0f, 1.0f, 0.5f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 3.0f, 7.5f), Vector3(4.0f, 1.0f, 0.5f));
 
-		BuildObstacle(pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		BuildObstacle(pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
-		*/
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
 	}
 	{
 		// 임시 캐릭터 생성

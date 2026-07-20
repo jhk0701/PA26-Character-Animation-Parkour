@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <memory.h>
 #include "Content/Obstacle.h"
 #include "Content/ContentConfig.h"
 

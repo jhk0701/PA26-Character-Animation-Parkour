@@ -44,7 +44,7 @@ void Character::Construct()
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character_test.mini");
+	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
 	std::shared_ptr<SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();

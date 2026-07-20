@@ -271,9 +271,6 @@
     <ClInclude Include="Manager\DataManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Obstacle.h">
-      <Filter>Content\03.Object</Filter>
-    </ClInclude>
     <ClInclude Include="Asset\BoneNaming.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
@@ -282,6 +279,9 @@
     </ClInclude>
     <ClInclude Include="Content\UIDebugConsole.h">
       <Filter>Content\06.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Obstacle.h">
+      <Filter>Content\03.Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -435,9 +435,6 @@
     <ClCompile Include="Manager\DataManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Obstacle.cpp">
-      <Filter>Content\03.Object</Filter>
-    </ClCompile>
     <ClCompile Include="Asset\BoneNaming.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
@@ -446,6 +443,9 @@
     </ClCompile>
     <ClCompile Include="Content\UIDebugConsole.cpp">
       <Filter>Content\06.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Obstacle.cpp">
+      <Filter>Content\03.Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
