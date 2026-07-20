@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <memory>
 #include "Scene/SceneComponent.h"
 #include "Asset/StaticMesh.h"

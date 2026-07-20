@@ -68,9 +68,6 @@
     <Filter Include="Content\02.Scene">
       <UniqueIdentifier>{ea37ff1a-673e-4bc4-8f6e-1eabd05eed50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\03.Character">
-      <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content\01.Config">
       <UniqueIdentifier>{603b0d7e-4658-4fa5-8672-c452c155f10f}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,9 @@
     </Filter>
     <Filter Include="Content\05.Data">
       <UniqueIdentifier>{9f8be4ae-2fc5-4223-91e5-48e2b831d605}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\03.Object">
+      <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -179,7 +179,7 @@
       <Filter>Content\02.Scene</Filter>
     </ClInclude>
     <ClInclude Include="Content\Character.h">
-      <Filter>Content\03.Character</Filter>
+      <Filter>Content\03.Object</Filter>
     </ClInclude>
     <ClInclude Include="Manager\PathManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
@@ -268,6 +268,9 @@
     <ClInclude Include="Manager\DataManager.h">
       <Filter>Engine\02.Core\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Obstacle.h">
+      <Filter>Content\03.Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -334,7 +337,7 @@
       <Filter>Content\02.Scene</Filter>
     </ClCompile>
     <ClCompile Include="Content\Character.cpp">
-      <Filter>Content\03.Character</Filter>
+      <Filter>Content\03.Object</Filter>
     </ClCompile>
     <ClCompile Include="Manager\PathManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
@@ -419,6 +422,9 @@
     </ClCompile>
     <ClCompile Include="Manager\DataManager.cpp">
       <Filter>Engine\02.Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Obstacle.cpp">
+      <Filter>Content\03.Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
