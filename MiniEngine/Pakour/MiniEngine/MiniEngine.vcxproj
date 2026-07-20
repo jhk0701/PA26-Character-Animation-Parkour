@@ -131,6 +131,7 @@
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
+    <ClInclude Include="Content\CharacterStateMachine.h" />
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
     <ClInclude Include="Content\JumpTiming.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
+    <ClCompile Include="Content\CharacterStateMachine.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
     <ClCompile Include="Content\JumpTiming.cpp" />

@@ -293,6 +293,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
 				const float charHeight = GetCharHeight(_ctx);
 
+				// input 관련 사항은 여기가 아니라 다른 곳에서 처리
 				//if (inputDir.y < 0 &&
 				//	CheckLandable(_ctx, Layer::Obstacle | Layer::Ground, charHeight))
 				//{

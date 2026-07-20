@@ -88,6 +88,19 @@ void Character::Construct()
 		pPerceptComp->SetQueryTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
+	{
+		// 캐릭터 로직 처리용 FSM 추가
+		std::shared_ptr<CharacterStateMachine> pCharFSM = AddComponent<CharacterStateMachine>();
+		
+		// enum class EState : uint8_t 순서대로 사용중
+		pCharFSM->RegisterStates(
+			{
+				std::make_shared<LandingState>(),
+				std::make_shared<InAirState>(),
+				std::make_shared<HangingState>()
+			});
+		m_charFSM = pCharFSM;
+	}
 
 	PostConstruct();
 }
@@ -357,11 +370,11 @@ void Character::BeginPlay()
 
 void Character::Tick(float _dt)
 {
+	Actor::Tick(_dt);
+
 	// TODO : FSM으로 리팩터링
 	InputCamRotate();
-	InputMovement(_dt);
-	
-	Actor::Tick(_dt);
+	// InputMovement(_dt);
 
 	// 판단 절차
 	// 내용 적용은 다음 tick에서 반영
@@ -420,6 +433,7 @@ void Character::InputMovement(float _dt)
 
 void Character::InputCamRotate()
 {
+	// TODO : FSM으로 리팩터링
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	// 마우스 델타에 이미 델타타임이 곱해져 있음
@@ -475,6 +489,7 @@ void Character::ProcessPerceptionResult()
 
 void Character::CheckCharacterState()
 {
+	// TODO : FSM으로 리팩터링
 	if (m_state == EState::Hanging) // PerceptionComp에서 인식하고 반영해줄 것
 		return; // 벽에 매달린 상황일 때
 
@@ -526,6 +541,11 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 }
 
+void Character::AddMovementInput(const Vector3& _moveDelta)
+{
+	m_charCont.lock()->AddMovementInput(_moveDelta);
+}
+
 void Character::Jump()
 {
 	m_charCont.lock()->Jump(m_jumpSpeed);
@@ -543,6 +563,16 @@ void Character::InputJump()
 
 	std::shared_ptr<ActionClip> pJump = GetActions(tag);
 	GetAnim().lock()->PlayActionClip(pJump, 0.2f);
+}
+
+void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
+{
+	GetAnim().lock()->SetBaseTrackInputAxis(_input);
+}
+
+bool Character::IsActionClipPlaying() const
+{
+	return GetAnim().lock()->IsActionClipPlaying();
 }
 
 void Character::SetHangingState(bool _bIsOn)

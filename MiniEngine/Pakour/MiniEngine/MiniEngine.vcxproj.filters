@@ -95,6 +95,9 @@
     <Filter Include="Content\06.UI">
       <UniqueIdentifier>{6d63e76f-3626-4066-867f-dcef3f4496d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\03.Object\Component">
+      <UniqueIdentifier>{6c7d7855-6ac8-411d-8f1c-be3a7de17607}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -283,6 +286,9 @@
     <ClInclude Include="Content\Obstacle.h">
       <Filter>Content\03.Object</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CharacterStateMachine.h">
+      <Filter>Content\03.Object\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -446,6 +452,9 @@
     </ClCompile>
     <ClCompile Include="Content\Obstacle.cpp">
       <Filter>Content\03.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterStateMachine.cpp">
+      <Filter>Content\03.Object\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
