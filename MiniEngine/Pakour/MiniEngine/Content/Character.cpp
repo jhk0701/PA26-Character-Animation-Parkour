@@ -289,7 +289,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
 
 		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
-		pSetIdle->SetTime(0.5f);
+		pSetIdle->SetTime(0.8f);
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
@@ -299,14 +299,14 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pIgnoreObstacle);
 
 		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
-		pCollideObstacle->SetTime(0.5f);
+		pCollideObstacle->SetTime(0.8f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetLerpWeight(0.99f);
-		pCorrectRM->SetDeltaIntensity(10.0f);
+		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
+		pCorrectRM->SetTime(0.0f, 0.4f);
+		pCorrectRM->SetLerpWeight(0.75f);
 		pCorrectRM->SetProperDistance(0.05f);
 		pActionClip->AddNotify(pCorrectRM);
 

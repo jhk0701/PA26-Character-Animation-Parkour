@@ -113,7 +113,7 @@ namespace
 		return false; // 매달려야 함
 	}
 
-	bool CheckLedge(TravelContext& _context, const Vector3& _pos, float _radius)
+	bool CheckLedge(TravelContext& _context, const Vector3& _pos, float _radius, RaycastResult& _outResult)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		
@@ -123,15 +123,14 @@ namespace
 		sphParam.m_radius = _radius;
 		sphParam.m_maxDistance = 1.0f;
 
-		RaycastResult result;
-		bool bIsHit = _context.m_physics->SphereCast(sphParam, result, ToMask(Layer::ObstacleLedge));
+		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 
 		// MG_LOG_INFO("[QueryTree] LedgeFind Cast Origin : ({}, {}, {})", sphParam.m_startPos.x, sphParam.m_startPos.y, sphParam.m_startPos.z);
 
 		if (bIsHit)
 		{
-			_context.m_ledge = result.m_pos.y;
-			MG_LOG_INFO("[QueryTree] Ledge Found : ({}, {}, {})", result.m_pos.x, result.m_pos.y, result.m_pos.z);
+			_context.m_ledge = _outResult.m_pos.y;
+			MG_LOG_INFO("[QueryTree] Ledge Found : ({}, {}, {})", _outResult.m_pos.x, _outResult.m_pos.y, _outResult.m_pos.z);
 		}
 
 		return bIsHit;
@@ -222,11 +221,12 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				rayPosition.y += (_ctx.m_units - 1) * CHAR_H;
 
 				// 상반신 크기 확인
-				if (CheckLedge(_ctx, rayPosition + Vector3(0.0f, 1.0f, 0.0f) * RADIUS, RADIUS))
+				RaycastResult result;
+				if (CheckLedge(_ctx, rayPosition + Vector3(0.0f, 1.0f, 0.0f) * RADIUS, RADIUS, result))
 					return bVaultable;
 
 				// 하반신 크기 확인
-				if (CheckLedge(_ctx, rayPosition - Vector3(0.0f, 1.0f, 0.0f) * RADIUS, RADIUS))
+				if (CheckLedge(_ctx, rayPosition - Vector3(0.0f, 1.0f, 0.0f) * RADIUS, RADIUS, result))
 					return bVaultable;
 
 				// 배치되지 않은 구조물
@@ -304,17 +304,19 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			[](TravelContext& _ctx) 
 			{
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-				const float RADIUS = pChar->GetCapsuleHalfHeight() * 0.5f;
-				Vector3 pos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, 2.0f, 0.0f);
+				const float CHAR_H = GetCharHeight(_ctx);
+				const float RADIUS = 0.25f;
+				Vector3 pos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, CHAR_H * 1.5f, 0.0f);
 
-				MG_LOG_INFO("[QueryTree] Check Ledge");
-				bool bIsHit = CheckLedge(_ctx, pos, RADIUS);
+				// MG_LOG_INFO("[QueryTree] Check Ledge");
+				RaycastResult result;
+				bool bIsHit = CheckLedge(_ctx, pos, RADIUS, result);
 				if (bIsHit) 
 				{
-					MG_LOG_INFO("[QueryTree] Hang to mantle");
-					_ctx.m_firstObstacleHitPos = pos;
-					_ctx.m_firstObstacleHitPos.y = _ctx.m_ledge;
-					_ctx.m_distance = 1.0f;
+					_ctx.m_firstObstacle = result.GetActor();
+					_ctx.m_firstObstacleHitPos = result.m_pos;
+					_ctx.m_distance = result.m_distance;
+					_ctx.m_ledge = result.m_pos.y;
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
 				}
 
