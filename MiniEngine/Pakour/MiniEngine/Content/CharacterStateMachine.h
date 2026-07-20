@@ -42,35 +42,4 @@ protected:
 
 private:
 	std::weak_ptr<CharacterStateMachine> m_machine;
-
-};
-
-class LandingState : public CharacterState 
-{
-public:
-	void OnStart() override;
-	void OnEnd() override;
-	void Tick(float _dt) override;
-	void CheckState() override;
-};
-
-class InAirState : public CharacterState
-{
-public:
-	void OnStart() override;
-	void OnEnd() override;
-	void Tick(float _dt) override;
-	void CheckState() override;
-};
-
-class HangingState : public CharacterState
-{
-public:
-	void OnStart() override;
-	void OnEnd() override;
-	void Tick(float _dt) override;
-	void CheckState() override;
-
-private:
-	void ProcessMovement(float _dt);
 };

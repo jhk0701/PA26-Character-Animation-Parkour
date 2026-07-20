@@ -149,17 +149,6 @@ namespace
 		RaycastResult result;
 		return _context.m_physics->Raycast(rayParam, result, _layerMask);
 	}
-
-	bool CheckFront(TravelContext& _context, uint32_t _layerMask, float _dist)
-	{
-		RaycastParam rayParam;
-		rayParam.m_origin = _context.m_raycastPos;
-		rayParam.m_dir = Vector3(0.0f, 0.0f, 1.0f);
-		rayParam.m_maxDistance = _dist;
-
-		RaycastResult result;
-		return _context.m_physics->Raycast(rayParam, result, _layerMask);
-	}
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
@@ -173,11 +162,14 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 
 	std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
-	std::shared_ptr<ConditionNode> pCheckAroundOnHaning = std::make_shared<ConditionNode>();
+	std::shared_ptr<SelectorNode> pOnHanging = std::make_shared<SelectorNode>();
+	std::shared_ptr<ConditionNode> pOnHangingClimbable = std::make_shared<ConditionNode>();
+	std::shared_ptr<ConditionNode> pOnHangingLandable = std::make_shared<ConditionNode>();
 
 	// Leaf
 	std::shared_ptr<LeafNode> pEmpty = std::make_shared<LeafNode>(); // 빈 결과 리턴, 탐색 계속 신호
 	std::shared_ptr<LeafNode> pReturn = std::make_shared<LeafNode>(); // 결과 리턴
+
 
 	pReturn->SetTask(
 		[](TravelContext& _context)
@@ -262,9 +254,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
 
 					if (bIsLandable)
-						MG_LOG_INFO("[QueryTree] Mantle");
+						MG_LOG_INFO("[QueryTree] Mantle + {}", _ctx.m_units);
 					else
-						MG_LOG_INFO("[QueryTree] Vault");
+						MG_LOG_INFO("[QueryTree] Vault + {}", _ctx.m_units);
 
 					return bIsLandable;
 				},
@@ -279,56 +271,75 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		{
 			return CheckOwnerState(_ctx, (uint8_t)Character::EState::Hanging);
 		},
-		pCheckAroundOnHaning,	// 매달렸을 때 처리
+		pOnHanging,				// 매달렸을 때 처리
 		pEmpty					// false는 공중에서 떨어지는 상태일 것 // TODO : 허공상태일 때 인식하려면 여기서 이어서 작업
 	);
 
-		pCheckAroundOnHaning->SetCondition(
-			[this](TravelContext& _ctx)
+		pOnHanging->SetCondition(
+			[](TravelContext& _ctx) 
 			{
-				// 벽면에 있는 상황
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-				Vector2 inputDir = pChar->GetInputDir();
+				const Vector2 INPUT_DIR = pChar->GetInputDir();
 
-				_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
-				const float charHeight = GetCharHeight(_ctx);
+				if (INPUT_DIR.y > 0)
+					return 0;
+				else if (INPUT_DIR.y < 0)
+					return 1;
+				else if (INPUT_DIR.x > 0)
+					return 2;
+				else if (INPUT_DIR.x < 0)
+					return 3;
+				return 4;
+			},
+			{
+				pOnHangingClimbable,
+				pOnHangingLandable,
+				pEmpty,
+				pEmpty,
+				pEmpty
+			}
+		);
 
-				// input 관련 사항은 여기가 아니라 다른 곳에서 처리
-				//if (inputDir.y < 0 &&
-				//	CheckLandable(_ctx, Layer::Obstacle | Layer::Ground, charHeight))
-				//{
-				//	// 아래를 향하는데
-				//	// 1 단위만큼 거리에 바닥이나 착지할 수 있는 장애물이 있음
-				//	_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToIdle;
-				//	_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
-				//	_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
-				//	_ctx.m_distance = _ctx.m_raycastResult.m_distance;
+		pOnHangingClimbable->SetCondition(
+			[](TravelContext& _ctx) 
+			{
+				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+				const float RADIUS = pChar->GetCapsuleHalfHeight() * 0.5f;
+				Vector3 pos = pChar->GetRoot()->localTransform.position + Vector3(0.0f, 2.0f, 0.0f);
 
-				//	MG_LOG_INFO("Character Hang To Idle");
-				//	return true;
-				//}
-
-				/*if (inputDir.y > 0 &&
-					CheckClimbableByUnit(_ctx, charHeight * 1.5f) == false)
+				MG_LOG_INFO("[QueryTree] Check Ledge");
+				bool bIsHit = CheckLedge(_ctx, pos, RADIUS);
+				if (bIsHit) 
 				{
-					_ctx.m_raycastPos = pChar->GetRoot()->localTransform.position;
-					if (CheckFront(_ctx, ToMask(Layer::Obstacle), MAX_OBSTACLE_DETECT_DIST))
-					{
-						_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
-						_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
-						_ctx.m_distance = _ctx.m_raycastResult.m_distance;
-					}
-
+					MG_LOG_INFO("[QueryTree] Hang to mantle");
+					_ctx.m_firstObstacleHitPos = pos;
+					_ctx.m_firstObstacleHitPos.y = _ctx.m_ledge;
+					_ctx.m_distance = 1.0f;
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToMantle;
+				}
 
-					MG_LOG_INFO("Character Hang To Mantle");
-					return true;
-				}*/
+				return bIsHit;
+			},
+			pReturn,
+			pEmpty
+		);
 
-				// 좌우 양옆을 확인
-				// 갈 곳이 있음 해당 부분으로 이동
+		pOnHangingLandable->SetCondition(
+			[](TravelContext& _ctx)
+			{
+				bool bIsHit = CheckLandable(
+					_ctx, 
+					ToChar(_ctx.m_owner)->GetRoot()->localTransform.position, 
+					Layer::Obstacle | Layer::Ground, 
+					1.0f); // 1m 아래 확인
 
-				return false;
+				if (bIsHit)
+				{
+					MG_LOG_INFO("[QueryTree] Hang to idle");
+					_ctx.m_predictedActTag = (uint8_t)ETagAct::HangToIdle;
+				}
+
+				return bIsHit;
 			},
 			pReturn,
 			pEmpty

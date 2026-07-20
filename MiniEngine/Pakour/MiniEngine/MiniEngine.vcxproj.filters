@@ -98,6 +98,9 @@
     <Filter Include="Content\03.Object\Component">
       <UniqueIdentifier>{6c7d7855-6ac8-411d-8f1c-be3a7de17607}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\03.Object\Component\CharacterState">
+      <UniqueIdentifier>{759554ca-a749-4484-ba7d-ecc526c81c42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -289,6 +292,15 @@
     <ClInclude Include="Content\CharacterStateMachine.h">
       <Filter>Content\03.Object\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CharacterState\HangingState.h">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\CharacterState\InAirState.h">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\CharacterState\LandingState.h">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -455,6 +467,15 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterStateMachine.cpp">
       <Filter>Content\03.Object\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterState\HangingState.cpp">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterState\InAirState.cpp">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterState\LandingState.cpp">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

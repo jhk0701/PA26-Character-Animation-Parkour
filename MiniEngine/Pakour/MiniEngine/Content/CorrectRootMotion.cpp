@@ -19,10 +19,6 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	if (!m_pChar)
 		return;
 
-	MiniEngine::Actor* pCurObs = m_pChar->GetCurObstacle();
-	if (pCurObs == nullptr)
-		return;
-	
 	// 현재 장애물과 거리
 	float dist = m_pChar->GetCurObstacleDistance(); // 지형탐색을 통해 얻은 첫 장애물로부터의 거리
 	//MG_LOG_INFO("Correct dist : {}", dist);

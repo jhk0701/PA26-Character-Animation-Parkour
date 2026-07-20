@@ -26,6 +26,11 @@
 #include "Content/EnableHangingState.h"
 #include "Content/CorrectRootMotion.h"
 
+#include "Content/CharacterStateMachine.h"
+#include "Content/CharacterState/LandingState.h"
+#include "Content/CharacterState/InAirState.h"
+#include "Content/CharacterState/HangingState.h"
+
 using namespace Content::Config;
 
 Character::Character()
@@ -193,7 +198,11 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// Valut 모두 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
+		// m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
+
+		// 임시 설정
+		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
 	}
 	{
 		// Mantle Mid
@@ -218,9 +227,13 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetLerpWeight(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
 		
-		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
+		// m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
+		// m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
 		m_mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
+
+		// 임시 설정
+		// m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
 	}
 	{
 		// FallingToLand
@@ -268,18 +281,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
-		std::shared_ptr<CorrectRootMotion> pCorretRM = std::make_shared<CorrectRootMotion>();
-		pCorretRM->SetTime(0.0f, 0.5f);
-		pCorretRM->SetProperDistance(0.01f);
-		pCorretRM->SetLerpWeight(0.8f);
-		pCorretRM->SetDeltaIntensity(5.0f);
-		pCorretRM->SetCorrectAxis(CorrectRootMotion::YZ);
-		pActionClip->AddNotify(pCorretRM);
-
 		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
 	}
 	{
-		// HangToIdle
+		// HangToMantle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
 

@@ -2,7 +2,6 @@
 #include "Scene/Actor.h"
 #include "Scene/PerceptionComponent.h"
 #include "Content/PerceptionQueryTree.h"
-#include "Content/CharacterStateMachine.h"
 
 #include <unordered_map>
 
@@ -18,6 +17,7 @@ namespace MiniEngine
 
 using namespace MiniEngine;
 
+class CharacterStateMachine;
 class Character : public Actor
 {
 public:
@@ -65,7 +65,7 @@ public:
 	float GetCamPitchMaxDeg() const { return m_camPitchMaxDeg; }
 	Vector2& CamRotate() { return m_camRotate; }
 	std::weak_ptr<SceneComponent> GetCamHolder() const { return m_cameraHolder; }
-	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
+	void ResetCamRot() {/* m_camRotate.x = 180.0f; */ m_camRotate.y = 180.0f; }
 
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);

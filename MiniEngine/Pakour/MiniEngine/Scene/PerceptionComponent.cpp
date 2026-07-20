@@ -54,7 +54,7 @@ namespace MiniEngine
 			return TravelResult();
 
 		uint8_t r = m_condition(_context);
-		assert(r >= m_children.size());
+		assert(r < m_children.size());
 
 		return m_children[r]->Execute(_context);
 	}
