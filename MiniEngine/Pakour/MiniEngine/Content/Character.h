@@ -40,20 +40,23 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
-	void InputMovement(float _dt);
-	void CheckCharacterState();
 	void ProcessPerceptionResult();
 
 	void Jump();
 	void InputJump();
 
+	// Component Getter
+	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
+	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
+
 	// getter setter
-	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	void SetState(EState _state) { m_state = _state; }
+	EState GetState() const { return m_state; }
 	
 	// input 조작
-	float GetMoveSpeed() const { return m_moveSpeed; }
+	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	Vector2 GetInputDir() const { return m_inputDir; }
+	float GetMoveSpeed() const { return m_moveSpeed; }
 	float GetInputLerpWeight() const { return m_lerpWeight; }
 	Vector2& InputLerp() { return m_lerpInputDir; }
 
@@ -62,18 +65,14 @@ public:
 	float GetCamPitchMaxDeg() const { return m_camPitchMaxDeg; }
 	Vector2& CamRotate() { return m_camRotate; }
 	std::weak_ptr<SceneComponent> GetCamHolder() const { return m_cameraHolder; }
-
-	EState GetCharState() const { return m_state; }
+	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
 
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);
-	void TranstionBaseTrack(uint8_t _state, float _transitionTime);
+	void TranstionBaseTrack(uint8_t _state, float _transitionTime = 0.25f);
 	bool IsActionClipPlaying() const;
-
-	// Component Getter
-	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
-	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
+	void PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime = 0.25f);
 
 	// 콜라이더 및 물리
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
@@ -81,15 +80,17 @@ public:
 	void SetEnableCollisionObstacle(bool _bEnable);
 	void AddMovementInput(const Vector3& _moveDelta);
 	bool IsFalling() const;
+	bool IsGrounded() const;
+	void SetUseGravity(bool _bUse);
 
-	void SetHangingState(bool _bIsOn);
+	// 상태머신
+	void TransitionStateMachine(uint8_t _state);
 	
+	// 지형 인식
 	Actor* GetCurObstacle() const { return m_pCurObstacle; }
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 	float GetCurObstacleLedge() const { return m_curObstacleLedge + m_ledgeOffset; }
 	Vector3 GetCurObstacleHitPos() const;
-
-	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
 
 private:
 	void InitCollisionLayer();

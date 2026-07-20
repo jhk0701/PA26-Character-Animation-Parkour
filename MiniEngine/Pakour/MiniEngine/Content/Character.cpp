@@ -371,50 +371,7 @@ void Character::BeginPlay()
 void Character::Tick(float _dt)
 {
 	Actor::Tick(_dt);
-
-	// TODO : FSM으로 리팩터링
-	// 판단 절차
-	// 내용 적용은 다음 tick에서 반영
-	CheckCharacterState();
 }
-
-void Character::InputMovement(float _dt)
-{
-	// 키보드 이동키
-	if (GetAnim().lock()->IsActionClipPlaying())
-		return;
-
-	// TODO : 전체 구조에서 FSM 고려해볼 것
-	switch (m_state)
-	{
-	case EState::Hanging: 
-		{
-			// 4 방향 중 하나만 골라야 함
-			ETagAct eAct = ETagAct::End;
-			if (m_inputDir.y > 0)
-				eAct = ETagAct::HangingMoveUp;
-			else if (m_inputDir.y < 0)
-				eAct = ETagAct::HangingMoveDown;
-			else if (m_inputDir.x < 0)
-				eAct = ETagAct::HangingMoveRight;
-			else if (m_inputDir.x > 0)
-				eAct = ETagAct::HangingMoveLeft;
-
-			if (std::shared_ptr<ActionClip> pAct = m_mapActions[(uint8_t)eAct])
-				GetAnim().lock()->PlayActionClip(pAct, 0.1f);
-
-			break;
-		}
-	case EState::InAir: 
-		{ break; }
-	case EState::Landing: __fallthrough;
-	default:
-		{
-			break;
-		}
-	}
-}
-
 
 void Character::ProcessPerceptionResult()
 {
@@ -450,48 +407,6 @@ void Character::ProcessPerceptionResult()
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
-void Character::CheckCharacterState()
-{
-	// TODO : FSM으로 리팩터링
-	if (m_state == EState::Hanging) // PerceptionComp에서 인식하고 반영해줄 것
-		return; // 벽에 매달린 상황일 때
-
-	std::shared_ptr<Animator> pAnim = GetAnim().lock();
-	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
-
-	if (!pAnim || !pCharCont)
-		return;
-	
-	// 애니메이션 baseTrack의 상태만 전환하기 위한 용도
-	// 공중인지 판단
-	const bool bIsGrounded = pCharCont->IsGrounded();	// 땅에 닿았는지
-	const bool bIsFalling = pCharCont->IsFalling();		// 실질적으로 떨어지고 있는지
-
-	if (bIsFalling && 
-		m_state != EState::InAir)
-	{
-		m_state = EState::InAir;
-		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-		return;
-	}
-
-	if (bIsGrounded && m_state != EState::Landing)
-	{
-		if (m_state == EState::InAir)
-		{
-			// 공중 -> 착지
-			if (std::shared_ptr<ActionClip> pClip = m_mapActions[(uint8_t)Content::Config::ETagAct::FallingToLand])
-			{
-				pAnim->PlayActionClip(pClip, 0.2f);
-			}
-		}
-
-		m_state = EState::Landing;
-		pAnim->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
-
-		return;
-	}
-}
 
 std::weak_ptr<Animator> Character::GetAnim() const
 {
@@ -512,6 +427,18 @@ void Character::AddMovementInput(const Vector3& _moveDelta)
 bool Character::IsFalling() const
 {
 	return m_charCont.lock()->IsFalling();
+}
+
+bool Character::IsGrounded() const
+{
+	return  m_charCont.lock()->IsGrounded();
+}
+
+void Character::SetUseGravity(bool _bUse)
+{
+	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
+	pCharCont->SetUseGravity(_bUse);
+	pCharCont->SetForceFalling(false);
 }
 
 void Character::Jump()
@@ -548,15 +475,18 @@ bool Character::IsActionClipPlaying() const
 	return GetAnim().lock()->IsActionClipPlaying();
 }
 
-void Character::SetHangingState(bool _bIsOn)
+void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime)
 {
-	SetState(_bIsOn ? EState::Hanging : EState::Landing);
+	if (_clip == nullptr)
+		return;
 
-	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
-	pCharCont->SetUseGravity(_bIsOn ? false : true); // 매달린 중에는 중력 적용 해제
-	pCharCont->SetForceFalling(false);
+	GetAnim().lock()->PlayActionClip(_clip, _transitionTime);
+}
 
-	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+void Character::TransitionStateMachine(uint8_t _state)
+{
+	SetState(static_cast<Character::EState>(_state));
+	m_charFSM.lock()->Transition(_state);
 }
 
 Vector3 Character::GetCurObstacleHitPos() const

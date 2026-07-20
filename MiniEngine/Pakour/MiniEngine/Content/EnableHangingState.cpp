@@ -8,5 +8,5 @@ void EnableHangingState::Activate(MiniEngine::AnimNotifyParam& _param)
 		return;
 
 	Character* pChar = dynamic_cast<Character*>(_param.m_pActor);
-	pChar->SetHangingState(m_bEnable);
+	pChar->TransitionStateMachine((uint8_t)(m_bEnable ? Character::EState::Hanging : Character::EState::Landing));
 }

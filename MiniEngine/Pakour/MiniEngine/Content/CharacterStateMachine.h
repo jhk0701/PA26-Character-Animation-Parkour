@@ -24,7 +24,7 @@ private:
 class CharacterState
 {
 public:
-	CharacterState();
+	CharacterState() {};
 	virtual ~CharacterState() {};
 
 	void RegisterMachine(std::shared_ptr<CharacterStateMachine> _machine) { m_machine = _machine; }
@@ -32,9 +32,13 @@ public:
 	virtual void OnStart() = 0;
 	virtual void OnEnd() = 0;
 	virtual void Tick(float _dt) = 0;
+	virtual void CheckState() = 0;
 
 protected:
 	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }
+
+	void DefaultMovement(float _dt);
+	void DefaultCameraRotate(float _dt);
 
 private:
 	std::weak_ptr<CharacterStateMachine> m_machine;
@@ -47,12 +51,7 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
-
-	void CheckState();
-
-private:
-	void InputMovement(float _dt);
-	void InputCamRotate(float _dt);
+	void CheckState() override;
 };
 
 class InAirState : public CharacterState
@@ -61,6 +60,7 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
+	void CheckState() override;
 };
 
 class HangingState : public CharacterState
@@ -69,4 +69,8 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
+	void CheckState() override;
+
+private:
+	void ProcessMovement(float _dt);
 };

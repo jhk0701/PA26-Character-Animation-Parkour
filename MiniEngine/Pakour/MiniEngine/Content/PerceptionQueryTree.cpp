@@ -34,7 +34,7 @@ namespace
 	bool CheckOwnerState(TravelContext& _context, uint8_t _state)
 	{
 		if (std::shared_ptr<Character> pChar = ToChar(_context.m_owner))
-			return pChar->GetCharState() == (Character::EState)_state;
+			return pChar->GetState() == (Character::EState)_state;
 
 		return false;
 	}
