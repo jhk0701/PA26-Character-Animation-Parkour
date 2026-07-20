@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Asset/MiniLoader.h"
 #include "Asset/MiniFormat.h"
 #include "Core/Log.h"
@@ -12,68 +12,9 @@ namespace MiniEngine
 {
     namespace
     {
-        // 단위 큐브(-1..1). 면당 4정점 * 6면 = 24정점, 면별 법선(외향). LH / CW(외부 시점).
-        // 각 면: v0(BL) v1(BR) v2(TR) v3(TL) 순서, 삼각형 (0,2,1) (0,3,2) — CW 외향.
-        struct CubeFace
-        {
-            float normal[3];
-            float corners[4][3];
-        };
+        // SkinnedMesh 직렬화
 
-        const CubeFace kCubeFaces[6] =
-        {
-            // +Z (front)
-            { { 0, 0, 1 },  { { -1, -1, 1 }, { 1, -1, 1 }, { 1, 1, 1 }, { -1, 1, 1 } } },
-            // -Z (back)
-            { { 0, 0, -1 }, { { 1, -1, -1 }, { -1, -1, -1 }, { -1, 1, -1 }, { 1, 1, -1 } } },
-            // +X (right)
-            { { 1, 0, 0 },  { { 1, -1, 1 }, { 1, -1, -1 }, { 1, 1, -1 }, { 1, 1, 1 } } },
-            // -X (left)
-            { { -1, 0, 0 }, { { -1, -1, -1 }, { -1, -1, 1 }, { -1, 1, 1 }, { -1, 1, -1 } } },
-            // +Y (top)
-            { { 0, 1, 0 },  { { -1, 1, 1 }, { 1, 1, 1 }, { 1, 1, -1 }, { -1, 1, -1 } } },
-            // -Y (bottom)
-            { { 0, -1, 0 }, { { -1, -1, -1 }, { 1, -1, -1 }, { 1, -1, 1 }, { -1, -1, 1 } } },
-        };
-
-        const float kCornerUV[4][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-
-        void BuildCube(std::vector<MiniStaticVertex>& _vertices, std::vector<uint32_t>& _indices)
-        {
-            _vertices.clear();
-            _indices.clear();
-            _vertices.reserve(24);
-            _indices.reserve(36);
-
-            for (const CubeFace& face : kCubeFaces)
-            {
-                const uint32_t base = static_cast<uint32_t>(_vertices.size());
-                for (int i = 0; i < 4; ++i)
-                {
-                    MiniStaticVertex v = {};
-                    v.position[0] = face.corners[i][0];
-                    v.position[1] = face.corners[i][1];
-                    v.position[2] = face.corners[i][2];
-                    v.normal[0]   = face.normal[0];
-                    v.normal[1]   = face.normal[1];
-                    v.normal[2]   = face.normal[2];
-                    v.uv[0]       = kCornerUV[i][0];
-                    v.uv[1]       = kCornerUV[i][1];
-                    _vertices.push_back(v);
-                }
-                // 삼각형 (0,2,1) (0,3,2) — CW 외향(LH).
-                _indices.push_back(base + 0);
-                _indices.push_back(base + 2);
-                _indices.push_back(base + 1);
-                _indices.push_back(base + 0);
-                _indices.push_back(base + 3);
-                _indices.push_back(base + 2);
-            }
-        }
-
-        // ---- SkinnedMesh 직렬화 헬퍼 ----
-
-        // SimpleMath Matrix(row-major 저장) ↔ float[16] (레이아웃 동일 — memcpy).
+        // SimpleMath Matrix(row-major 저장) ↔ float[16] 크기 동일
         void MatrixToFloats(const Matrix& _m, float (&_out)[16])
         {
             std::memcpy(_out, &_m, sizeof(float) * 16);
@@ -91,106 +32,17 @@ namespace MiniEngine
             std::memset(_dst, 0, MINI_NAME_LENGTH);
             const size_t len = (_src.size() < MINI_NAME_LENGTH - 1) ? _src.size() : MINI_NAME_LENGTH - 1;
             std::memcpy(_dst, _src.data(), len);
+            
+            if (len < _src.size())
+                MG_LOG_WARN("MiniLoader: 이름이 {}자에서 절단됨 — \"{}\" (앞 {}자가 같은 이름과 충돌 가능)",
+                    MINI_NAME_LENGTH - 1, _src, MINI_NAME_LENGTH - 1);
         }
 
-        // 널 종단 보장 읽기(파일 손상 대비).
+        // 널 종단 보장 읽기
         std::string ReadName(const char (&_src)[MINI_NAME_LENGTH])
         {
             const size_t len = ::strnlen(_src, MINI_NAME_LENGTH);
             return std::string(_src, len);
-        }
-
-        // ---- 절차적 2-본 굴곡 박스 (검증용, Assimp 미사용) ----
-        //
-        // 1×4×1 박스(x,z ∈ [-0.5,0.5], y ∈ [0,4])를 Y축으로 8링 분할.
-        // bone0(root, y=0 바인드 identity) / bone1(자식, y=2 관절).
-        // 정점 가중치 = 높이 선형 블렌드(y=0 → bone0 100%, y=4 → bone1 100%).
-        void BuildSkinnedTestBox(std::vector<MiniSkinnedVertex>& _vertices, std::vector<uint32_t>& _indices)
-        {
-            constexpr float HALF      = 0.5f;
-            constexpr float HEIGHT    = 4.0f;
-            constexpr int   SEGMENTS  = 8;
-            constexpr float SEG_DY    = HEIGHT / SEGMENTS;
-
-            _vertices.clear();
-            _indices.clear();
-
-            // 가중치는 높이 비례 — 하단 bone0, 상단 bone1 로 선형 블렌드.
-            auto pushVertex = [&_vertices, &HEIGHT](float _x, float _y, float _z,
-                                           float _nx, float _ny, float _nz, float _u, float _v)
-            {
-                MiniSkinnedVertex vert = {};
-                vert.position[0] = _x;  vert.position[1] = _y;  vert.position[2] = _z;
-                vert.normal[0]   = _nx; vert.normal[1]   = _ny; vert.normal[2]   = _nz;
-                vert.uv[0] = _u; vert.uv[1] = _v;
-                const float w1 = _y / HEIGHT;
-                vert.boneIndices[0] = 0;
-                vert.boneIndices[1] = 1;
-                vert.boneWeights[0] = 1.0f - w1;
-                vert.boneWeights[1] = w1;
-                _vertices.push_back(vert);
-            };
-
-            // 측면 4면. 각 면은 수평 에지 (b0 → b1) × 세로 링으로 구성 — 큐브와 동일한
-            // CW 외향 와인딩(LH): 세그먼트 쿼드 BL(b0,y0) BR(b1,y0) TR(b1,y1) TL(b0,y1), 삼각형 (0,2,1)(0,3,2).
-            struct SideFace
-            {
-                float normal[3];
-                float b0[2]; // (x, z) — 면 하단 왼쪽 끝
-                float b1[2]; // (x, z) — 면 하단 오른쪽 끝
-            };
-            const SideFace kSides[4] =
-            {
-                { { 0, 0,  1 }, { -HALF,  HALF }, {  HALF,  HALF } }, // +Z
-                { { 0, 0, -1 }, {  HALF, -HALF }, { -HALF, -HALF } }, // -Z
-                { {  1, 0, 0 }, {  HALF,  HALF }, {  HALF, -HALF } }, // +X
-                { { -1, 0, 0 }, { -HALF, -HALF }, { -HALF,  HALF } }, // -X
-            };
-
-            for (const SideFace& side : kSides)
-            {
-                for (int seg = 0; seg < SEGMENTS; ++seg)
-                {
-                    const float y0 = seg * SEG_DY;
-                    const float y1 = y0 + SEG_DY;
-                    const float v0 = static_cast<float>(seg) / SEGMENTS;
-                    const float v1 = static_cast<float>(seg + 1) / SEGMENTS;
-                    const uint32_t base = static_cast<uint32_t>(_vertices.size());
-
-                    pushVertex(side.b0[0], y0, side.b0[1], side.normal[0], side.normal[1], side.normal[2], 0.0f, v0);
-                    pushVertex(side.b1[0], y0, side.b1[1], side.normal[0], side.normal[1], side.normal[2], 1.0f, v0);
-                    pushVertex(side.b1[0], y1, side.b1[1], side.normal[0], side.normal[1], side.normal[2], 1.0f, v1);
-                    pushVertex(side.b0[0], y1, side.b0[1], side.normal[0], side.normal[1], side.normal[2], 0.0f, v1);
-
-                    _indices.push_back(base + 0);
-                    _indices.push_back(base + 2);
-                    _indices.push_back(base + 1);
-                    _indices.push_back(base + 0);
-                    _indices.push_back(base + 3);
-                    _indices.push_back(base + 2);
-                }
-            }
-
-            // 상/하 캡 (큐브 ±Y 면과 동일 와인딩).
-            const uint32_t topBase = static_cast<uint32_t>(_vertices.size());
-            pushVertex(-HALF, HEIGHT,  HALF, 0, 1, 0, 0, 0);
-            pushVertex( HALF, HEIGHT,  HALF, 0, 1, 0, 1, 0);
-            pushVertex( HALF, HEIGHT, -HALF, 0, 1, 0, 1, 1);
-            pushVertex(-HALF, HEIGHT, -HALF, 0, 1, 0, 0, 1);
-            const uint32_t bottomBase = static_cast<uint32_t>(_vertices.size());
-            pushVertex(-HALF, 0.0f, -HALF, 0, -1, 0, 0, 0);
-            pushVertex( HALF, 0.0f, -HALF, 0, -1, 0, 1, 0);
-            pushVertex( HALF, 0.0f,  HALF, 0, -1, 0, 1, 1);
-            pushVertex(-HALF, 0.0f,  HALF, 0, -1, 0, 0, 1);
-            for (uint32_t capBase : { topBase, bottomBase })
-            {
-                _indices.push_back(capBase + 0);
-                _indices.push_back(capBase + 2);
-                _indices.push_back(capBase + 1);
-                _indices.push_back(capBase + 0);
-                _indices.push_back(capBase + 3);
-                _indices.push_back(capBase + 2);
-            }
         }
     }
 
@@ -232,9 +84,9 @@ namespace MiniEngine
         std::vector<MiniStaticVertex> vertices(meshHeader.vertexCount);
         std::vector<uint32_t>         indices(meshHeader.indexCount);
         file.read(reinterpret_cast<char*>(vertices.data()),
-                  static_cast<std::streamsize>(vertices.size() * sizeof(MiniStaticVertex)));
+            static_cast<std::streamsize>(vertices.size() * sizeof(MiniStaticVertex)));
         file.read(reinterpret_cast<char*>(indices.data()),
-                  static_cast<std::streamsize>(indices.size() * sizeof(uint32_t)));
+            static_cast<std::streamsize>(indices.size() * sizeof(uint32_t)));
         if (!file)
         {
             MG_LOG_ERROR("MiniLoader: truncated StaticMesh body");
@@ -244,7 +96,7 @@ namespace MiniEngine
         auto mesh = std::make_shared<StaticMesh>();
         mesh->SetData(std::move(vertices), std::move(indices));
         MG_LOG_INFO("MiniLoader: loaded StaticMesh ({} verts, {} indices)",
-                    meshHeader.vertexCount, meshHeader.indexCount);
+            meshHeader.vertexCount, meshHeader.indexCount);
         return mesh;
     }
 
@@ -272,21 +124,21 @@ namespace MiniEngine
         }
 
         MiniHeader header = {};
-        header.magic     = MINI_MAGIC;
-        header.version   = MINI_VERSION;
+        header.magic = MINI_MAGIC;
+        header.version = MINI_VERSION;
         header.assetType = static_cast<uint32_t>(MiniAssetType::StaticMesh);
-        header.reserved  = 0;
+        header.bakeFlags = 0; // StaticMesh 는 스켈레톤/루트모션이 없어 축 정규화 개념이 없다.
 
         MiniStaticMeshHeader meshHeader = {};
         meshHeader.vertexCount = static_cast<uint32_t>(_vertices.size());
-        meshHeader.indexCount  = static_cast<uint32_t>(_indices.size());
+        meshHeader.indexCount = static_cast<uint32_t>(_indices.size());
 
         file.write(reinterpret_cast<const char*>(&header), sizeof(header));
         file.write(reinterpret_cast<const char*>(&meshHeader), sizeof(meshHeader));
         file.write(reinterpret_cast<const char*>(_vertices.data()),
-                   static_cast<std::streamsize>(_vertices.size() * sizeof(MiniStaticVertex)));
+            static_cast<std::streamsize>(_vertices.size() * sizeof(MiniStaticVertex)));
         file.write(reinterpret_cast<const char*>(_indices.data()),
-                   static_cast<std::streamsize>(_indices.size() * sizeof(uint32_t)));
+            static_cast<std::streamsize>(_indices.size() * sizeof(uint32_t)));
         if (!file)
         {
             MG_LOG_ERROR("MiniLoader: write failed");
@@ -294,16 +146,8 @@ namespace MiniEngine
         }
 
         MG_LOG_INFO("MiniLoader: wrote StaticMesh .mini ({} verts, {} indices)",
-                    meshHeader.vertexCount, meshHeader.indexCount);
+            meshHeader.vertexCount, meshHeader.indexCount);
         return true;
-    }
-
-    bool MiniLoader::WriteCubeMini(const std::wstring& _path)
-    {
-        std::vector<MiniStaticVertex> vertices;
-        std::vector<uint32_t>         indices;
-        BuildCube(vertices, indices);
-        return WriteStaticMesh(_path, vertices, indices);
     }
 
     std::shared_ptr<SkinnedMesh> MiniLoader::LoadSkinnedMesh(const std::wstring& _path)
@@ -345,9 +189,9 @@ namespace MiniEngine
         std::vector<MiniSkinnedVertex> vertices(meshHeader.vertexCount);
         std::vector<uint32_t>          indices(meshHeader.indexCount);
         file.read(reinterpret_cast<char*>(vertices.data()),
-                  static_cast<std::streamsize>(vertices.size() * sizeof(MiniSkinnedVertex)));
+            static_cast<std::streamsize>(vertices.size() * sizeof(MiniSkinnedVertex)));
         file.read(reinterpret_cast<char*>(indices.data()),
-                  static_cast<std::streamsize>(indices.size() * sizeof(uint32_t)));
+            static_cast<std::streamsize>(indices.size() * sizeof(uint32_t)));
         if (!file)
         {
             MG_LOG_ERROR("MiniLoader: truncated SkinnedMesh body");
@@ -367,10 +211,10 @@ namespace MiniEngine
                 return nullptr;
             }
             Bone& bone = skeleton.bones[i];
-            bone.parentIndex     = raw.parentIndex;
-            bone.localBindPose   = FloatsToMatrix(raw.localBindPose);
+            bone.parentIndex = raw.parentIndex;
+            bone.localBindPose = FloatsToMatrix(raw.localBindPose);
             bone.inverseBindPose = FloatsToMatrix(raw.inverseBindPose);
-            bone.name            = ReadName(raw.name);
+            bone.name = ReadName(raw.name);
         }
 
         // 클립.
@@ -386,8 +230,8 @@ namespace MiniEngine
             }
 
             AnimClip& clip = clips[c];
-            clip.name           = ReadName(clipHeader.name);
-            clip.duration       = clipHeader.duration;
+            clip.name = ReadName(clipHeader.name);
+            clip.duration = clipHeader.duration;
             clip.ticksPerSecond = clipHeader.ticksPerSecond;
             clip.channels.resize(clipHeader.channelCount);
 
@@ -411,21 +255,21 @@ namespace MiniEngine
                 {
                     MiniVecKey raw = {};
                     file.read(reinterpret_cast<char*>(&raw), sizeof(raw));
-                    key.time  = raw.time;
+                    key.time = raw.time;
                     key.value = Vector3(raw.v[0], raw.v[1], raw.v[2]);
                 }
                 for (QuatKey& key : channel.rot)
                 {
                     MiniQuatKey raw = {};
                     file.read(reinterpret_cast<char*>(&raw), sizeof(raw));
-                    key.time  = raw.time;
+                    key.time = raw.time;
                     key.value = Quaternion(raw.v[0], raw.v[1], raw.v[2], raw.v[3]);
                 }
                 for (VecKey& key : channel.scale)
                 {
                     MiniVecKey raw = {};
                     file.read(reinterpret_cast<char*>(&raw), sizeof(raw));
-                    key.time  = raw.time;
+                    key.time = raw.time;
                     key.value = Vector3(raw.v[0], raw.v[1], raw.v[2]);
                 }
                 if (!file)
@@ -440,8 +284,12 @@ namespace MiniEngine
         mesh->SetData(std::move(vertices), std::move(indices));
         mesh->SetSkeleton(std::move(skeleton));
         mesh->SetClips(std::move(clips));
+        mesh->SetBakeFlags(header.bakeFlags); // 편집·재저장 라운드트립용(구 파일 = 0).
         MG_LOG_INFO("MiniLoader: loaded SkinnedMesh ({} verts, {} indices, {} bones, {} clips)",
-                    meshHeader.vertexCount, meshHeader.indexCount, meshHeader.boneCount, meshHeader.clipCount);
+            meshHeader.vertexCount, meshHeader.indexCount, meshHeader.boneCount, meshHeader.clipCount);
+        if ((header.bakeFlags & MINI_BAKE_AXIS_NORMALIZED) == 0)
+            MG_LOG_WARN("MiniLoader: SkinnedMesh was baked before axis normalization — root motion may be "
+                "inaccurate (rebake recommended; see docs/UEFN_Bone.md §5.8)");
         return mesh;
     }
 
@@ -449,7 +297,8 @@ namespace MiniEngine
                                       const std::vector<MiniSkinnedVertex>& _vertices,
                                       const std::vector<uint32_t>& _indices,
                                       const Skeleton& _skeleton,
-                                      const std::vector<AnimClip>& _clips)
+                                      const std::vector<AnimClip>& _clips,
+                                      uint32_t _bakeFlags)
     {
         if (_vertices.empty() || _indices.empty() || _skeleton.bones.empty())
         {
@@ -471,23 +320,23 @@ namespace MiniEngine
         }
 
         MiniHeader header = {};
-        header.magic     = MINI_MAGIC;
-        header.version   = MINI_VERSION;
+        header.magic = MINI_MAGIC;
+        header.version = MINI_VERSION;
         header.assetType = static_cast<uint32_t>(MiniAssetType::SkinnedMesh);
-        header.reserved  = 0;
+        header.bakeFlags = _bakeFlags;
 
         MiniSkinnedMeshHeader meshHeader = {};
         meshHeader.vertexCount = static_cast<uint32_t>(_vertices.size());
-        meshHeader.indexCount  = static_cast<uint32_t>(_indices.size());
-        meshHeader.boneCount   = static_cast<uint32_t>(_skeleton.bones.size());
-        meshHeader.clipCount   = static_cast<uint32_t>(_clips.size());
+        meshHeader.indexCount = static_cast<uint32_t>(_indices.size());
+        meshHeader.boneCount = static_cast<uint32_t>(_skeleton.bones.size());
+        meshHeader.clipCount = static_cast<uint32_t>(_clips.size());
 
         file.write(reinterpret_cast<const char*>(&header), sizeof(header));
         file.write(reinterpret_cast<const char*>(&meshHeader), sizeof(meshHeader));
         file.write(reinterpret_cast<const char*>(_vertices.data()),
-                   static_cast<std::streamsize>(_vertices.size() * sizeof(MiniSkinnedVertex)));
+            static_cast<std::streamsize>(_vertices.size() * sizeof(MiniSkinnedVertex)));
         file.write(reinterpret_cast<const char*>(_indices.data()),
-                   static_cast<std::streamsize>(_indices.size() * sizeof(uint32_t)));
+            static_cast<std::streamsize>(_indices.size() * sizeof(uint32_t)));
 
         for (const Bone& bone : _skeleton.bones)
         {
@@ -503,17 +352,17 @@ namespace MiniEngine
         {
             MiniAnimClipHeader clipHeader = {};
             CopyName(clipHeader.name, clip.name);
-            clipHeader.duration       = clip.duration;
+            clipHeader.duration = clip.duration;
             clipHeader.ticksPerSecond = clip.ticksPerSecond;
-            clipHeader.channelCount   = static_cast<uint32_t>(clip.channels.size());
+            clipHeader.channelCount = static_cast<uint32_t>(clip.channels.size());
             file.write(reinterpret_cast<const char*>(&clipHeader), sizeof(clipHeader));
 
             for (const AnimChannel& channel : clip.channels)
             {
                 MiniAnimChannelHeader channelHeader = {};
-                channelHeader.boneIndex     = static_cast<uint32_t>(channel.boneIndex);
-                channelHeader.posKeyCount   = static_cast<uint32_t>(channel.pos.size());
-                channelHeader.rotKeyCount   = static_cast<uint32_t>(channel.rot.size());
+                channelHeader.boneIndex = static_cast<uint32_t>(channel.boneIndex);
+                channelHeader.posKeyCount = static_cast<uint32_t>(channel.pos.size());
+                channelHeader.rotKeyCount = static_cast<uint32_t>(channel.rot.size());
                 channelHeader.scaleKeyCount = static_cast<uint32_t>(channel.scale.size());
                 file.write(reinterpret_cast<const char*>(&channelHeader), sizeof(channelHeader));
 
@@ -542,99 +391,18 @@ namespace MiniEngine
         }
 
         MG_LOG_INFO("MiniLoader: wrote SkinnedMesh .mini ({} verts, {} indices, {} bones, {} clips)",
-                    meshHeader.vertexCount, meshHeader.indexCount, meshHeader.boneCount, meshHeader.clipCount);
+            meshHeader.vertexCount, meshHeader.indexCount, meshHeader.boneCount, meshHeader.clipCount);
         return true;
     }
 
-    bool MiniLoader::WriteSkinnedTest(const std::wstring& _path)
+    bool MiniLoader::PeekHeader(const std::wstring& _path, MiniHeader& _outHeader)
     {
-        std::vector<MiniSkinnedVertex> vertices;
-        std::vector<uint32_t>          indices;
-        BuildSkinnedTestBox(vertices, indices);
-
-        // 스켈레톤: bone0(root, y=0) + bone1(자식, y=2 관절). 바인드는 순수 이동이므로
-        // 글로벌 바인드 역행렬 = 역방향 이동.
-        Skeleton skeleton;
-        skeleton.bones.resize(2);
-        skeleton.bones[0].parentIndex = -1;
-        skeleton.bones[0].name = "root";
-        skeleton.bones[1].parentIndex = 0;
-        skeleton.bones[1].localBindPose = Matrix::CreateTranslation(0.0f, 2.0f, 0.0f);
-        skeleton.bones[1].inverseBindPose = Matrix::CreateTranslation(0.0f, -2.0f, 0.0f);
-        skeleton.bones[1].name = "upper";
-
-        // 클립 = bone1 왕복 회전(0° → +40° → 0° → −40° → 0°, 2초 루프). 축만 다름:
-        // "wave"(Z축) / "twist"(Y축) / "roll"(X축) — 크로스페이드·블렌드 스페이스(1D 3샘플 / 2D 삼각형)
-        // 데모가 시각적으로 구분되도록 3개 수록.
-        const struct { const char* name; Vector3 axis; } kClipDefs[] = {
-            { "wave",  Vector3(0.0f, 0.0f, 1.0f) },
-            { "twist", Vector3(0.0f, 1.0f, 0.0f) },
-            { "roll",  Vector3(1.0f, 0.0f, 0.0f) },
-        };
-
-        std::vector<AnimClip> clips;
-        for (const auto& def : kClipDefs)
-        {
-            AnimClip clip;
-            clip.name = def.name;
-            clip.duration = 2.0f;
-            clip.ticksPerSecond = 1.0f;
-
-            AnimChannel channel;
-            channel.boneIndex = 1;
-            const float kTimes[5] = { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f };
-            const float kAngles[5] = { 0.0f, ToRadians(40.0f), 0.0f, ToRadians(-40.0f), 0.0f };
-            for (int i = 0; i < 5; ++i)
-            {
-                QuatKey key;
-                key.time = kTimes[i];
-                key.value = Quaternion::CreateFromAxisAngle(def.axis, kAngles[i]);
-                channel.rot.push_back(key);
-            }
-            // pos/scale 트랙은 비움 → 바인드 포즈 성분(이동 y=2, 스케일 1) 유지.
-            clip.channels.push_back(std::move(channel));
-            clips.push_back(std::move(clip));
-        }
-
-        // ── 루트 모션 검증 클립 (bone0="root" 에 이동/회전 트랙) ──
-        // 루트 모션을 끄면 앞으로 나아가다 루프 지점에서 원점으로 튕겨 돌아오고(증상 재현),
-        // 켜면 액터가 계속 전진/회전한다. bone1 흔들기를 얹어 재생 중임이 눈에 보이게 한다.
-        {
-            AnimChannel wave; // 상체 흔들기 — 3클립과 동일한 Z축 왕복.
-            wave.boneIndex = 1;
-            const float kTimes[5] = { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f };
-            const float kAngles[5] = { 0.0f, ToRadians(40.0f), 0.0f, ToRadians(-40.0f), 0.0f };
-            for (int i = 0; i < 5; ++i)
-                wave.rot.push_back({ kTimes[i], Quaternion::CreateFromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), kAngles[i]) });
-
-            // "walk_fwd": 2초에 +Z 로 2유닛(루프당 순 변위 2).
-            AnimClip walk;
-            walk.name = "walk_fwd";
-            walk.duration = 2.0f;
-            walk.ticksPerSecond = 1.0f;
-            AnimChannel walkRoot;
-            walkRoot.boneIndex = 0;
-            walkRoot.pos.push_back({ 0.0f, Vector3(0.0f, 0.0f, 0.0f) });
-            walkRoot.pos.push_back({ 2.0f, Vector3(0.0f, 0.0f, 2.0f) });
-            walk.channels.push_back(std::move(walkRoot));
-            walk.channels.push_back(wave);
-            clips.push_back(std::move(walk));
-
-            // "turn_left": 2초에 Y축 +90°(루프당 순 회전 90°).
-            AnimClip turn;
-            turn.name = "turn_left";
-            turn.duration = 2.0f;
-            turn.ticksPerSecond = 1.0f;
-            AnimChannel turnRoot;
-            turnRoot.boneIndex = 0;
-            for (int i = 0; i < 3; ++i)
-                turnRoot.rot.push_back({ i * 1.0f,
-                    Quaternion::CreateFromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), ToRadians(45.0f * i)) });
-            turn.channels.push_back(std::move(turnRoot));
-            turn.channels.push_back(std::move(wave));
-            clips.push_back(std::move(turn));
-        }
-
-        return WriteSkinnedMesh(_path, vertices, indices, skeleton, clips);
+        std::ifstream file(_path, std::ios::binary);
+        if (!file.is_open())
+            return false;
+        file.read(reinterpret_cast<char*>(&_outHeader), sizeof(_outHeader));
+        return static_cast<bool>(file)
+            && _outHeader.magic == MINI_MAGIC
+            && _outHeader.version == MINI_VERSION;
     }
 }

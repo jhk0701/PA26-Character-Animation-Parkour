@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <vector>
 #include <cstdint>
 #include <d3d11.h>
@@ -6,12 +6,11 @@
 #include "Asset/MiniFormat.h"
 #include "Asset/Skeleton.h"
 #include "Asset/AnimClip.h"
+#include "Asset/BoneNaming.h"
 
 namespace MiniEngine
 {
-    // 스키닝 메시 (통합 컨테이너 — 정점/인덱스 + 스켈레톤 + AnimClip).
-    // StaticMesh 와 동형: CPU 데이터 보유 + 요청 시 GPU 버퍼(IMMUTABLE) 생성.
-    // 소유는 AssetManager 캐시(weak) + 사용처(SkeletalMeshComponent, shared).
+    // 스키닝 메시
     class SkinnedMesh
     {
     public:
@@ -20,10 +19,19 @@ namespace MiniEngine
 
         SkinnedMesh() = default;
 
-        // CPU 데이터 설정(로더가 채운다). GPU 리소스 생성 전에 호출.
+        // CPU 데이터 설정. GPU 리소스 생성 전에 호출.
         void SetData(std::vector<Vertex> _vertices, std::vector<uint32_t> _indices);
-        void SetSkeleton(Skeleton _skeleton) { m_skeleton = std::move(_skeleton); }
+        void SetSkeleton(Skeleton _skeleton); // 루트 모션 본 + 휴머노이드 본 확인
         void SetClips(std::vector<AnimClip> _clips) { m_clips = std::move(_clips); }
+
+        // 루트 모션을 방출하는 본("root" 또는 Hips 역할). -1 = 없음(루트 모션 무동작).
+        // SetSkeleton 이 FindRootMotionBone 으로 채우며, 필요 시 호출자가 덮어쓸 수 있다.
+        int  GetRootMotionBone() const { return m_rootMotionBone; }
+        void SetRootMotionBone(int _boneIndex) { m_rootMotionBone = _boneIndex; }
+        const HumanoidBoneMap& GetHumanoidBones() const { return m_humanoidBones; }
+
+        uint32_t GetBakeFlags() const { return m_bakeFlags; }
+        void     SetBakeFlags(uint32_t _flags) { m_bakeFlags = _flags; }
 
         // CPU 데이터로부터 GPU 정점/인덱스 버퍼를 생성. 성공 시 true.
         bool CreateGpuResources(ID3D11Device* _device);
@@ -35,17 +43,20 @@ namespace MiniEngine
         uint32_t      GetVertexStride() const { return static_cast<uint32_t>(sizeof(Vertex)); }
         bool          HasGpuResources() const { return m_vertexBuffer && m_indexBuffer; }
 
-        const std::vector<Vertex>&   GetVertices() const { return m_vertices; }
+        const std::vector<Vertex>& GetVertices() const { return m_vertices; }
         const std::vector<uint32_t>& GetIndices()  const { return m_indices; }
-        const Skeleton&              GetSkeleton() const { return m_skeleton; }
+        const Skeleton& GetSkeleton() const { return m_skeleton; }
         const std::vector<AnimClip>& GetClips()    const { return m_clips; }
-        AnimClip* GetClipPtr(int _idx) { return &m_clips[_idx]; }
+        AnimClip* GetClipPtr(int _idx);
 
     private:
         std::vector<Vertex>   m_vertices;
         std::vector<uint32_t> m_indices;
         Skeleton              m_skeleton;
         std::vector<AnimClip> m_clips;
+        int                   m_rootMotionBone = -1;
+        HumanoidBoneMap       m_humanoidBones;  // SetSkeleton 이 BuildHumanoidBoneMap 으로 채운다.
+        uint32_t              m_bakeFlags = 0;
 
         Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
         Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;

@@ -44,7 +44,7 @@ void Character::Construct()
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
+	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character_test.mini");
 	std::shared_ptr<SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
@@ -63,7 +63,7 @@ void Character::Construct()
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -4.0f);
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
 		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;
@@ -186,6 +186,17 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
 
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreObstacle->SetTime(0.4f);
+		pIgnoreObstacle->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreObstacle);
+
+		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
+		pCollideObstacle->SetTime(0.7f);
+		pCollideObstacle->SetEnable(true);
+		pActionClip->AddNotify(pCollideObstacle);
+
+
 		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; // Mantle_Mid 넘어 오르는 모션
 	}
 	{
@@ -304,6 +315,13 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpFromWall] = pActionClip;
 	}
+	{
+		// 벽에서 매달린 상태에서 점프
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(24)); // Jump From Wall
+
+		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
+	}
 
 	pAnim->SetEnableRootMotion(true);
 
@@ -323,6 +341,7 @@ void Character::BeginPlay()
 {
 	Actor::BeginPlay();
 
+	InitCollisionLayer();
 	InitInput();
 }
 
@@ -366,6 +385,8 @@ void Character::InputMovement(float _dt)
 
 			break;
 		}
+	case EState::InAir: 
+		{ break; }
 	case EState::Landing: __fallthrough;
 	default:
 		{
@@ -392,20 +413,19 @@ void Character::InputCamRotate()
 	Input& input = InputManager::GetInstance()->GetInput();
 
 	// 마우스 델타에 이미 델타타임이 곱해져 있음
-	const Vector2 CamRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
-	m_camRotate.x += CamRotSpeed.x;
-	m_camRotate.y += CamRotSpeed.y;
+	const Vector2 camRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
+	m_camRotate.x += camRotSpeed.x;
+	m_camRotate.y += camRotSpeed.y;
+	m_camRotate.y = std::clamp(m_camRotate.y, 180.0f - m_camPitchMaxDeg, 180.0f + m_camPitchMaxDeg);
 
-	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), m_camRotate.x);
-	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), m_camRotate.y);
+	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(m_camRotate.x));
+	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(m_camRotate.y));
 	qYaw.Normalize();
 	qPitch.Normalize();
 
 	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
 
-	if (m_state == EState::Landing)
-		GetRoot()->localTransform.rotation = qYaw;
-
+	GetRoot()->localTransform.rotation = qYaw;
 	pCamHolderRoot->localTransform.rotation = qPitch;
 }
 
@@ -428,6 +448,7 @@ void Character::ProcessPerceptionResult()
 		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
 		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
+		m_curObstacleLedge = result.m_obstacleLedge;
 	}
 	else
 	{
@@ -490,12 +511,8 @@ std::weak_ptr<Animator> Character::GetAnim() const
 
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
-	GetController().lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
-
-	if (_bEnable)
-		MG_LOG_INFO("[Character] Enable Collision Obstacle");
-	else
-		MG_LOG_INFO("[Character] Disable Collision Obstacle");
+	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
+	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 }
 
 void Character::Jump()
@@ -528,8 +545,15 @@ void Character::SetHangingState(bool _bIsOn)
 	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
 }
 
+void Character::InitCollisionLayer()
+{
+	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
+}
+
 void Character::InitInput()
 {
+	ResetCamRot();
+
 	// 바인딩
 	Input& input = InputManager::GetInstance()->GetInput();
 
@@ -601,28 +625,29 @@ void Character::InitInput()
 			InputJump();
 		});
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]()
-		{ 
-			ProcessPerceptionResult(); 
-		}
+		[this]() { ProcessPerceptionResult();  }
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
+		[this]() { ResetCamRot(); }
+	);
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
 		[this]() 
-		{
-			std::shared_ptr<Physics::PhysicsWorld> pPhy = GetScene()->GetPhysics().lock();
-
+		{ 
 			const Transform& tf = GetRoot()->localTransform;
-			
-			Physics::SpherecastParam param;
-			param.m_startPos = tf.position + Vector3(0.0f, 2.0f, 0.0f);
-			param.m_dir = tf.Forward();
-			param.m_maxDistance = 5.0f;
 
-			Physics::RaycastResult result;
-			if (pPhy->SphereCast(param, result, Physics::ToMask(Physics::Layer::ObstacleLedge)))
-			{
-				MG_LOG_INFO("[Character] :: Check Obstacle Ledge :: Pos {}, {}, {}", result.m_pos.x, result.m_pos.y, result.m_pos.z);
-			}
+			MiniEngine::Physics::SpherecastParam spParam;
+			spParam.m_dir = tf.Forward();
+			spParam.m_startPos = tf.position + Vector3(0.0f, 1.0f, 0.0f) * GetCapsuleHalfHeight();
+			spParam.m_maxDistance = 1.0f;
+			spParam.m_radius = 0.5f;
+			
+			MiniEngine::Physics::RaycastResult spResult;
+			bool isHit = GetScene()->GetPhysics().lock()->SphereCast(spParam, spResult, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::ObstacleLedge));
+
+			if (isHit)
+				MG_LOG_INFO("[Test] : Get Ledge by sphere cast :: {}, {}, {}",
+					spResult.m_pos.x, spResult.m_pos.y, spResult.m_pos.z);
 		}
 	);
 }

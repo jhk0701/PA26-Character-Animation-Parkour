@@ -25,19 +25,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -126,6 +126,7 @@
     <ClInclude Include="Animation\AnimStateMachine.h" />
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimNotify.h" />
+    <ClInclude Include="Asset\BoneNaming.h" />
     <ClInclude Include="Asset\DataAsset.h" />
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\ActionClipContainer.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Content\EnableHangingState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
+    <ClInclude Include="Content\UIDebugConsole.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
@@ -179,6 +181,7 @@
     <ClInclude Include="Asset\MiniLoader.h" />
     <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\AssimpBaker.h" />
+    <ClInclude Include="UI\UIBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation\ActionClip.cpp" />
@@ -187,6 +190,7 @@
     <ClCompile Include="Animation\AnimStateMachine.cpp" />
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimNotify.cpp" />
+    <ClCompile Include="Asset\BoneNaming.cpp" />
     <ClCompile Include="Asset\DataAsset.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\ActionClipContainer.cpp" />
@@ -199,6 +203,7 @@
     <ClCompile Include="Content\EnableHangingState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
+    <ClCompile Include="Content\UIDebugConsole.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
@@ -234,6 +239,7 @@
     <ClCompile Include="Asset\MiniLoader.cpp" />
     <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\AssimpBaker.cpp" />
+    <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Mecro.hlsli" />

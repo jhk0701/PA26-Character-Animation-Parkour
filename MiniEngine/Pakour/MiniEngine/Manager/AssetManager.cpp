@@ -14,6 +14,7 @@ namespace MiniEngine
     {
         m_pDevice = _device;
     };
+
     bool AssetManager::IsValidPath(const std::wstring& _path) const
     {
         std::ifstream probe(_path, std::ios::binary);
@@ -22,9 +23,6 @@ namespace MiniEngine
 
         if (exists)
             return exists;
-
-        if (MiniLoader::WriteCubeMini(_path))
-            return true;
 
         MG_LOG_ERROR("AssetManager: failed to .mini");
         return false;

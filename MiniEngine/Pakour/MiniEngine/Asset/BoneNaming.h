@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 
 namespace MiniEngine
@@ -13,6 +13,8 @@ namespace MiniEngine
         LeftUpperLeg, LeftLowerLeg, LeftFoot, LeftToes,
         RightShoulder, RightUpperArm, RightLowerArm, RightHand, // 우
         RightUpperLeg, RightLowerLeg, RightFoot, RightToes,
+        
+        Count
     };
 
     std::string NormalizeBoneName(std::string _name);
@@ -21,4 +23,19 @@ namespace MiniEngine
     HumanoidBone ResolveHumanoidBone(const std::string& _normalized);
 
     int FindRootMotionBone(const Skeleton& _skeleton);
+
+    struct HumanoidBoneMap
+    {
+        int index[static_cast<size_t>(HumanoidBone::Count)] = {}; // BuildHumanoidBoneMap 이 -1 로 초기화
+        int  Get(HumanoidBone _role) const
+        {
+            if (_role == HumanoidBone::None || _role >= HumanoidBone::Count) return -1;
+            return index[static_cast<size_t>(_role)];
+        }
+        bool Has(HumanoidBone _role) const { return Get(_role) >= 0; }
+    };
+
+    
+    // 리타겟시, 본 구조를 읽고 매핑
+    void BuildHumanoidBoneMap(const Skeleton& _skeleton, HumanoidBoneMap& _out);
 }

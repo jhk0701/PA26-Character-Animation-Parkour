@@ -1,5 +1,6 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Manager/UIManager.h"
+#include "UI/UIBase.h"
 
 #include <imgui.h>
 #include <imgui_impl_win32.h>
@@ -62,6 +63,8 @@ namespace MiniEngine
 		ImGui::DestroyContext();
 
 		m_initialized = false;
+
+		m_uiInsts.clear();
 	}
 
 	void UIManager::BuildUI(Scene& _world, const Matrix& _view, const Matrix& _proj)
@@ -73,7 +76,7 @@ namespace MiniEngine
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		// ImGuizmo::BeginFrame();
-		ImGuiIO& io = ImGui::GetIO();
+		// ImGuiIO& io = ImGui::GetIO();
 
 		// 디버깅용 로그 콘솔
 		//ImGui::Begin("Debug Console");
@@ -86,6 +89,9 @@ namespace MiniEngine
 		if (!m_initialized)
 			return;
 
+		for (std::shared_ptr<UIBase>& ui : m_uiInsts)
+			ui->Render();
+
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
@@ -97,6 +103,5 @@ namespace MiniEngine
 		return ImGui_ImplWin32_WndProcHandler(_hWnd, _msg, _wParam, _lParam);
 	}
 }
-
 
 #endif

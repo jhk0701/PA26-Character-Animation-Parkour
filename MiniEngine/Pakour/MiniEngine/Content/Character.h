@@ -65,12 +65,16 @@ public:
 	
 	Actor* GetCurObstacle() const { return m_pCurObstacle; }
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
+	float GetCurObstacleLedge() const { return m_curObstacleLedge; }
 	Vector3 GetCurObstacleHitPos() const { return m_curObstacleHitPos; }
 
+	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
+
 private:
+	void InitCollisionLayer();
 	void InitInput();
 
-	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 0(1)로 찾을 것
+	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 O(1)로 찾을 것
 	std::unordered_map<uint8_t, std::shared_ptr<ActionClip>> m_mapActions;
 
 	Vector2 m_inputDir;
@@ -79,9 +83,9 @@ private:
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
-	float m_camRotateSpeed{ 0.3f };
+	float m_camRotateSpeed{ 20.0f };
+	float m_camPitchMaxDeg{ 85.0f };
 	Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
-	float m_camMaxPitchDeg{ 85.0f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };
@@ -98,6 +102,7 @@ private:
 	// 정리 필요
 	Actor* m_pCurObstacle{ nullptr };
 	float m_curObstacleDistance{ 0.0f };
+	float m_curObstacleLedge{ 0.0f };
 	Vector3 m_curObstacleHitPos{ 0.0f };
 };
 

@@ -1,18 +1,18 @@
 #pragma once
 #include <cstdint>
 
-// .mini 바이너리 애셋 포맷 정의 (CLAUDE.md §8).
+// .mini 바이너리 애셋 포맷
 //
 // 파일 레이아웃 (리틀엔디안, x64 고정):
 //   [ MiniHeader ]                     // 16바이트 (magic/version/assetType/reserved)
 //   [ 타입별 본문 ]
 //
-// StaticMesh 본문:
+// StaticMesh
 //   [ MiniStaticMeshHeader ]           // 8바이트 (vertexCount/indexCount)
 //   [ MiniStaticVertex   * vertexCount ] // 32바이트 * N (pos3/normal3/uv2)
 //   [ uint32             * indexCount  ] // 4바이트 * M
 //
-// SkinnedMesh 본문 (통합 컨테이너 — 스키닝 메시 + 스켈레톤 + AnimClip 임베드, §8):
+// SkinnedMesh 스키닝 메시 + 스켈레톤 + AnimClip
 //   [ MiniSkinnedMeshHeader ]            // 16바이트 (vertexCount/indexCount/boneCount/clipCount)
 //   [ MiniSkinnedVertex  * vertexCount ] // 64바이트 * N (pos3/normal3/uv2 + boneIndices4/boneWeights4)
 //   [ uint32             * indexCount  ] // 4바이트 * M
@@ -30,43 +30,46 @@
 
 namespace MiniEngine
 {
-    // FourCC 'MINI' (리틀엔디안 파일에서 바이트열 'M','I','N','I' 로 기록됨).
+    // 'MINI' (리틀엔디안 파일에서 바이트열 'M','I','N','I' 로 기록)
     constexpr uint32_t MINI_MAGIC   = 0x494E494D; // 'I''N''I''M' → 파일상 "MINI"
     constexpr uint32_t MINI_VERSION = 1;
 
-    // 애셋 타입 슬롯. SkinnedMesh 는 통합 컨테이너(메시+스켈레톤+클립).
+    // 애셋 타입
+    // SkinnedMesh 는 통합 컨테이너(메시+스켈레톤+클립).
     // Skeleton/AnimClip 단독 파일 슬롯은 추후 분할용으로 보존.
     enum class MiniAssetType : uint32_t
     {
-        Unknown     = 0,
-        StaticMesh  = 1,
-        SkinnedMesh = 2,
-        Skeleton    = 3,
-        AnimClip    = 4,
+        Unknown,
+        StaticMesh,
+        SkinnedMesh,
+        Skeleton,
+        AnimClip,
     };
 
-    // 본/클립 이름의 고정 길이(널 종단 포함).
+    // 본/클립 이름의 고정 길이(널 종단 포함)
     constexpr uint32_t MINI_NAME_LENGTH = 64;
+    constexpr uint32_t MINI_BAKE_AXIS_NORMALIZED = 1u << 0;
 
 #pragma pack(push, 4)
 
-    // 모든 .mini 파일 공통 헤더 (16바이트).
+    // 모든 .mini 파일 공통 헤더 (16바이트)
     struct MiniHeader
     {
         uint32_t magic;     // == MINI_MAGIC
         uint32_t version;   // == MINI_VERSION
         uint32_t assetType; // MiniAssetType 값
-        uint32_t reserved;  // 정렬/미래 확장용 (0)
+        uint32_t bakeFlags; // MINI_BAKE_* 비트 OR (구 파일 = 0). 구: reserved.
     };
 
-    // StaticMesh 본문 헤더 (8바이트).
+    // StaticMesh 본문 헤더 (8바이트)
     struct MiniStaticMeshHeader
     {
         uint32_t vertexCount;
         uint32_t indexCount;
     };
 
-    // StaticMesh 정점 (32바이트). pos/normal/uv.
+    // StaticMesh 정점 (32바이트)
+    // pos/normal/uv.
     struct MiniStaticVertex
     {
         float position[3];
@@ -74,7 +77,7 @@ namespace MiniEngine
         float uv[2];
     };
 
-    // SkinnedMesh 본문 헤더 (16바이트).
+    // SkinnedMesh 본문 헤더 (16바이트)
     struct MiniSkinnedMeshHeader
     {
         uint32_t vertexCount;
@@ -83,7 +86,8 @@ namespace MiniEngine
         uint32_t clipCount;
     };
 
-    // 스키닝 정점 (64바이트). 앞 32바이트는 MiniStaticVertex 와 동일 레이아웃.
+    // 스킨드 버텍스 (64바이트)
+    // 앞 32바이트는 MiniStaticVertex 와 동일 레이아웃.
     struct MiniSkinnedVertex
     {
         float    position[3];
@@ -93,7 +97,8 @@ namespace MiniEngine
         float    boneWeights[4]; // 가중치 4개 (합 = 1.0, 미사용 슬롯은 0)
     };
 
-    // 본 1개 (196바이트). 행렬은 SimpleMath row-major 저장 순서 그대로 16 float.
+    // 본 1개 (196바이트)
+    // 행렬은 SimpleMath row-major 저장 순서 그대로 16 float
     struct MiniBone
     {
         int32_t parentIndex;          // -1 = 루트. 항상 자기 인덱스보다 앞(위상 정렬).

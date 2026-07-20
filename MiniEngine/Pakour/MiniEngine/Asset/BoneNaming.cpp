@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Asset/BoneNaming.h"
 #include "Asset/Skeleton.h"
 #include "Core/Log.h"
@@ -10,6 +10,7 @@ namespace MiniEngine
 {
     namespace
     {
+        // 부속으로 붙은 사이드를 뗀 core 이름 모음
         enum class BoneRole
         {
             None, Hips, Spine, Chest, UpperChest, Neck, Head,
@@ -17,7 +18,7 @@ namespace MiniEngine
             UpperLeg, LowerLeg, Foot, Toes,
         };
 
-        HumanoidBone CombineRoleSide(BoneRole _role, int _side) 
+        HumanoidBone CombineRoleSide(BoneRole _role, int _side) // _side: 0=none 1=left 2=right
         {
             switch (_role)
             {
@@ -56,11 +57,14 @@ namespace MiniEngine
         return _name;
     }
 
+    // 1. 구분자(_/./-)로 분리된 단일 문자 사이드(_l/_r, .l/.r, l_/r_) 및 단어형(left/right) 확인
+    // 2. 구분자 제거해 compact core → 별칭 테이블 exact 조회
     HumanoidBone ResolveHumanoidBone(const std::string& _normalized)
     {
         std::string s = _normalized;
         int side = 0; // 0=none 1=left 2=right
 
+        // 1 구분자로 분리된 단일 문자 사이드 접미/접두.
         if (s.size() >= 2)
         {
             const char sep = s[s.size() - 2];
@@ -77,11 +81,12 @@ namespace MiniEngine
             else if (s[0] == 'r') { side = 2; s.erase(0, 2); }
         }
 
-        // 구분자 제거
+        // 2 구분자 제거 → compact core.
         std::string c;
         for (char ch : s)
             if (ch != '_' && ch != '.' && ch != '-' && ch != ' ') c += ch;
 
+        // 3 단어형 사이드(left/right) 접두/접미.
         if (side == 0)
         {
             if (c.size() >= 4 && c.compare(0, 4, "left") == 0) { side = 1; c.erase(0, 4); }
@@ -90,6 +95,8 @@ namespace MiniEngine
             else if (c.size() >= 5 && c.compare(c.size() - 5, 5, "right") == 0) { side = 2; c.erase(c.size() - 5); }
         }
 
+        // 4 core → 역할. 스파인 체인은 리그마다 인덱싱이 달라 근사 매핑
+        // UE5 Manny/Quinn: spine_01~05·neck_01/02·ball_l/r 커버(neck01/02, spine4/04·5/05, ball 별칭)
         static const std::unordered_map<std::string, BoneRole> table = {
             { "hips", BoneRole::Hips }, { "pelvis", BoneRole::Hips }, { "bip01pelvis", BoneRole::Hips },
             { "spine", BoneRole::Spine },
@@ -129,7 +136,22 @@ namespace MiniEngine
 
         if (hipsIndex < 0)
             MG_LOG_WARN("BoneNaming: root motion bone not found (no \"root\" bone, no Hips role)");
-
         return hipsIndex;
     }
+
+    void BuildHumanoidBoneMap(const Skeleton& _skeleton, HumanoidBoneMap& _out)
+    {
+        for (size_t r = 0; r < static_cast<size_t>(HumanoidBone::Count); ++r)
+            _out.index[r] = -1;
+
+        for (size_t i = 0; i < _skeleton.bones.size(); ++i)
+        {
+            const HumanoidBone role = ResolveHumanoidBone(NormalizeBoneName(_skeleton.bones[i].name));
+            if (role == HumanoidBone::None) continue;
+
+            int& slot = _out.index[static_cast<size_t>(role)];
+            if (slot < 0) slot = static_cast<int>(i); // 첫 등장 유지 — 다대일 매칭의 대표.
+        }
+    }
+
 }

@@ -46,6 +46,7 @@ namespace Content::Config
 		HangingMoveLeft,
 		HangingMoveRight,
 
+		Test,
 		End
 	};
 

@@ -92,6 +92,9 @@
     <Filter Include="Content\03.Object">
       <UniqueIdentifier>{e1cc84c2-5c83-4e2a-a789-0ae45178c24b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\06.UI">
+      <UniqueIdentifier>{6d63e76f-3626-4066-867f-dcef3f4496d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -271,6 +274,15 @@
     <ClInclude Include="Content\Obstacle.h">
       <Filter>Content\03.Object</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\BoneNaming.h">
+      <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIBase.h">
+      <Filter>Engine\08.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\UIDebugConsole.h">
+      <Filter>Content\06.UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -425,6 +437,15 @@
     </ClCompile>
     <ClCompile Include="Content\Obstacle.cpp">
       <Filter>Content\03.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\BoneNaming.cpp">
+      <Filter>Engine\03.Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIBase.cpp">
+      <Filter>Engine\08.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UIDebugConsole.cpp">
+      <Filter>Content\06.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

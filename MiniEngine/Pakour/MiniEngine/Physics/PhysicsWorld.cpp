@@ -327,7 +327,7 @@ namespace MiniEngine::Physics
 			ToPx(_inParam.m_dir),
 			physx::PxReal(_inParam.m_maxDistance),
 			hitBuffer,
-			PxHitFlag::eDEFAULT,
+			PxHitFlag::eDEFAULT | PxHitFlag::eMTD,
 			filter)
 			&& hitBuffer.hasBlock;
 

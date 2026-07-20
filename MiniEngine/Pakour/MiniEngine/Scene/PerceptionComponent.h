@@ -16,8 +16,9 @@ namespace MiniEngine
 		Vector3 m_firstObstacleHitPos;
 		uint8_t m_predictedActTag;
 		uint8_t m_units;
-		float m_distance{ 0.0f };
 		Vector3 m_raycastPos;
+		float m_distance{ 0.0f };
+		float m_ledge{ 0.0f };
 		Physics::RaycastResult m_raycastResult;
 	};
 
@@ -28,6 +29,7 @@ namespace MiniEngine
 		void* m_pFirstObstacle{ nullptr };
 		float m_distanceObstacle{ 0.0f };
 		Vector3 m_firstObstacleHitPos;
+		float m_obstacleLedge{ 0.0f };
 
 		void Reset();
 	};
