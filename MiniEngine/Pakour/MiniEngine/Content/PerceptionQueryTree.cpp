@@ -71,13 +71,13 @@ namespace
 		return bIsHit;
 	}
 
-	bool CapsuleCast(TravelContext& _context, const Vector3& _pos) 
+	bool CapsuleCast(TravelContext& _context, const Vector3& _pos, const Vector3& _dir) 
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 
 		CapsulecastParam capParam;
 		capParam.m_startPos = _pos;
-		capParam.m_dir = pChar->GetRoot()->localTransform.Forward();
+		capParam.m_dir = _dir;
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
 		capParam.m_maxDistance = 1.0f;
@@ -86,15 +86,16 @@ namespace
 		return _context.m_physics->CapsuleCast(capParam, result, ToMask(Layer::Obstacle));
 	}
 
-	bool CheckVaultable(TravelContext& _context, const Vector3& _initPos, const float _unit, uint8_t _maxCnt = 2)
+	bool CheckVaultable(TravelContext& _context, const Vector3& _initPos, const Vector3& _dir, const float _unit, uint8_t _maxCnt = 2)
 	{
 		const Vector3 up = Vector3(0.0f, 1.0f, 0.0f) * _unit;
 		Vector3 rayPosition = _initPos; 
+
 		for (uint8_t i = 0; i < _maxCnt; ++i)
 		{
 			rayPosition += up;
-
-			bool bIsHit = CapsuleCast(_context, rayPosition);
+			
+			bool bIsHit = CapsuleCast(_context, rayPosition, _dir);
 			if (bIsHit)
 			{
 				// MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
@@ -148,6 +149,20 @@ namespace
 		RaycastResult result;
 		return _context.m_physics->Raycast(rayParam, result, _layerMask);
 	}
+
+	// 양쪽 사이드 확인
+	bool CheckHangableOnSide(TravelContext& _context, bool _bIsRight, float _dist)
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		
+		const Transform& tf
+
+		CapsulecastParam param;
+		param.m_dir = _bIsRight ? pChar->GetRoot()->localTransform.Right() : -pChar->GetRoot()->localTransform.Right();
+		param.m_radius = pChar->GetCapsuleRadius();
+		param.m_halfHeight = pChar->GetCapsuleHalfHeight();
+		param.m_startPos = pChar
+	}
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
@@ -164,6 +179,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<SelectorNode> pOnHanging = std::make_shared<SelectorNode>();
 	std::shared_ptr<ConditionNode> pOnHangingClimbable = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pOnHangingLandable = std::make_shared<ConditionNode>();
+	std::shared_ptr<ConditionNode> pOnHangingLeft = std::make_shared<ConditionNode>();
+	std::shared_ptr<ConditionNode> pOnHangingRight = std::make_shared<ConditionNode>();
 
 	// Leaf
 	std::shared_ptr<LeafNode> pEmpty = std::make_shared<LeafNode>(); // 빈 결과 리턴, 탐색 계속 신호
@@ -206,7 +223,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			{
 				// 장애물의 높이 확인
 				const float CHAR_H = GetCharHeight(_ctx);
-				bool bVaultable = CheckVaultable(_ctx, _ctx.m_raycastPos, CHAR_H);
+				const Vector3& FWD = ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward();
+
+				bool bVaultable = CheckVaultable(_ctx, _ctx.m_raycastPos, FWD, CHAR_H);
 
 				if (bVaultable == false)
 				{
@@ -294,8 +313,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			{
 				pOnHangingClimbable,
 				pOnHangingLandable,
-				pEmpty,
-				pEmpty,
+				pOnHangingRight,
+				pOnHangingLeft,
 				pEmpty
 			}
 		);
@@ -344,6 +363,26 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				return bIsHit;
 			},
 			pReturn,
+			pEmpty
+		);
+
+		pOnHangingRight->SetCondition(
+			[](TravelContext& _ctx)
+			{
+
+
+				return true;
+			},
+			pReturn,
+			pEmpty
+		);
+
+		pOnHangingLeft->SetCondition(
+			[](TravelContext& _ctx) 
+			{
+				return true;
+			}, 
+			pReturn, 
 			pEmpty
 		);
 	
