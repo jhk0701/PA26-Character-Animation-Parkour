@@ -28,7 +28,7 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	//MG_LOG_INFO("Correct dist : {}", dist);
 
 	// 캐릭터와 장애물의 적정거리 보정
-	Vector3 obsPos = m_pChar->GetCurObstacleHitPos(); //pCurObs->GetRoot()->localTransform.position;
+	Vector3 obsPos = m_pChar->GetCurObstacleHitPos();
 	Vector3 charPos = m_pChar->GetRoot()->localTransform.position;
 	
 	switch (m_corrextAxis)
@@ -40,15 +40,12 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	case XY:
 		obsPos.z = 0.0f;
 		charPos.z = 0.0f;
-
-		obsPos.y = m_pChar->GetCurObstacleLedge() + 0.5f;
+		obsPos.y = m_pChar->GetCurObstacleLedge();
 		break;
 	case YZ:
 		obsPos.x = 0.0f;
 		charPos.x = 0.0f;
-
-		obsPos.y = m_pChar->GetCurObstacleLedge() + 0.5f;
-
+		obsPos.y = m_pChar->GetCurObstacleLedge();
 		break;
 	case None: __fallthrough;
 	default:
@@ -67,6 +64,13 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
 	if (dist > m_properDistance)
 		correctMovementDt *= _dt * m_deltaIntensity;
+
+	if (m_bLockX)
+		correctMovementDt.x = 0.0;
+	if (m_bLockY)
+		correctMovementDt.y = 0.0;
+	if (m_bLockZ)
+		correctMovementDt.z = 0.0;
 
 	m_pChar->GetController().lock()->AddMovementInput(correctMovementDt);
 }

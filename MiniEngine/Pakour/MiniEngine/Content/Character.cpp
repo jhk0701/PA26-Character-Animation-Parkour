@@ -177,34 +177,38 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
 		
-		// Valut 낮은 모션 적용 
+		// Valut 모두 낮은 모션 적용 
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
 	}
 	{
 		// Mantle Mid
+		// Sprint To Wall Climb
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.4f);
+		pIgnoreObstacle->SetTime(0.15f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
 		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
-		pCollideObstacle->SetTime(0.7f);
+		pCollideObstacle->SetTime(1.2f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.2f, 0.6f);
-		pCorrectRM->SetProperDistance(0.5f);
-		pCorrectRM->SetLerpWeight(0.9f);
-		pCorrectRM->SetDeltaIntensity(50.0f);
+		pCorrectRM->SetProperDistance(2.5f);
+		pCorrectRM->SetLerpWeight(0.5f);
+		pCorrectRM->SetLockAxis(false, false, true);
+		pActionClip->AddNotify(pCorrectRM);
 		
 		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
+		m_mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
 	}
 	{
 		// FallingToLand

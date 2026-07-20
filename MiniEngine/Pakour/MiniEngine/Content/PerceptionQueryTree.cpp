@@ -65,7 +65,7 @@ namespace
 			_context.m_units = 1; // 1 단위 확정
 			_context.m_ledge = result.m_pos.y;
 
-			// MG_LOG_INFO("[QueryTree] : Hit : ({}, {}, {})", _ctx.m_raycastPos.x, _ctx.m_raycastPos.y, _ctx.m_raycastPos.z);
+			MG_LOG_INFO("[QueryTree] Hit Pos : ({}, {}, {})", _context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
 		}
 
 		return bIsHit;
@@ -131,7 +131,7 @@ namespace
 		if (bIsHit)
 		{
 			_context.m_ledge = result.m_pos.y;
-			// MG_LOG_INFO("[QueryTree] Ledge Found : {}", _context.m_ledge);
+			MG_LOG_INFO("[QueryTree] Ledge Found : ({}, {}, {})", result.m_pos.x, result.m_pos.y, result.m_pos.z);
 		}
 
 		return bIsHit;
@@ -206,7 +206,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	);
 		// 평지에 있는데, 장애물을 발견했는지
 		pFindObstacle->SetCondition(
-			[](TravelContext& _ctx) { return CheckObstacle(_ctx); },
+			[](TravelContext& _ctx) 
+			{ 
+				return CheckObstacle(_ctx); 
+			},
 			pCheckHeight,	// 찾은 경우 높이 확인
 			pEmpty			// 찾지 못한 경우 empty return 
 		);
@@ -259,7 +262,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 원래는 여기서 Vault / Hurdle 중에 갈려야함
 					// 모션이 제한적이라 우선 Mantle, Vault를 사용
 					_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ?
-						ETagAct::Mantle : ETagAct::Vault);
+						ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
 
 					if (bIsLandable)
 						MG_LOG_INFO("[QueryTree] Mantle");

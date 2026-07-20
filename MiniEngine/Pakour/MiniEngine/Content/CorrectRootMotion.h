@@ -22,6 +22,13 @@ public:
 	 void SetCorrectAxis(ECorrectAxis _axis) { m_corrextAxis = _axis; }
 	 void SetDeltaIntensity(float _intensity) { m_deltaIntensity = _intensity; }
 
+	 void SetLockAxis(bool _lockX, bool _lockY, bool _lockZ)
+	 {
+		 m_bLockX = _lockX;
+		 m_bLockY = _lockY;
+		 m_bLockZ = _lockZ;
+	 };
+
 private:
 	Character* m_pChar{ nullptr };
 	ECorrectAxis m_corrextAxis{ XZ };
@@ -29,4 +36,7 @@ private:
 	float m_properDistance{ 1.0f };
 	float m_lerpWeight{ 0.5f };
 	float m_deltaIntensity{ 1.0f };
+	bool m_bLockX{ false };
+	bool m_bLockY{ false };
+	bool m_bLockZ{ false };
 };
