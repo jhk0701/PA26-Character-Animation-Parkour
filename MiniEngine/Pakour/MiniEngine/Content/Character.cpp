@@ -196,6 +196,12 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
+		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
+		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
+		pCorrectRM->SetTime(0.2f, 0.6f);
+		pCorrectRM->SetProperDistance(1.5f);
+		pCorrectRM->SetLerpWeight(0.9f);
+		pCorrectRM->SetDeltaIntensity(50.0f);
 
 		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; // Mantle_Mid 넘어 오르는 모션
 	}
@@ -449,6 +455,8 @@ void Character::ProcessPerceptionResult()
 		m_curObstacleHitPos = result.m_firstObstacleHitPos;
 		m_curObstacleDistance = result.m_distanceObstacle;
 		m_curObstacleLedge = result.m_obstacleLedge;
+
+		MG_LOG_WARN("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
 	{
@@ -620,10 +628,7 @@ void Character::InitInput()
 
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
-		[this]()
-		{
-			InputJump();
-		});
+		[this]() { InputJump(); });
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]() { ProcessPerceptionResult();  }
 	);

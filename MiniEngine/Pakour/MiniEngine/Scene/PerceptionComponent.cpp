@@ -23,9 +23,9 @@ namespace MiniEngine
 	{
 		m_condition = _cond;
 
-		m_child.resize(2);
-		m_child[0] = _nodeOnTrue;
-		m_child[1] = _nodeOnFalse;
+		m_children.resize(2);
+		m_children[0] = _nodeOnTrue;
+		m_children[1] = _nodeOnFalse;
 	}
 
 	TravelResult ConditionNode::Execute(TravelContext& _context)
@@ -34,10 +34,30 @@ namespace MiniEngine
 			return TravelResult();
 
 		if (m_condition(_context))
-			return m_child[0]->Execute(_context);
+			return m_children[0]->Execute(_context);
 		else
-			return m_child[1]->Execute(_context);
+			return m_children[1]->Execute(_context);
 	};
+
+	void SelectorNode::SetCondition(
+		std::function<uint8_t(TravelContext&)>&& _cond, 
+		std::vector<std::shared_ptr<QueryNodeBase>>&& _results
+	)
+	{
+		m_condition = _cond;
+		m_children = _results;
+	}
+
+	TravelResult SelectorNode::Execute(TravelContext& _context)
+	{
+		if (!m_condition)
+			return TravelResult();
+
+		uint8_t r = m_condition(_context);
+		assert(r >= m_children.size());
+
+		return m_children[r]->Execute(_context);
+	}
 
 	TravelResult LeafNode::Execute(TravelContext& _context)
 	{

@@ -52,7 +52,20 @@ namespace MiniEngine
 
 	private:
 		std::function<bool(TravelContext&)> m_condition;
-		std::vector<std::shared_ptr<QueryNodeBase>> m_child;
+		std::vector<std::shared_ptr<QueryNodeBase>> m_children;
+	};
+
+	class SelectorNode : public QueryNodeBase 
+	{
+	public:
+		void SetCondition(std::function<uint8_t(TravelContext&)>&& _cond,
+			std::vector<std::shared_ptr<QueryNodeBase>>&& _results);
+
+		TravelResult Execute(TravelContext& _context) override;
+
+	private:
+		std::function<uint8_t(TravelContext&)> m_condition;
+		std::vector<std::shared_ptr<QueryNodeBase>> m_children;
 	};
 
 	class LeafNode : public QueryNodeBase
@@ -65,6 +78,7 @@ namespace MiniEngine
 	private:
 		std::function<TravelResult(TravelContext&)> m_task;
 	};
+
 
 	class PerceptionComponent : public Component
 	{

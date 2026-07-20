@@ -57,7 +57,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		Quaternion identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 		// 1. mantle
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.0f, 3.0f), Vector3(2.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.25f, 3.0f), Vector3(2.5f), identity);
+		
+		// 2. mantle 3.0
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-8.0f, 1.5f, 3.0f), Vector3(3.0f), identity);
 
 		// 2. vault
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f), identity);

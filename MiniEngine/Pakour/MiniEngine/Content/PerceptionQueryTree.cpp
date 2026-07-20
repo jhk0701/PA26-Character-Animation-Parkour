@@ -66,7 +66,19 @@ namespace
 		sphParam.m_maxDistance = 1.0f;
 
 		RaycastResult result;
-		return _context.m_physics->SphereCast(sphParam, result, ToMask(Layer::ObstacleLedge));
+		bool bIsHit = _context.m_physics->SphereCast(sphParam, result, ToMask(Layer::ObstacleLedge));
+
+		MG_LOG_INFO("[QueryTree] Cast Origin : {}, {}, {}", sphParam.m_startPos.x, sphParam.m_startPos.y, sphParam.m_startPos.z);
+
+		if (bIsHit)
+		{
+			_context.m_ledge = result.m_pos.y;
+			MG_LOG_INFO("[QueryTree] Ledge Found : {}", _context.m_ledge);
+		}
+		else
+			_context.m_ledge = _context.m_raycastResult.m_pos.y;
+
+		return bIsHit;
 	}
 
 	bool CheckLandable(TravelContext& _context, uint32_t _layerMask, float _dist)
@@ -154,9 +166,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_firstObstacle = _ctx.m_raycastResult.GetActor();
 					_ctx.m_firstObstacleHitPos = _ctx.m_raycastResult.m_pos;
 					_ctx.m_distance = _ctx.m_raycastResult.m_distance;
-
-					if (CheckClimbableLedge(_ctx, charHalfHeight))
-						_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
 				}
 
 				return bIsHit;
@@ -169,9 +178,14 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pIsClimbableFirst->SetCondition(
 				[this](TravelContext& _ctx)
 				{
+					MG_LOG_INFO("[QueryTree] : Check Climb 1 unit");
+
 					const float charHeight = GetCharHeight(_ctx);
 					if (CheckClimbableByUnit(_ctx, charHeight) == false)
 					{
+						// 벽 모서리 탐지
+						CheckClimbableLedge(_ctx, charHeight);
+
 						// 넘을 수 있었음 -> 1단위 넘을 수 있는 높이
 						// 진행방향으로 1단위만큼 이동
 						_ctx.m_raycastPos += 
@@ -182,12 +196,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 						return true;
 					}
-					else if(CheckClimbableLedge(_ctx, charHeight))
-					{
-						// 닿음 -> 벽 모서리 탐지
-						_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
-					}
-
+					
 					// 1 단위만큼 높여서 테스트했지만 장애물이 닿았음
 					_ctx.m_raycastPos += Vector3(0.0f, 1.0f, 0.0f) * charHeight;
 					_ctx.m_units = 1;
@@ -201,11 +210,15 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				pIsClimbableSecond->SetCondition(
 					[this](TravelContext& _ctx)
 					{
+						MG_LOG_INFO("[QueryTree] : Check Climb 2 unit");
 						const float charHeight = GetCharHeight(_ctx);
 
 						// 첫번째 체크에서 true였다면 +y축으로 m_unit만큼 올려둠
 						if (CheckClimbableByUnit(_ctx, charHeight) == false)
 						{
+							// 벽 모서리 탐지
+							CheckClimbableLedge(_ctx, charHeight);
+
 							// 2단위로 넘을 수 있는 높이
 							_ctx.m_raycastPos += 
 								Vector3(0.0f, 1.0f, 0.0f) * charHeight + 
@@ -214,11 +227,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 							_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
 
 							return true;
-						}
-						else if (CheckClimbableLedge(_ctx, charHeight))
-						{
-							// 닿음 -> 벽 모서리 탐지
-							_ctx.m_ledge = _ctx.m_raycastResult.m_pos.y;
 						}
 
 						_ctx.m_units = 2;
