@@ -40,12 +40,10 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	case XY:
 		obsPos.z = 0.0f;
 		charPos.z = 0.0f;
-		obsPos.y = m_pChar->GetCurObstacleLedge();
 		break;
 	case YZ:
 		obsPos.x = 0.0f;
 		charPos.x = 0.0f;
-		obsPos.y = m_pChar->GetCurObstacleLedge();
 		break;
 	case None: __fallthrough;
 	default:

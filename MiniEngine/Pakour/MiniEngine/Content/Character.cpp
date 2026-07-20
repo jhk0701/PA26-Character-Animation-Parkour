@@ -189,7 +189,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.15f);
+		pIgnoreObstacle->SetTime(0.5f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -201,9 +201,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.2f, 0.6f);
-		pCorrectRM->SetProperDistance(2.5f);
+		pCorrectRM->SetProperDistance(1.0f);
 		pCorrectRM->SetLerpWeight(0.5f);
-		pCorrectRM->SetLockAxis(false, false, true);
 		pActionClip->AddNotify(pCorrectRM);
 		
 		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
@@ -555,6 +554,13 @@ void Character::SetHangingState(bool _bIsOn)
 	pCharCont->SetForceFalling(false);
 
 	GetAnim().lock()->TranstionBaseTrack(static_cast<uint8_t>(m_state), 0.25f);
+}
+
+Vector3 Character::GetCurObstacleHitPos() const
+{
+	Vector3 hitPos = m_curObstacleHitPos;
+	hitPos.y = GetCurObstacleLedge();
+	return hitPos;
 }
 
 void Character::InitCollisionLayer()

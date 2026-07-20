@@ -170,10 +170,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<ConditionNode> pRootQuery = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
 	std::shared_ptr<ConditionNode> pCheckHeight = std::make_shared<ConditionNode>(); // 장애물 높이 확인
-
-	// 레거시
-	std::shared_ptr<ConditionNode> pIsClimbableFirst = std::make_shared<ConditionNode>();	// 장애물을 넘을 수 있는지 1 단위
-	std::shared_ptr<ConditionNode> pIsClimbableSecond = std::make_shared<ConditionNode>();	// 장애물을 넘을 수 있는지 2 단위
 	std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 
 	std::shared_ptr<ConditionNode> pIsHanging = std::make_shared<ConditionNode>();
@@ -248,6 +244,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pObstableIsLandable,
 			pReturn
 		);
+
 			pObstableIsLandable->SetCondition(
 				[](TravelContext& _ctx)
 				{

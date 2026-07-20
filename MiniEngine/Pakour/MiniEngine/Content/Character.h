@@ -66,7 +66,7 @@ public:
 	Actor* GetCurObstacle() const { return m_pCurObstacle; }
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 	float GetCurObstacleLedge() const { return m_curObstacleLedge + m_ledgeOffset; }
-	Vector3 GetCurObstacleHitPos() const { return m_curObstacleHitPos; }
+	Vector3 GetCurObstacleHitPos() const;
 
 	void ResetCamRot() {/* m_camRotate.x = 180.0f; */m_camRotate.y = 180.0f; }
 
