@@ -12,7 +12,9 @@ using namespace MiniEngine;
 
 void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh, 
 	const Vector3& _pos, 
-	const Vector3& _scale)
+	const Vector3& _scale,
+	const Quaternion& _rot,
+	bool _addLedge)
 {
 	if (_pStaticMesh == nullptr)
 		return;
@@ -28,6 +30,7 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	staticMeshComp->SetMesh(_pStaticMesh);
 	staticMeshComp->localTransform.position = _pos;
 	staticMeshComp->localTransform.scale = halfExtent;
+	staticMeshComp->localTransform.rotation = _rot;
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
 
@@ -38,31 +41,36 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.1f, 0.1f);
 	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.1f, 0.1f);
 
+	if (_addLedge == false)
+		return;
+
 	std::shared_ptr<Actor> pSharedThis = shared_from_this();
 	AddLedge(pSharedThis,
 		_pStaticMesh,
 		_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
 		commonLedgeExtentX,
-		Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
 	);
 	AddLedge(pSharedThis,
 		_pStaticMesh,
 		_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
 		commonLedgeExtentX,
-		Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
 	);
 	AddLedge(pSharedThis,
 		_pStaticMesh,
 		_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
 		commonLedgeExtentY,
-		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f)
+		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
 	);
 	AddLedge(pSharedThis,
 		_pStaticMesh,
 		_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
 		commonLedgeExtentY,
-		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f)
+		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
 	);
+
+	
 }
 
 void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget, 
@@ -91,13 +99,15 @@ std::shared_ptr<Actor> ObstacleFactory::Create(
 	std::shared_ptr<Scene> _pScene, 
 	std::shared_ptr<StaticMesh> _pStaticMesh,
 	const Vector3& _pos, 
-	const Vector3& _scale)
+	const Vector3& _scale,
+	const Quaternion& _rot,
+	bool _addLedge)
 {
 	if (_pScene == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Obstacle> pObs = _pScene->SpawnActor<Obstacle>();
-	pObs->Construct(_pStaticMesh, _pos, _scale);
+	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _addLedge);
 
 	return pObs;
 }

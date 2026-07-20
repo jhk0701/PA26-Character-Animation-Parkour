@@ -14,7 +14,9 @@ public:
 	void Construct(
 		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
 		const MiniEngine::Vector3& _pos, 
-		const MiniEngine::Vector3& _scale);
+		const MiniEngine::Vector3& _scale,
+		const MiniEngine::Quaternion& _rot,
+		bool _addLedge);
 
 private:
 	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
@@ -31,5 +33,8 @@ public:
 		std::shared_ptr<MiniEngine::Scene> _pScene, 
 		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
 		const MiniEngine::Vector3& _pos, 
-		const MiniEngine::Vector3& _scale);
+		const MiniEngine::Vector3& _scale,
+		const MiniEngine::Quaternion& _rot,
+		bool _addLedge = true
+	);
 };

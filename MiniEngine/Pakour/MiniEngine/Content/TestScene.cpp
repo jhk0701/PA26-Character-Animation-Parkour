@@ -54,19 +54,51 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	}
 	{
 		std::shared_ptr<Scene> pScene = shared_from_this();
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.0f, 3.0f), Vector3(2.0f));
+		Quaternion identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f));
+		// 1. mantle
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.0f, 3.0f), Vector3(2.0f), identity);
 
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 1.0, 7.5f), Vector3(4.0f, 2.0f, 0.5f));
+		// 2. vault
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f), identity);
 
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f));
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 3.0f, 7.5f), Vector3(4.0f, 1.0f, 0.5f));
+		// 3. mantle -> vault
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 1.0, 7.5f), Vector3(4.0f, 2.0f, 0.5f), identity);
 
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f));
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f));
+		// 4. mantle -> mantle
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 3.0f, 7.5f), Vector3(4.0f, 1.0f, 0.5f), identity);
+
+		// 5. hanging 벽
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f), identity);
+		// 5-1. 벽 - 벽
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(20.0f, 3.5f, 8.0f), Vector3(6.0f, 7.0f, 3.0f), identity);
+		// 5-2. 벽 - 지붕
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(20.0f, 5.0f, 6.0f), Vector3(4.0f, 0.05f, 1.0f), identity);
+
+		// 6. 경사로 + 건물
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.0f, 10.0f), Vector3(5.0f, 1.0f, 10.0f), 
+			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), false);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.5f, 16.5f), Vector3(5.0f), identity);
+		// 철봉 (beam) 벽
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 7.5f, 25.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 7.5f, 25.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
+
+		// beam // 밟는 용도
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 21.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 23.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 25.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 25.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 8.0f, 27.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
+		// celing
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 10.0f, 29.0f), Vector3(4.0f, 0.05f, 4.0f), identity);
+
+		// beam // 잡는 용도
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 34.0f), Vector3(4.0f, 0.1f, 0.1f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 36.0f), Vector3(4.0f, 0.1f, 0.1f), identity);
 	}
 	{
 		// 임시 캐릭터 생성
