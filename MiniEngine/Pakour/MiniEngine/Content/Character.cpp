@@ -373,9 +373,6 @@ void Character::Tick(float _dt)
 	Actor::Tick(_dt);
 
 	// TODO : FSM으로 리팩터링
-	InputCamRotate();
-	// InputMovement(_dt);
-
 	// 판단 절차
 	// 내용 적용은 다음 tick에서 반영
 	CheckCharacterState();
@@ -413,45 +410,11 @@ void Character::InputMovement(float _dt)
 	case EState::Landing: __fallthrough;
 	default:
 		{
-			Vector2 inputDir = m_inputDir;
-			inputDir.Normalize();
-			m_lerpInputDir = Vector2::Lerp(m_lerpInputDir, inputDir, m_lerpWeight * _dt);
-
-			const float deltaSpeed = _dt * m_moveSpeed;
-			std::shared_ptr<SceneComponent> pRoot = GetRoot();
-
-			// 캐릭터 정면 기준 이동
-			const Vector3& fwd = pRoot->localTransform.Forward();
-			const Vector3& rht = pRoot->localTransform.Right();
-			m_charCont.lock()->AddMovementInput(deltaSpeed * m_lerpInputDir.y * fwd + deltaSpeed * -m_lerpInputDir.x * rht);
-
-			GetAnim().lock()->SetBaseTrackInputAxis(m_lerpInputDir);
 			break;
 		}
 	}
 }
 
-void Character::InputCamRotate()
-{
-	// TODO : FSM으로 리팩터링
-	Input& input = InputManager::GetInstance()->GetInput();
-
-	// 마우스 델타에 이미 델타타임이 곱해져 있음
-	const Vector2 camRotSpeed = m_camRotateSpeed * input.GetMouseDelta();
-	m_camRotate.x += camRotSpeed.x;
-	m_camRotate.y += camRotSpeed.y;
-	m_camRotate.y = std::clamp(m_camRotate.y, 180.0f - m_camPitchMaxDeg, 180.0f + m_camPitchMaxDeg);
-
-	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(m_camRotate.x));
-	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(m_camRotate.y));
-	qYaw.Normalize();
-	qPitch.Normalize();
-
-	std::shared_ptr<SceneComponent> pCamHolderRoot = m_cameraHolder.lock();
-
-	GetRoot()->localTransform.rotation = qYaw;
-	pCamHolderRoot->localTransform.rotation = qPitch;
-}
 
 void Character::ProcessPerceptionResult()
 {
@@ -546,6 +509,11 @@ void Character::AddMovementInput(const Vector3& _moveDelta)
 	m_charCont.lock()->AddMovementInput(_moveDelta);
 }
 
+bool Character::IsFalling() const
+{
+	return m_charCont.lock()->IsFalling();
+}
+
 void Character::Jump()
 {
 	m_charCont.lock()->Jump(m_jumpSpeed);
@@ -568,6 +536,11 @@ void Character::InputJump()
 void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
 {
 	GetAnim().lock()->SetBaseTrackInputAxis(_input);
+}
+
+void Character::TranstionBaseTrack(uint8_t _state, float _transitionTime)
+{
+	GetAnim().lock()->TranstionBaseTrack(_state, _transitionTime);
 }
 
 bool Character::IsActionClipPlaying() const

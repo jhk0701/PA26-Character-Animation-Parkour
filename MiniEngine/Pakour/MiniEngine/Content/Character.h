@@ -40,36 +40,47 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
-	void Jump();
-	void InputCamRotate();
 	void InputMovement(float _dt);
 	void CheckCharacterState();
 	void ProcessPerceptionResult();
 
+	void Jump();
 	void InputJump();
 
 	// getter setter
 	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	void SetState(EState _state) { m_state = _state; }
-	void SetAnimBaseTrackInputAxis(const Vector2& _input);
-
-	float GetCapsuleRadius() const { return m_capsuleRadius; }
-	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 	
+	// input 조작
 	float GetMoveSpeed() const { return m_moveSpeed; }
 	Vector2 GetInputDir() const { return m_inputDir; }
 	float GetInputLerpWeight() const { return m_lerpWeight; }
 	Vector2& InputLerp() { return m_lerpInputDir; }
 
+	// 카메라
+	float GetCamRotateSpeed() const { return m_camRotateSpeed; }
+	float GetCamPitchMaxDeg() const { return m_camPitchMaxDeg; }
+	Vector2& CamRotate() { return m_camRotate; }
+	std::weak_ptr<SceneComponent> GetCamHolder() const { return m_cameraHolder; }
+
 	EState GetCharState() const { return m_state; }
+
+	// 애니메이션
+	void SetAnimBaseTrackInputAxis(const Vector2& _input);
+	void TranstionBaseTrack(uint8_t _state, float _transitionTime);
 	bool IsActionClipPlaying() const;
 
+	// Component Getter
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
 
+	// 콜라이더 및 물리
+	float GetCapsuleRadius() const { return m_capsuleRadius; }
+	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 	void SetEnableCollisionObstacle(bool _bEnable);
 	void AddMovementInput(const Vector3& _moveDelta);
+	bool IsFalling() const;
 
 	void SetHangingState(bool _bIsOn);
 	

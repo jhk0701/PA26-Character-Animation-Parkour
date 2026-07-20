@@ -30,8 +30,8 @@ public:
 	void RegisterMachine(std::shared_ptr<CharacterStateMachine> _machine) { m_machine = _machine; }
 
 	virtual void OnStart() = 0;
-	virtual void Tick(float _dt) = 0;
 	virtual void OnEnd() = 0;
+	virtual void Tick(float _dt) = 0;
 
 protected:
 	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }
@@ -45,26 +45,28 @@ class LandingState : public CharacterState
 {
 public:
 	void OnStart() override;
-	void Tick(float _dt) override;
 	void OnEnd() override;
+	void Tick(float _dt) override;
+
+	void CheckState();
 
 private:
 	void InputMovement(float _dt);
 	void InputCamRotate(float _dt);
 };
 
-class HangingState : public CharacterState
-{
-public:
-	void OnStart() override;
-	void Tick(float _dt) override;
-	void OnEnd() override;
-};
-
 class InAirState : public CharacterState
 {
 public:
 	void OnStart() override;
-	void Tick(float _dt) override;
 	void OnEnd() override;
+	void Tick(float _dt) override;
+};
+
+class HangingState : public CharacterState
+{
+public:
+	void OnStart() override;
+	void OnEnd() override;
+	void Tick(float _dt) override;
 };
