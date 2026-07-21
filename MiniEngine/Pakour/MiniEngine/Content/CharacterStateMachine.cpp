@@ -52,9 +52,9 @@ void CharacterState::DefaultMovement(float _dt)
 	std::shared_ptr<SceneComponent> pRoot = pChar->GetRoot();
 
 	// 캐릭터 정면 기준 이동
-	const Vector3& fwd = pRoot->localTransform.Forward();
-	const Vector3& rht = pRoot->localTransform.Right();
-	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * fwd + DELTA_SPD * -inputLerp.x * rht);
+	const Vector3& FWD = pRoot->localTransform.Forward();
+	const Vector3& RHT = pRoot->localTransform.Right();
+	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * FWD + DELTA_SPD * inputLerp.x * RHT);
 
 	pChar->SetAnimBaseTrackInputAxis(inputLerp);
 }

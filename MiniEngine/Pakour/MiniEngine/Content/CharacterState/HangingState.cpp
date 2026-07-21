@@ -70,9 +70,9 @@ void HangingState::ProcessMovement(float _dt)
 		eAct = ETagAct::Wall_HangingMoveUp;
 	else if (INPUT_DIR.y < 0)
 		eAct = ETagAct::Wall_HangingMoveDown;
-	else if (INPUT_DIR.x < 0)
-		eAct = ETagAct::Wall_HangingMoveRight;
 	else if (INPUT_DIR.x > 0)
+		eAct = ETagAct::Wall_HangingMoveRight;
+	else if (INPUT_DIR.x < 0)
 		eAct = ETagAct::Wall_HangingMoveLeft;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))

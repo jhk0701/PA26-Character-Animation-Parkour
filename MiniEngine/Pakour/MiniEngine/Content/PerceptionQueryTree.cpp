@@ -157,6 +157,8 @@ namespace
 		param.m_radius = pChar->GetCapsuleRadius();
 		param.m_halfHeight = pChar->GetCapsuleHalfHeight();
 		
+		MG_LOG_INFO("[QueryTree] Check Side :: is right? {}, ({},{},{})", _bIsRight ? "R" : "L", param.m_dir.x, param.m_dir.y, param.m_dir.z);
+
 		return _context.m_physics->CapsuleCast(param, _outResult, _layerMask);
 	}
 }
@@ -307,6 +309,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					return 2;
 				else if (INPUT_DIR.x < 0)
 					return 3;
+
 				return 4;
 			},
 		{

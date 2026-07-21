@@ -323,11 +323,11 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveDown] = pHangMoveDown;
 
 		std::shared_ptr<ActionClip> pHangMoveRight = std::make_shared<ActionClip>();
-		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(21));
+		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(22));
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveRight] = pHangMoveRight;
 
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
-		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(22));
+		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(21));
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveLeft] = pHangMoveLeft;
 	}
 	{
