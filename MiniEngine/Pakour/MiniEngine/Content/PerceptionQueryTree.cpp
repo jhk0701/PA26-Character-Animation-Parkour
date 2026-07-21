@@ -183,9 +183,10 @@ namespace
 std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 {
 	// Condition
-	// Landing
 	std::shared_ptr<SelectorNode> pRootQuery = std::make_shared<SelectorNode>();
-	std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
+
+	// Landing
+	std::shared_ptr<ConditionNode> pStateLanding = std::make_shared<ConditionNode>(); // 평지상태 : 장애물 찾기
 	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::shared_ptr<SelectorNode>(); // 장애물 태그 확인 // 추후 늘어날 수 있으므로 selector로 적용
 	
 	// Obstacle Default
@@ -196,10 +197,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<ConditionNode> pCompareHeight = std::make_shared<ConditionNode>(); // 캐릭터와 장애물의 y 위치 비교
 
 	// InAir
-	std::shared_ptr<ConditionNode> pIsInAir = std::make_shared<ConditionNode>();
+	std::shared_ptr<ConditionNode> pStateInAir = std::make_shared<ConditionNode>();
 
 	// Hanging
-	std::shared_ptr<SelectorNode> pOnHanging = std::make_shared<SelectorNode>();
+	std::shared_ptr<SelectorNode> pStateHanging = std::make_shared<SelectorNode>();
 	std::shared_ptr<ConditionNode> pOnHangingUp = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pOnHangingUpDetourableObs = std::make_shared<ConditionNode>(); // 천장 우회 가능한지 확인
 	std::shared_ptr<ConditionNode> pOnHangingClimbable = std::make_shared<ConditionNode>();
@@ -240,13 +241,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		},
 		{
 			// 배치 순서는 Character EState 순서대로
-			pFindObstacle,
-			pIsInAir,
-			pOnHanging
+			pStateLanding,
+			pStateInAir,
+			pStateHanging
 		}
 	);
 		// 평지에 있는데, 장애물을 발견했는지
-		pFindObstacle->SetCondition(
+		pStateLanding->SetCondition(
 			[](TravelContext& _ctx) 
 			{ 
 				return CheckObstacle(_ctx, 
@@ -357,7 +358,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			);
 
 	// Hanging State 처리
-	pOnHanging->SetCondition(
+	pStateHanging->SetCondition(
 		[](TravelContext& _ctx) 
 			{
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
@@ -578,9 +579,23 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			);
 
 	
-	pIsInAir->SetCondition(
-		[](TravelContext& _ctx) { return 0; }, 
-		pEmpty, 
+	pStateInAir->SetCondition(
+		[](TravelContext& _ctx) 
+		{ 
+			// 떨어지는 중에 주변 장애물 탐색
+			bool bFindObstacle = CheckObstacle(_ctx,
+				ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward(),
+				MIN_OBSTACLE_DETECT_DIST
+			);
+
+			if (bFindObstacle) 
+			{
+				// TODO : 낙하 상태 종료
+			}
+
+			return bFindObstacle;
+		}, 
+		pCheckObstacleTag,
 		pEmpty
 	);
 
