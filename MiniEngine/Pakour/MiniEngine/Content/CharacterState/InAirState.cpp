@@ -2,6 +2,7 @@
 #include "Content/CharacterState/InAirState.h"
 #include "Content/Character.h"
 #include "Content/ContentConfig.h"
+#include "Core/Log.h"
 
 void InAirState::OnStart() {}
 void InAirState::OnEnd() {}
@@ -24,7 +25,9 @@ void InAirState::CheckState()
 
 	// 공중 -> 착지 모션
 	if (std::shared_ptr<ActionClip> pClip = pChar->GetActions((uint8_t)Content::Config::ETagAct::FallingToLand))
+	{
 		pChar->PlayActionClip(pClip, 0.2f);
+	}
 
 	pChar->SetState(Character::EState::Landing);
 	const uint8_t STATE = (uint8_t)pChar->GetState();

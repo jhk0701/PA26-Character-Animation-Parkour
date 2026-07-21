@@ -158,7 +158,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
 		// 모션 입력 
 		// 블렌드 모션이 생각보다 별로라 루트모션으로 대체
-		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(17)); // Hanging Idle
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 
@@ -275,7 +275,6 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		m_mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
 	}
-
 	{
 		// Falling To Landing
 		// FallingToLand
