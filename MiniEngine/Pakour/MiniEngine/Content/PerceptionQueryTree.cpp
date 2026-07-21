@@ -355,6 +355,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 					// MG_LOG_INFO("[QueryTree] Compare Height:: Char + step : {}, obs hit pos : {} ", CHAR_POS.y + pChar->GetStepThreshold(), OBS_POS.y);
 					// MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
+
 					return bStepable;
 				},
 				pReturn,
@@ -584,16 +585,16 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	pStateInAir->SetCondition(
 		[](TravelContext& _ctx) 
 		{ 
+			std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+
 			// 떨어지는 중에 주변 장애물 탐색
 			bool bFindObstacle = CheckObstacle(_ctx,
-				ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward(),
+				pChar->GetRoot()->localTransform.Forward(),
 				MIN_OBSTACLE_DETECT_DIST
 			);
 
 			if (bFindObstacle) 
-			{
-				// TODO : 낙하 상태 종료
-			}
+				pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // 낙하 상태 강제 종료
 
 			return bFindObstacle;
 		}, 

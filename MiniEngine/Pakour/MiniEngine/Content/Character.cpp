@@ -415,11 +415,36 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::Wall_OuterRotateRight] = pActionClip;
 	}
 	{
+		// A_Jump_One_L
+		// Beam_Step
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
+
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreCollision->SetTime(0.15f);
+		pIgnoreCollision->SetEnable(false);
+		pActionClip->AddNotify(pIgnoreCollision);
+
+		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
+		pEnableCollision->SetTime(0.5f);
+		pEnableCollision->SetEnable(true);
+		pActionClip->AddNotify(pEnableCollision);
+
+		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetProperDistance(1.0f);
+		pCorrectRM->SetLerpWeight(0.65f);
+		pActionClip->AddNotify(pCorrectRM);
+
+
+		m_mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
+	}
+	{
 		// 애니메이션 테스트
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(28));
 
-		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::Test] = pActionClip;
 	}
 
 	pAnim->SetEnableRootMotion(true);
