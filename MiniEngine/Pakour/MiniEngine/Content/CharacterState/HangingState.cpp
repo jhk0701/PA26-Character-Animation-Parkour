@@ -15,6 +15,8 @@ void HangingState::OnStart()
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
 
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+
+	TakeOverCameraRotate(pChar);
 }
 
 void HangingState::OnEnd()
@@ -23,6 +25,8 @@ void HangingState::OnEnd()
 	pChar->SetUseGravity(true); // 매달림 해제
 
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+
+	HandOverCameraRotate(pChar);
 }
 
 void HangingState::Tick(float _dt)
@@ -111,4 +115,25 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 
 	RaycastResult result;
 	return physics->Raycast(param, result, ToMask(Layer::Obstacle));
+}
+
+void HangingState::TakeOverCameraRotate(std::shared_ptr<Character>& _pChar)
+{
+	Vector2& camRot = _pChar->CamRotate();
+	m_prevYaw = camRot.x;
+	camRot.x = 0.0f;
+}
+
+void HangingState::HandOverCameraRotate(std::shared_ptr<Character>& _pChar)
+{
+	Vector2& camRot = _pChar->CamRotate();
+	camRot.x += m_prevYaw;
+
+	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(camRot.x));
+	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(camRot.y));
+	qYaw.Normalize();
+	qPitch.Normalize();
+
+	_pChar->GetRoot()->localTransform.rotation = qYaw;
+	_pChar->GetCamHolder().lock()->localTransform.rotation = qPitch;
 }

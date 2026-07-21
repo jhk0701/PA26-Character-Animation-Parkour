@@ -12,4 +12,8 @@ private:
 	void CameraRotate(float _dt);
 	void ProcessMovement(float _dt);
 	bool CheckEnableToMove(Content::Config::ETagAct _tag);
+
+	void TakeOverCameraRotate(std::shared_ptr<Character>& _pChar);
+	void HandOverCameraRotate(std::shared_ptr<Character>& _pChar);
+	float m_prevYaw{ 0.0f };
 };

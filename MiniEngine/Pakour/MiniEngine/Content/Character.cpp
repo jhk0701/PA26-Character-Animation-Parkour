@@ -501,7 +501,7 @@ void Character::ProcessPerceptionResult()
 	{
 		m_pCurObstacle = nullptr;
 		if (result.m_bIsEmpty == false)
-			MG_LOG_WARN("[Character] Travel Result returned but CurObstacle is null");
+			MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
 	}
 
 	if (pAction)

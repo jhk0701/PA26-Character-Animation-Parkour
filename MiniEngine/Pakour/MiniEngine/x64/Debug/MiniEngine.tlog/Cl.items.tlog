@@ -9,11 +9,16 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Asset\D
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Asset\RootMotion.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\RootMotion.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\ActionClipContainer.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\ActionClipContainer.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\Character.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Character.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\CharacterStateMachine.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\CharacterStateMachine.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\CharacterState\HangingState.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\HangingState.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\CharacterState\InAirState.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\InAirState.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\CharacterState\LandingState.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\LandingState.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\ContentConfig.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\ContentConfig.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\EnableCollisionObstacle.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\EnableCollisionObstacle.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\JumpTiming.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\JumpTiming.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\Obstacle.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\Obstacle.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\PerceptionQueryTree.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\PerceptionQueryTree.obj
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\EnableHangingState.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\EnableHangingState.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\TransitionState.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\TransitionState.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\CorrectRootMotion.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\CorrectRootMotion.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\TestScene.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\TestScene.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\Content\UIDebugConsole.cpp;D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Debug\UIDebugConsole.obj
