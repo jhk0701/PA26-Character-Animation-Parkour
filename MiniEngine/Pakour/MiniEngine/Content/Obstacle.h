@@ -35,6 +35,5 @@ public:
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
-		bool _addLedge = true
-	);
+		bool _addLedge = true);
 };

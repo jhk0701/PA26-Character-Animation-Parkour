@@ -2,7 +2,7 @@
 #include "Manager/SceneManager.h"
 #include "Scene/Scene.h"
 
-// TODO : ÄÜÅÙÃ÷ ÄÚµå. ¿£Áø ÄÚµå¿¡¼­ Áö¿ï °Í
+// TODO : ì½˜í…ì¸  ì½”ë“œ. ì—”ì§„ ì½”ë“œì—ì„œ ì§€ìš¸ ê²ƒ
 #include "Content/TestScene.h"
 
 namespace MiniEngine
@@ -12,7 +12,7 @@ namespace MiniEngine
 
 	void SceneManager::Init(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	{
-		// TODO : Config ÀĞ¾î¿À±â
+		// TODO : Config ì½ì–´ì˜¤ê¸°
 		m_pCurScene = std::make_shared<TestScene>();
 		
 		if (m_pCurScene)

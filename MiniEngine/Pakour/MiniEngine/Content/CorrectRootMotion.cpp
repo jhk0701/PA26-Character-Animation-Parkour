@@ -66,7 +66,7 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	if (m_bLockZ)
 		correctMovementDt.z = 0.0;
 
-	MG_LOG_INFO("[CorrectRootMotion] : ({},{},{})", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
+	// MG_LOG_INFO("[CorrectRootMotion] : ({},{},{})", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
 
 	m_pChar->AddMovementInput(correctMovementDt);
 }

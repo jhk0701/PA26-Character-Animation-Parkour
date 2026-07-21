@@ -38,7 +38,6 @@ namespace Content::Config
 
 		// Wall		벽면 매달리기
 		// Bar		봉 매달리기
-
 		Wall_IdleToHang,		// 매달리기 시작
 		Wall_HangToIdle,		// 매달리기에서 내려옴
 		Wall_HangToMantle,	// 매달린 상태에서 꼭대기에 오름

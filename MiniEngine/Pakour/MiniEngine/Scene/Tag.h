@@ -2,18 +2,15 @@
 
 namespace MiniEngine 
 {
-	// 태그 구성 예시 : Obstacle,Wall,OverHead
 	struct Tag
 	{
 	private:
 		enum 
 		{
-			MAX_LAYER_CNT	= 8,	// 8개로 제한둘 것. 그 이상 계층이 깊어지는거면 구조를 다시 생각해봐야 함. 현재도 3~5까지 예상중
-			// TAG_DIVIDER		= ','	// ','으로 구분
+			MAX_LAYER_CNT	= 8,
 		};
 	public:
 		Tag();
-		// Tag(const std::string& _fullTag); // 문자열 비교보단 int 비교가 더 저렴하므로 변경
 
 		bool Has(const uint8_t _tag) const;
 		bool GetTagAt(const uint8_t _idx, uint8_t& _outTag) const;
