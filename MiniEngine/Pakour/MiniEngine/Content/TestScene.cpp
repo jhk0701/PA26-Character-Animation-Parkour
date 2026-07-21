@@ -91,11 +91,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 7.5f, 25.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
 
 		// beam // 밟는 용도
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 21.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 23.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.5f, 5.0f, 25.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 25.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 8.0f, 27.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 21.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 6.5f, 29.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 8.0f, 31.0f), Vector3(4.0f, 0.5f, 0.5f), identity);
 		// celing
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 10.0f, 29.0f), Vector3(4.0f, 0.05f, 4.0f), identity);
 

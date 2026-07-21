@@ -258,7 +258,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetLerpWeight(0.95f);
 		pActionClip->AddNotify(pCorrectRM);
 
-		m_mapActions[(uint8_t)ETagAct::IdleToHang] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::Wall_IdleToHang] = pActionClip;
 	}
 	{
 		// HangToIdle
@@ -281,7 +281,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
-		m_mapActions[(uint8_t)ETagAct::HangToIdle] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangToIdle] = pActionClip;
 	}
 	{
 		// HangToMantle
@@ -310,25 +310,25 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetProperDistance(0.05f);
 		pActionClip->AddNotify(pCorrectRM);
 
-		m_mapActions[(uint8_t)ETagAct::HangToMantle] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangToMantle] = pActionClip;
 	}
 	{
 		// Hanging 중 이동 모션
 		std::shared_ptr<ActionClip> pHangMoveUp = std::make_shared<ActionClip>();
 		pHangMoveUp->AddClip(skinnedMesh->GetClipPtr(20));
-		m_mapActions[(uint8_t)ETagAct::HangingMoveUp] = pHangMoveUp;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveUp] = pHangMoveUp;
 
 		std::shared_ptr<ActionClip> pHangMoveDown = std::make_shared<ActionClip>();
 		pHangMoveDown->AddClip(skinnedMesh->GetClipPtr(19));
-		m_mapActions[(uint8_t)ETagAct::HangingMoveDown] = pHangMoveDown;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveDown] = pHangMoveDown;
 
 		std::shared_ptr<ActionClip> pHangMoveRight = std::make_shared<ActionClip>();
 		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(21));
-		m_mapActions[(uint8_t)ETagAct::HangingMoveRight] = pHangMoveRight;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveRight] = pHangMoveRight;
 
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(22));
-		m_mapActions[(uint8_t)ETagAct::HangingMoveLeft] = pHangMoveLeft;
+		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveLeft] = pHangMoveLeft;
 	}
 	{
 		// 벽에서 매달린 상태에서 점프
@@ -346,7 +346,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	{
 		// 벽에서 매달린 상태에서 점프
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(24)); // Jump From Wall
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(27)); // Jump From Wall
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
 	}
@@ -576,31 +576,19 @@ void Character::InitInput()
 
 	// 테스트용 점프
 	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
-		[this]() { InputJump(); });
+		[this]() { InputJump(); }
+	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
 		[this]() { ProcessPerceptionResult();  }
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
 		[this]() { ResetCamRot(); }
 	);
-
 	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
 		[this]() 
-		{ 
-			const Transform& tf = GetRoot()->localTransform;
-
-			MiniEngine::Physics::SpherecastParam spParam;
-			spParam.m_dir = tf.Forward();
-			spParam.m_startPos = tf.position + Vector3(0.0f, 1.0f, 0.0f) * GetCapsuleHalfHeight();
-			spParam.m_maxDistance = 1.0f;
-			spParam.m_radius = 0.5f;
-			
-			MiniEngine::Physics::RaycastResult spResult;
-			bool isHit = GetScene()->GetPhysics().lock()->SphereCast(spParam, spResult, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::ObstacleLedge));
-
-			if (isHit)
-				MG_LOG_INFO("[Test] : Get Ledge by sphere cast :: {}, {}, {}",
-					spResult.m_pos.x, spResult.m_pos.y, spResult.m_pos.z);
+		{
+			std::shared_ptr<ActionClip> pTest = GetActions((uint8_t)Content::Config::ETagAct::Test);
+			GetAnim().lock()->PlayActionClip(pTest, 0.2f);
 		}
 	);
 }

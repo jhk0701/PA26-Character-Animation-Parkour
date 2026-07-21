@@ -67,13 +67,13 @@ void HangingState::ProcessMovement(float _dt)
 	// 4 방향 중 하나만 골라야 함
 	ETagAct eAct = ETagAct::End;
 	if (INPUT_DIR.y > 0)
-		eAct = ETagAct::HangingMoveUp;
+		eAct = ETagAct::Wall_HangingMoveUp;
 	else if (INPUT_DIR.y < 0)
-		eAct = ETagAct::HangingMoveDown;
+		eAct = ETagAct::Wall_HangingMoveDown;
 	else if (INPUT_DIR.x < 0)
-		eAct = ETagAct::HangingMoveRight;
+		eAct = ETagAct::Wall_HangingMoveRight;
 	else if (INPUT_DIR.x > 0)
-		eAct = ETagAct::HangingMoveLeft;
+		eAct = ETagAct::Wall_HangingMoveLeft;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
 		pChar->PlayActionClip(pAct, 0.1f);
