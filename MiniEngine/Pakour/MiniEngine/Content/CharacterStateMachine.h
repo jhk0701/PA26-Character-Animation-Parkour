@@ -32,7 +32,7 @@ public:
 	virtual void OnStart() = 0;
 	virtual void OnEnd() = 0;
 	virtual void Tick(float _dt) = 0;
-	virtual void CheckState() = 0;
+	virtual void CheckState() {};
 
 protected:
 	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }

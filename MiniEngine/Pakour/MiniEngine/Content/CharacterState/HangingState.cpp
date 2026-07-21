@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "Content/CharacterState/HangingState.h"
 #include "Content/Character.h"
-#include "Content/ContentConfig.h"
 #include "Platform/Input.h"
 
+#include "Scene/Scene.h"
+#include "Physics/PhysicsWorld.h"
+
 using namespace Content::Config;
+using namespace MiniEngine::Physics;
 
 void HangingState::OnStart()
 {
@@ -26,13 +29,8 @@ void HangingState::Tick(float _dt)
 	ProcessMovement(_dt);
 	CameraRotate(_dt);
 
-	CheckState();
 }
 
-void HangingState::CheckState()
-{
-	// 일차적으로 풀 수 있는 경우
-}
 
 void HangingState::CameraRotate(float _dt)
 {
@@ -75,6 +73,43 @@ void HangingState::ProcessMovement(float _dt)
 	else if (INPUT_DIR.x < 0)
 		eAct = ETagAct::Wall_HangingMoveLeft;
 
+	if (eAct != ETagAct::End && CheckEnableToMove(eAct) == false)
+		return;
+
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
 		pChar->PlayActionClip(pAct, 0.1f);
+}
+
+bool HangingState::CheckEnableToMove(ETagAct _tag)
+{
+	// 진행방향에 레이캐스트
+	// 향하려는 방향에 아무것도 없는 경우 -> 가지 못함
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
+	const Transform& TF = pChar->GetRoot()->localTransform;
+	const float CHECK_DIST = pChar->GetCheckingDistance();
+
+	RaycastParam param;
+	param.m_maxDistance = CHECK_DIST;
+	param.m_dir = TF.Forward();
+	param.m_origin = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
+
+	switch (_tag)
+	{
+	case Content::Config::ETagAct::Wall_HangingMoveUp:
+		param.m_origin += TF.Up() * CHECK_DIST;
+		break;
+	case Content::Config::ETagAct::Wall_HangingMoveDown:
+		param.m_origin += TF.Up() * -CHECK_DIST;
+		break;
+	case Content::Config::ETagAct::Wall_HangingMoveLeft:
+		param.m_origin += TF.Right() * -CHECK_DIST;
+		break;
+	case Content::Config::ETagAct::Wall_HangingMoveRight:
+		param.m_origin += TF.Right() * CHECK_DIST;
+		break;
+	}
+
+	RaycastResult result;
+	return physics->Raycast(param, result, ToMask(Layer::Obstacle));
 }

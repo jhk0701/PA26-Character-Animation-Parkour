@@ -257,7 +257,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(15));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetTime(0.00f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -331,7 +331,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(28)); // 벽에서 올라감
 
 		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
-		pSetIdle->SetTime(0.8f);
+		pSetIdle->SetTime(0.9f);
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
@@ -341,7 +341,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pIgnoreObstacle);
 
 		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
-		pCollideObstacle->SetTime(0.8f);
+		pCollideObstacle->SetTime(0.7f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
@@ -349,7 +349,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetLerpWeight(0.75f);
-		pCorrectRM->SetProperDistance(0.05f);
+		pCorrectRM->SetProperDistance(0.1f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::Wall_HangToMantle] = pActionClip;

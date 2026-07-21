@@ -92,6 +92,7 @@ public:
 	float GetCurObstacleLedge() const { return m_curObstacleLedge + m_ledgeOffset; }
 	Vector3 GetCurObstacleHitPos() const;
 	float GetStepThreshold() const { return m_stepThreshold; }
+	float GetCheckingDistance() const { return m_checkingDistance; }
 
 private:
 	void InitCollisionLayer();
@@ -107,6 +108,7 @@ private:
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 	float m_stepThreshold{ 0.5f };
+	float m_checkingDistance{ 1.5f };
 
 	float m_camRotateSpeed{ 20.0f };
 	float m_camPitchMaxDeg{ 85.0f };
