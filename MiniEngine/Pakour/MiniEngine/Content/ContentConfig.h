@@ -2,14 +2,22 @@
 
 namespace Content::Config 
 {
-	inline constexpr uint8_t TAG_TYPE_ENV		= 0;
-	inline constexpr uint8_t TAG_TYPE_ACT		= 1;
-	inline constexpr uint8_t TAG_TYPE_HEIGHT	= 2;
+	inline constexpr uint8_t TAG_TYPE_ENV			= 0;
+	inline constexpr uint8_t TAG_TYPE_ENV_DETAIL	= 1;
 
 	enum class ETagEnv : uint8_t
 	{
 		Land,
 		Obstacle,
+
+		End
+	};
+
+	enum class ETagEnvDetail : uint8_t 
+	{
+		Default,	// 기본적인 일반지형
+		Bar,		// 봉 같이 얇고 긴 경우
+		FootHold,	// 발판
 
 		End
 	};

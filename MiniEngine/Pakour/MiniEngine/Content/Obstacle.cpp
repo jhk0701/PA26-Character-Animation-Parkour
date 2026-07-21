@@ -14,6 +14,7 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	const Vector3& _pos, 
 	const Vector3& _scale,
 	const Quaternion& _rot,
+	uint8_t _detailTag,
 	bool _addLedge)
 {
 	if (_pStaticMesh == nullptr)
@@ -23,6 +24,7 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 
 	Tag& tag = GetTag();
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
+	tag += _detailTag;
 
 	const Vector3 halfExtent = _scale * 0.5f;
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = AddComponent<StaticMeshComponent>();
@@ -101,13 +103,14 @@ std::shared_ptr<Actor> ObstacleFactory::Create(
 	const Vector3& _pos, 
 	const Vector3& _scale,
 	const Quaternion& _rot,
+	uint8_t _detailTag,
 	bool _addLedge)
 {
 	if (_pScene == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Obstacle> pObs = _pScene->SpawnActor<Obstacle>();
-	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _addLedge);
+	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _detailTag, _addLedge);
 
 	return pObs;
 }

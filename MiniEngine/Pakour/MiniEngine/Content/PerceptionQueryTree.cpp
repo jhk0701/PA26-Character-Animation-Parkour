@@ -355,7 +355,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pOnHangingUpDetourableObs->SetCondition(
 				[](TravelContext& _ctx) 
 				{
-					MG_LOG_INFO("[QueryTree] 우회 체크");
+					// MG_LOG_INFO("[QueryTree] Ceiling is detected. Check detour.");
 
 					// 천장 우회 가능한지
 					// 뒤로 1단위 물러나서 다시 위로 레이캐스트
@@ -366,7 +366,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					bool bIsHit = SphereCast(_ctx, POS, Vector3(0.0f, 1.0f, 0.0f), MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
 					if (bIsHit == false)
 					{
-						MG_LOG_INFO("[QueryTree] 우회 가능");
+						// MG_LOG_INFO("[QueryTree] Can detour");
 						// TODO : 우회 climbing
 						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 					}
