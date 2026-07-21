@@ -341,12 +341,41 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pSetIdle->SetEnable(false);
 		pActionClip->AddNotify(pSetIdle);
 
-		m_mapActions[(uint8_t)Content::Config::ETagAct::JumpFromWall] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::JumpFromWall] = pActionClip;
 	}
 	{
-		// 벽에서 매달린 상태에서 점프
+		// 벽에서 코너 돌기 Inner Left
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(27)); // Jump From Wall
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(24));
+
+		m_mapActions[(uint8_t)ETagAct::Wall_InnerRotateLeft] = pActionClip;
+	}
+	{
+		// 벽에서 코너 돌기 Inner Right
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(25));
+
+		m_mapActions[(uint8_t)ETagAct::Wall_InnerRotateRight] = pActionClip;
+	}
+	{
+		// 벽에서 코너 돌기 Outer Left
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(26));
+
+		m_mapActions[(uint8_t)ETagAct::Wall_OuterRotateLeft] = pActionClip;
+	}
+	{
+		// 벽에서 코너 돌기 Outer Right
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(27));
+
+		m_mapActions[(uint8_t)ETagAct::Wall_OuterRotateRight] = pActionClip;
+	}
+
+	{
+		// 애니메이션 테스트
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(27));
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
 	}
