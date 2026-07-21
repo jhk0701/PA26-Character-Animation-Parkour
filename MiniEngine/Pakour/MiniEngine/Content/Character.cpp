@@ -132,23 +132,25 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	{
 		// Landing
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(9);
+
 		// 모션 입력 
 		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// idle
-		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(6));	// Walking
-		pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(9));	// Walking Backword
-		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(8));	// right strafe
-		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(7));	// left strafe
+		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(5));		// run Fwd
+		pBlend->AddAnimClip({ 0.5, 1 }, skinnedMesh->GetClipPtr(5));	// run Fwd
+		pBlend->AddAnimClip({ -0.5, 1 }, skinnedMesh->GetClipPtr(5));	// run Fwd
+		pBlend->AddAnimClip({ 0, -1 }, skinnedMesh->GetClipPtr(8));		// run Bwd
+		pBlend->AddAnimClip({ 0.5, -1 }, skinnedMesh->GetClipPtr(8));	// run Bwd
+		pBlend->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(8));	// run Bwd
+		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(6));	// left strafe
+		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(7));	// right strafe
+		
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 	{
 		// InAir
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
 		// 모션 입력 
-		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(13));	// Falling Idle
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(10));	// Falling Idle
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 	{
@@ -156,7 +158,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
 		// 모션 입력 
 		// 블렌드 모션이 생각보다 별로라 루트모션으로 대체
-		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(17)); // Hanging Idle
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 
@@ -164,7 +166,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	{
 		// 테스트 Jump
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(10));
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(9));
 		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
 		
 		std::shared_ptr<JumpTiming> pJumpNotify = std::make_shared<JumpTiming>();
@@ -175,8 +177,9 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	}
 	{
 		// Jump Valut
+		// vault low, mid에 사용
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(11)); // Jumping valut
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(12));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreObstacle->SetTime(0.15f);
@@ -199,24 +202,20 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
 		// m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
-
-		// 임시 설정
-		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
 	}
 	{
-		// Mantle Mid
-		// Sprint To Wall Climb
+		// Mantle_A_Jump_L_On
+		// Mantle Low, Mid
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(12)); // Sprint To Wall Climb
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.5f);
+		pIgnoreObstacle->SetTime(0.1f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
 		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
-		pCollideObstacle->SetTime(1.2f);
+		pCollideObstacle->SetTime(0.5f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
@@ -227,25 +226,23 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetLerpWeight(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
 		
-		// m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
-		// m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
-		m_mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
-
-		// 임시 설정
-		// m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
+		// m_mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
 	}
 	{
+		// Falling To Landing
 		// FallingToLand
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(11));
 		pActionClip->SetApplyRootBone(false);
 		m_mapActions[(uint8_t)ETagAct::FallingToLand] = pActionClip;
 	}
 	{
+		// Idle To Braced Hang
 		// IdleToHang
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(15)); // 벽 매달리기 (시작)
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽 매달리기 (시작)
 
 		std::shared_ptr<EnableHangingState> pSetHanging = std::make_shared<EnableHangingState>();
 		pSetHanging->SetTime(0.2f);
@@ -261,6 +258,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::Wall_IdleToHang] = pActionClip;
 	}
 	{
+		// TODO : 넘버 체크
 		// HangToIdle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(17)); // 벽에서 내려옴 (종료)
@@ -284,9 +282,9 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::Wall_HangToIdle] = pActionClip;
 	}
 	{
-		// HangToMantle
+		// A_Ledge_ClimbUp_Monkey_Mantle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽에서 올라감
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(28)); // 벽에서 올라감
 
 		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
 		pSetIdle->SetTime(0.8f);
@@ -294,7 +292,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pSetIdle);
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetTime(0.05f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -305,7 +303,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.0f, 0.4f);
+		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetLerpWeight(0.75f);
 		pCorrectRM->SetProperDistance(0.05f);
 		pActionClip->AddNotify(pCorrectRM);
@@ -313,27 +311,28 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::Wall_HangToMantle] = pActionClip;
 	}
 	{
-		// Hanging 중 이동 모션
+		// Wall_Hanging 중 이동 모션
 		std::shared_ptr<ActionClip> pHangMoveUp = std::make_shared<ActionClip>();
-		pHangMoveUp->AddClip(skinnedMesh->GetClipPtr(20));
+		pHangMoveUp->AddClip(skinnedMesh->GetClipPtr(19));
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveUp] = pHangMoveUp;
 
 		std::shared_ptr<ActionClip> pHangMoveDown = std::make_shared<ActionClip>();
-		pHangMoveDown->AddClip(skinnedMesh->GetClipPtr(19));
+		pHangMoveDown->AddClip(skinnedMesh->GetClipPtr(20));
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveDown] = pHangMoveDown;
-
-		std::shared_ptr<ActionClip> pHangMoveRight = std::make_shared<ActionClip>();
-		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(22));
-		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveRight] = pHangMoveRight;
 
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(21));
 		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveLeft] = pHangMoveLeft;
+
+		std::shared_ptr<ActionClip> pHangMoveRight = std::make_shared<ActionClip>();
+		pHangMoveRight->AddClip(skinnedMesh->GetClipPtr(22));
+		m_mapActions[(uint8_t)ETagAct::Wall_HangingMoveRight] = pHangMoveRight;
 	}
 	{
+		// A_Ledge_Jump180_L
 		// 벽에서 매달린 상태에서 점프
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(23)); // Jump From Wall
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(23));
 
 		// 벽에서 매달렸을 것. 상태 전환
 		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
@@ -371,11 +370,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		m_mapActions[(uint8_t)ETagAct::Wall_OuterRotateRight] = pActionClip;
 	}
-
 	{
 		// 애니메이션 테스트
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(27));
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(28));
 
 		m_mapActions[(uint8_t)Content::Config::ETagAct::Test] = pActionClip;
 	}
