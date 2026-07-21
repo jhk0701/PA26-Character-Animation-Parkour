@@ -348,8 +348,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetLerpWeight(0.75f);
-		pCorrectRM->SetProperDistance(0.1f);
+		pCorrectRM->SetLerpWeight(0.5f);
+		pCorrectRM->SetProperDistance(0.85f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::Wall_HangToMantle] = pActionClip;

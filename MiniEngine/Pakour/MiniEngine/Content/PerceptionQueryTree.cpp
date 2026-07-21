@@ -131,16 +131,15 @@ namespace
 		sphParam.m_startPos = _pos;
 		sphParam.m_dir = _dir; //
 		sphParam.m_radius = _radius;
-		sphParam.m_maxDistance = 1.0f;
+		sphParam.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
-
 		// MG_LOG_INFO("[QueryTree] LedgeFind Cast Origin : ({}, {}, {})", sphParam.m_startPos.x, sphParam.m_startPos.y, sphParam.m_startPos.z);
 
 		if (bIsHit)
 		{
 			_context.m_ledge = _outResult.m_pos.y;
-			MG_LOG_INFO("[QueryTree] Ledge Found : ({}, {}, {})", _outResult.m_pos.x, _outResult.m_pos.y, _outResult.m_pos.z);
+			/// MG_LOG_INFO("[QueryTree] Ledge Found : ({}, {}, {})", _outResult.m_pos.x, _outResult.m_pos.y, _outResult.m_pos.z);
 		}
 
 		return bIsHit;
@@ -415,7 +414,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					if (bIsHit == false)
 					{
 						// MG_LOG_INFO("[QueryTree] Can detour");
-						// TODO : 우회 climbing
 						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 					}
 
@@ -429,14 +427,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[](TravelContext& _ctx) 
 				{
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const float CHAR_H = GetCharHeight(_ctx);
-					const float RADIUS = 0.25f;
-					const Vector3 POS = pChar->GetRoot()->localTransform.position + Vector3(0.0f, CHAR_H * 1.5f, 0.0f);
+					const float CHAR_HALF_H = pChar->GetCapsuleHalfHeight();
+					const Vector3 POS = pChar->GetRoot()->localTransform.position + Vector3(0.0f, CHAR_HALF_H, 0.0f);
 					const Vector3 DIR = pChar->GetRoot()->localTransform.Forward();
 
-					// MG_LOG_INFO("[QueryTree] Check Ledge");
+					// MG_LOG_INFO("[QueryTree] Check Ledge to climbing :: Dir ({}, {}, {})", DIR.x, DIR.y, DIR.z);
 					RaycastResult result;
-					bool bIsHit = CheckLedge(_ctx, POS, DIR, RADIUS, result);
+					bool bIsHit = CheckLedge(_ctx, POS, DIR, CHAR_HALF_H, result);
 					if (bIsHit)
 					{
 						_ctx.m_firstObstacle = result.GetActor();
