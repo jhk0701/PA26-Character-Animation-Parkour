@@ -16,8 +16,7 @@ namespace Content::Config
 	enum class ETagEnvDetail : uint8_t 
 	{
 		Default,	// 기본적인 일반지형
-		Bar,		// 봉 같이 얇고 긴 경우
-		FootHold,	// 발판
+		Beam,		// 발판, 봉과 같이 변의 한쪽이 좁고 긴 경우
 
 		End
 	};
@@ -60,6 +59,15 @@ namespace Content::Config
 		Wall_InnerRotateLeft,	// 270도 단일 벽의 모서리 돌기 왼쪽
 		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
 		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
+
+		Beam_Step,
+		Beam_IdleToHang,
+		Beam_HangToIdle,
+		Beam_HangToJump,
+		Beam_HangingMoveUp,
+		Beam_HangingMoveDown,
+		Beam_HangingMoveLeft,
+		Beam_HangingMoveRight,
 
 		Test,
 		End

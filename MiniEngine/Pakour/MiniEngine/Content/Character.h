@@ -52,7 +52,7 @@ public:
 	// getter setter
 	void SetState(EState _state) { m_state = _state; }
 	EState GetState() const { return m_state; }
-	
+
 	// input 조작
 	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	Vector2 GetInputDir() const { return m_inputDir; }
@@ -91,6 +91,7 @@ public:
 	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
 	float GetCurObstacleLedge() const { return m_curObstacleLedge + m_ledgeOffset; }
 	Vector3 GetCurObstacleHitPos() const;
+	float GetStepThreshold() const { return m_stepThreshold; }
 
 private:
 	void InitCollisionLayer();
@@ -105,6 +106,7 @@ private:
 	float m_lerpWeight{ 5.0f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
+	float m_stepThreshold{ 0.3f };
 
 	float m_camRotateSpeed{ 20.0f };
 	float m_camPitchMaxDeg{ 85.0f };

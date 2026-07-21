@@ -183,13 +183,22 @@ namespace
 std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 {
 	// Condition
+	// Landing
 	std::shared_ptr<SelectorNode> pRootQuery = std::make_shared<SelectorNode>();
 	std::shared_ptr<ConditionNode> pFindObstacle = std::make_shared<ConditionNode>(); // 장애물 찾기
+	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::shared_ptr<SelectorNode>(); // 장애물 태그 확인 // 추후 늘어날 수 있으므로 selector로 적용
+	
+	// Obstacle Default
 	std::shared_ptr<ConditionNode> pCheckHeight = std::make_shared<ConditionNode>(); // 장애물 높이 확인
 	std::shared_ptr<ConditionNode> pObstableIsLandable = std::make_shared<ConditionNode>(); // 장애물을 너머가 평지인지 확인
 
+	// Obstacle Beam
+	std::shared_ptr<ConditionNode> pCompareHeight = std::make_shared<ConditionNode>(); // 캐릭터와 장애물의 y 위치 비교
+
+	// InAir
 	std::shared_ptr<ConditionNode> pIsInAir = std::make_shared<ConditionNode>();
 
+	// Hanging
 	std::shared_ptr<SelectorNode> pOnHanging = std::make_shared<SelectorNode>();
 	std::shared_ptr<ConditionNode> pOnHangingUp = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pOnHangingUpDetourableObs = std::make_shared<ConditionNode>(); // 천장 우회 가능한지 확인
@@ -245,9 +254,26 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					MAX_OBSTACLE_DETECT_DIST
 				); 
 			},
-			pCheckHeight,	// 찾은 경우 높이 확인
+			pCheckObstacleTag,	// 찾은 경우 태그 확인
 			pEmpty			// 찾지 못한 경우 empty return 
 		);
+
+			pCheckObstacleTag->SetCondition(
+				[](TravelContext& _ctx) 
+				{
+					Actor* pObs = reinterpret_cast<Actor*>(_ctx.m_firstObstacle);
+					
+					uint8_t detailTag = 0;
+					pObs->GetTag().GetTagAt(TAG_TYPE_ENV_DETAIL, detailTag);
+
+					return detailTag;
+				}, 
+				{
+					// ETagEnvDetail 순서
+					pCheckHeight,	// Default // 일반 장애물 높이 확인
+					pCompareHeight	// Beam
+				}
+			);
 
 			pCheckHeight->SetCondition(
 				[](TravelContext& _ctx) 
@@ -313,6 +339,22 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					pReturn,
 					pReturn
 				);
+
+			pCompareHeight->SetCondition(
+				[](TravelContext& _ctx) 
+				{
+					// 장애물 y 위치 비교
+					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+
+					bool bStepable = _ctx.m_firstObstacleHitPos.y < (pChar->GetRoot()->localTransform.position.y + pChar->GetStepThreshold());
+					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::Beam_Step : ETagAct::Beam_IdleToHang);
+					_ctx.m_ledge = _ctx.m_firstObstacleHitPos.y;
+
+					return bStepable;
+				},
+				pReturn,
+				pReturn
+			);
 
 	// Hanging State 처리
 	pOnHanging->SetCondition(
@@ -539,7 +581,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	pIsInAir->SetCondition(
 		[](TravelContext& _ctx) { return 0; }, 
 		pEmpty, 
-		pEmpty);
+		pEmpty
+	);
 
 	return pRootQuery;
 }

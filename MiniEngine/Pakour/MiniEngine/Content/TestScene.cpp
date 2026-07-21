@@ -84,26 +84,25 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		// 6. 경사로 + 건물
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.0f, 10.0f), Vector3(5.0f, 1.0f, 10.0f), 
-			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), false);
+			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), 0U, false);
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.5f, 16.5f), Vector3(5.0f), identity);
 		// 벽
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 7.5f, 25.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 7.5f, 25.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
 
 		// Foot Hold // 밟는 용도
-		uint8_t detailTag = (uint8_t)Content::Config::ETagEnvDetail::FootHold;
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 21.0f), Vector3(3.0f, 0.5f, 0.5f), identity, detailTag);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, detailTag);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.0f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity, detailTag);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 6.5f, 29.0f), Vector3(4.0f, 0.5f, 0.5f), identity, detailTag);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 8.0f, 31.0f), Vector3(4.0f, 0.5f, 0.5f), identity, detailTag);
+		const uint8_t DETAIL_TAG = (uint8_t)Content::Config::ETagEnvDetail::Beam;
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.5f, 21.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.5f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-1.1f, 5.5f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 6.5f, 29.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 8.0f, 31.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAG);
 		// celing
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.0f, 10.0f, 29.0f), Vector3(4.0f, 0.05f, 4.0f), identity);
 
 		// Bar // 잡는 용도
-		detailTag = (uint8_t)Content::Config::ETagEnvDetail::Bar;
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 34.0f), Vector3(4.0f, 0.1f, 0.1f), identity, detailTag);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 36.0f), Vector3(4.0f, 0.1f, 0.1f), identity, detailTag);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 34.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(1.5f, 6.5f, 36.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
 	}
 	{
 		// 임시 캐릭터 생성
