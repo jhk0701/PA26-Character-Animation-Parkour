@@ -16,6 +16,7 @@ void HangingState::OnStart()
 
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
 }
+
 void HangingState::OnEnd()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -28,9 +29,7 @@ void HangingState::Tick(float _dt)
 {
 	ProcessMovement(_dt);
 	CameraRotate(_dt);
-
 }
-
 
 void HangingState::CameraRotate(float _dt)
 {

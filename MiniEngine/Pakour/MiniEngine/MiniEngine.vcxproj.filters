@@ -262,7 +262,7 @@
     <ClInclude Include="Content\JumpTiming.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\EnableHangingState.h">
+    <ClInclude Include="Content\TransitionState.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
     <ClInclude Include="Content\CorrectRootMotion.h">
@@ -438,7 +438,7 @@
     <ClCompile Include="Content\JumpTiming.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
-    <ClCompile Include="Content\EnableHangingState.cpp">
+    <ClCompile Include="Content\TransitionState.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
     <ClCompile Include="Content\CorrectRootMotion.cpp">

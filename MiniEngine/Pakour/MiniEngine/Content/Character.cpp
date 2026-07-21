@@ -23,7 +23,7 @@
 
 #include "Content/JumpTiming.h"
 #include "Content/EnableCollisionObstacle.h"
-#include "Content/EnableHangingState.h"
+#include "Content/TransitionState.h"
 #include "Content/CorrectRootMotion.h"
 
 #include "Content/CharacterStateMachine.h"
@@ -289,9 +289,9 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽 매달리기 (시작)
 
-		std::shared_ptr<EnableHangingState> pSetHanging = std::make_shared<EnableHangingState>();
+		std::shared_ptr<TransitionState> pSetHanging = std::make_shared<TransitionState>();
 		pSetHanging->SetTime(0.1f);
-		pSetHanging->SetEnable(true);
+		pSetHanging->SetState((uint8_t)EState::Hanging);
 		pActionClip->AddNotify(pSetHanging);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
@@ -318,10 +318,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
-		pSetIdle->SetTime(0.5f);
-		pSetIdle->SetEnable(false);
-		pActionClip->AddNotify(pSetIdle);
+		std::shared_ptr<TransitionState> pSetLanding = std::make_shared<TransitionState>();
+		pSetLanding->SetTime(0.5f);
+		pSetLanding->SetState((uint8_t)EState::Landing);
+		pActionClip->AddNotify(pSetLanding);
 
 		m_mapActions[(uint8_t)ETagAct::Wall_HangToIdle] = pActionClip;
 	}
@@ -330,10 +330,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(28)); // 벽에서 올라감
 
-		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
-		pSetIdle->SetTime(0.9f);
-		pSetIdle->SetEnable(false);
-		pActionClip->AddNotify(pSetIdle);
+		std::shared_ptr<TransitionState> pSetLanding = std::make_shared<TransitionState>();
+		pSetLanding->SetTime(0.9f);
+		pSetLanding->SetState((uint8_t)EState::Landing);
+		pActionClip->AddNotify(pSetLanding);
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreObstacle->SetTime(0.05f);
@@ -378,11 +378,11 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(23));
 
-		// 벽에서 매달렸을 것. 상태 전환
-		std::shared_ptr<EnableHangingState> pSetIdle = std::make_shared<EnableHangingState>();
-		pSetIdle->SetTime(0.5f);
-		pSetIdle->SetEnable(false);
-		pActionClip->AddNotify(pSetIdle);
+		// 벽에서 매달렸을 것. 상태 전환 -> Jump로 전환이므로 InAir
+		std::shared_ptr<TransitionState> pSetInAir = std::make_shared<TransitionState>();
+		pSetInAir->SetTime(0.3f);
+		pSetInAir->SetState((uint8_t)EState::InAir);
+		pActionClip->AddNotify(pSetInAir);
 
 		m_mapActions[(uint8_t)ETagAct::JumpFromWall] = pActionClip;
 	}
@@ -524,7 +524,6 @@ void Character::Jump()
 
 void Character::InputJump()
 {
-	// TODO : FSM 정리 대상
 	if (m_state == EState::InAir)
 		return;
 	
@@ -532,8 +531,8 @@ void Character::InputJump()
 		(uint8_t)Content::Config::ETagAct::Jump :
 		(uint8_t)Content::Config::ETagAct::JumpFromWall;
 
-	std::shared_ptr<ActionClip> pJump = GetActions(tag);
-	GetAnim().lock()->PlayActionClip(pJump, 0.2f);
+	if (std::shared_ptr<ActionClip> pJump = GetActions(tag))
+		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
 }
 
 void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
