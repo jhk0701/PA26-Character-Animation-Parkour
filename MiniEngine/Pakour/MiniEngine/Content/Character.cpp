@@ -426,16 +426,16 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
-		pEnableCollision->SetTime(0.5f);
+		pEnableCollision->SetTime(0.45f);
 		pEnableCollision->SetEnable(true);
 		pActionClip->AddNotify(pEnableCollision);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetProperDistance(1.0f);
 		pCorrectRM->SetLerpWeight(0.65f);
 		pActionClip->AddNotify(pCorrectRM);
-
 
 		m_mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
 	}
