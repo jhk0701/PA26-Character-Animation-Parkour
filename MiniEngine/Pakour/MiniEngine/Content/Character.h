@@ -106,7 +106,7 @@ private:
 	float m_lerpWeight{ 5.0f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
-	float m_stepThreshold{ 0.3f };
+	float m_stepThreshold{ 0.5f };
 
 	float m_camRotateSpeed{ 20.0f };
 	float m_camPitchMaxDeg{ 85.0f };

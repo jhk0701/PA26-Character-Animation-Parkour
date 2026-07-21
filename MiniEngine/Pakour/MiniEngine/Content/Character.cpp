@@ -428,7 +428,7 @@ void Character::ProcessPerceptionResult()
 		m_curObstacleDistance = result.m_distanceObstacle;
 		m_curObstacleLedge = result.m_obstacleLedge;
 
-		MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
+		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
 	{

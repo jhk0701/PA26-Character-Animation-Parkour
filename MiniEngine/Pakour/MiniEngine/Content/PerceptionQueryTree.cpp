@@ -89,7 +89,7 @@ namespace
 			_context.m_units = 1; // 1 단위 확정
 			_context.m_ledge = result.m_pos.y;
 
-			MG_LOG_INFO("[QueryTree] Hit Pos : ({}, {}, {})", _context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
+			// MG_LOG_INFO("[QueryTree] Hit Pos : ({}, {}, {})", _context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
 		}
 
 		return bIsHit;
@@ -187,7 +187,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 	// Landing
 	std::shared_ptr<ConditionNode> pStateLanding = std::make_shared<ConditionNode>(); // 평지상태 : 장애물 찾기
-	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::shared_ptr<SelectorNode>(); // 장애물 태그 확인 // 추후 늘어날 수 있으므로 selector로 적용
+	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::make_shared<SelectorNode>(); // 장애물 태그 확인 // 추후 늘어날 수 있으므로 selector로 적용
 	
 	// Obstacle Default
 	std::shared_ptr<ConditionNode> pCheckHeight = std::make_shared<ConditionNode>(); // 장애물 높이 확인
@@ -263,7 +263,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[](TravelContext& _ctx) 
 				{
 					Actor* pObs = reinterpret_cast<Actor*>(_ctx.m_firstObstacle);
-					
 					uint8_t detailTag = 0;
 					pObs->GetTag().GetTagAt(TAG_TYPE_ENV_DETAIL, detailTag);
 
@@ -346,11 +345,17 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					// 장애물 y 위치 비교
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+					Actor* pObs = reinterpret_cast<Actor*>(_ctx.m_firstObstacle);
 
-					bool bStepable = _ctx.m_firstObstacleHitPos.y < (pChar->GetRoot()->localTransform.position.y + pChar->GetStepThreshold());
+					const Vector3& CHAR_POS = pChar->GetRoot()->localTransform.position;
+					const Vector3& OBS_POS = pObs->GetRoot()->localTransform.position;
+
+					bool bStepable = OBS_POS.y <= (CHAR_POS.y + pChar->GetStepThreshold());
 					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::Beam_Step : ETagAct::Beam_IdleToHang);
-					_ctx.m_ledge = _ctx.m_firstObstacleHitPos.y;
+					_ctx.m_ledge = OBS_POS.y;
 
+					// MG_LOG_INFO("[QueryTree] Compare Height:: Char + step : {}, obs hit pos : {} ", CHAR_POS.y + pChar->GetStepThreshold(), OBS_POS.y);
+					// MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
 					return bStepable;
 				},
 				pReturn,
