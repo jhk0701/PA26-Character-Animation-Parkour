@@ -80,7 +80,7 @@ namespace
 
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
-		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() - CAPSULE_CONTACT_OFFSET;
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * 2.0f; //- CAPSULE_CONTACT_OFFSET;
 		capParam.m_startPos = GetCharacterCenterPosition(_context) + TF.Forward() * capParam.m_radius * 2.0f;
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
@@ -88,6 +88,7 @@ namespace
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle capsule half height : {}", capParam.m_halfHeight);
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle : ({}, {}, {})", capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z);
 
+		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
 		bool bIsHit = _context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle));
 
@@ -95,13 +96,14 @@ namespace
 			return false;
 
 		// 경사로와 같이, 이미 올라온 장애물이 판정된 경우
-		RaycastParam rayParam;
-		rayParam.m_origin = TF.position;
-		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-		rayParam.m_maxDistance = 0.1f;
+		SpherecastParam spParam;
+		spParam.m_startPos = TF.position;
+		spParam.m_radius = capParam.m_radius;
+		spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+		spParam.m_maxDistance = 0.1f;
 
 		RaycastResult downCheckResult;
-		if (_context.m_physics->Raycast(rayParam, downCheckResult, ToMask(Layer::Obstacle))) 
+		if (_context.m_physics->SphereCast(spParam, downCheckResult, ToMask(Layer::Obstacle)))
 		{
 			// 바로 밑에 장애물이 있음
 			bool m_bIsEmpty = true;
