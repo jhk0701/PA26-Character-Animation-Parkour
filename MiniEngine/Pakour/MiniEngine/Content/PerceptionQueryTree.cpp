@@ -88,8 +88,8 @@ namespace
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle capsule half height : {}", capParam.m_halfHeight);
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle : ({}, {}, {})", capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z);
 
-		RaycastResult result;
-		bool bIsHit = _context.m_physics->CapsuleCast(capParam, result, ToMask(Layer::Obstacle));
+		RaycastMultipleResult hits;
+		bool bIsHit = _context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle));
 
 		if (bIsHit == false)
 			return false;
@@ -103,19 +103,42 @@ namespace
 		RaycastResult downCheckResult;
 		if (_context.m_physics->Raycast(rayParam, downCheckResult, ToMask(Layer::Obstacle))) 
 		{
-			if (result.GetActor() == downCheckResult.GetActor())
-				return false;
-		}
-		
-		_context.m_raycastPos = result.m_pos;
-		_context.m_firstObstacle = result.GetActor();
-		_context.m_firstObstacleHitPos = result.m_pos;
-		_context.m_distance = result.m_distance;
-		_context.m_units = 1; // 1 단위 확정
+			// 바로 밑에 장애물이 있음
+			bool m_bIsEmpty = true;
+			for (size_t i = 0; i < hits.m_hitResults.size(); ++i)
+			{
+				if (hits.m_hitResults[i].GetActor() == downCheckResult.GetActor())
+					continue; // 바닥에 접촉한 장애물이 파악한 장애물과 같음
 
-		// 기본값으로 장애물의 y값 지정
-		// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
-		_context.m_ledge = result.m_pos.y;
+				// 아예 다른 별개의 장애물 식별
+				m_bIsEmpty = false;
+				const HitResult& r = hits.m_hitResults[i];
+
+				_context.m_raycastPos = r.m_pos;
+				_context.m_firstObstacle = r.GetActor();
+				_context.m_firstObstacleHitPos = r.m_pos;
+				_context.m_ledge = r.m_pos.y;
+				_context.m_distance = r.m_distance;
+				_context.m_units = 1;
+
+				break; // 순회 종료
+			}
+
+			if (m_bIsEmpty) 
+				return false; // 만약 겹친 장애물 외에 없는 경우 -> 장애물을 찾지 못한 것
+		}
+		else 
+		{
+			// 바닥이 있지도 않은 상태에서 장애물을 확인
+			const HitResult& r = hits.m_hitResults.front();
+
+			_context.m_raycastPos = r.m_pos;
+			_context.m_firstObstacle = r.GetActor();
+			_context.m_firstObstacleHitPos = r.m_pos;
+			_context.m_distance = r.m_distance;
+			_context.m_ledge = r.m_pos.y;
+			_context.m_units = 1; // 1 단위 확정
+		}
 
 		return bIsHit;
 	}

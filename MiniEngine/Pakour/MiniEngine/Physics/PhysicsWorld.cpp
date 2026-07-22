@@ -386,7 +386,8 @@ namespace MiniEngine::Physics
 		);
 		PxTransform pose(ToPx(_inParam.m_startPos), ToPx(_inParam.m_startRot));
 		
-		PxSweepBufferN<10> hitBuffer;
+		PxSweepBufferN<10> hitBuffer; // 최대 10개 탐지
+
 		bool bIsHit = m_scene->sweep(
 			_inGeo,
 			pose,
@@ -394,24 +395,20 @@ namespace MiniEngine::Physics
 			physx::PxReal(_inParam.m_maxDistance),
 			hitBuffer,
 			PxHitFlag::eDEFAULT | PxHitFlag::eMTD,
-			filter)
-			&& hitBuffer.hasBlock;
-
-		_outResult.m_bIsHit = bIsHit;
-		if (bIsHit == false)
-			return bIsHit;
+			filter);
 
 		PxU32 touchCnt = hitBuffer.getNbTouches();
-		if (touchCnt > 0) 
+		if (touchCnt > 0)
 		{
+			_outResult.m_bIsHit = true;
 			std::vector<const PxSweepHit*> sortedHits;
 			sortedHits.reserve(touchCnt);
 
 			for (PxU32 i = 0; i < touchCnt; ++i)
 				sortedHits.push_back(&hitBuffer.getTouch(i));
 
-			std::sort(sortedHits.begin(), sortedHits.end(), 
-				[](const PxSweepHit* _a, const PxSweepHit* _b) 
+			std::sort(sortedHits.begin(), sortedHits.end(),
+				[](const PxSweepHit* _a, const PxSweepHit* _b)
 				{
 					return _a->distance < _b->distance;
 				}
@@ -428,9 +425,11 @@ namespace MiniEngine::Physics
 				_outResult.m_hitResults[i].m_hitShape = block.shape;
 			}
 		}
+		else
+			return false;
 
 		// RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
-		return bIsHit;
+		return _outResult.m_bIsHit;
 	}
 	
 	namespace
