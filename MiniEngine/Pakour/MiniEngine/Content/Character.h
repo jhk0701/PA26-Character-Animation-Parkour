@@ -26,7 +26,8 @@ public:
 		Landing,
 		InAir,
 		Hanging,
-		Beam,
+		BeamStand,
+		BeamHanging,
 
 		End
 	};
@@ -41,7 +42,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
 
-	void ProcessPerceptionResult();
+	void TryPerception();
+	void ProcessPerceptionResult(const TravelResult& _result);
 
 	void Jump();
 	void InputJump();

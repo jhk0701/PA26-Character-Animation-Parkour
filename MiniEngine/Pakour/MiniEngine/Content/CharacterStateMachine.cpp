@@ -30,6 +30,12 @@ void CharacterStateMachine::Transition(uint8_t _nextID)
 	m_states[m_curState]->OnStart();
 }
 
+void CharacterStateMachine::ProcessPerceptionResult(const TravelResult& _result)
+{
+	assert(m_curState < m_states.size());
+	m_states[m_curState]->ProcessPerceptionResult(_result);
+}
+
 std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 {
 	return std::dynamic_pointer_cast<Character>(owner.lock());

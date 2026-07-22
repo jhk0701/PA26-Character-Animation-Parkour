@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "Scene/Component.h"
+#include "Scene/PerceptionComponent.h"
 
 class Character;
 class CharacterState;
@@ -13,6 +14,7 @@ public:
 
 	void RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states);
 	void Transition(uint8_t _nextID);
+	void ProcessPerceptionResult(const TravelResult& _result);
 
 	std::shared_ptr<Character> GetCharacter();
 
@@ -33,6 +35,7 @@ public:
 	virtual void OnEnd() = 0;
 	virtual void Tick(float _dt) = 0;
 	virtual void CheckState() {};
+	virtual void ProcessPerceptionResult(const TravelResult& _result) {};
 
 protected:
 	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }

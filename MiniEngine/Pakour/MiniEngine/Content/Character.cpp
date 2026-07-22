@@ -30,7 +30,8 @@
 #include "Content/CharacterState/LandingState.h"
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
-#include "Content/CharacterState/BeamState.h"
+#include "Content/CharacterState/BeamStandState.h"
+#include "Content/CharacterState/BeamHangingState.h"
 
 using namespace Content::Config;
 
@@ -104,7 +105,8 @@ void Character::Construct()
 				std::make_shared<LandingState>(),
 				std::make_shared<InAirState>(),
 				std::make_shared<HangingState>(),
-				std::make_shared<BeamState>()
+				std::make_shared<BeamStandState>(),
+				std::make_shared<BeamHangingState>()
 			});
 		m_charFSM = pCharFSM;
 	}
@@ -161,6 +163,22 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// 모션 입력 
 		// 블렌드 모션이 생각보다 별로라 루트모션으로 대체
 		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(18)); // Hanging Idle
+		pAnim->AddBaseLocomotion(pBlend);
+	}
+	{
+		// Beam Stand
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
+		// 모션 입력 
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// TODO : 애니메이션 적절한 것으로 교체하기
+
+		pAnim->AddBaseLocomotion(pBlend);
+	}
+	{
+		// Beam Hanging
+		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
+		// 모션 입력 
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(32)); // A_Hanging_Idle
+
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 
@@ -475,7 +493,7 @@ void Character::Tick(float _dt)
 	Actor::Tick(_dt);
 }
 
-void Character::ProcessPerceptionResult()
+void Character::TryPerception()
 {
 	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
 		return; // 이미 행동 중이라면 탐색하지 않도록
@@ -487,25 +505,26 @@ void Character::ProcessPerceptionResult()
 	if (result.m_bIsEmpty) // 빈 결과는 리턴
 		return;
 
-	std::shared_ptr<ActionClip> pAction = GetActions(result.m_actTag);
-	
-	if (result.m_pFirstObstacle)
-	{
-		m_pCurObstacle = reinterpret_cast<Actor*>(result.m_pFirstObstacle);
-		m_curObstacleHitPos = result.m_firstObstacleHitPos;
-		m_curObstacleDistance = result.m_distanceObstacle;
-		m_curObstacleLedge = result.m_obstacleLedge;
+	ProcessPerceptionResult(result);
+}
 
+void Character::ProcessPerceptionResult(const TravelResult& _result)
+{
+	if (_result.m_pFirstObstacle)
+	{
+		m_pCurObstacle = reinterpret_cast<Actor*>(_result.m_pFirstObstacle);
+		m_curObstacleHitPos = _result.m_firstObstacleHitPos;
+		m_curObstacleDistance = _result.m_distanceObstacle;
+		m_curObstacleLedge = _result.m_obstacleLedge;
 		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
 	{
 		m_pCurObstacle = nullptr;
-		if (result.m_bIsEmpty == false)
-			MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
+		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
 	}
 
-	if (pAction)
+	if (std::shared_ptr<ActionClip> pAction = GetActions(_result.m_actTag))
 		GetAnim().lock()->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
@@ -675,7 +694,7 @@ void Character::InitInput()
 		[this]() { InputJump(); }
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() { ProcessPerceptionResult();  }
+		[this]() { TryPerception();  }
 	);
 	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
 		[this]() { ResetCamRot(); }

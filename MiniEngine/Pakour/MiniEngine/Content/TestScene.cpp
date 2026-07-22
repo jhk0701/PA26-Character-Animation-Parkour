@@ -102,8 +102,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 10.0f, 34.0f), Vector3(4.0f, 0.05f, 4.0f), identity);
 
 		// Bar // 잡는 용도
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 23.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 24.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 26.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG);
 	}
 	{
 		// 임시 캐릭터 생성

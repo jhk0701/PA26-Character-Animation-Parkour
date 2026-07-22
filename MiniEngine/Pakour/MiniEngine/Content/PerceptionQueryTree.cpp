@@ -354,7 +354,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_ledge = OBS_POS.y;
 
 					// MG_LOG_INFO("[QueryTree] Compare Height:: Char + step : {}, obs hit pos : {} ", CHAR_POS.y + pChar->GetStepThreshold(), OBS_POS.y);
-					// MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
+					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
 
 					return bStepable;
 				},
@@ -453,15 +453,23 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pOnHangingDown->SetCondition(
 			[](TravelContext& _ctx)
 			{
-				bool bIsHit = CheckLandable(
-					_ctx, 
-					ToChar(_ctx.m_owner)->GetRoot()->localTransform.position, 
-					Layer::Obstacle | Layer::Ground, 
-					1.0f); // 1m 아래 확인
+				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+
+				RaycastParam param;
+				param.m_origin = pChar->GetRoot()->localTransform.position;
+				param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+				param.m_maxDistance = 1.0f;
+
+				RaycastResult result;
+				bool bIsHit = _ctx.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground);
 
 				if (bIsHit)
 				{
 					MG_LOG_INFO("[QueryTree] Hang to idle");
+					
+					_ctx.m_firstObstacle = result.GetActor();
+					_ctx.m_firstObstacleHitPos = result.m_pos;
+					_ctx.m_distance = result.m_distance;
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
 				}
 

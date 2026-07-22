@@ -26,6 +26,7 @@ namespace MiniEngine
 	{
 		bool m_bIsEmpty{ true };
 		uint8_t m_actTag; // 탐색한 결과 취해야할 행동 태그
+
 		void* m_pFirstObstacle{ nullptr };
 		float m_distanceObstacle{ 0.0f };
 		Vector3 m_firstObstacleHitPos;
