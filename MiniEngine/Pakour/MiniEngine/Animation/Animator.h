@@ -47,8 +47,6 @@ namespace MiniEngine
 		void SampleOverrideTrack(float _dt);
 		void FinalizePose();
 
-		
-
 		// 루트모션 api
 		void SetEnableRootMotion(bool _bEnable) { m_bEnableRootMotion = _bEnable; }
 		void SetRootBoneIdx(int _idx) { m_rootBoneIdx = _idx; }

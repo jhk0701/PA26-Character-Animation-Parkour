@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Content/CharacterStateMachine.h"
 #include "Content/Character.h"
+#include "Content/ContentConfig.h"
 #include "Platform/Input.h"
 
 void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states)
@@ -30,10 +31,10 @@ void CharacterStateMachine::Transition(uint8_t _nextID)
 	m_states[m_curState]->OnStart();
 }
 
-void CharacterStateMachine::ProcessPerceptionResult(const TravelResult& _result)
+void CharacterStateMachine::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	assert(m_curState < m_states.size());
-	m_states[m_curState]->ProcessPerceptionResult(_result);
+	m_states[m_curState]->ProcessPerceptionResult(_info);
 }
 
 std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
@@ -41,6 +42,14 @@ std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 	return std::dynamic_pointer_cast<Character>(owner.lock());
 }
 
+
+void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(_info.m_actTag))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+}
 
 void CharacterState::DefaultMovement(float _dt)
 {
@@ -52,16 +61,15 @@ void CharacterState::DefaultMovement(float _dt)
 	inputDir.Normalize();
 
 	Vector2& inputLerp = pChar->InputLerp();
-	inputLerp = Vector2::Lerp(inputLerp, inputDir, pChar->GetInputLerpWeight() * _dt);
+	inputLerp = Vector2::Lerp(inputLerp, inputDir, std::clamp(pChar->GetInputLerpWeight(), 0.0f, 1.0f));
 
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
-	std::shared_ptr<SceneComponent> pRoot = pChar->GetRoot();
+	const Transform& TF = pChar->GetRoot()->localTransform;
 
-	// 캐릭터 정면 기준 이동
-	const Vector3& FWD = pRoot->localTransform.Forward();
-	const Vector3& RHT = pRoot->localTransform.Right();
-	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * FWD + DELTA_SPD * inputLerp.x * RHT);
-
+	pChar->AddMovementInput(
+		DELTA_SPD * inputLerp.y * TF.Forward() + 
+		DELTA_SPD * inputLerp.x * TF.Right()
+	);
 	pChar->SetAnimBaseTrackInputAxis(inputLerp);
 }
 

@@ -7,6 +7,7 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
+	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 private:
 	void CameraRotate(float _dt);
@@ -15,5 +16,6 @@ private:
 
 	void TakeOverCameraRotate(std::shared_ptr<Character>& _pChar);
 	void HandOverCameraRotate(std::shared_ptr<Character>& _pChar);
+
 	float m_prevYaw{ 0.0f };
 };

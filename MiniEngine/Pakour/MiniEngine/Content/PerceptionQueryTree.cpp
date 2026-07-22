@@ -15,7 +15,7 @@ namespace
 {
 	// 헬퍼 메서드 모음
 	constexpr float MIN_OBSTACLE_DETECT_DIST = 1.0f;
-	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.0f;
+	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.5f;
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
@@ -73,7 +73,7 @@ namespace
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = CHAR_HALF_H;
 		capParam.m_dir = _dir; //  TF.Forward();
-		capParam.m_maxDistance = _dist; //  MAX_OBSTACLE_DETECT_DIST;
+		capParam.m_maxDistance = _dist;
 
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle : ({}, {}, {})", capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z);
 		RaycastResult result;

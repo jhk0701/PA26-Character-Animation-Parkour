@@ -22,12 +22,14 @@ namespace MiniEngine
 
         void AddMovementInput(const Vector3& _worldDelta);
         void AddYaw(const Quaternion& _deltaRotation);
+        void ClearMovement();
         
         void Jump(float _speed);
         void Move(float _dt);
         
         void SyncTransform();
         void SetRootMotionSource(const std::shared_ptr<SkeletalMeshComponent>& _skeletal);
+        void SetPosition(const Vector3& _newPos);
 
         bool IsFalling() const { return m_bIsFalling; }
         bool IsGrounded() const { return m_grounded; }
@@ -53,11 +55,6 @@ namespace MiniEngine
         // 디버그용 멤버 변수 getter
         float GetFallingElapsed() const { return m_fallingElapsed; }
 #endif // DEBUG
-
-        /*
-        void SetCollsionGroup(Physics::ECollisionGroup _group);
-        Physics::ECollisionGroup GetCollsionGroup() const;
-        */
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);

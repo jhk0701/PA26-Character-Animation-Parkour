@@ -301,10 +301,7 @@
     <ClInclude Include="Content\CharacterState\LandingState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
-    <ClInclude Include="Content\CharacterState\BeamStandState.h">
-      <Filter>Content\03.Object\Component\CharacterState</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\CharacterState\BeamHangingState.h">
+    <ClInclude Include="Content\CharacterState\BeamState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
   </ItemGroup>
@@ -483,10 +480,7 @@
     <ClCompile Include="Content\CharacterState\LandingState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
-    <ClCompile Include="Content\CharacterState\BeamStandState.cpp">
-      <Filter>Content\03.Object\Component\CharacterState</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\CharacterState\BeamHangingState.cpp">
+    <ClCompile Include="Content\CharacterState\BeamState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
   </ItemGroup>

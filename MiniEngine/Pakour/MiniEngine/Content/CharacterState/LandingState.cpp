@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Content/CharacterState/LandingState.h"
-#include "Content/Character.h"
 
 void LandingState::OnStart() 
 {
@@ -26,7 +25,6 @@ void LandingState::CheckState()
 	CharacterState::CheckState();
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
 	if (pChar->IsFalling() == false)
 		return;
 
@@ -37,4 +35,9 @@ void LandingState::CheckState()
 	// 각각의 State에서 OnStart 시, 실행해 줄 것
 	// pChar->TranstionBaseTrack(STATE, 0.25f);
 	GetMachine()->Transition(STATE);
+}
+
+void LandingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
+{
+	DefaultProcessPerceptionResult(_info);
 }

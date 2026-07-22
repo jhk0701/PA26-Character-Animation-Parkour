@@ -13,9 +13,9 @@ void HangingState::OnStart()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
-
+	
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
-
+	
 	TakeOverCameraRotate(pChar);
 }
 
@@ -23,9 +23,9 @@ void HangingState::OnEnd()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
-
+	
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
-
+	
 	HandOverCameraRotate(pChar);
 }
 
@@ -33,6 +33,11 @@ void HangingState::Tick(float _dt)
 {
 	ProcessMovement(_dt);
 	CameraRotate(_dt);
+}
+
+void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
+{
+	DefaultProcessPerceptionResult(_info);
 }
 
 void HangingState::CameraRotate(float _dt)

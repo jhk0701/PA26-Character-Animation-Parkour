@@ -79,6 +79,11 @@ namespace MiniEngine
 		target->localTransform.rotation.Normalize();
 	}
 
+	void CharacterControllerComponent::ClearMovement()
+	{
+		m_pendingMove = Vector3(0.0f);
+	}
+
 	void CharacterControllerComponent::Jump(float _speed)
 	{
 		if (!m_grounded)
@@ -165,6 +170,11 @@ namespace MiniEngine
 		const Quaternion& r = _skeletal->localTransform.rotation;
 		if (fabsf(fabsf(r.w) - 1.0f) > 1e-4f)
 			MG_LOG_WARN("[CharacterControllerComp] 루트모션 소스의 local 회전이 identity가 아님 -> 이동 방향이 어긋날 것");
+	}
+
+	void CharacterControllerComponent::SetPosition(const Vector3& _newPos)
+	{
+		m_controller->setPosition(physx::PxExtendedVec3(_newPos.x, _newPos.y, _newPos.z));
 	}
 
 	Vector3 CharacterControllerComponent::GetFootPosition() const

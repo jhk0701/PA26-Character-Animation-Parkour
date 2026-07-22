@@ -30,8 +30,7 @@
 #include "Content/CharacterState/LandingState.h"
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
-#include "Content/CharacterState/BeamStandState.h"
-#include "Content/CharacterState/BeamHangingState.h"
+#include "Content/CharacterState/BeamState.h"
 
 using namespace Content::Config;
 
@@ -123,12 +122,241 @@ void Character::PostConstruct()
 	pAnim->SetOverrideTrackEndEvent([this]() { GetController().lock()->SetCheckFalling(true); });
 }
 
+void Character::BeginPlay()
+{
+	Actor::BeginPlay();
+
+	InitCollisionLayer();
+	InitInput();
+}
+
+void Character::Tick(float _dt)
+{
+	Actor::Tick(_dt);
+}
+
+void Character::TryPerception()
+{
+	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
+		return; // 이미 행동 중이라면 탐색하지 않도록
+
+	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
+	pPercept->Travel(); // 탐색 개시
+
+	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
+	if (result.m_bIsEmpty) // 빈 결과는 리턴
+		return;
+
+	ProcessPerceptionResult(result);
+}
+
+void Character::ProcessPerceptionResult(const TravelResult& _result)
+{
+	if (_result.m_pFirstObstacle)
+	{
+		m_curObstacleInfo.m_actTag = _result.m_actTag;
+		m_curObstacleInfo.m_pObstacle = reinterpret_cast<Actor*>(_result.m_pFirstObstacle);
+		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
+		m_curObstacleInfo.m_obstacleDistance = _result.m_distanceObstacle;
+		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge + m_ledgeOffset;
+		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
+	}
+	else
+	{
+		m_curObstacleInfo.m_pObstacle = nullptr;
+		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
+	}
+
+	if (m_charFSM.expired())
+		return;
+
+	// 세부 처리는 각 상태일때 달리 처리
+	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
+}
+
+
+void Character::InitCollisionLayer()
+{
+	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
+}
+void Character::SetEnableCollisionObstacle(bool _bEnable)
+{
+	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
+	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+}
+void Character::AddMovementInput(const Vector3& _moveDelta)
+{
+	m_charCont.lock()->AddMovementInput(_moveDelta);
+}
+
+void Character::SetPosition(const Vector3& _newPos)
+{
+	m_charCont.lock()->SetPosition(_newPos + Vector3(0.0f, GetCapsuleHalfHeight(), 0.0f));
+}
+
+void Character::ClearMovement()
+{
+	m_charCont.lock()->ClearMovement();
+}
+bool Character::IsFalling() const
+{
+	return m_charCont.lock()->IsFalling();
+}
+bool Character::IsGrounded() const
+{
+	return  m_charCont.lock()->IsGrounded();
+}
+void Character::SetUseGravity(bool _bUse)
+{
+	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
+	pCharCont->SetUseGravity(_bUse);
+	pCharCont->SetForceFalling(false);
+}
+
+void Character::Jump()
+{
+	m_charCont.lock()->Jump(m_jumpSpeed);
+}
+
+void Character::InputJump()
+{
+	if (m_state == EState::InAir)
+		return;
+	
+	uint8_t tag = m_state == EState::Landing ? 
+		(uint8_t)Content::Config::ETagAct::Jump :
+		(uint8_t)Content::Config::ETagAct::JumpFromWall;
+
+	if (std::shared_ptr<ActionClip> pJump = GetActions(tag))
+		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
+}
+
+
+std::weak_ptr<Animator> Character::GetAnim() const
+{
+	return m_skinMeshComp.lock()->GetAnim();
+}
+void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
+{
+	GetAnim().lock()->SetBaseTrackInputAxis(_input);
+}
+void Character::TranstionBaseTrack(uint8_t _state, float _transitionTime)
+{
+	GetAnim().lock()->TranstionBaseTrack(_state, _transitionTime);
+}
+bool Character::IsActionClipPlaying() const
+{
+	return GetAnim().lock()->IsActionClipPlaying();
+}
+void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime, uint8_t _priority)
+{
+	if (_clip == nullptr)
+		return;
+
+	GetAnim().lock()->PlayActionClip(_clip, _transitionTime, _priority);
+}
+
+void Character::TransitionStateMachine(uint8_t _state)
+{
+	SetState(static_cast<Character::EState>(_state));
+	m_charFSM.lock()->Transition(_state);
+}
+
+
+void Character::InitInput()
+{
+	ResetCamRot();
+
+	// 바인딩
+	Input& input = InputManager::GetInstance()->GetInput();
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.y = 1.0f;
+			SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.y = 0.0f;
+			SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.y = -1.0f;
+			SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.y = 0.0f;
+			SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = 1.0f;
+			SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = 0.0f;
+			SetInputDir(inputDir);
+		});
+
+	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnPressed = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = -1.0f;
+			SetInputDir(inputDir);
+		});
+	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnReleased = std::bind(
+		[this]()
+		{
+			Vector2 inputDir = GetInputDir();
+			inputDir.x = 0.0f;
+			SetInputDir(inputDir);
+		});
+
+	// 테스트용 점프
+	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
+		[this]() { InputJump(); }
+	);
+	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
+		[this]() { TryPerception();  }
+	);
+	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
+		[this]() { ResetCamRot(); }
+	);
+	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
+		[this]() 
+		{
+			SetPosition(Vector3(0.0f));
+			// std::shared_ptr<ActionClip> pTest = GetActions((uint8_t)Content::Config::ETagAct::Test);
+			// GetAnim().lock()->PlayActionClip(pTest, 0.2f);
+		}
+	);
+}
+
 void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 {
 	// 애니메이션 설정
 	std::shared_ptr<Animator> pAnim = _skinComp->GetAnim().lock();
 	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = _skinComp->GetMesh().lock();
-	
+
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::End));
 
 	// TODO : 데이터화
@@ -147,7 +375,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pBlend->AddAnimClip({ -0.5, -1 }, skinnedMesh->GetClipPtr(8));	// run Bwd
 		pBlend->AddAnimClip({ -1, 0 }, skinnedMesh->GetClipPtr(6));	// left strafe
 		pBlend->AddAnimClip({ 1, 0 }, skinnedMesh->GetClipPtr(7));	// right strafe
-		
+
 		pAnim->AddBaseLocomotion(pBlend);
 	}
 	{
@@ -188,7 +416,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(9));
 		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
-		
+
 		std::shared_ptr<JumpTiming> pJumpNotify = std::make_shared<JumpTiming>();
 		pJumpNotify->SetTime(0.5f);
 		pActionClip->AddNotify(pJumpNotify);
@@ -217,7 +445,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetLerpWeight(0.7f);
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
-		
+
 		m_mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		m_mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
 	}
@@ -265,9 +493,9 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pCorrectRM->SetTime(0.01f, 0.5f);
 		pCorrectRM->SetProperDistance(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
-		
+
 		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
-		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip; 
+		m_mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
 	}
 	{
 		// Mantle_A_Wall_Monkey_On
@@ -439,8 +667,13 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
 
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetState((uint8_t)EState::BeamStand);
+		pTransition->SetTime(0.5f);
+		pActionClip->AddNotify(pTransition);
+
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreCollision->SetTime(0.15f);
+		pIgnoreCollision->SetTime(0.1f);
 		pIgnoreCollision->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreCollision);
 
@@ -450,10 +683,10 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pEnableCollision);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.4f);
+		pCorrectRM->SetTime(0.0f, 0.2f);
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetProperDistance(1.0f);
-		pCorrectRM->SetLerpWeight(0.65f);
+		pCorrectRM->SetLerpWeight(0.85f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
@@ -478,232 +711,4 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	pAnim->SetRootBoneIdx(1); // hips
 
 	pAnim->Init(0);
-}
-
-void Character::BeginPlay()
-{
-	Actor::BeginPlay();
-
-	InitCollisionLayer();
-	InitInput();
-}
-
-void Character::Tick(float _dt)
-{
-	Actor::Tick(_dt);
-}
-
-void Character::TryPerception()
-{
-	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
-		return; // 이미 행동 중이라면 탐색하지 않도록
-
-	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	pPercept->Travel(); // 탐색 개시
-
-	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
-	if (result.m_bIsEmpty) // 빈 결과는 리턴
-		return;
-
-	ProcessPerceptionResult(result);
-}
-
-void Character::ProcessPerceptionResult(const TravelResult& _result)
-{
-	if (_result.m_pFirstObstacle)
-	{
-		m_pCurObstacle = reinterpret_cast<Actor*>(_result.m_pFirstObstacle);
-		m_curObstacleHitPos = _result.m_firstObstacleHitPos;
-		m_curObstacleDistance = _result.m_distanceObstacle;
-		m_curObstacleLedge = _result.m_obstacleLedge;
-		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
-	}
-	else
-	{
-		m_pCurObstacle = nullptr;
-		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
-	}
-
-	if (std::shared_ptr<ActionClip> pAction = GetActions(_result.m_actTag))
-		GetAnim().lock()->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
-}
-
-
-std::weak_ptr<Animator> Character::GetAnim() const
-{
-	return m_skinMeshComp.lock()->GetAnim();
-}
-
-void Character::SetEnableCollisionObstacle(bool _bEnable)
-{
-	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
-	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
-}
-
-void Character::AddMovementInput(const Vector3& _moveDelta)
-{
-	m_charCont.lock()->AddMovementInput(_moveDelta);
-}
-
-bool Character::IsFalling() const
-{
-	return m_charCont.lock()->IsFalling();
-}
-
-bool Character::IsGrounded() const
-{
-	return  m_charCont.lock()->IsGrounded();
-}
-
-void Character::SetUseGravity(bool _bUse)
-{
-	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
-	pCharCont->SetUseGravity(_bUse);
-	pCharCont->SetForceFalling(false);
-}
-
-void Character::Jump()
-{
-	m_charCont.lock()->Jump(m_jumpSpeed);
-}
-
-void Character::InputJump()
-{
-	if (m_state == EState::InAir)
-		return;
-	
-	uint8_t tag = m_state == EState::Landing ? 
-		(uint8_t)Content::Config::ETagAct::Jump :
-		(uint8_t)Content::Config::ETagAct::JumpFromWall;
-
-	if (std::shared_ptr<ActionClip> pJump = GetActions(tag))
-		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
-}
-
-void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
-{
-	GetAnim().lock()->SetBaseTrackInputAxis(_input);
-}
-
-void Character::TranstionBaseTrack(uint8_t _state, float _transitionTime)
-{
-	GetAnim().lock()->TranstionBaseTrack(_state, _transitionTime);
-}
-
-bool Character::IsActionClipPlaying() const
-{
-	return GetAnim().lock()->IsActionClipPlaying();
-}
-
-void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime)
-{
-	if (_clip == nullptr)
-		return;
-
-	GetAnim().lock()->PlayActionClip(_clip, _transitionTime);
-}
-
-void Character::TransitionStateMachine(uint8_t _state)
-{
-	SetState(static_cast<Character::EState>(_state));
-	m_charFSM.lock()->Transition(_state);
-}
-
-Vector3 Character::GetCurObstacleHitPos() const
-{
-	Vector3 hitPos = m_curObstacleHitPos;
-	hitPos.y = GetCurObstacleLedge();
-	return hitPos;
-}
-
-void Character::InitCollisionLayer()
-{
-	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
-}
-
-void Character::InitInput()
-{
-	ResetCamRot();
-
-	// 바인딩
-	Input& input = InputManager::GetInstance()->GetInput();
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = -1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = -1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	// 테스트용 점프
-	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
-		[this]() { InputJump(); }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() { TryPerception();  }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
-		[this]() { ResetCamRot(); }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
-		[this]() 
-		{
-			std::shared_ptr<ActionClip> pTest = GetActions((uint8_t)Content::Config::ETagAct::Test);
-			GetAnim().lock()->PlayActionClip(pTest, 0.2f);
-		}
-	);
 }

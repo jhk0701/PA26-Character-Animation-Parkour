@@ -19,12 +19,11 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	if (!m_pChar)
 		return;
 
-	// 현재 장애물과 거리
-	float dist = m_pChar->GetCurObstacleDistance(); // 지형탐색을 통해 얻은 첫 장애물로부터의 거리
-	//MG_LOG_INFO("Correct dist : {}", dist);
+	const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
 	// 캐릭터와 장애물의 적정거리 보정
-	Vector3 obsPos = m_pChar->GetCurObstacleHitPos();
+	Vector3 obsPos = OBS_INFO.m_obstacleHitPos;
+	obsPos.y = OBS_INFO.m_obstacleLedge;
 	Vector3 charPos = m_pChar->GetRoot()->localTransform.position;
 	
 	switch (m_corrextAxis)
@@ -56,7 +55,7 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	
 	// 멀 때만 보간 처리
 	// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
-	if (dist > m_properDistance)
+	if (OBS_INFO.m_obstacleDistance > m_properDistance)
 		correctMovementDt *= _dt * m_deltaIntensity;
 
 	if (m_bLockX)
@@ -67,6 +66,5 @@ void CorrectRootMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 		correctMovementDt.z = 0.0;
 
 	// MG_LOG_INFO("[CorrectRootMotion] : ({},{},{})", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
-
 	m_pChar->AddMovementInput(correctMovementDt);
 }

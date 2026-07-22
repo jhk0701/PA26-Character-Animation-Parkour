@@ -32,6 +32,17 @@ public:
 		End
 	};
 
+	struct PerceptedObstacleInfo
+	{
+		uint8_t m_actTag;
+		Actor* m_pObstacle{ nullptr };
+		float m_obstacleDistance{ 0.0f };
+		float m_obstacleLedge{ 0.0f };
+		Vector3 m_obstacleHitPos{ 0.0f };
+
+		bool IsValid() const { return m_pObstacle != nullptr; }
+	};
+
 	Character();
 	virtual ~Character();
 
@@ -75,13 +86,15 @@ public:
 	void TranstionBaseTrack(uint8_t _state, float _transitionTime = 0.25f);
 	bool IsActionClipPlaying() const;
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
-	void PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime = 0.25f);
+	void PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime = 0.25f, uint8_t _priority = 0U);
 
 	// 콜라이더 및 물리
+	void AddMovementInput(const Vector3& _moveDelta);
+	void SetPosition(const Vector3& _newPos);
+	void ClearMovement();
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
 	void SetEnableCollisionObstacle(bool _bEnable);
-	void AddMovementInput(const Vector3& _moveDelta);
 	bool IsFalling() const;
 	bool IsGrounded() const;
 	void SetUseGravity(bool _bUse);
@@ -90,10 +103,7 @@ public:
 	void TransitionStateMachine(uint8_t _state);
 	
 	// 지형 인식
-	Actor* GetCurObstacle() const { return m_pCurObstacle; }
-	float GetCurObstacleDistance() const { return m_curObstacleDistance; }
-	float GetCurObstacleLedge() const { return m_curObstacleLedge + m_ledgeOffset; }
-	Vector3 GetCurObstacleHitPos() const;
+	const PerceptedObstacleInfo& GetCurObstacleInfo() const { return m_curObstacleInfo; };
 	float GetStepThreshold() const { return m_stepThreshold; }
 	float GetCheckingDistance() const { return m_checkingDistance; }
 
@@ -107,7 +117,7 @@ private:
 
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
-	float m_lerpWeight{ 5.0f };
+	float m_lerpWeight{ 0.25f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 	float m_stepThreshold{ 0.5f };
@@ -131,10 +141,7 @@ private:
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	
 	// 정리 필요
-	Actor* m_pCurObstacle{ nullptr };
-	float m_curObstacleDistance{ 0.0f };
-	float m_curObstacleLedge{ 0.0f };
 	float m_ledgeOffset{ 0.5f };
-	Vector3 m_curObstacleHitPos{ 0.0f };
+	PerceptedObstacleInfo m_curObstacleInfo;
 };
 

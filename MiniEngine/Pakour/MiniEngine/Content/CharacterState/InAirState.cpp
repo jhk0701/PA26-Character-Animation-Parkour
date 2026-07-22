@@ -42,3 +42,8 @@ void InAirState::CheckState()
 	// pChar->TranstionBaseTrack(STATE, 0.25f);
 	GetMachine()->Transition(STATE);
 }
+
+void InAirState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
+{
+	DefaultProcessPerceptionResult(_info);
+}
