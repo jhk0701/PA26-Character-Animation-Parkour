@@ -35,6 +35,8 @@ class BezierCorrectRootMotion : public MiniEngine::AnimNotifyState
 public:
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
+	
+	void SetEndOffset(const MiniEngine::Vector3& _offset) { m_endOffset = _offset; }
 	void SetBezierY(const float _y) { m_bezierY = _y; }
 
 private:
@@ -43,6 +45,8 @@ private:
 	float m_elapsedTime{ 0.0f };
 
 	float m_bezierY{ 0.0f };
+	MiniEngine::Vector3 m_endOffset{ 0.0f, 0.0f, 0.0f };
+
 	MiniEngine::Vector3 m_startPoint{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_midPoint{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_endPoint{ 0.0f, 0.0f, 0.0f };

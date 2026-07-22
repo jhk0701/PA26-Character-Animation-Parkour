@@ -346,4 +346,28 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
 	}
+	{
+		// Beam_IdleToHanging
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(31));
+		pActionClip->SetApplyRootBone(false);
+
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreCollision->SetEnable(false);
+		pIgnoreCollision->SetTime(0.0f);
+		pActionClip->AddNotify(pIgnoreCollision);
+
+		std::shared_ptr<UseGravity> pIgnoreGravity = std::make_shared<UseGravity>();
+		pIgnoreGravity->SetUseGravity(false);
+		pIgnoreGravity->SetTime(0.0f);
+		pActionClip->AddNotify(pIgnoreGravity);
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.25f);
+		pCorrectRM->SetEndOffset({0.0f, - 2.1f, 0.0f});
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Beam_IdleToHang] = pActionClip;
+	}
+
 }
