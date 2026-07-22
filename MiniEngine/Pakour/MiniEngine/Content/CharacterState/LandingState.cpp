@@ -23,6 +23,8 @@ void LandingState::Tick(float _dt)
 
 void LandingState::CheckState()
 {
+	CharacterState::CheckState();
+
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	if (pChar->IsFalling() == false)

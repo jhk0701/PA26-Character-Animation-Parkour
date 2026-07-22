@@ -26,8 +26,9 @@ public:
 		Landing,
 		InAir,
 		Hanging,
+		Beam,
 
-		END
+		End
 	};
 
 	Character();

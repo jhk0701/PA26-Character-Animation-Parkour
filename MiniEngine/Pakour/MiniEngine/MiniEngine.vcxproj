@@ -25,7 +25,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'" Label="Configuration">
@@ -132,6 +132,7 @@
     <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\CharacterStateMachine.h" />
+    <ClInclude Include="Content\CharacterState\BeamState.h" />
     <ClInclude Include="Content\CharacterState\HangingState.h" />
     <ClInclude Include="Content\CharacterState\InAirState.h" />
     <ClInclude Include="Content\CharacterState\LandingState.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\CharacterStateMachine.cpp" />
+    <ClCompile Include="Content\CharacterState\BeamState.cpp" />
     <ClCompile Include="Content\CharacterState\HangingState.cpp" />
     <ClCompile Include="Content\CharacterState\InAirState.cpp" />
     <ClCompile Include="Content\CharacterState\LandingState.cpp" />

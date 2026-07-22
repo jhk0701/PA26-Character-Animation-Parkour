@@ -21,6 +21,8 @@ void InAirState::Tick(float _dt)
 
 void InAirState::CheckState()
 {
+	CharacterState::CheckState();
+
 	// 공중 + 떨어지는 상황
 	// 바닥 감지 필요
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();

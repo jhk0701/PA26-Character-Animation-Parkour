@@ -301,6 +301,9 @@
     <ClInclude Include="Content\CharacterState\LandingState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CharacterState\BeamState.h">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -475,6 +478,9 @@
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
     <ClCompile Include="Content\CharacterState\LandingState.cpp">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterState\BeamState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
   </ItemGroup>

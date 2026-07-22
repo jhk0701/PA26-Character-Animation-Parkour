@@ -30,6 +30,7 @@
 #include "Content/CharacterState/LandingState.h"
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
+#include "Content/CharacterState/BeamState.h"
 
 using namespace Content::Config;
 
@@ -102,7 +103,8 @@ void Character::Construct()
 			{
 				std::make_shared<LandingState>(),
 				std::make_shared<InAirState>(),
-				std::make_shared<HangingState>()
+				std::make_shared<HangingState>(),
+				std::make_shared<BeamState>()
 			});
 		m_charFSM = pCharFSM;
 	}
@@ -125,7 +127,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	std::shared_ptr<Animator> pAnim = _skinComp->GetAnim().lock();
 	std::shared_ptr<MiniEngine::SkinnedMesh> skinnedMesh = _skinComp->GetMesh().lock();
 	
-	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::END));
+	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::End));
 
 	// TODO : 데이터화
 	// 로코모션 구현 (순서 유의 - EState 값 순서대로 할당하고 찾을 것)
@@ -225,7 +227,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		m_mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
 	}
 	{
-		// Mantle_A_Jump_L_On
+		// Mantle_A_TwoHand_L_On
 		// Mantle Low, Mid
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
@@ -242,9 +244,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.2f, 0.6f);
-		pCorrectRM->SetProperDistance(1.0f);
-		pCorrectRM->SetLerpWeight(0.5f);
+		pCorrectRM->SetTime(0.01f, 0.5f);
+		pCorrectRM->SetProperDistance(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
 		
 		m_mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
@@ -426,12 +427,12 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
-		pEnableCollision->SetTime(0.45f);
+		pEnableCollision->SetTime(0.5f);
 		pEnableCollision->SetEnable(true);
 		pActionClip->AddNotify(pEnableCollision);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetTime(0.0f, 0.4f);
 		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
 		pCorrectRM->SetProperDistance(1.0f);
 		pCorrectRM->SetLerpWeight(0.65f);
@@ -451,8 +452,8 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 
 	RootMotionConfig rmCfg;
 	rmCfg.extractY = true;
-	rmCfg.extractYaw = false;
 	rmCfg.applyY = true;
+	rmCfg.extractYaw = false;
 	rmCfg.applyYaw = false;
 
 	pAnim->SetRootMotionConfig(rmCfg);

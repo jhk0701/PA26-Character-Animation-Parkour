@@ -253,13 +253,4 @@ namespace MiniEngine
 	}
 
 
-	//void CharacterControllerComponent::SetCollsionGroup(Physics::ECollisionGroup _group)
-	//{
-	//	physx::PxSetGroup(*m_controller->getActor(), _group);
-	//}
-
-	//Physics::ECollisionGroup CharacterControllerComponent::GetCollsionGroup() const
-	//{
-	//	return (Physics::ECollisionGroup)physx::PxGetGroup(*m_controller->getActor());
-	//}
 }
