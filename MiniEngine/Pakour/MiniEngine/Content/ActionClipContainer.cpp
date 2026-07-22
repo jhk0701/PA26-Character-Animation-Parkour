@@ -350,7 +350,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		// Beam_IdleToHanging
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(31));
-		pActionClip->SetApplyRootBone(false);
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreCollision->SetEnable(false);
