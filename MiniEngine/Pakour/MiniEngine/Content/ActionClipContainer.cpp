@@ -106,7 +106,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.4f);
+		pCorrectRM->SetTime(0.0f, 0.2f);
 		pCorrectRM->SetProperDistance(1.0f); // 적정거리 1.5 ~ 1.0
 		pCorrectRM->SetLerpWeight(0.5f);
 		pCorrectRM->SetDeltaIntensity(2.0f);

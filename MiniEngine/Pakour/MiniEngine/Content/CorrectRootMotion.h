@@ -25,6 +25,8 @@ private:
 	Character* m_pChar{ nullptr };
 	ECorrectAxis m_corrextAxis{ ECorrectAxis::XZ };
 
+	float m_elapsedTime{ 0.0f };
+
 	float m_properDistance{ 1.0f };
 	float m_lerpWeight{ 0.5f };
 	float m_deltaIntensity{ 1.0f };

@@ -17,6 +17,9 @@ void CorrectRootMotion::OnStart(AnimNotifyParam& _param)
 		return;
 
 	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
+	m_elapsedTime = 0.0f;
+
+	assert(GetDuration() > 1e-4f);
 }
 
 void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
@@ -56,16 +59,25 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	dir.Normalize();
 
 	Vector3 properPoint = obsPos - dir * m_properDistance;
-	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
 
-	Vector3 correctMovementDt = lerped - charPos;
-	// 멀 때만 보간 처리
-	// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
-	if (OBS_INFO.m_obstacleDistance > m_properDistance)
-		correctMovementDt *= _dt * m_deltaIntensity;
+	float w = m_elapsedTime / GetDuration();
+	Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
+	m_pChar->SetPosition(lerpedPos);
 
-	// MG_LOG_INFO("[CorrectRootMotion] : ({},{},{})", correctMovementDt.x, correctMovementDt.y, correctMovementDt.z);
-	m_pChar->AddMovementInput(correctMovementDt);
+	m_elapsedTime += _dt;
+
+	{
+		return;
+		Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
+		Vector3 correctMovementDt = lerped - charPos;
+
+		// 멀 때만 보간 처리
+		// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
+		if (OBS_INFO.m_obstacleDistance > m_properDistance)
+			correctMovementDt *= _dt * m_deltaIntensity;
+
+		m_pChar->AddMovementInput(correctMovementDt);
+	}
 }
 
 // 사용 전제
