@@ -1,5 +1,6 @@
 #pragma once
 #include "Content/CharacterStateMachine.h"
+#include "Content/ContentConfig.h"
 
 class BeamState : public CharacterState 
 {
@@ -28,4 +29,12 @@ public:
 class BeamHangingState : public BeamState
 {
 public:
+	void OnStart() override;
+	void OnEnd() override;
+	void Tick(float _dt) override;
+	void CheckState() override;
+	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+
+private:
+	void ProcessMovement(float _dt);
 };

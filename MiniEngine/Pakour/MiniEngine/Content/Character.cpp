@@ -175,11 +175,12 @@ void Character::InitCollisionLayer()
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
 }
+
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
-	std::shared_ptr<CharacterControllerComponent> pCharCont = GetController().lock();
-	pCharCont->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
+	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 }
+
 void Character::AddMovementInput(const Vector3& _moveDelta)
 {
 	m_charCont.lock()->AddMovementInput(_moveDelta);
@@ -194,14 +195,17 @@ void Character::ClearMovement()
 {
 	m_charCont.lock()->ClearMovement();
 }
+
 bool Character::IsFalling() const
 {
 	return m_charCont.lock()->IsFalling();
 }
+
 bool Character::IsGrounded() const
 {
 	return  m_charCont.lock()->IsGrounded();
 }
+
 void Character::SetUseGravity(bool _bUse)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();

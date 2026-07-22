@@ -218,6 +218,7 @@ namespace MiniEngine
 	void CharacterControllerComponent::SetUseGravity(bool _bUse)
 	{
 		m_bUseGravity = _bUse;
+		m_verticalVelocity = 0.0f;
 	}
 
 	void CharacterControllerComponent::SetCheckFalling(bool _bCheckFalling)

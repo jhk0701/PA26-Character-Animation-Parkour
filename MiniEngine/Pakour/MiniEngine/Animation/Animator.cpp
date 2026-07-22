@@ -42,10 +42,10 @@ namespace MiniEngine
 
 	void Animator::SampleBaseTrack(float _dt)
 	{
-		const Skeleton& skeleton = GetSkeleton();
-
 		if (m_baseTrack.IsValid() == false)
 			return;
+
+		const Skeleton& skeleton = GetSkeleton();
 
 		m_baseTrack.Update(_dt, skeleton, m_poseTarget);
 	}
