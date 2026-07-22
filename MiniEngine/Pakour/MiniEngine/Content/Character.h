@@ -112,6 +112,7 @@ public:
 private:
 	void InitCollisionLayer();
 	void InitInput();
+
 	std::weak_ptr<Animator> GetAnim() const;
 
 	// tag - action 맵 : 모션 테이블, 판단한 tag를 기반으로 O(1)로 찾을 것
@@ -142,7 +143,6 @@ private:
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	
-	// 정리 필요
 	float m_ledgeOffset{ 0.5f };
 	PerceptedObstacleInfo m_curObstacleInfo;
 };

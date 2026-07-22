@@ -89,24 +89,42 @@ namespace
 
 		RaycastResult result;
 		bool bIsHit = _context.m_physics->CapsuleCast(capParam, result, ToMask(Layer::Obstacle));
-		if (bIsHit)
+
+		if (bIsHit == false)
+			return false;
+
+		// 만약 캐릭터가 장애물 위에 서있다면?
+		// 그 경우가 하필 경사로인 경우, 캐릭터는 경사로에서 오르려 할 것
+		// 그러므로 아래로 짧게 한 번 레이를 쏴서 캡슐로 쏜 대상과 일치하는지 확인
+		RaycastParam rayParam;
+		rayParam.m_origin = TF.position;
+		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+		rayParam.m_maxDistance = 0.1f;
+		RaycastResult downCheckResult;
+		if (_context.m_physics->Raycast(rayParam, downCheckResult, ToMask(Layer::Obstacle))) 
 		{
-			_context.m_raycastPos = result.m_pos;
-			_context.m_firstObstacle = result.GetActor();
-			_context.m_firstObstacleHitPos = result.m_pos;
-			_context.m_distance = result.m_distance;
-
-			_context.m_units = 1; // 1 단위 확정
-			_context.m_ledge = result.m_pos.y; 
-			// 기본값으로 장애물의 y값 지정
-			// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
-
-			MG_LOG_INFO("[QueryTree]\nChar Pos : ({}, {}, {}),\nOrigin : ({}, {}, {})\nHit Pos : ({}, {}, {})", 
-				TF.position.x, TF.position.y, TF.position.z,
-				capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z,
-				_context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
+			if (result.GetActor() == downCheckResult.GetActor())
+				return false;
 		}
+		
+		_context.m_raycastPos = result.m_pos;
+		_context.m_firstObstacle = result.GetActor();
+		_context.m_firstObstacleHitPos = result.m_pos;
+		_context.m_distance = result.m_distance;
+		_context.m_units = 1; // 1 단위 확정
+		_context.m_ledge = result.m_pos.y;
+		// 기본값으로 장애물의 y값 지정
+		// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
 
+		Actor* pObs = reinterpret_cast<Actor*>(result.GetActor());
+
+		MG_LOG_INFO("[QueryTree] Hit Obs name ::{}", pObs->GetName());
+		/*
+		MG_LOG_INFO("[QueryTree]\nChar Pos : ({}, {}, {}),\nOrigin : ({}, {}, {})\nHit Pos : ({}, {}, {})",
+			TF.position.x, TF.position.y, TF.position.z,
+			capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z,
+			_context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
+		*/
 		return bIsHit;
 	}
 
