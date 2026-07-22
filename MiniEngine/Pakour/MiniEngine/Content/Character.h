@@ -94,6 +94,8 @@ public:
 	void ClearMovement();
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
 	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
+	float GetCharacterHalfHeight() const { return (m_capsuleHeight + m_capsuleRadius) * 0.5f; }
+
 	void SetEnableCollisionObstacle(bool _bEnable);
 	bool IsFalling() const;
 	bool IsGrounded() const;

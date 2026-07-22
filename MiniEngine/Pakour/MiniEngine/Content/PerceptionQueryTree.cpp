@@ -29,7 +29,17 @@ namespace
 		if (!pChar)
 			return 1.0f;
 		
-		return pChar->GetCapsuleHalfHeight() * 2.0f; // 캡슐 원본 높이 -> 일반적으로 캐릭터의 높이 맞게 캡슐의 높이가 결정될 것
+		return pChar->GetCharacterHalfHeight() * 2.0f;
+	}
+
+	Vector3 GetCharacterCenterPosition(TravelContext& _context) 
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+
+		if (!pChar)
+			return Vector3(0.0f);
+
+		return pChar->GetRoot()->localTransform.position + Vector3(0.0f, pChar->GetCharacterHalfHeight(), 0.0f);
 	}
 
 	// 심플하게 결과값 상관없이 히트하는지만 보려는 때 사용
@@ -65,19 +75,19 @@ namespace
 	bool CheckObstacle(TravelContext& _context, const Vector3& _dir, const float _dist)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
-		const float CHAR_HALF_H = pChar->GetCapsuleHalfHeight();
 		const Transform& TF = pChar->GetRoot()->localTransform;
 
 		CapsulecastParam capParam;
-		capParam.m_startPos = TF.position + Vector3(0.0f, CHAR_HALF_H, 0.0f);
+		capParam.m_startPos = GetCharacterCenterPosition(_context);
 		capParam.m_radius = pChar->GetCapsuleRadius();
-		capParam.m_halfHeight = CHAR_HALF_H;
-		capParam.m_dir = _dir; //  TF.Forward();
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
+		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
+		// MG_LOG_INFO("[QueryTree] : Check Obstacle capsule half height : {}", capParam.m_halfHeight);
 		// MG_LOG_INFO("[QueryTree] : Check Obstacle : ({}, {}, {})", capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z);
-		RaycastResult result;
 
+		RaycastResult result;
 		bool bIsHit = _context.m_physics->CapsuleCast(capParam, result, ToMask(Layer::Obstacle));
 		if (bIsHit)
 		{
@@ -91,7 +101,10 @@ namespace
 			// 기본값으로 장애물의 y값 지정
 			// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
 
-			// MG_LOG_INFO("[QueryTree] Hit Pos : ({}, {}, {})", _context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
+			MG_LOG_INFO("[QueryTree]\nChar Pos : ({}, {}, {}),\nOrigin : ({}, {}, {})\nHit Pos : ({}, {}, {})", 
+				TF.position.x, TF.position.y, TF.position.z,
+				capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z,
+				_context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
 		}
 
 		return bIsHit;
@@ -167,7 +180,7 @@ namespace
 		const Transform& TF = pChar->GetRoot()->localTransform;
 
 		CapsulecastParam param;
-		param.m_startPos = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
+		param.m_startPos = GetCharacterCenterPosition(_context);
 		param.m_dir = _bIsRight ? TF.Right() : -TF.Right();
 		param.m_maxDistance = _dist;
 		param.m_radius = pChar->GetCapsuleRadius();
@@ -215,6 +228,15 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	// Leaf
 	std::shared_ptr<LeafNode> pEmpty = std::make_shared<LeafNode>(); // 빈 결과 리턴, 탐색 계속 신호
 	std::shared_ptr<LeafNode> pReturn = std::make_shared<LeafNode>(); // 결과 리턴
+
+	pEmpty->SetTask(
+		[](TravelContext& _context)
+		{
+			MG_LOG_INFO("[QueryTree] Is Empty");
+			TravelResult result;
+			return result;
+		}
+	);
 
 	pReturn->SetTask(
 		[](TravelContext& _context)
@@ -430,13 +452,12 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[](TravelContext& _ctx) 
 				{
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const float CHAR_HALF_H = pChar->GetCapsuleHalfHeight();
-					const Vector3 POS = pChar->GetRoot()->localTransform.position + Vector3(0.0f, CHAR_HALF_H, 0.0f);
+					const Vector3 POS = GetCharacterCenterPosition(_ctx);
 					const Vector3 DIR = pChar->GetRoot()->localTransform.Forward();
 
 					// MG_LOG_INFO("[QueryTree] Check Ledge to climbing :: Dir ({}, {}, {})", DIR.x, DIR.y, DIR.z);
 					RaycastResult result;
-					bool bIsHit = CheckLedge(_ctx, POS, DIR, CHAR_HALF_H, result);
+					bool bIsHit = CheckLedge(_ctx, POS, DIR, pChar->GetCapsuleRadius(), result);
 					if (bIsHit)
 					{
 						_ctx.m_firstObstacle = result.GetActor();
@@ -535,14 +556,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// Ledge 인지 확인 true : climb , false : inner rotate
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					const Transform& TF = pChar->GetRoot()->localTransform;
-					const float CHAR_HALF_H = pChar->GetCapsuleHalfHeight();
 					const Vector3 DIR = _ctx.m_bIsRight ? TF.Right() : -TF.Right();
 
 					RaycastResult result;
 					bool bLedgeHit = CheckLedge(_ctx, 
-						TF.position + Vector3(0.0f, CHAR_HALF_H, 0.0f),
+						GetCharacterCenterPosition(_ctx),
 						DIR,
-						CHAR_HALF_H * 0.5f, 
+						pChar->GetCapsuleRadius(),
 						result);
 
 					if (bLedgeHit) 
@@ -572,9 +592,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 이동하려고 예측하는 위치에서 전방으로 레이
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					const Transform& TF = pChar->GetRoot()->localTransform;
-					const float CHAR_HALF_H = pChar->GetCapsuleHalfHeight();
-					const Vector3 POS = 
-						TF.position + Vector3(0.0f, CHAR_HALF_H, 0.0f) + 
+					const Vector3 POS = GetCharacterCenterPosition(_ctx) + 
 						(_ctx.m_bIsRight ? 1 : -1) * MIN_OBSTACLE_DETECT_DIST * TF.Right();
 
 					bool bIsHit = CapsuleCast(_ctx, POS, TF.Forward(), MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));

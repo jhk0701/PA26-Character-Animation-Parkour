@@ -674,16 +674,6 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		//pTransition->SetTime(0.5f);
 		//pActionClip->AddNotify(pTransition);
 
-		std::shared_ptr<UseGravity> pIgnoreGravity = std::make_shared<UseGravity>();
-		pIgnoreGravity->SetUseGravity(false);
-		pIgnoreGravity->SetTime(0.0f);
-		pActionClip->AddNotify(pIgnoreGravity);
-
-		std::shared_ptr<UseGravity> pUseGravity = std::make_shared<UseGravity>();
-		pUseGravity->SetUseGravity(true);
-		pUseGravity->SetTime(0.5f);
-		pActionClip->AddNotify(pUseGravity);
-
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetBezierY(1.0f);

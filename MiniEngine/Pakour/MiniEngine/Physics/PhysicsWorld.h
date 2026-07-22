@@ -64,8 +64,14 @@ namespace MiniEngine::Physics
     };
     struct CapsulecastParam : public SweepCommonParam
     {
-        float m_radius;
-        float m_halfHeight;
+        CapsulecastParam() 
+        {
+            // 강제로 y축을 향해 일어나도록 조정
+            m_startRot = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(90.0f));
+        }
+
+        float m_radius{0.0f};
+        float m_halfHeight{0.0f};
     };
 
     class PhysicsWorld
