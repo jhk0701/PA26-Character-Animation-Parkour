@@ -17,6 +17,7 @@ namespace
 	constexpr float MIN_OBSTACLE_DETECT_DIST = 1.0f;
 	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.5f;
 	constexpr float CAPSULE_CONTACT_OFFSET = 0.2f;
+	constexpr float MIN_MANTLE_DEPTH_THRESHOLD = 0.75f; // 해당 깊이에서 레이를 쏘았는데 닿았다 -> mantle
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
@@ -340,7 +341,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const Vector3& FWD = ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward();
 
 					bool bVaultable = CheckVaultable(_ctx, _ctx.m_raycastPos, FWD, CHAR_H);
-
 					if (bVaultable == false)
 					{
 						_ctx.m_predictedActTag = (uint8_t)Content::Config::ETagAct::Wall_IdleToHang;
@@ -373,11 +373,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				pObstableIsLandable->SetCondition(
 					[](TravelContext& _ctx)
 					{
+						std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 						const float CHAR_H = GetCharHeight(_ctx);
 
-						Vector3 rayPosition = _ctx.m_raycastPos;
+						Vector3 rayPosition = _ctx.m_raycastPos; // 최초 장애물 접촉점
 						rayPosition.y += _ctx.m_units * CHAR_H;
-						rayPosition += ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward() * 1.0f;
+						rayPosition += pChar->GetRoot()->localTransform.Forward() * MIN_MANTLE_DEPTH_THRESHOLD;
+						MG_LOG_INFO("[QueryTree] Check Landable ({}, {}, {})", rayPosition.x, rayPosition.y, rayPosition.z);
 
 						bool bIsLandable = CheckLandable(_ctx, rayPosition, ToMask(Layer::Obstacle), CHAR_H);
 

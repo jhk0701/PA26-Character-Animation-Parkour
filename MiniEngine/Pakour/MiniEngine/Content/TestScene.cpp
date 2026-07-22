@@ -60,7 +60,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.25f, 3.0f), Vector3(2.5f), identity);
 		
 		// 2. mantle 3.0
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-8.0f, 1.5f, 3.0f), Vector3(3.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-8.0f, 1.75f, 3.0f), Vector3(3.5f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-13.0f, 2.5f, 3.0f), Vector3(5.0f), identity);
 
 		// 2. vault
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f), identity);
@@ -121,7 +122,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 임시 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
-		pChar->Construct(Vector3(0.0f, 30.0f, 0.0f));
+		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));
 	}
 }
 

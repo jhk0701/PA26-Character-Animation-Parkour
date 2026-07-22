@@ -78,7 +78,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 	// ActionClip 구성
 	{
-		// 테스트 Jump
+		// Jump
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(9));
 		pActionClip->SetApplyRootBone(false); // jump는 루트모션 적용하지 않음
@@ -121,7 +121,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(13));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetTime(0.2f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -131,9 +131,9 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetProperDistance(1.0f); // 적정거리 1.5 ~ 1.0
-		pCorrectRM->SetLerpWeight(0.7f);
+		pCorrectRM->SetTime(0.0f, 0.9f);
+		pCorrectRM->SetProperDistance(0.5f); // 적정거리 1.5 ~ 1.0
+		pCorrectRM->SetLerpWeight(0.85f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
@@ -170,7 +170,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(15));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.01f);
+		pIgnoreObstacle->SetTime(0.3f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -181,8 +181,8 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.0f, 0.6f);
-		pCorrectRM->SetLerpWeight(0.5f);
+		pCorrectRM->SetTime(0.0f, 0.9f);
+		pCorrectRM->SetLerpWeight(0.85f);
 		pCorrectRM->SetProperDistance(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
 
@@ -345,12 +345,5 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
-	}
-	{
-		// 애니메이션 테스트
-		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
-		pActionClip->AddClip(skinnedMesh->GetClipPtr(28));
-
-		mapActions[(uint8_t)ETagAct::Test] = pActionClip;
 	}
 }
