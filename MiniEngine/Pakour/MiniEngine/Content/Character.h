@@ -132,6 +132,8 @@ private:
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };
+	float m_capsuleContactOffset{ 0.05f };
+	float m_stepOffset{ 0.2f };
 
 	EState m_state{ EState::Landing };
 	

@@ -22,6 +22,11 @@ namespace MiniEngine::Physics
 		return m_hitActor->userData;
 	}
 
+	void* HitResult::GetActor() const
+	{
+		return m_hitActor->userData;
+	}
+
 	void PhysicsWorld::SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask)
 	{
 		// shape 수는 현재 팩토리가 만드는 액터 기준 항상 1, 
@@ -312,6 +317,32 @@ namespace MiniEngine::Physics
 		return SweepGeometry(sphere, _inParam, _outResult, _layerMask);
 	}
 
+	bool PhysicsWorld::CapsuleCastMultiple(const CapsulecastParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask) const
+	{
+		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
+			return false;
+
+		// 필터없음은 모두 통과될 것이므로 애초에 쏘지 않을 것
+		if (_layerMask == LayerMask::NONE)
+			return false;
+
+		PxCapsuleGeometry capsule(_inParam.m_radius, _inParam.m_halfHeight);
+		return SweepGeometryMulti(capsule, _inParam, _outResult, _layerMask);
+	}
+
+	bool PhysicsWorld::SphereCastMultiple(const SpherecastParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask) const
+	{
+		if (!m_scene || _inParam.m_maxDistance <= 0.0f)
+			return false;
+
+		// 필터없음은 모두 통과될 것이므로 애초에 쏘지 않을 것
+		if (_layerMask == LayerMask::NONE)
+			return false;
+
+		PxSphereGeometry sphere(_inParam.m_radius);
+		return SweepGeometryMulti(sphere, _inParam, _outResult, _layerMask);
+	}
+
 	bool PhysicsWorld::SweepGeometry(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask) const
 	{
 		// 레이캐스트와 동일하게 마스크 설정
@@ -343,6 +374,62 @@ namespace MiniEngine::Physics
 		}
 
 		RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
+		return bIsHit;
+	}
+
+	bool PhysicsWorld::SweepGeometryMulti(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask) const
+	{
+		// 레이캐스트와 동일하게 마스크 설정
+		const PxQueryFilterData filter(
+			PxFilterData(_layerMask, 0, 0, 0),
+			PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC
+		);
+		PxTransform pose(ToPx(_inParam.m_startPos), ToPx(_inParam.m_startRot));
+		
+		PxSweepBufferN<10> hitBuffer;
+		bool bIsHit = m_scene->sweep(
+			_inGeo,
+			pose,
+			ToPx(_inParam.m_dir),
+			physx::PxReal(_inParam.m_maxDistance),
+			hitBuffer,
+			PxHitFlag::eDEFAULT | PxHitFlag::eMTD,
+			filter)
+			&& hitBuffer.hasBlock;
+
+		_outResult.m_bIsHit = bIsHit;
+		if (bIsHit == false)
+			return bIsHit;
+
+		PxU32 touchCnt = hitBuffer.getNbTouches();
+		if (touchCnt > 0) 
+		{
+			std::vector<const PxSweepHit*> sortedHits;
+			sortedHits.reserve(touchCnt);
+
+			for (PxU32 i = 0; i < touchCnt; ++i)
+				sortedHits.push_back(&hitBuffer.getTouch(i));
+
+			std::sort(sortedHits.begin(), sortedHits.end(), 
+				[](const PxSweepHit* _a, const PxSweepHit* _b) 
+				{
+					return _a->distance < _b->distance;
+				}
+			);
+
+			_outResult.m_hitResults.resize(touchCnt);
+			for (PxU32 i = 0; i < touchCnt; ++i)
+			{
+				const PxSweepHit& block = *sortedHits[i];
+				_outResult.m_hitResults[i].m_pos = ToVec3(block.position);
+				_outResult.m_hitResults[i].m_nrm = ToVec3(block.normal);
+				_outResult.m_hitResults[i].m_distance = block.distance;
+				_outResult.m_hitResults[i].m_hitActor = block.actor;
+				_outResult.m_hitResults[i].m_hitShape = block.shape;
+			}
+		}
+
+		// RecordQueryLine(_inParam.m_startPos, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
 		return bIsHit;
 	}
 	

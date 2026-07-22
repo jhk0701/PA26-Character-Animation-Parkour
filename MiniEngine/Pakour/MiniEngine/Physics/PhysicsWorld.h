@@ -51,6 +51,23 @@ namespace MiniEngine::Physics
         void* GetActor() const;
     };
 
+    struct HitResult 
+    {
+        Vector3 m_pos;
+        Vector3 m_nrm;
+        float m_distance;
+        physx::PxRigidActor* m_hitActor;
+        physx::PxShape* m_hitShape;
+        void* GetActor() const;
+    };
+
+    struct RaycastMultipleResult
+    {
+        bool m_bIsHit{ false };
+        std::vector<HitResult> m_hitResults;
+    };
+
+
     struct SweepCommonParam 
     {
         float m_maxDistance{ 1.0f };
@@ -98,6 +115,8 @@ namespace MiniEngine::Physics
         bool Raycast(const RaycastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
         bool CapsuleCast(const CapsulecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
         bool SphereCast(const SpherecastParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        bool CapsuleCastMultiple(const CapsulecastParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        bool SphereCastMultiple(const SpherecastParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
 
         static void SetQueryLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
         static void SetCollisionLayer(physx::PxRigidActor& _actor, uint32_t _layerMask);
@@ -121,6 +140,7 @@ namespace MiniEngine::Physics
             bool _hit, const RaycastResult& _hitInfo) const;
 
         bool SweepGeometry(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
+        bool SweepGeometryMulti(const physx::PxGeometry& _inGeo, const SweepCommonParam& _inParam, RaycastMultipleResult& _outResult, uint32_t _layerMask = LayerMask::ALL) const;
     };
 
 

@@ -16,6 +16,7 @@ namespace
 	// 헬퍼 메서드 모음
 	constexpr float MIN_OBSTACLE_DETECT_DIST = 1.0f;
 	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.5f;
+	constexpr float CAPSULE_CONTACT_OFFSET = 0.2f;
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
@@ -78,9 +79,9 @@ namespace
 		const Transform& TF = pChar->GetRoot()->localTransform;
 
 		CapsulecastParam capParam;
-		capParam.m_startPos = GetCharacterCenterPosition(_context);
 		capParam.m_radius = pChar->GetCapsuleRadius();
-		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight();
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() - CAPSULE_CONTACT_OFFSET;
+		capParam.m_startPos = GetCharacterCenterPosition(_context) + TF.Forward() * capParam.m_radius * 2.0f;
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
@@ -93,13 +94,12 @@ namespace
 		if (bIsHit == false)
 			return false;
 
-		// 만약 캐릭터가 장애물 위에 서있다면?
-		// 그 경우가 하필 경사로인 경우, 캐릭터는 경사로에서 오르려 할 것
-		// 그러므로 아래로 짧게 한 번 레이를 쏴서 캡슐로 쏜 대상과 일치하는지 확인
+		// 경사로와 같이, 이미 올라온 장애물이 판정된 경우
 		RaycastParam rayParam;
 		rayParam.m_origin = TF.position;
 		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 		rayParam.m_maxDistance = 0.1f;
+
 		RaycastResult downCheckResult;
 		if (_context.m_physics->Raycast(rayParam, downCheckResult, ToMask(Layer::Obstacle))) 
 		{
@@ -112,36 +112,27 @@ namespace
 		_context.m_firstObstacleHitPos = result.m_pos;
 		_context.m_distance = result.m_distance;
 		_context.m_units = 1; // 1 단위 확정
-		_context.m_ledge = result.m_pos.y;
+
 		// 기본값으로 장애물의 y값 지정
 		// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
+		_context.m_ledge = result.m_pos.y;
 
-		Actor* pObs = reinterpret_cast<Actor*>(result.GetActor());
-
-		MG_LOG_INFO("[QueryTree] Hit Obs name ::{}", pObs->GetName());
-		/*
-		MG_LOG_INFO("[QueryTree]\nChar Pos : ({}, {}, {}),\nOrigin : ({}, {}, {})\nHit Pos : ({}, {}, {})",
-			TF.position.x, TF.position.y, TF.position.z,
-			capParam.m_startPos.x, capParam.m_startPos.y, capParam.m_startPos.z,
-			_context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
-		*/
 		return bIsHit;
 	}
 
 	bool CheckVaultable(TravelContext& _context, const Vector3& _initPos, const Vector3& _dir, const float _unit, uint8_t _maxCnt = 2)
 	{
-		const Vector3 up = Vector3(0.0f, 1.0f, 0.0f) * _unit;
+		const Vector3 UP = Vector3(0.0f, _unit, 0.0f);
 		Vector3 rayPosition = _initPos; 
 
 		for (uint8_t i = 0; i < _maxCnt; ++i)
 		{
-			rayPosition += up;
+			rayPosition += UP;
 			
 			bool bIsHit = CapsuleCast(_context, rayPosition, _dir, MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
 			if (bIsHit)
 			{
 				// MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
-
 				// 이 높이에선 아직 닿음
 				_context.m_units++; // 단위 상승
 				_context.m_ledge = rayPosition.y; // 대략적인 위치만 기입

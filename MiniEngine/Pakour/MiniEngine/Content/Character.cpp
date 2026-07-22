@@ -82,8 +82,8 @@ void Character::Construct()
 		Physics::CapsuleControllerDesc desc;
 		desc.radius = m_capsuleRadius;
 		desc.height = m_capsuleHeight;
-		desc.stepOffset = 0.2f;
-		desc.contactOffset = 0.05f;
+		desc.stepOffset = m_stepOffset;
+		desc.contactOffset = m_capsuleContactOffset;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
