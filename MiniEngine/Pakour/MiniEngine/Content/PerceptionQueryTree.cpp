@@ -87,7 +87,9 @@ namespace
 			_context.m_distance = result.m_distance;
 
 			_context.m_units = 1; // 1 단위 확정
-			_context.m_ledge = result.m_pos.y;
+			_context.m_ledge = result.m_pos.y; 
+			// 기본값으로 장애물의 y값 지정
+			// 후에 결과 처리에 따라서 정확한 ledge 값이 들어갈 것
 
 			// MG_LOG_INFO("[QueryTree] Hit Pos : ({}, {}, {})", _context.m_firstObstacleHitPos.x, _context.m_firstObstacleHitPos.y, _context.m_firstObstacleHitPos.z);
 		}

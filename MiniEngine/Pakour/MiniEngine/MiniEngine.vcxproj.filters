@@ -304,6 +304,9 @@
     <ClInclude Include="Content\CharacterState\BeamState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
+    <ClInclude Include="Content\UseGravity.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -482,6 +485,9 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterState\BeamState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UseGravity.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -25,12 +25,14 @@
 #include "Content/EnableCollisionObstacle.h"
 #include "Content/TransitionState.h"
 #include "Content/CorrectRootMotion.h"
+#include "Content/UseGravity.h"
 
 #include "Content/CharacterStateMachine.h"
 #include "Content/CharacterState/LandingState.h"
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
 #include "Content/CharacterState/BeamState.h"
+
 
 using namespace Content::Config;
 
@@ -262,7 +264,6 @@ void Character::TransitionStateMachine(uint8_t _state)
 	m_charFSM.lock()->Transition(_state);
 }
 
-
 void Character::InitInput()
 {
 	ResetCamRot();
@@ -442,7 +443,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.4f);
 		pCorrectRM->SetProperDistance(1.0f); // 적정거리 1.5 ~ 1.0
-		pCorrectRM->SetLerpWeight(0.7f);
+		pCorrectRM->SetLerpWeight(0.5f);
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
@@ -489,7 +490,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
+		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.01f, 0.5f);
 		pCorrectRM->SetProperDistance(0.5f);
 		pActionClip->AddNotify(pCorrectRM);
@@ -514,7 +515,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
+		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.0f, 0.6f);
 		pCorrectRM->SetLerpWeight(0.5f);
 		pCorrectRM->SetProperDistance(0.5f);
@@ -593,7 +594,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
+		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
 		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetLerpWeight(0.5f);
 		pCorrectRM->SetProperDistance(0.85f);
@@ -666,27 +667,26 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 		// Beam_Step
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
+		pActionClip->SetApplyRootBone(false);
 
-		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
-		pTransition->SetState((uint8_t)EState::BeamStand);
-		pTransition->SetTime(0.5f);
-		pActionClip->AddNotify(pTransition);
+		//std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		//pTransition->SetState((uint8_t)EState::BeamStand);
+		//pTransition->SetTime(0.5f);
+		//pActionClip->AddNotify(pTransition);
 
-		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreCollision->SetTime(0.1f);
-		pIgnoreCollision->SetEnable(false);
-		pActionClip->AddNotify(pIgnoreCollision);
+		std::shared_ptr<UseGravity> pIgnoreGravity = std::make_shared<UseGravity>();
+		pIgnoreGravity->SetUseGravity(false);
+		pIgnoreGravity->SetTime(0.0f);
+		pActionClip->AddNotify(pIgnoreGravity);
 
-		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
-		pEnableCollision->SetTime(0.5f);
-		pEnableCollision->SetEnable(true);
-		pActionClip->AddNotify(pEnableCollision);
+		std::shared_ptr<UseGravity> pUseGravity = std::make_shared<UseGravity>();
+		pUseGravity->SetUseGravity(true);
+		pUseGravity->SetTime(0.5f);
+		pActionClip->AddNotify(pUseGravity);
 
-		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.2f);
-		pCorrectRM->SetCorrectAxis(CorrectRootMotion::ECorrectAxis::YZ);
-		pCorrectRM->SetProperDistance(1.0f);
-		pCorrectRM->SetLerpWeight(0.85f);
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.5f);
+		pCorrectRM->SetBezierY(1.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		m_mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;

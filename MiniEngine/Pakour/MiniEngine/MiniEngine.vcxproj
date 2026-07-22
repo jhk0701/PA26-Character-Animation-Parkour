@@ -145,6 +145,7 @@
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Content\UIDebugConsole.h" />
+    <ClInclude Include="Content\UseGravity.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Content\UIDebugConsole.cpp" />
+    <ClCompile Include="Content\UseGravity.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />
