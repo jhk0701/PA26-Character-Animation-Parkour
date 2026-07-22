@@ -94,7 +94,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// Foot Hold // 밟는 용도
 		const uint8_t DETAIL_TAG = (uint8_t)Content::Config::ETagEnvDetail::Beam;
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
-
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
 			->SetName(FOOT_HOLD_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.9f, 26.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
@@ -106,21 +105,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
 			->SetName(FOOT_HOLD_NAME.c_str());
 
-		// celing
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 10.0f, 34.0f), Vector3(4.0f, 0.05f, 4.0f), identity);
-
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 24.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG)
 			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 26.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG)
 			->SetName(BAR_NAME.c_str());
+
+		// 공중 큐브
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 28.5f, 0.0f), Vector3(3.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 15.0f, 7.0f), Vector3(5.0f), identity);
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 17.5f, 7.0f), Vector3(5.0f, 1.0f, 0.05f), identity);
 	}
 	{
 		// 임시 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
-		pChar->Construct();
+		pChar->Construct(Vector3(0.0f, 30.0f, 0.0f));
 	}
 }
 

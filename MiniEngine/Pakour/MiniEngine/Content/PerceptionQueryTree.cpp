@@ -655,7 +655,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				MIN_OBSTACLE_DETECT_DIST
 			);
 
-			if (bFindObstacle) 
+			if (bFindObstacle)
 				pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // 낙하 상태 강제 종료
 
 			return bFindObstacle;

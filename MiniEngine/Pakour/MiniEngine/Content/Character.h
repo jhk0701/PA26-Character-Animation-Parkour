@@ -46,7 +46,7 @@ public:
 	Character();
 	virtual ~Character();
 
-	void Construct();
+	void Construct(const Vector3& _initPosition);
 	void PostConstruct();
 	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
 

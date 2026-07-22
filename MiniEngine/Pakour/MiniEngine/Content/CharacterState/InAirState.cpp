@@ -10,14 +10,18 @@ void InAirState::OnStart()
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
 }
 
-void InAirState::OnEnd() {}
+void InAirState::OnEnd() 
+{
+	// 강제로 떨어지는 경우
+	// vertical velocity 초기화
+}
+
 void InAirState::Tick(float _dt)
 {
 	// 떨어지는 중엔 movement 막기
 	DefaultCameraRotate(_dt);
 	CheckState();
 }
-
 
 void InAirState::CheckState()
 {
