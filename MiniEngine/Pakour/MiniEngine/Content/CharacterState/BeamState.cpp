@@ -175,6 +175,12 @@ void BeamStandState::ProcessMovement(float _dt)
 			pChar->PlayActionClip(pAct, 0.1f);
 		return;
 	}
+	else if (INPUT_DIR.y < 0) 
+	{
+		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandMoveDown))
+			pChar->PlayActionClip(pAct, 0.1f);
+		return;
+	}
 	
 	Vector2& inputLerp = pChar->InputLerp();
 	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());

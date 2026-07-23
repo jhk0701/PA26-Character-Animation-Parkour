@@ -349,29 +349,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		mapActions[(uint8_t)ETagAct::Beam_IdleToStand] = pActionClip;
 	}
 	{
-		// Rotate Left
-		std::shared_ptr<ActionClip> pRotateLeft = std::make_shared<ActionClip>();
-		pRotateLeft->AddClip(skinnedMesh->GetClipPtr(40));
-		
-		std::shared_ptr<RotateMotion> pCorrectRotateLeft = std::make_shared<RotateMotion>();
-		pCorrectRotateLeft->SetTime(0.1, 0.7);
-		pCorrectRotateLeft->SetRotateDeg({-90.0f, 0.0f, 0.0f});
-		pRotateLeft->AddNotify(pCorrectRotateLeft);
-
-		mapActions[(uint8_t)ETagAct::Beam_StandRotateLeft] = pRotateLeft;
-
-		// Rotate Right
-		std::shared_ptr<ActionClip> pRotateRight = std::make_shared<ActionClip>();
-		pRotateRight->AddClip(skinnedMesh->GetClipPtr(40));
-
-		std::shared_ptr<RotateMotion> pCorrectRotateRight = std::make_shared<RotateMotion>();
-		pCorrectRotateRight->SetTime(0.1, 0.7);
-		pCorrectRotateRight->SetRotateDeg({ 90.0f, 0.0f, 0.0f });
-		pRotateRight->AddNotify(pCorrectRotateRight);
-
-		mapActions[(uint8_t)ETagAct::Beam_StandRotateRight] = pRotateRight;
-	}
-	{
 		// Beam_StandToIdle
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
@@ -388,6 +365,57 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_StandToIdle] = pActionClip;
+	}
+	{
+		// Rotate Left
+		std::shared_ptr<ActionClip> pRotateLeft = std::make_shared<ActionClip>();
+		pRotateLeft->AddClip(skinnedMesh->GetClipPtr(40));
+
+		std::shared_ptr<RotateMotion> pCorrectRotateLeft = std::make_shared<RotateMotion>();
+		pCorrectRotateLeft->SetTime(0.1, 0.7);
+		pCorrectRotateLeft->SetRotateDeg({ -90.0f, 0.0f, 0.0f });
+		pRotateLeft->AddNotify(pCorrectRotateLeft);
+
+		mapActions[(uint8_t)ETagAct::Beam_StandRotateLeft] = pRotateLeft;
+
+		// Rotate Right
+		std::shared_ptr<ActionClip> pRotateRight = std::make_shared<ActionClip>();
+		pRotateRight->AddClip(skinnedMesh->GetClipPtr(40));
+
+		std::shared_ptr<RotateMotion> pCorrectRotateRight = std::make_shared<RotateMotion>();
+		pCorrectRotateRight->SetTime(0.1, 0.7);
+		pCorrectRotateRight->SetRotateDeg({ 90.0f, 0.0f, 0.0f });
+		pRotateRight->AddNotify(pCorrectRotateRight);
+
+		mapActions[(uint8_t)ETagAct::Beam_StandRotateRight] = pRotateRight;
+	}
+	{
+		// Beam Stand -> Beam Hanging
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(42));
+		pActionClip->SetApplyRootBone(false);
+
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetState((uint8_t)Character::EState::BeamHanging);
+		pTransition->SetTime(1.0f);
+		pActionClip->AddNotify(pTransition);
+
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreCollision->SetEnable(false);
+		pIgnoreCollision->SetTime(0.0f);
+		pActionClip->AddNotify(pIgnoreCollision);
+
+		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
+		pEnableCollision->SetEnable(true);
+		pEnableCollision->SetTime(1.0f);
+		pActionClip->AddNotify(pEnableCollision);
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 1.0f);
+		pCorrectRM->SetEndOffset({0.0f, -2.2f, 0.0f});
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Beam_StandMoveDown] = pActionClip;
 	}
 	{
 		// Beam_IdleToHanging
@@ -443,7 +471,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		mapActions[(uint8_t)ETagAct::Beam_HangToIdle] = pActionClip;
 	}
 
-	// Beam Hanging 좌우 이동
+	// Beam Hanging이동
 	{
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(36));
