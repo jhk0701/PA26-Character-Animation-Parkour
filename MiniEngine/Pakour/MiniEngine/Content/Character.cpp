@@ -151,7 +151,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 	if (_result.m_pFirstObstacle)
 	{
 		m_curObstacleInfo.m_actTag = _result.m_actTag;
-		m_curObstacleInfo.m_pObstacle = reinterpret_cast<Actor*>(_result.m_pFirstObstacle);
+		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleDistance = _result.m_distanceObstacle;
 		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge + m_ledgeOffset;

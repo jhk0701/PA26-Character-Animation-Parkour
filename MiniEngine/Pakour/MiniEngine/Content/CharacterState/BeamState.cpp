@@ -20,6 +20,11 @@ void BeamState::OnStart()
 	// Beam 태그가 달린 오브젝트를 처리하고 있을 것
 	const Character::PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
 	assert(OBS_INFO.IsValid());
+
+	uint8_t subInfoTag;
+	OBS_INFO.m_pObstacle->GetTag().GetTagAt(TAG_SUB_INFO, subInfoTag);
+
+	m_curAxis = (ETagAxis)subInfoTag;
 }
 
 void BeamState::OnEnd()
@@ -31,19 +36,20 @@ void BeamState::OnEnd()
 
 void BeamState::Tick(float _dt)
 {
+	CheckState();
 }
 
 void BeamState::CheckState()
 {
+	CharacterState::CheckState();
 }
 
 void BeamState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
-	DefaultProcessPerceptionResult(_info);
+	// DefaultProcessPerceptionResult(_info);
 }
 
 // Beam Stand
-
 void BeamStandState::OnStart()
 {
 	BeamState::OnStart();
@@ -58,7 +64,8 @@ void BeamStandState::Tick(float _dt)
 {
 	BeamState::Tick(_dt);
 
-	DefaultCameraRotate(_dt);
+	// DefaultCameraRotate(_dt);
+	ProcessMovement(_dt);
 }
 
 void BeamStandState::CheckState()
@@ -71,7 +78,27 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	BeamState::ProcessPerceptionResult(_info);
 }
 
+void BeamStandState::ProcessMovement(float _dt)
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	if (pChar->IsActionClipPlaying())
+		return;
 
+	const Vector2& INPUT_DIR = pChar->GetInputDir();
+
+	if (INPUT_DIR.y < 0)
+	{
+		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandRotate))
+			pChar->PlayActionClip(pAct, 0.1f);
+
+		return;
+	}
+
+	pChar->SetAnimBaseTrackInputAxis(INPUT_DIR);
+}
+
+
+// Beam Hanging
 void BeamHangingState::OnStart()
 {
 	BeamState::OnStart();

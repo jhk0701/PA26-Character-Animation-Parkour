@@ -117,8 +117,8 @@ namespace
 				m_bIsEmpty = false;
 				const HitResult& r = hits.m_hitResults[i];
 
+				_context.m_pFirstObstacle = reinterpret_cast<Actor*>(r.GetActor());
 				_context.m_raycastPos = r.m_pos;
-				_context.m_firstObstacle = r.GetActor();
 				_context.m_firstObstacleHitPos = r.m_pos;
 				_context.m_ledge = r.m_pos.y;
 				_context.m_distance = r.m_distance;
@@ -135,12 +135,12 @@ namespace
 			// 바닥이 있지도 않은 상태에서 장애물을 확인
 			const HitResult& r = hits.m_hitResults.front();
 
-			_context.m_raycastPos = r.m_pos;
-			_context.m_firstObstacle = r.GetActor();
+			_context.m_pFirstObstacle = reinterpret_cast<Actor*>(r.GetActor());
 			_context.m_firstObstacleHitPos = r.m_pos;
 			_context.m_distance = r.m_distance;
 			_context.m_ledge = r.m_pos.y;
 			_context.m_units = 1; // 1 단위 확정
+			_context.m_raycastPos = r.m_pos;
 		}
 
 		return bIsHit;
@@ -279,7 +279,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			TravelResult result;
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
-			result.m_pFirstObstacle = _context.m_firstObstacle;
+			result.m_pFirstObstacle = _context.m_pFirstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_distanceObstacle = _context.m_distance;
 			result.m_obstacleLedge = _context.m_ledge;
@@ -320,9 +320,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pCheckObstacleTag->SetCondition(
 				[](TravelContext& _ctx) 
 				{
-					Actor* pObs = reinterpret_cast<Actor*>(_ctx.m_firstObstacle);
 					uint8_t detailTag = 0;
-					pObs->GetTag().GetTagAt(TAG_TYPE_ENV_DETAIL, detailTag);
+					_ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, detailTag);
 
 					return detailTag;
 				}, 
@@ -404,13 +403,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					// 장애물 y 위치 비교
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					Actor* pObs = reinterpret_cast<Actor*>(_ctx.m_firstObstacle);
+					Actor* pObs = _ctx.m_pFirstObstacle;
 
 					const Vector3& CHAR_POS = pChar->GetRoot()->localTransform.position;
 					const Vector3& OBS_POS = pObs->GetRoot()->localTransform.position;
 
 					bool bStepable = OBS_POS.y <= (CHAR_POS.y + pChar->GetStepThreshold());
-					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::Beam_Step : ETagAct::Beam_IdleToHang);
+					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::Beam_IdleToStand : ETagAct::Beam_IdleToHang);
 					_ctx.m_ledge = OBS_POS.y;
 
 					// MG_LOG_INFO("[QueryTree] Compare Height:: Char + step : {}, obs hit pos : {} ", CHAR_POS.y + pChar->GetStepThreshold(), OBS_POS.y);
@@ -496,7 +495,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					bool bIsHit = CheckLedge(_ctx, POS, DIR, pChar->GetCapsuleRadius(), result);
 					if (bIsHit)
 					{
-						_ctx.m_firstObstacle = result.GetActor();
+						_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
 						_ctx.m_firstObstacleHitPos = result.m_pos;
 						_ctx.m_distance = result.m_distance;
 						_ctx.m_ledge = result.m_pos.y;
@@ -526,7 +525,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					MG_LOG_INFO("[QueryTree] Hang to idle");
 					
-					_ctx.m_firstObstacle = result.GetActor();
+					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
 					_ctx.m_distance = result.m_distance;
 					_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
@@ -549,7 +548,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit) 
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_firstObstacle = result.GetActor();
+					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
 					_ctx.m_distance = result.m_distance;
 				}
@@ -571,7 +570,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit)
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_firstObstacle = result.GetActor();
+					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
 					_ctx.m_distance = result.m_distance;
 				}

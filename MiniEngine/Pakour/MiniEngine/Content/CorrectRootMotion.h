@@ -53,3 +53,21 @@ private:
 	MiniEngine::Vector3 m_midPoint{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_endPoint{ 0.0f, 0.0f, 0.0f };
 };
+
+class RotateMotion : public MiniEngine::AnimNotifyState 
+{
+public:
+	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
+	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
+
+	void SetRotateDeg(const MiniEngine::Vector3& _yawPitchRoll) { m_rotateDegree = _yawPitchRoll; }
+
+private:
+	Character* m_pChar{ nullptr };
+	
+	float m_elapsedTime{ 0.0f };
+	
+	MiniEngine::Vector3 m_rotateDegree;
+	MiniEngine::Quaternion m_startRotation;
+	MiniEngine::Quaternion m_endRotation;
+};

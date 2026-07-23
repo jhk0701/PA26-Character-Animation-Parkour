@@ -16,7 +16,7 @@ public:
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
-		uint8_t _detailTag,
+		const std::vector<uint8_t>& _detailTags,
 		bool _addLedge);
 
 private:
@@ -36,6 +36,6 @@ public:
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
-		uint8_t _detailTag = 0U, // (uint8_t)Content::Config::ETagEnvDetail::Default
+		const std::vector<uint8_t>& _detailTags = { 0U }, // (uint8_t)Content::Config::ETagEnvDetail::Default
 		bool _addLedge = true);
 };

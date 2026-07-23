@@ -55,10 +55,12 @@ namespace MiniEngine
 		const float n1 = std::floor(t1 / dur);
 		const int n = static_cast<int>(n1 - n0);
 
+		// 두 시간에 대해 샘플링
 		BoneTRS b0, b1;
 		_clip.SampleTRS(_rootBone, t0 - n0 * dur, _skel, b0);
 		_clip.SampleTRS(_rootBone, t1 - n1 * dur, _skel, b1);
 
+		// 샘플링한 두 모션 간의 차이를 추출
 		Vector3 trans = b1.pos - b0.pos;
 		Quaternion rot = ExtractYaw(b1.rot) * Inv(ExtractYaw(b0.rot));
 

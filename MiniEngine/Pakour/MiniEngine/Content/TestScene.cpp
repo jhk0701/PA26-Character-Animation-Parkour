@@ -85,7 +85,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		// 6. 경사로 + 건물
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.0f, 14.0f), Vector3(10.0f, 1.0f, 10.0f), 
-			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), 0U, false);
+			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), { (uint8_t)Content::Config::ETagEnv::Obstacle }, false);
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.5f, 20.5f), Vector3(10.0f, 5.0f, 5.0f), identity);
 
 		// 벽
@@ -93,24 +93,29 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 7.5f, 29.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
 
 		// Foot Hold // 밟는 용도
-		const uint8_t DETAIL_TAG = (uint8_t)Content::Config::ETagEnvDetail::Beam;
+		const std::vector<uint8_t> DETAIL_TAGS = 
+		{ 
+			(uint8_t)Content::Config::ETagEnvDetail::Beam,
+			(uint8_t)Content::Config::ETagAxis::X,
+		};
+
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.9f, 26.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.9f, 26.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.1f, 30.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.1f, 30.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.5f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
 
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAG)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
 
 		// 공중 큐브

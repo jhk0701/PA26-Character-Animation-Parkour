@@ -83,7 +83,7 @@ namespace MiniEngine
 
 		TravelContext context;
 		context.m_owner = owner.lock();
-		context.m_physics = owner.lock()->GetScene()->GetPhysics().lock();
+		context.m_physics = context.m_owner->GetScene()->GetPhysics().lock();
 		context.m_units = 0;
 
 		m_result = m_queryTree->Execute(context);

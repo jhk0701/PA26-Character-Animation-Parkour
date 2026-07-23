@@ -2,8 +2,9 @@
 
 namespace Content::Config 
 {
-	inline constexpr uint8_t TAG_TYPE_ENV			= 0;
-	inline constexpr uint8_t TAG_TYPE_ENV_DETAIL	= 1;
+	inline constexpr uint8_t TAG_ENV		= 0;
+	inline constexpr uint8_t TAG_ENV_DETAIL	= 1;
+	inline constexpr uint8_t TAG_SUB_INFO	= 2;
 
 	enum class ETagEnv : uint8_t
 	{
@@ -20,6 +21,16 @@ namespace Content::Config
 
 		End
 	};
+
+	// 특정 액터의 주된 방향
+	// Beam 지형물의 경우 어느 축으로 길게 뻗었는지 : 로컬 기준
+	enum class ETagAxis : uint8_t 
+	{
+		X, // Transform에서 Right
+		Y, // Transform에서 Up
+		Z  // Transform에서 Front
+	};
+
 
 	enum class ETagAct : uint8_t
 	{
@@ -60,7 +71,8 @@ namespace Content::Config
 		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
 		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
 
-		Beam_Step,
+		Beam_IdleToStand,
+		Beam_StandRotate,
 
 		Beam_IdleToHang,
 		Beam_HangToIdle,

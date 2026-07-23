@@ -63,7 +63,8 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		// Beam Stand
 		std::shared_ptr<BlendClip> pBlend = std::make_shared<BlendClip>(1);
 		// 모션 입력 
-		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(1));	// TODO : 애니메이션 적절한 것으로 교체하기
+		pBlend->AddAnimClip({ 0, 0 }, skinnedMesh->GetClipPtr(38)); // A_Balance_Idle
+		pBlend->AddAnimClip({ 0, 1 }, skinnedMesh->GetClipPtr(39)); // A_Balance_Run
 
 		pAnim->AddBaseLocomotion(pBlend);
 	}
@@ -334,18 +335,31 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
 		pActionClip->SetApplyRootBone(false);
 
-		//std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
-		//pTransition->SetState((uint8_t)EState::BeamStand);
-		//pTransition->SetTime(0.5f);
-		//pActionClip->AddNotify(pTransition);
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetState((uint8_t)Character::EState::BeamStand);
+		pTransition->SetTime(0.5f);
+		pActionClip->AddNotify(pTransition);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetBezierY(1.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
-		mapActions[(uint8_t)ETagAct::Beam_Step] = pActionClip;
+		mapActions[(uint8_t)ETagAct::Beam_IdleToStand] = pActionClip;
 	}
+	{
+		// Rotate
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(40));
+		
+		std::shared_ptr<RotateMotion> pCorrectRM = std::make_shared<RotateMotion>();
+		pCorrectRM->SetTime(0.1, 0.7);
+		pCorrectRM->SetRotateDeg({180.0f, 0.0f, 0.0f});
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Beam_StandRotate] = pActionClip;
+	}
+
 	{
 		// Beam_IdleToHanging
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
@@ -373,7 +387,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Beam_IdleToHang] = pActionClip;
 	}
-
 	{
 		// Beam Hanging 상태
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();

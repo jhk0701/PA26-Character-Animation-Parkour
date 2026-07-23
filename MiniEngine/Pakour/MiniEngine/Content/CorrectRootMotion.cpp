@@ -60,23 +60,25 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 
 	Vector3 properPoint = obsPos - dir * m_properDistance;
 
-	float w = m_elapsedTime / GetDuration();
-	Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
-	m_pChar->SetPosition(lerpedPos);
+	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
+	Vector3 correctMovementDt = lerped - charPos;
 
-	m_elapsedTime += _dt;
+	// 멀 때만 보간 처리
+	// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
+	if (OBS_INFO.m_obstacleDistance > m_properDistance)
+		correctMovementDt *= _dt * m_deltaIntensity;
+
+	m_pChar->AddMovementInput(correctMovementDt);
 
 	{
 		return;
-		Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
-		Vector3 correctMovementDt = lerped - charPos;
+		// 정석적인 방법은 아래이나
+		// 위의 처리 방식이 더 자연스러워 보여 우선 보류
 
-		// 멀 때만 보간 처리
-		// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
-		if (OBS_INFO.m_obstacleDistance > m_properDistance)
-			correctMovementDt *= _dt * m_deltaIntensity;
-
-		m_pChar->AddMovementInput(correctMovementDt);
+		m_elapsedTime += _dt;
+		float w = m_elapsedTime / GetDuration();
+		Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
+		m_pChar->SetPosition(lerpedPos);
 	}
 }
 
@@ -115,12 +117,40 @@ void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 		return;
 
 	// 베지어로 보간
+	m_elapsedTime += _dt;
 	const float w = m_elapsedTime / GetDuration();
 	Vector3 p1 = Vector3::Lerp(m_startPoint, m_midPoint, w);
 	Vector3 p2 = Vector3::Lerp(m_midPoint, m_endPoint, w);
 	Vector3 p3 = Vector3::Lerp(p1, p2, w);
 	
 	m_pChar->SetPosition(p3);
+}
 
+void RotateMotion::OnStart(MiniEngine::AnimNotifyParam& _param)
+{
+	AnimNotifyState::OnStart(_param);
+
+	if (!_param.m_pActor)
+		return;
+
+	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
+	m_elapsedTime = 0.0f;
+
+	m_startRotation = m_pChar->GetRoot()->localTransform.rotation;
+	m_endRotation = m_startRotation * Quaternion::CreateFromYawPitchRoll(ToRadians(m_rotateDegree.x), ToRadians(m_rotateDegree.y), ToRadians(m_rotateDegree.z));
+	m_endRotation.Normalize();
+
+	assert(GetDuration() > 1e-4f);
+}
+
+void RotateMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
+{
+	if (!m_pChar)
+		return;
+
+	// 자체 회전 반영
 	m_elapsedTime += _dt;
+
+	const float w = m_elapsedTime / GetDuration();
+	m_pChar->GetRoot()->localTransform.rotation = Quaternion::Slerp(m_startRotation, m_endRotation, w);
 }
