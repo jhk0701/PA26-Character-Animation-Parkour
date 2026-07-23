@@ -21,7 +21,7 @@ void BeamState::OnStart()
 	MG_LOG_INFO("[Character] Beam State Started");
 	pChar->SetUseGravity(false);
 
-	Refresh();
+	Refresh(); // 최초에도 한번 refresh 호출
 }
 
 void BeamState::Refresh()
@@ -143,7 +143,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	// Beam Stand -> Beam Hanging
-	
 	uint8_t t = 0;
 	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
 	if (t == (uint8_t)ETagEnvDetail::Default) 
@@ -240,7 +239,6 @@ void BeamStandState::ProcessMovement(float _dt)
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
-
 bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character> _pChar)
 {
 	Vector3 dir = GetDirectionByAxis();
@@ -301,6 +299,8 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 
 void BeamHangingState::OrientByAxis()
 {
+
+
 }
 
 void BeamHangingState::ProcessMovement(float _dt)

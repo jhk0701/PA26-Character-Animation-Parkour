@@ -360,7 +360,6 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	param.pAnim = pAnim;
 	param.pSources = _skinComp->GetMesh().lock();
 	param.pMaps = &m_mapActions;
-	
 	ActionClipContainer::LoadActionClips(param);
 
 	pAnim->SetEnableRootMotion(true);
