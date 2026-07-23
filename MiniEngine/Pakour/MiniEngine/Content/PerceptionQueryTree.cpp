@@ -421,7 +421,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_ledge = OBS_POS.y;
 
 					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
-
 					return bStepable;
 				},
 				pReturn,
@@ -600,6 +599,12 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					MG_LOG_INFO("[QueryTree] Check Side Obstacle Detected");
 
+					// Beam 지형인 경우 처리
+					uint8_t detailTag = 0;
+					bool bHasTag = _ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, detailTag);
+					if (bHasTag && detailTag == (uint8_t)ETagEnvDetail::Beam)
+						return false; // beam 지형 처리로 전환
+
 					// 장애물이 식별된 상황
 					// Ledge 인지 확인 true : climb , false : inner rotate
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
@@ -629,7 +634,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					return bLedgeHit;
 				},
 				pReturn,
-				pReturn	
+				pCompareHeight
 			);
 
 			pOnSideEmpty->SetCondition(
