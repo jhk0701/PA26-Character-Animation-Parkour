@@ -99,22 +99,22 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		};
 
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.4f, 24.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 24.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.8f, 26.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.8f, 26.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.4f, 28.0f), Vector3(3.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 28.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.0f, 30.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.0f, 30.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-2.0f, 5.4f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
 			->SetName(FOOT_HOLD_NAME.c_str());
 
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 6.5f, 25.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 6.5f, 27.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 2.5f, 31.0f), Vector3(3.0f, 5.0f, 5.0f), identity);
 
