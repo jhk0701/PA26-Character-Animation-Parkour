@@ -112,9 +112,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 25.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAGS)
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 2.5f, 31.0f), Vector3(3.0f, 5.0f, 5.0f), identity);
 

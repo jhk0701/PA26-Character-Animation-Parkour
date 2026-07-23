@@ -258,7 +258,6 @@ void BeamHangingState::Tick(float _dt)
 	ProcessMovement(_dt);
 }
 
-
 void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	BeamState::ProcessPerceptionResult(_info);

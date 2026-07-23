@@ -527,7 +527,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(1.0f, 1.8f);
-		pCorrectRM->SetEndOffset({0.0f, 0.0f, -0.25f});
+		// pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.05f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_HangingMoveUp] = pActionClip;

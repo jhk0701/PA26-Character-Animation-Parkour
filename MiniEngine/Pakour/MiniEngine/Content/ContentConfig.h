@@ -70,6 +70,8 @@ namespace Content::Config
 		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
 		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
 
+		Wall_HangToBeam,	// 벽에서 Beam 지형으로 이동
+
 		BeamStand,
 		Beam_IdleToStand = BeamStand,
 		Beam_StandToIdle,
