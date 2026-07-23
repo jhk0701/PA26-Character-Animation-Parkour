@@ -476,5 +476,37 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Beam_HangingMoveRight] = pHangMoveRight;
 	}
+		
+	{
+		// Beam Hanging 올라가기
+		// Beam Hang -> Beam Stand
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(33));
 
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetTime(1.6f);
+		pTransition->SetState((uint8_t)Character::EState::BeamStand);
+		pActionClip->AddNotify(pTransition);
+
+		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
+		pIgnoreCollision->SetEnable(false);
+		pIgnoreCollision->SetTime(0.0f);
+		pActionClip->AddNotify(pIgnoreCollision);
+
+		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
+		pEnableCollision->SetEnable(true);
+		pEnableCollision->SetTime(1.6f);
+		pActionClip->AddNotify(pEnableCollision);
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(1.0f, 1.8f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, -0.25f});
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Beam_HangingMoveUp] = pActionClip;
+	}
+	{
+		// Beam Hanging 내려가기
+		// Beam Hang -> Beam Drop
+	}
 }

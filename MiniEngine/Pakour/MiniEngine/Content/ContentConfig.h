@@ -54,7 +54,6 @@ namespace Content::Config
 		MantleHigh,
 
 		// Wall		벽면 매달리기
-		// Bar		봉 매달리기
 		Wall,
 		Wall_IdleToHang = Wall,		// 매달리기 시작
 		Wall_HangToIdle,		// 매달리기에서 내려옴
@@ -76,6 +75,7 @@ namespace Content::Config
 		Beam_StandToIdle,
 		Beam_StandRotateLeft,
 		Beam_StandRotateRight,
+		Beam_StandMoveDown,
 
 		BeamHanging,
 		Beam_IdleToHang = BeamHanging,
