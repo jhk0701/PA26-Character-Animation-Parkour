@@ -14,12 +14,8 @@ void BeamState::OnStart()
 {
 	CameraFixedState::OnStart();
 
-	// Beam 장애물에 snap된 상태
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack((uint8_t)pChar->GetState());
-
-	MG_LOG_INFO("[Character] Beam State Started");
-	pChar->SetUseGravity(false);
 
 	Refresh(); // 최초에도 한번 refresh 호출
 }
@@ -45,10 +41,6 @@ void BeamState::Refresh()
 void BeamState::OnEnd()
 {
 	CameraFixedState::OnEnd();
-
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	pChar->SetUseGravity(true);
 
 	m_pCurObs = nullptr;
 }
@@ -96,43 +88,11 @@ Vector3 BeamState::GetDirectionByAxis()
 }
 
 // Beam Stand
-void BeamStandState::OnStart()
-{
-	BeamState::OnStart();
-}
-
-void BeamStandState::OnEnd()
-{
-	BeamState::OnEnd();
-}
-
 void BeamStandState::Tick(float _dt)
 {
 	BeamState::Tick(_dt);
 
-	// DefaultCameraRotate(_dt);
 	ProcessMovement(_dt);
-	CheckState();
-}
-
-void BeamStandState::CheckState()
-{
-	BeamState::CheckState();
-
-	// 해결후 테스트 확인
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	
-	// 현재 올라온 장애물 상태 확인
-	const Actor* pCurObs = GetCurObs();
-	if (!pCurObs || (pChar->GetCurObstacleInfo().IsValid() && 
-		!ObstacleIsBeamType(pChar->GetCurObstacleInfo().m_pObstacle)))
-	{
-		// 랜딩으로 전환
-
-		pChar->SetState(Character::EState::Landing);
-		const uint8_t STATE = (uint8_t)pChar->GetState();;
-		GetMachine()->Transition(STATE);
-	}
 }
 
 void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
@@ -222,7 +182,7 @@ void BeamStandState::ProcessMovement(float _dt)
 	
 	// 가지 못하는 상황
 	/*IsAlignToAxis(pChar) == false ||*/
-	if (CheckEnableToMove() == false ||
+	if (CheckEnableToMove(pChar) == false ||
 		inputLerp.y < 0)
 	{
 		inputLerp.y = 0.0f;
@@ -239,7 +199,7 @@ void BeamStandState::ProcessMovement(float _dt)
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
-bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character> _pChar)
+bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character>& _pChar)
 {
 	Vector3 dir = GetDirectionByAxis();
 	dir.y = 0.0f;
@@ -249,11 +209,10 @@ bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character> _pChar)
 	return dot >= 0.90f;
 }
 
-bool BeamStandState::CheckEnableToMove()
+bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 {
 	// 정면 바로 아래가 절벽인지 확인
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	const Transform& TF = pChar->GetRoot()->localTransform;
+	const Transform& TF = _pChar->GetRoot()->localTransform;
 
 	MiniEngine::Physics::SpherecastParam param;
 	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
@@ -262,7 +221,7 @@ bool BeamStandState::CheckEnableToMove()
 	param.m_radius = 0.3f;
 
 	MiniEngine::Physics::RaycastResult result;
-	bool bIsHit = pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
+	bool bIsHit = _pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
 	if (bIsHit && result.GetActor() == GetCurObs())
 		return true;
 
@@ -273,11 +232,19 @@ bool BeamStandState::CheckEnableToMove()
 void BeamHangingState::OnStart()
 {
 	BeamState::OnStart();
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetUseGravity(false);
+
+	Refresh();
 }
 
 void BeamHangingState::OnEnd()
 {
 	BeamState::OnEnd();
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetUseGravity(true);
 }
 
 void BeamHangingState::Tick(float _dt)
@@ -287,10 +254,6 @@ void BeamHangingState::Tick(float _dt)
 	ProcessMovement(_dt);
 }
 
-void BeamHangingState::CheckState()
-{
-	BeamState::CheckState();
-}
 
 void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
@@ -299,8 +262,7 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 
 void BeamHangingState::OrientByAxis()
 {
-
-
+	return;
 }
 
 void BeamHangingState::ProcessMovement(float _dt)
@@ -312,6 +274,9 @@ void BeamHangingState::ProcessMovement(float _dt)
 
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
+	if (CheckEnableToMove(pChar, INPUT_DIR) == false)
+		return;
+
 	ETagAct eAct = ETagAct::End;
 	if (INPUT_DIR.x > 0)
 		eAct = ETagAct::Beam_HangingMoveRight;
@@ -320,4 +285,25 @@ void BeamHangingState::ProcessMovement(float _dt)
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
 		pChar->PlayActionClip(pAct, 0.1f);
-};
+}
+
+bool BeamHangingState::CheckEnableToMove(std::shared_ptr<Character>& _pChar, const Vector2& _inputDir)
+{
+	// 좌우 방향 이동 시, 위쪽에 철봉이 계속되는지 확인
+	const Transform& TF = _pChar->GetRoot()->localTransform;
+
+	MiniEngine::Physics::SpherecastParam param;
+	param.m_radius = 0.3f;
+	param.m_dir = Vector3(0.f, 1.0f, 0.f);
+	param.m_maxDistance = 1.0f;
+	param.m_startPos = TF.position + Vector3(0.0f, _pChar->GetCharacterHalfHeight() * 2.0f, 0.0f) + _inputDir.x * TF.Right();
+
+	MiniEngine::Physics::RaycastResult result;
+	bool bIsHit = _pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
+
+	if (bIsHit && result.GetActor() == GetCurObs())
+		return true;
+
+	return false;
+}
+;

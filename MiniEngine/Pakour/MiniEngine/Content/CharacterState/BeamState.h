@@ -33,10 +33,8 @@ private:
 class BeamStandState : public BeamState
 {
 public:
-	void OnStart() override;
-	void OnEnd() override;
 	void Tick(float _dt) override;
-	void CheckState() override;
+	// void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
@@ -44,8 +42,8 @@ protected:
 
 private:
 	void ProcessMovement(float _dt);
-	bool IsAlignToAxis(std::shared_ptr<Character> _pChar);
-	bool CheckEnableToMove();
+	bool IsAlignToAxis(std::shared_ptr<Character>& _pChar);
+	bool CheckEnableToMove(std::shared_ptr<Character>& _pChar);
 };
 
 // Beam 지형에 올라탄 상태
@@ -56,7 +54,6 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
-	void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
@@ -64,4 +61,5 @@ protected:
 
 private:
 	void ProcessMovement(float _dt);
+	bool CheckEnableToMove(std::shared_ptr<Character>& _pChar, const Vector2& _inputDir);
 };
