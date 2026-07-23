@@ -1,8 +1,8 @@
 #pragma once
-#include "Content/CharacterStateMachine.h"
+#include "Content/CharacterState/CameraFixedState.h"
 #include "Content/ContentConfig.h"
 
-class BeamState : public CharacterState 
+class BeamState : public CameraFixedState 
 {
 public:
 	virtual void OnStart() override;

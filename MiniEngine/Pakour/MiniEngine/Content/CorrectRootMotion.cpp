@@ -100,8 +100,10 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	{
 		m_startPoint = m_pChar->GetRoot()->localTransform.position;
 
-		m_endPoint = m_pChar->GetCurObstacleInfo().m_obstacleHitPos;
-		m_endPoint.y = m_pChar->GetCurObstacleInfo().m_obstacleLedge;
+		const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
+
+		m_endPoint = OBS_INFO.m_obstacleHitPos;
+		m_endPoint.y = OBS_INFO.m_obstacleLedge;
 		m_endPoint += m_endOffset;
 
 		m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);

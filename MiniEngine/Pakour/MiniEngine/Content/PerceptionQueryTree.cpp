@@ -301,6 +301,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			// 배치 순서는 Character EState 순서대로
 			pStateLanding,
 			pStateInAir,
+			pStateHanging,
+			pStateLanding,
 			pStateHanging
 		}
 	);

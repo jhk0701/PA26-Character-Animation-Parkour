@@ -1,3 +1,4 @@
+#pragma once
 #include "Content/CharacterStateMachine.h"
 
 class InAirState : public CharacterState

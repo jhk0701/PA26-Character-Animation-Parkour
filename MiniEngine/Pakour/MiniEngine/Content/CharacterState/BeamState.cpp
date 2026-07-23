@@ -9,6 +9,8 @@ using namespace Content::Config;
 
 void BeamState::OnStart()
 {
+	CameraFixedState::OnStart();
+
 	// Beam 장애물에 snap된 상태
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack((uint8_t)pChar->GetState());
@@ -29,6 +31,8 @@ void BeamState::OnStart()
 
 void BeamState::OnEnd()
 {
+	CameraFixedState::OnEnd();
+
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	pChar->SetUseGravity(true);
@@ -37,6 +41,7 @@ void BeamState::OnEnd()
 void BeamState::Tick(float _dt)
 {
 	CheckState();
+	CameraRotate(_dt);
 }
 
 void BeamState::CheckState()
@@ -86,12 +91,25 @@ void BeamStandState::ProcessMovement(float _dt)
 
 	const Vector2& INPUT_DIR = pChar->GetInputDir();
 
-	if (INPUT_DIR.y < 0)
+	// x 축 입력 시 회전
+	if (INPUT_DIR.x < 0)
 	{
-		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandRotate))
+		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandRotateLeft))
 			pChar->PlayActionClip(pAct, 0.1f);
-
 		return;
+	}
+	else if (INPUT_DIR.x > 0) 
+	{
+		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandRotateRight))
+			pChar->PlayActionClip(pAct, 0.1f);
+		return;
+	}
+	else if (INPUT_DIR.y > 0) 
+	{
+		// y축 전방 입력 시, 앞으로 이동
+		// 후방 이동은 모션이 없어 제외
+
+		
 	}
 
 	pChar->SetAnimBaseTrackInputAxis(INPUT_DIR);

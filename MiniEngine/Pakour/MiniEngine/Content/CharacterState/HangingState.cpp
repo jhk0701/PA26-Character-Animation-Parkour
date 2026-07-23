@@ -11,22 +11,20 @@ using namespace MiniEngine::Physics;
 
 void HangingState::OnStart()
 {
+	CameraFixedState::OnStart();
+
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
-	
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
-	
-	TakeOverCameraRotate(pChar);
 }
 
 void HangingState::OnEnd()
 {
+	CameraFixedState::OnEnd();
+
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
-	
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
-	
-	HandOverCameraRotate(pChar);
 }
 
 void HangingState::Tick(float _dt)
@@ -38,28 +36,6 @@ void HangingState::Tick(float _dt)
 void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	DefaultProcessPerceptionResult(_info);
-}
-
-void HangingState::CameraRotate(float _dt)
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Input& input = InputManager::GetInstance()->GetInput();
-
-	// 마우스 델타에 이미 델타타임이 곱해져 있음
-	const Vector2 camRotSpeed = pChar->GetCamRotateSpeed() * input.GetMouseDelta();
-	Vector2& camRot = pChar->CamRotate();
-	const float MAX_PITCH = pChar->GetCamPitchMaxDeg();
-
-	camRot.x += camRotSpeed.x;
-	camRot.y += camRotSpeed.y;
-	camRot.y = std::clamp(camRot.y, 180.0f - MAX_PITCH, 180.0f + MAX_PITCH);
-
-	Quaternion qRot = Quaternion::CreateFromYawPitchRoll(ToRadians(camRot.x), ToRadians(camRot.y), 0.0f);
-	qRot.Normalize();
-	
-	std::shared_ptr<SceneComponent> pCamHolderRoot = pChar->GetCamHolder().lock();
-	pCamHolderRoot->localTransform.rotation = qRot;
-
 }
 
 void HangingState::ProcessMovement(float _dt)
@@ -120,25 +96,4 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 
 	RaycastResult result;
 	return physics->Raycast(param, result, ToMask(Layer::Obstacle));
-}
-
-void HangingState::TakeOverCameraRotate(std::shared_ptr<Character>& _pChar)
-{
-	Vector2& camRot = _pChar->CamRotate();
-	m_prevYaw = camRot.x;
-	camRot.x = 0.0f;
-}
-
-void HangingState::HandOverCameraRotate(std::shared_ptr<Character>& _pChar)
-{
-	Vector2& camRot = _pChar->CamRotate();
-	camRot.x += m_prevYaw;
-
-	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(camRot.x));
-	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(camRot.y));
-	qYaw.Normalize();
-	qPitch.Normalize();
-
-	_pChar->GetRoot()->localTransform.rotation = qYaw;
-	_pChar->GetCamHolder().lock()->localTransform.rotation = qPitch;
 }

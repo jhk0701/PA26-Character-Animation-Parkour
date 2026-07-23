@@ -307,6 +307,9 @@
     <ClInclude Include="Content\UseGravity.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CharacterState\CameraFixedState.h">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -488,6 +491,9 @@
     </ClCompile>
     <ClCompile Include="Content\UseGravity.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterState\CameraFixedState.cpp">
+      <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

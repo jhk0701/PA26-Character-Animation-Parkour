@@ -1,7 +1,8 @@
-#include "Content/CharacterStateMachine.h"
+#pragma once
+#include "Content/CharacterState/CameraFixedState.h"
 #include "Content/ContentConfig.h"
 
-class HangingState : public CharacterState
+class HangingState : public CameraFixedState
 {
 public:
 	void OnStart() override;
@@ -10,12 +11,6 @@ public:
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 private:
-	void CameraRotate(float _dt);
 	void ProcessMovement(float _dt);
 	bool CheckEnableToMove(Content::Config::ETagAct _tag);
-
-	void TakeOverCameraRotate(std::shared_ptr<Character>& _pChar);
-	void HandOverCameraRotate(std::shared_ptr<Character>& _pChar);
-
-	float m_prevYaw{ 0.0f };
 };

@@ -57,11 +57,10 @@ void CharacterState::DefaultMovement(float _dt)
 	if (pChar->IsActionClipPlaying())
 		return;
 
-	Vector2 inputDir = pChar->GetInputDir();
-	inputDir.Normalize();
+	const Vector2& INPUT_DIR = pChar->GetInputDir();
 
 	Vector2& inputLerp = pChar->InputLerp();
-	inputLerp = Vector2::Lerp(inputLerp, inputDir, std::clamp(pChar->GetInputLerpWeight(), 0.0f, 1.0f));
+	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, std::clamp(pChar->GetInputLerpWeight(), 0.0f, 1.0f));
 
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& TF = pChar->GetRoot()->localTransform;
