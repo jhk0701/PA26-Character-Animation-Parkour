@@ -87,7 +87,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.0f, 14.0f), Vector3(10.0f, 1.0f, 10.0f), 
 			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), { (uint8_t)Content::Config::ETagEnv::Obstacle }, false);
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.5f, 20.5f), Vector3(10.0f, 5.0f, 5.0f), identity);
-
 		// 벽
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 7.5f, 29.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 7.5f, 29.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
@@ -117,6 +116,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(2.0f, 6.5f, 27.0f), Vector3(4.0f, 0.1f, 0.1f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 2.5f, 31.0f), Vector3(3.0f, 5.0f, 5.0f), identity);
 
 		// 공중 큐브
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 28.5f, 0.0f), Vector3(3.0f), identity);

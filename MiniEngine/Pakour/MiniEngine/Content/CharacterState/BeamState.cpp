@@ -99,7 +99,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 {
 	BeamState::ProcessPerceptionResult(_info);
 	
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	// Beam Stand -> Beam Hanging
@@ -258,6 +257,22 @@ void BeamHangingState::Tick(float _dt)
 void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	BeamState::ProcessPerceptionResult(_info);
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	uint8_t t = 0;
+	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+	if (t == (uint8_t)ETagEnvDetail::Default)
+	{
+		// BeamHanging -> Landing
+		if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_HangToIdle))
+			pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+
+		return;
+	}
+
+	// BeamHanging -> BeamHanging
+	DefaultProcessPerceptionResult(_info);
 }
 
 void BeamHangingState::OrientByAxis()
@@ -274,7 +289,7 @@ void BeamHangingState::ProcessMovement(float _dt)
 
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
-	if (CheckEnableToMove(pChar, INPUT_DIR) == false)
+	if (INPUT_DIR.x != 0.0f && CheckEnableToMove(pChar, INPUT_DIR) == false)
 		return;
 
 	ETagAct eAct = ETagAct::End;
@@ -295,7 +310,7 @@ bool BeamHangingState::CheckEnableToMove(std::shared_ptr<Character>& _pChar, con
 	MiniEngine::Physics::SpherecastParam param;
 	param.m_radius = 0.3f;
 	param.m_dir = Vector3(0.f, 1.0f, 0.f);
-	param.m_maxDistance = 1.0f;
+	param.m_maxDistance = 0.5f;
 	param.m_startPos = TF.position + Vector3(0.0f, _pChar->GetCharacterHalfHeight() * 2.0f, 0.0f) + _inputDir.x * TF.Right();
 
 	MiniEngine::Physics::RaycastResult result;

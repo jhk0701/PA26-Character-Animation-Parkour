@@ -304,7 +304,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pStateInAir,
 			pStateHanging,
 			pStateLanding,
-			pStateHanging
+			pStateLanding
 		}
 	);
 		// 평지에 있는데, 장애물을 발견했는지
@@ -414,7 +414,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = OBS_POS.y;
 
-					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
+					// MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
 
 					return bStepable;
 				},
