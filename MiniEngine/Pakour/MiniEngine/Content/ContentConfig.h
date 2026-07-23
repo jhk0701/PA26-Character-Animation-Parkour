@@ -55,7 +55,8 @@ namespace Content::Config
 
 		// Wall		벽면 매달리기
 		// Bar		봉 매달리기
-		Wall_IdleToHang,		// 매달리기 시작
+		Wall,
+		Wall_IdleToHang = Wall,		// 매달리기 시작
 		Wall_HangToIdle,		// 매달리기에서 내려옴
 		Wall_HangToMantle,	// 매달린 상태에서 꼭대기에 오름
 		Wall_HangToJump,		// 매달린 상태에서 점프
@@ -70,11 +71,14 @@ namespace Content::Config
 		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
 		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
 
-		Beam_IdleToStand,
+		BeamStand,
+		Beam_IdleToStand = BeamStand,
+		Beam_StandToIdle,
 		Beam_StandRotateLeft,
 		Beam_StandRotateRight,
 
-		Beam_IdleToHang,
+		BeamHanging,
+		Beam_IdleToHang = BeamHanging,
 		Beam_HangToIdle,
 		Beam_HangToJump,
 		Beam_HangingMoveUp,

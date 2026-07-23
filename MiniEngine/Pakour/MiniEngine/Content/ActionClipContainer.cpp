@@ -330,7 +330,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 	}
 	{
 		// A_Jump_One_L
-		// Beam_Step
+		// Beam_IdleToStand
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
 		pActionClip->SetApplyRootBone(false);
@@ -369,6 +369,24 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pRotateRight->AddNotify(pCorrectRotateRight);
 
 		mapActions[(uint8_t)ETagAct::Beam_StandRotateRight] = pRotateRight;
+	}
+	{
+		// Beam_StandToIdle
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
+		pActionClip->SetApplyRootBone(false);
+
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetState((uint8_t)Character::EState::Landing);
+		pTransition->SetTime(0.6f);
+		pActionClip->AddNotify(pTransition);
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.5f);
+		pCorrectRM->SetBezierY(1.0f);
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Beam_StandToIdle] = pActionClip;
 	}
 
 	{

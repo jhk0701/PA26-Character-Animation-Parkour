@@ -138,6 +138,24 @@ void BeamStandState::CheckState()
 void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	BeamState::ProcessPerceptionResult(_info);
+	
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	// Beam Stand -> Beam Hanging
+	
+	uint8_t t = 0;
+	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+	if (t == (uint8_t)ETagEnvDetail::Default) 
+	{
+		// Beam Stand -> Landing
+		// Beam Stand에서 Land
+		if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
+			pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+
+		return;
+	}
+	
 	DefaultProcessPerceptionResult(_info);
 }
 

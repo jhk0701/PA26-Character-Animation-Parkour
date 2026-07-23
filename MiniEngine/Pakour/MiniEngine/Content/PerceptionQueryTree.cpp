@@ -279,6 +279,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			TravelResult result;
 			result.m_bIsEmpty = false;
 			result.m_actTag = _context.m_predictedActTag;
+			result.m_units = _context.m_units;
 			result.m_pFirstObstacle = _context.m_pFirstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_distanceObstacle = _context.m_distance;
@@ -344,7 +345,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					bool bVaultable = CheckVaultable(_ctx, _ctx.m_raycastPos, FWD, CHAR_H);
 					if (bVaultable == false)
 					{
-						_ctx.m_predictedActTag = (uint8_t)Content::Config::ETagAct::Wall_IdleToHang;
+						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall;
 						return false;
 					}
 
@@ -386,8 +387,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 						// 원래는 여기서 Vault / Hurdle 중에 갈려야함
 						// 모션이 제한적이라 우선 Mantle, Vault를 사용
-						_ctx.m_predictedActTag = static_cast<uint8_t>(bIsLandable ?
-							ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
+						_ctx.m_predictedActTag = (uint8_t)(bIsLandable ? ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
 
 						if (bIsLandable)
 							MG_LOG_INFO("[QueryTree] Mantle + {}", _ctx.m_units);
@@ -411,10 +411,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const Vector3& OBS_POS = pObs->GetRoot()->localTransform.position;
 
 					bool bStepable = OBS_POS.y <= (CHAR_POS.y + pChar->GetStepThreshold());
-					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::Beam_IdleToStand : ETagAct::Beam_IdleToHang);
+					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = OBS_POS.y;
 
-					// MG_LOG_INFO("[QueryTree] Compare Height:: Char + step : {}, obs hit pos : {} ", CHAR_POS.y + pChar->GetStepThreshold(), OBS_POS.y);
 					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
 
 					return bStepable;
