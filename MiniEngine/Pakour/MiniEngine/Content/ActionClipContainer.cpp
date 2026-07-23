@@ -507,6 +507,15 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 	}
 	{
 		// Beam Hanging 내려가기
-		// Beam Hang -> Beam Drop
+		// Beam Hang -> In Air
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(34));
+
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetTime(0.2f);
+		pTransition->SetState((uint8_t)Character::EState::InAir);
+		pActionClip->AddNotify(pTransition);
+
+		mapActions[(uint8_t)ETagAct::Beam_HangingMoveDown] = pActionClip;
 	}
 }

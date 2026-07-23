@@ -289,7 +289,6 @@ void BeamHangingState::ProcessMovement(float _dt)
 
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
-
 	ETagAct eAct = ETagAct::End;
 	if (INPUT_DIR.x > 0 && CheckEnableToMove(pChar, INPUT_DIR) == false)
 		eAct = ETagAct::Beam_HangingMoveRight;
@@ -297,6 +296,8 @@ void BeamHangingState::ProcessMovement(float _dt)
 		eAct = ETagAct::Beam_HangingMoveLeft;
 	else if (INPUT_DIR.y > 0)
 		eAct = ETagAct::Beam_HangingMoveUp;
+	else if (INPUT_DIR.y < 0)
+		eAct = ETagAct::Beam_HangingMoveDown;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
 		pChar->PlayActionClip(pAct, 0.1f);
