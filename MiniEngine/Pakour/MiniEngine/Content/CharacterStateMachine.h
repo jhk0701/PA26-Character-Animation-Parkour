@@ -13,6 +13,10 @@ public:
 
 	virtual void OnStart() = 0;
 	virtual void OnEnd() = 0;
+
+	// Transition이 빈번한 경우 OnStart, OnEnd를 계속 반복하지 않고, 대신 새로고침을 호출
+	virtual void Refresh() {};
+
 	virtual void Tick(float _dt) = 0;
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result) = 0;
 	virtual void CheckState() {};

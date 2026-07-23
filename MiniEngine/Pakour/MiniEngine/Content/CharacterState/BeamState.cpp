@@ -21,6 +21,13 @@ void BeamState::OnStart()
 	MG_LOG_INFO("[Character] Beam State Started");
 	pChar->SetUseGravity(false);
 
+	Refresh();
+}
+
+void BeamState::Refresh()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
 	// Beam 상태 진입의 전제
 	// Beam 태그가 달린 오브젝트를 처리하고 있을 것
 	const Character::PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
@@ -112,13 +119,13 @@ void BeamStandState::CheckState()
 {
 	BeamState::CheckState();
 
-	return;
 	// 해결후 테스트 확인
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	
 	// 현재 올라온 장애물 상태 확인
 	const Actor* pCurObs = GetCurObs();
-	if (!pCurObs || (pChar->GetCurObstacleInfo().IsValid() && !ObstacleIsBeamType(pChar->GetCurObstacleInfo().m_pObstacle)))
+	if (!pCurObs || (pChar->GetCurObstacleInfo().IsValid() && 
+		!ObstacleIsBeamType(pChar->GetCurObstacleInfo().m_pObstacle)))
 	{
 		// 랜딩으로 전환
 
@@ -136,6 +143,9 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 
 void BeamStandState::OrientByAxis()
 {
+	// 회전각 제한은 우선 보류
+	return;
+
 	// 좁은 발판에 선 상황
 	const Actor* pCurObs = GetCurObs();
 	if (!pCurObs)
@@ -144,7 +154,6 @@ void BeamStandState::OrientByAxis()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Transform& charTF = pChar->GetRoot()->localTransform;
 	
-
 	Vector3 obsDir, obsLeftAngled;
 	obsDir = GetDirectionByAxis();
 
@@ -166,7 +175,7 @@ void BeamStandState::OrientByAxis()
 	if (bAlignToAxis == false && OBS_LEFT_DOT < 0)
 		toward *= -1;
 	
-	charTF.rotation = Quaternion::LookRotation(toward, Vector3(0.0f, -1.0f, 0.0f));
+	charTF.rotation = Quaternion::LookRotation(toward, Vector3(0.0f, 1.0f, 0.0f));
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -195,16 +204,14 @@ void BeamStandState::ProcessMovement(float _dt)
 	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
 	
 	// 가지 못하는 상황
-	if (IsAlignToAxis(pChar) == false ||
-		CheckEnableToMove() == false)
+	/*IsAlignToAxis(pChar) == false ||*/
+	if (CheckEnableToMove() == false ||
+		inputLerp.y < 0)
 	{
 		inputLerp.y = 0.0f;
 		pChar->SetAnimBaseTrackInputAxis(inputLerp);
 		return;
 	}
-
-	if (inputLerp.y < 0)
-		return;
 
 	// y축 입력 시, 앞 뒤로 이동
 	// 후방 이동은 모션이 없어 제외 -> 블렌드 시, idle이 최종임
@@ -223,7 +230,7 @@ bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character> _pChar)
 	dir.Normalize();
 
 	float dot = fabs(dir.Dot(_pChar->GetRoot()->localTransform.Forward()));
-	return dot >= 0.95f;
+	return dot >= 0.90f;
 }
 
 bool BeamStandState::CheckEnableToMove()

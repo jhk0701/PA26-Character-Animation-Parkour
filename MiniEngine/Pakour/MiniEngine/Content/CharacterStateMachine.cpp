@@ -25,7 +25,10 @@ void CharacterStateMachine::Transition(uint8_t _nextID)
 	assert(_nextID < m_states.size());
 
 	if (m_curState == _nextID)
+	{
+		m_states[m_curState]->Refresh();
 		return;
+	}
 
 	m_states[m_curState]->OnEnd();
 

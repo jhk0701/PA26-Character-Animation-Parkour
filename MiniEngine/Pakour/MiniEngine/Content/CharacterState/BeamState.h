@@ -8,6 +8,7 @@ class BeamState : public CameraFixedState
 {
 public:
 	virtual void OnStart() override;
+	virtual void Refresh() override;
 	virtual void OnEnd() override;
 	virtual void Tick(float _dt) override;
 	virtual void CheckState() override;
