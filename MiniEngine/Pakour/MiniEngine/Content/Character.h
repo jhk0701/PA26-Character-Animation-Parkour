@@ -71,7 +71,7 @@ public:
 	void SetInputDir(const Vector2& _dir) { m_inputDir = _dir; }
 	Vector2 GetInputDir() const { return m_inputDir; }
 	float GetMoveSpeed() const { return m_moveSpeed; }
-	float GetInputLerpWeight() const { return m_lerpWeight; }
+	float GetInputLerpWeight() const { return std::clamp(m_lerpWeight, 0.0f, 1.0f); }
 	Vector2& InputLerp() { return m_lerpInputDir; }
 
 	// 카메라

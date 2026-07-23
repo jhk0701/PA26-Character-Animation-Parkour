@@ -28,10 +28,9 @@ namespace Content::Config
 	{
 		X, // Transform에서 Right
 		Y, // Transform에서 Up
-		Z  // Transform에서 Front
+		Z  // Transform에서 Forward
 	};
-
-
+	
 	enum class ETagAct : uint8_t
 	{
 		Landing, // 착지

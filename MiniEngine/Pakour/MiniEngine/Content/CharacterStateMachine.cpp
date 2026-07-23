@@ -60,7 +60,7 @@ void CharacterState::DefaultMovement(float _dt)
 	const Vector2& INPUT_DIR = pChar->GetInputDir();
 
 	Vector2& inputLerp = pChar->InputLerp();
-	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, std::clamp(pChar->GetInputLerpWeight(), 0.0f, 1.0f));
+	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
 
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& TF = pChar->GetRoot()->localTransform;

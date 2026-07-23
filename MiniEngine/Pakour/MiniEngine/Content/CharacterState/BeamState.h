@@ -12,10 +12,14 @@ public:
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
+	virtual void OrientByAxis() = 0;
+
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
+	const Actor* GetCurObs() const { return m_pCurObs; }
 
 private:
 	Content::Config::ETagAxis m_curAxis;
+	Actor* m_pCurObs{ nullptr };
 };
 
 // Beam 지형에 올라탄 상태
@@ -28,6 +32,9 @@ public:
 	void Tick(float _dt) override;
 	void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+
+protected:
+	void OrientByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);
@@ -43,6 +50,9 @@ public:
 	void Tick(float _dt) override;
 	void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+
+protected:
+	void OrientByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);

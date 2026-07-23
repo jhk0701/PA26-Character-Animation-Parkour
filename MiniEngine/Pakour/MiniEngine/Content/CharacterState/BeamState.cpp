@@ -27,6 +27,9 @@ void BeamState::OnStart()
 	OBS_INFO.m_pObstacle->GetTag().GetTagAt(TAG_SUB_INFO, subInfoTag);
 
 	m_curAxis = (ETagAxis)subInfoTag;
+	m_pCurObs = OBS_INFO.m_pObstacle;
+
+	OrientByAxis();
 }
 
 void BeamState::OnEnd()
@@ -36,6 +39,8 @@ void BeamState::OnEnd()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	pChar->SetUseGravity(true);
+
+	m_pCurObs = nullptr;
 }
 
 void BeamState::Tick(float _dt)
@@ -48,11 +53,7 @@ void BeamState::CheckState()
 {
 	CharacterState::CheckState();
 }
-
-void BeamState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	// DefaultProcessPerceptionResult(_info);
-}
+void BeamState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) {}
 
 // Beam Stand
 void BeamStandState::OnStart()
@@ -83,6 +84,56 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	BeamState::ProcessPerceptionResult(_info);
 }
 
+void BeamStandState::OrientByAxis()
+{
+	// 좁은 발판에 선 상황
+	const Actor* pCurObs = GetCurObs();
+
+	if (!pCurObs)
+		return;
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Transform& charTF = pChar->GetRoot()->localTransform;
+
+	Vector3 obsDir;
+	switch (GetAxis())
+	{
+	case ETagAxis::X:
+		obsDir = pCurObs->GetRoot()->localTransform.Right();
+		break;
+	case ETagAxis::Y:
+		obsDir = pCurObs->GetRoot()->localTransform.Up();
+		break;
+	case ETagAxis::Z:
+		obsDir = pCurObs->GetRoot()->localTransform.Forward();
+		break;
+	}
+
+	// 발판을 전제로 함
+	// y 방향으로 향하는 경우는 우선 배제
+	obsDir.y = 0.0f;
+	obsDir.Normalize();
+
+	const Vector3 CHAR_FWD = charTF.Forward();
+	const float DOT = fabs(CHAR_FWD.Dot(obsDir));// fabs();
+
+	Vector3 toward;
+	if (DOT >= 0.5f)
+	{
+		// Axis 방향으로 더 가까움
+		// Axis 방향으로 향하도록 보정
+		toward = obsDir;
+	}
+	else 
+	{
+		// Axis와 직교 방향으로 더 가까움
+		// 직교 방향으로 향하도록 보정
+		toward = CHAR_FWD;
+	}
+
+	charTF.rotation.LookRotation(toward, charTF.Up());
+}
+
 void BeamStandState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -104,15 +155,20 @@ void BeamStandState::ProcessMovement(float _dt)
 			pChar->PlayActionClip(pAct, 0.1f);
 		return;
 	}
-	else if (INPUT_DIR.y > 0) 
-	{
-		// y축 전방 입력 시, 앞으로 이동
-		// 후방 이동은 모션이 없어 제외
+	
+	// y축 입력 시, 앞 뒤로 이동
+	// 후방 이동은 모션이 없어 제외 -> 블렌드 시, idle이 최종임
+	Vector2& inputLerp = pChar->InputLerp();
+	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
+	pChar->SetAnimBaseTrackInputAxis(inputLerp);
 
-		
-	}
+	if (inputLerp.y < 0)
+		return;
 
-	pChar->SetAnimBaseTrackInputAxis(INPUT_DIR);
+	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
 
@@ -142,6 +198,10 @@ void BeamHangingState::CheckState()
 void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	BeamState::ProcessPerceptionResult(_info);
+}
+
+void BeamHangingState::OrientByAxis()
+{
 }
 
 void BeamHangingState::ProcessMovement(float _dt)
