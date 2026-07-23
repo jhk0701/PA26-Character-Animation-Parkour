@@ -131,10 +131,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.9f);
-		pCorrectRM->SetProperDistance(0.5f); // 적정거리 1.5 ~ 1.0
-		pCorrectRM->SetLerpWeight(0.85f);
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.2f, 0.9f);
+		// pCorrectRM->SetBezierY(0.3f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.25f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
@@ -250,7 +250,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pSetLanding);
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.05f);
+		pIgnoreObstacle->SetTime(0.00f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -259,11 +259,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetLerpWeight(0.5f);
-		pCorrectRM->SetProperDistance(0.85f);
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.6f);
+		pCorrectRM->SetBezierY(0.35f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.25f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Wall_HangToMantle] = pActionClip;

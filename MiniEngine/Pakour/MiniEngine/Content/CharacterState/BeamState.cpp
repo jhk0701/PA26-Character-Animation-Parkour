@@ -162,7 +162,6 @@ void BeamStandState::ProcessMovement(float _dt)
 
 	const Vector2& INPUT_DIR = pChar->GetInputDir();
 
-	// x 축 입력 시 회전
 	if (INPUT_DIR.x < 0)
 	{
 		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandRotateLeft))

@@ -98,13 +98,19 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
 	if (m_pChar)
 	{
-		m_startPoint = m_pChar->GetRoot()->localTransform.position;
+		const Transform& TF = m_pChar->GetRoot()->localTransform;
+		m_startPoint = TF.position;
 
 		const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
 		m_endPoint = OBS_INFO.m_obstacleHitPos;
 		m_endPoint.y = OBS_INFO.m_obstacleLedge;
-		m_endPoint += m_endOffset;
+		
+		Vector3 offset = Vector3(0.0f);
+		offset += TF.Right() * m_endOffset.x;
+		offset += TF.Up() * m_endOffset.y;
+		offset += TF.Forward() * m_endOffset.z;
+		m_endPoint += offset;
 
 		m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);
 		m_midPoint.y += m_bezierY;

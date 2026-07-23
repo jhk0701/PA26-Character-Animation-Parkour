@@ -4,6 +4,8 @@
 #include "Content/ContentConfig.h"
 #include "Platform/Input.h"
 
+#include "Core/Log.h"
+
 void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states)
 {
 	m_states = _states;
@@ -67,7 +69,10 @@ void CharacterState::DefaultMovement(float _dt)
 
 	Vector2& inputLerp = pChar->InputLerp();
 	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
-
+	
+	if (INPUT_DIR.x != 0 || INPUT_DIR.y != 0)
+		inputLerp.Normalize();
+	
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& TF = pChar->GetRoot()->localTransform;
 

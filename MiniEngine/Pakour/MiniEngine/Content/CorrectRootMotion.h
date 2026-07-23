@@ -38,6 +38,10 @@ public:
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 	
+	// 캐릭터 트랜스폼 기준
+	// x : 캐릭터 Right
+	// y : 캐릭터 Up
+	// z : 캐릭터 Forward
 	void SetEndOffset(const MiniEngine::Vector3& _offset) { m_endOffset = _offset; }
 	void SetBezierY(const float _y) { m_bezierY = _y; }
 

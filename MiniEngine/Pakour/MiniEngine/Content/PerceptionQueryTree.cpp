@@ -82,7 +82,7 @@ namespace
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * 2.0f; //- CAPSULE_CONTACT_OFFSET;
-		capParam.m_startPos = GetCharacterCenterPosition(_context) + TF.Forward() * capParam.m_radius * 2.0f;
+		capParam.m_startPos = GetCharacterCenterPosition(_context); // +TF.Forward() * capParam.m_radius * 2.0f;
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
@@ -463,7 +463,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			pOnHangingUpDetourableObs->SetCondition(
 				[](TravelContext& _ctx) 
 				{
-					// MG_LOG_INFO("[QueryTree] Ceiling is detected. Check detour.");
+					MG_LOG_INFO("[QueryTree] Ceiling is detected. Check detour.");
 
 					// 천장 우회 가능한지
 					// 뒤로 1단위 물러나서 다시 위로 레이캐스트
@@ -488,18 +488,20 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[](TravelContext& _ctx) 
 				{
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const Vector3 POS = GetCharacterCenterPosition(_ctx);
+					const Vector3 POS = GetCharacterCenterPosition(_ctx) + Vector3(0.0f, 1.0f, 0.0f);
 					const Vector3 DIR = pChar->GetRoot()->localTransform.Forward();
 
 					// MG_LOG_INFO("[QueryTree] Check Ledge to climbing :: Dir ({}, {}, {})", DIR.x, DIR.y, DIR.z);
 					RaycastResult result;
-					bool bIsHit = CheckLedge(_ctx, POS, DIR, pChar->GetCapsuleRadius(), result);
+					bool bIsHit = CheckLedge(_ctx, POS, DIR, 1.0f, result);
 					if (bIsHit)
 					{
 						_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
 						_ctx.m_firstObstacleHitPos = result.m_pos;
 						_ctx.m_distance = result.m_distance;
 						_ctx.m_ledge = result.m_pos.y;
+
+						MG_LOG_INFO("[QueryTree] Wall Ledge Climb");
 						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 					}
 
