@@ -15,7 +15,9 @@ protected:
 	virtual void OrientByAxis() = 0;
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
-	const Actor* GetCurObs() const { return m_pCurObs; }
+	Actor* GetCurObs() const { return m_pCurObs; }
+
+	bool ObstacleIsBeamType(Actor* _pObs);
 
 private:
 	Content::Config::ETagAxis m_curAxis;

@@ -153,6 +153,6 @@ void RotateMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 	// 자체 회전 반영
 	m_elapsedTime += _dt;
 
-	const float w = m_elapsedTime / GetDuration();
+	const float w = std::clamp(m_elapsedTime / GetDuration(), 0.0f, 1.0f);
 	m_pChar->GetRoot()->localTransform.rotation = Quaternion::Slerp(m_startRotation, m_endRotation, w);
 }

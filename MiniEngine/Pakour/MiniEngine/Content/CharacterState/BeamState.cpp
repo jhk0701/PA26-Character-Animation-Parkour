@@ -55,6 +55,16 @@ void BeamState::CheckState()
 }
 void BeamState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) {}
 
+bool BeamState::ObstacleIsBeamType(Actor* _pObs)
+{
+	uint8_t typeTag;
+
+	if (_pObs->GetTag().GetTagAt(TAG_ENV_DETAIL, typeTag))
+		return typeTag == (uint8_t)ETagEnvDetail::Beam;
+
+	return false;
+}
+
 // Beam Stand
 void BeamStandState::OnStart()
 {
@@ -72,16 +82,33 @@ void BeamStandState::Tick(float _dt)
 
 	// DefaultCameraRotate(_dt);
 	ProcessMovement(_dt);
+	CheckState();
 }
 
 void BeamStandState::CheckState()
 {
 	BeamState::CheckState();
+
+	return;
+	// 해결후 테스트 확인
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	
+	// 현재 올라온 장애물 상태 확인
+	const Actor* pCurObs = GetCurObs();
+	if (!pCurObs || (pChar->GetCurObstacleInfo().IsValid() && !ObstacleIsBeamType(pChar->GetCurObstacleInfo().m_pObstacle)))
+	{
+		// 랜딩으로 전환
+
+		pChar->SetState(Character::EState::Landing);
+		const uint8_t STATE = (uint8_t)pChar->GetState();;
+		GetMachine()->Transition(STATE);
+	}
 }
 
 void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	BeamState::ProcessPerceptionResult(_info);
+	DefaultProcessPerceptionResult(_info);
 }
 
 void BeamStandState::OrientByAxis()
@@ -95,17 +122,17 @@ void BeamStandState::OrientByAxis()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Transform& charTF = pChar->GetRoot()->localTransform;
 
-	Vector3 obsDir;
+	Vector3 obsDir, obsLeftAngled;
 	switch (GetAxis())
 	{
 	case ETagAxis::X:
-		obsDir = pCurObs->GetRoot()->localTransform.Right();
+		obsDir = charTF.Right();
 		break;
 	case ETagAxis::Y:
-		obsDir = pCurObs->GetRoot()->localTransform.Up();
+		obsDir = charTF.Up();
 		break;
 	case ETagAxis::Z:
-		obsDir = pCurObs->GetRoot()->localTransform.Forward();
+		obsDir = charTF.Forward();
 		break;
 	}
 
@@ -113,22 +140,21 @@ void BeamStandState::OrientByAxis()
 	// y 방향으로 향하는 경우는 우선 배제
 	obsDir.y = 0.0f;
 	obsDir.Normalize();
+	obsLeftAngled = obsDir.Cross(Vector3(0.0f, 1.0f, 0.0f));
+	obsLeftAngled.Normalize();
 
 	const Vector3 CHAR_FWD = charTF.Forward();
-	const float DOT = fabs(CHAR_FWD.Dot(obsDir));// fabs();
+	
+	const float OBS_AXIS_DOT = CHAR_FWD.Dot(obsDir);
+	const float OBS_LEFT_DOT = CHAR_FWD.Dot(obsLeftAngled);
+	
+	bool bAlignToAxis = fabs(OBS_AXIS_DOT) >= cosf(ToRadians(45.0f));
+	Vector3 toward = bAlignToAxis ? obsDir : obsLeftAngled;
 
-	Vector3 toward;
-	if (DOT >= 0.5f)
+	if (bAlignToAxis == false)
 	{
-		// Axis 방향으로 더 가까움
-		// Axis 방향으로 향하도록 보정
-		toward = obsDir;
-	}
-	else 
-	{
-		// Axis와 직교 방향으로 더 가까움
-		// 직교 방향으로 향하도록 보정
-		toward = CHAR_FWD;
+		if (OBS_LEFT_DOT < 0)
+			toward *= -1;
 	}
 
 	charTF.rotation.LookRotation(toward, charTF.Up());

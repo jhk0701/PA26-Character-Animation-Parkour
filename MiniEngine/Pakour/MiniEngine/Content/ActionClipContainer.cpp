@@ -337,7 +337,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
 		pTransition->SetState((uint8_t)Character::EState::BeamStand);
-		pTransition->SetTime(0.5f);
+		pTransition->SetTime(0.6f);
 		pActionClip->AddNotify(pTransition);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
