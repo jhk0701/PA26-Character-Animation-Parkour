@@ -3,6 +3,9 @@
 #include "Content/Character.h"
 #include "Platform/Input.h"
 
+#include "Scene/Scene.h"
+#include "Physics/PhysicsWorld.h"
+
 #include "Core/Log.h"
 
 using namespace Content::Config;
@@ -149,7 +152,7 @@ void BeamStandState::OrientByAxis()
 	// y 방향으로 향하는 경우는 우선 배제
 	obsDir.y = 0.0f;
 	obsDir.Normalize();
-	obsLeftAngled = obsDir.Cross(Vector3(0.0f, 1.0f, 0.0f));
+	obsLeftAngled = Vector3(0.0f, 1.0f, 0.0f).Cross(obsDir);
 	obsLeftAngled.Normalize();
 
 	const Vector3 CHAR_FWD = charTF.Forward();
@@ -160,13 +163,10 @@ void BeamStandState::OrientByAxis()
 	bool bAlignToAxis = fabs(OBS_AXIS_DOT) >= cosf(ToRadians(45.0f));
 	Vector3 toward = bAlignToAxis ? obsDir : obsLeftAngled;
 
-	if (bAlignToAxis == false)
-	{
-		if (OBS_LEFT_DOT < 0)
-			toward *= -1;
-	}
+	if (bAlignToAxis == false && OBS_LEFT_DOT < 0)
+		toward *= -1;
 	
-	charTF.rotation = Quaternion::LookRotation(toward, charTF.Up());
+	charTF.rotation = Quaternion::LookRotation(toward, Vector3(0.0f, -1.0f, 0.0f));
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -191,26 +191,60 @@ void BeamStandState::ProcessMovement(float _dt)
 		return;
 	}
 	
-	// y축 입력 시, 앞 뒤로 이동
-	// 후방 이동은 모션이 없어 제외 -> 블렌드 시, idle이 최종임
 	Vector2& inputLerp = pChar->InputLerp();
 	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
-	pChar->SetAnimBaseTrackInputAxis(inputLerp);
+	
+	// 가지 못하는 상황
+	if (IsAlignToAxis(pChar) == false ||
+		CheckEnableToMove() == false)
+	{
+		inputLerp.y = 0.0f;
+		pChar->SetAnimBaseTrackInputAxis(inputLerp);
+		return;
+	}
 
 	if (inputLerp.y < 0)
 		return;
 
+	// y축 입력 시, 앞 뒤로 이동
+	// 후방 이동은 모션이 없어 제외 -> 블렌드 시, idle이 최종임
+	pChar->SetAnimBaseTrackInputAxis(inputLerp);
+
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& TF = pChar->GetRoot()->localTransform;
-
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
-bool BeamStandState::IsAlignToAxis()
+
+bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character> _pChar)
 {
-	return false;
+	Vector3 dir = GetDirectionByAxis();
+	dir.y = 0.0f;
+	dir.Normalize();
+
+	float dot = fabs(dir.Dot(_pChar->GetRoot()->localTransform.Forward()));
+	return dot >= 0.95f;
 }
 
+bool BeamStandState::CheckEnableToMove()
+{
+	// 정면 바로 아래가 절벽인지 확인
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	MiniEngine::Physics::SpherecastParam param;
+	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+	param.m_maxDistance = 0.5f;
+	param.m_startPos = TF.position + TF.Forward() * 0.3f + Vector3(0.0f, 0.3f, 0.0f);
+	param.m_radius = 0.3f;
+
+	MiniEngine::Physics::RaycastResult result;
+	bool bIsHit = pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
+	if (bIsHit && result.GetActor() == GetCurObs())
+		return true;
+
+	return false;
+}
 
 // Beam Hanging
 void BeamHangingState::OnStart()

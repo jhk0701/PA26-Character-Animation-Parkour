@@ -2,6 +2,8 @@
 #include "Content/CharacterState/CameraFixedState.h"
 #include "Content/ContentConfig.h"
 
+class Character;
+
 class BeamState : public CameraFixedState 
 {
 public:
@@ -41,7 +43,8 @@ protected:
 
 private:
 	void ProcessMovement(float _dt);
-	bool IsAlignToAxis();
+	bool IsAlignToAxis(std::shared_ptr<Character> _pChar);
+	bool CheckEnableToMove();
 };
 
 // Beam 지형에 올라탄 상태
