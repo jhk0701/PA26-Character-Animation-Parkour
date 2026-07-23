@@ -16,8 +16,9 @@ protected:
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
 	Actor* GetCurObs() const { return m_pCurObs; }
-
 	bool ObstacleIsBeamType(Actor* _pObs);
+	
+	Vector3 GetDirectionByAxis();
 
 private:
 	Content::Config::ETagAxis m_curAxis;
@@ -40,6 +41,7 @@ protected:
 
 private:
 	void ProcessMovement(float _dt);
+	bool IsAlignToAxis();
 };
 
 // Beam 지형에 올라탄 상태

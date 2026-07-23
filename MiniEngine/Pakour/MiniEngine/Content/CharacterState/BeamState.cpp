@@ -65,6 +65,26 @@ bool BeamState::ObstacleIsBeamType(Actor* _pObs)
 	return false;
 }
 
+Vector3 BeamState::GetDirectionByAxis()
+{
+	Vector3 dir;
+
+	switch (GetAxis())
+	{
+	case ETagAxis::X:
+		dir = GetCurObs()->GetRoot()->localTransform.Right();
+		break;
+	case ETagAxis::Y:
+		dir = GetCurObs()->GetRoot()->localTransform.Up();
+		break;
+	case ETagAxis::Z:
+		dir = GetCurObs()->GetRoot()->localTransform.Forward();
+		break;
+	}
+
+	return dir;
+}
+
 // Beam Stand
 void BeamStandState::OnStart()
 {
@@ -115,26 +135,15 @@ void BeamStandState::OrientByAxis()
 {
 	// 좁은 발판에 선 상황
 	const Actor* pCurObs = GetCurObs();
-
 	if (!pCurObs)
 		return;
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Transform& charTF = pChar->GetRoot()->localTransform;
+	
 
 	Vector3 obsDir, obsLeftAngled;
-	switch (GetAxis())
-	{
-	case ETagAxis::X:
-		obsDir = charTF.Right();
-		break;
-	case ETagAxis::Y:
-		obsDir = charTF.Up();
-		break;
-	case ETagAxis::Z:
-		obsDir = charTF.Forward();
-		break;
-	}
+	obsDir = GetDirectionByAxis();
 
 	// 발판을 전제로 함
 	// y 방향으로 향하는 경우는 우선 배제
@@ -156,8 +165,8 @@ void BeamStandState::OrientByAxis()
 		if (OBS_LEFT_DOT < 0)
 			toward *= -1;
 	}
-
-	charTF.rotation.LookRotation(toward, charTF.Up());
+	
+	charTF.rotation = Quaternion::LookRotation(toward, charTF.Up());
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -195,6 +204,11 @@ void BeamStandState::ProcessMovement(float _dt)
 	const Transform& TF = pChar->GetRoot()->localTransform;
 
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
+}
+
+bool BeamStandState::IsAlignToAxis()
+{
+	return false;
 }
 
 
