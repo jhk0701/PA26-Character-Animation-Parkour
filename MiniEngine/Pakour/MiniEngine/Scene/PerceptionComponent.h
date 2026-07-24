@@ -14,6 +14,7 @@ namespace MiniEngine
 		std::shared_ptr<Physics::PhysicsWorld> m_physics;
 		Actor* m_pFirstObstacle{ nullptr };
 		Vector3 m_firstObstacleHitPos;
+		Vector3 m_firstObstacleHitNrm;
 		uint8_t m_predictedActTag;
 		uint8_t m_units;
 		Vector3 m_raycastPos;
@@ -31,6 +32,7 @@ namespace MiniEngine
 		Actor* m_pFirstObstacle{ nullptr };
 		float m_distanceObstacle{ 0.0f };
 		Vector3 m_firstObstacleHitPos;
+		Vector3 m_firstObstacleHitNrm;
 		float m_obstacleLedge{ 0.0f };
 
 		void Reset();

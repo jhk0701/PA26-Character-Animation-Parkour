@@ -129,7 +129,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 17.5f, 7.0f), Vector3(5.0f, 1.0f, 0.05f), identity);
 	}
 	{
-		// 임시 캐릭터 생성
+		// 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
 		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));

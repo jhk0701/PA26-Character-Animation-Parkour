@@ -48,6 +48,7 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	if (_addLedge == false)
 		return;
 
+	m_pLedges.reserve(4);
 	std::shared_ptr<Actor> pSharedThis = shared_from_this();
 	AddLedge(pSharedThis,
 		_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
@@ -84,6 +85,8 @@ void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget,
 	pScene->localTransform.position = _localPos;
 	pScene->localTransform.rotation = _localRot;
 	pScene->localTransform.scale = _halfExtent;
+
+	m_pLedges.push_back(pScene);
 
 	std::shared_ptr<RigidBodyComponent> pRB = _pTarget->AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pScene, 10.0f, true);

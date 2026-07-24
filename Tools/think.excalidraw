@@ -9134,7 +9134,7 @@
     {
       "id": "SWAcFr7PNm1O2prQwlnre",
       "type": "rectangle",
-      "x": 707.0875941743702,
+      "x": 684.1845405102251,
       "y": 4176.601236610884,
       "width": 193.00166080403523,
       "height": 38.60033216080682,
@@ -9153,8 +9153,8 @@
         "type": 3
       },
       "seed": 1197365529,
-      "version": 2320,
-      "versionNonce": 508618048,
+      "version": 2330,
+      "versionNonce": 1136774848,
       "isDeleted": false,
       "boundElements": [
         {
@@ -9170,14 +9170,14 @@
           "type": "arrow"
         }
       ],
-      "updated": 1784862536956,
+      "updated": 1784884382948,
       "link": null,
       "locked": false
     },
     {
       "id": "UwdrurPyS-EsaZt8dQH-_",
       "type": "text",
-      "x": 716.2605131994347,
+      "x": 693.3574595352896,
       "y": 4185.901402691287,
       "width": 174.65582275390625,
       "height": 20,
@@ -9194,11 +9194,11 @@
       "index": "b3n",
       "roundness": null,
       "seed": 1816514041,
-      "version": 2508,
-      "versionNonce": 92421440,
+      "version": 2518,
+      "versionNonce": 1880749760,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1784862536956,
+      "updated": 1784884382948,
       "link": null,
       "locked": false,
       "text": "장애물 <= 캐릭터 높이 * 3",
@@ -9216,7 +9216,7 @@
       "type": "arrow",
       "x": 911.0107085497616,
       "y": 4087.01690761209,
-      "width": 107.5222839733733,
+      "width": 130.4253376375184,
       "height": 84.08432899879426,
       "angle": 0,
       "strokeColor": "#e03131",
@@ -9231,8 +9231,8 @@
       "index": "b3o",
       "roundness": null,
       "seed": 1915463385,
-      "version": 1941,
-      "versionNonce": 751342912,
+      "version": 1951,
+      "versionNonce": 791486144,
       "isDeleted": false,
       "boundElements": [
         {
@@ -9240,7 +9240,7 @@
           "id": "cXFvILIEsvVvrNajkSRX_"
         }
       ],
-      "updated": 1784862536956,
+      "updated": 1784884382949,
       "link": null,
       "locked": false,
       "points": [
@@ -9250,14 +9250,14 @@
         ],
         [
           0,
-          42.04216449939713
+          42.042164499397586
         ],
         [
-          -107.5222839733733,
-          42.04216449939713
+          -130.4253376375184,
+          42.042164499397586
         ],
         [
-          -107.5222839733733,
+          -130.4253376375184,
           84.08432899879426
         ]
       ],
@@ -9324,7 +9324,7 @@
     {
       "id": "QPVEVozwmwAMhUAdX4Ege",
       "type": "rectangle",
-      "x": 706.9875939631052,
+      "x": 684.0845402989601,
       "y": 4277.616840666824,
       "width": 193.00166080403523,
       "height": 38.60033216080682,
@@ -9343,8 +9343,8 @@
         "type": 3
       },
       "seed": 1825604761,
-      "version": 2491,
-      "versionNonce": 1233382720,
+      "version": 2501,
+      "versionNonce": 335834816,
       "isDeleted": false,
       "boundElements": [
         {
@@ -9356,14 +9356,14 @@
           "type": "arrow"
         }
       ],
-      "updated": 1784862536956,
+      "updated": 1784884382949,
       "link": null,
       "locked": false
     },
     {
       "id": "Ws_d41yFh2QlahMfhEk8R",
       "type": "text",
-      "x": 741.0964794798689,
+      "x": 718.1934258157238,
       "y": 4286.917006747227,
       "width": 124.78388977050781,
       "height": 20,
@@ -9380,11 +9380,11 @@
       "index": "b3r",
       "roundness": null,
       "seed": 157714809,
-      "version": 2710,
-      "versionNonce": 1695827264,
+      "version": 2720,
+      "versionNonce": 1594398400,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1784862536956,
+      "updated": 1784884382949,
       "link": null,
       "locked": false,
       "text": "매달리기 Hanging",
@@ -9400,7 +9400,7 @@
     {
       "id": "d09juk8f_i7Gin_27A8_M",
       "type": "arrow",
-      "x": 803.4884245763881,
+      "x": 780.585370912243,
       "y": 4220.701568771692,
       "width": 0.10000021126484171,
       "height": 51.41527189513181,
@@ -9417,11 +9417,11 @@
       "index": "b3s",
       "roundness": null,
       "seed": 849932889,
-      "version": 1183,
-      "versionNonce": 1557765440,
+      "version": 1203,
+      "versionNonce": 122142400,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1784862536956,
+      "updated": 1784884382949,
       "link": null,
       "locked": false,
       "points": [
@@ -22972,7 +22972,7 @@
       "id": "1ifLqjuQSntyFXtP-OipI",
       "type": "text",
       "x": 626.8564842343178,
-      "y": 3606.1054011065225,
+      "y": 3612.976317205766,
       "width": 147.98385620117188,
       "height": 20,
       "angle": 0,
@@ -22988,11 +22988,11 @@
       "index": "bAH",
       "roundness": null,
       "seed": 1020270272,
-      "version": 173,
-      "versionNonce": 916360896,
+      "version": 178,
+      "versionNonce": 1015211712,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1784862530440,
+      "updated": 1784884342849,
       "link": null,
       "locked": false,
       "text": "앞에 장애물이 있는지?",

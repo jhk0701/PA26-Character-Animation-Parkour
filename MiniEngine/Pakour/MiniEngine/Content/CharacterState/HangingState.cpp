@@ -16,6 +16,8 @@ void HangingState::OnStart()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+
+	Refresh();
 }
 
 void HangingState::OnEnd()
@@ -36,6 +38,18 @@ void HangingState::Tick(float _dt)
 void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	DefaultProcessPerceptionResult(_info);
+}
+
+void HangingState::Refresh()
+{
+	CharacterState::Refresh();
+
+	AlignToNormal();
+}
+
+void HangingState::AlignToNormal()
+{
+
 }
 
 void HangingState::ProcessMovement(float _dt)

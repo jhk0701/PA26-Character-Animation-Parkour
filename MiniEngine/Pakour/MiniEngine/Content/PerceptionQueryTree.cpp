@@ -138,6 +138,7 @@ namespace
 
 			_context.m_pFirstObstacle = reinterpret_cast<Actor*>(r.GetActor());
 			_context.m_firstObstacleHitPos = r.m_pos;
+			_context.m_firstObstacleHitNrm = r.m_nrm;
 			_context.m_distance = r.m_distance;
 			_context.m_ledge = r.m_pos.y;
 			_context.m_units = 1; // 1 단위 확정
@@ -288,6 +289,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			result.m_units = _context.m_units;
 			result.m_pFirstObstacle = _context.m_pFirstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
+			result.m_firstObstacleHitNrm = _context.m_firstObstacleHitNrm;
 			result.m_distanceObstacle = _context.m_distance;
 			result.m_obstacleLedge = _context.m_ledge;
 			return result;
@@ -296,13 +298,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	
 	// 루트 확인 : 평지에 있는 상황인지
 	pRootQuery->SetCondition(
-		[this](TravelContext& _ctx) 
+		[](TravelContext& _ctx) 
 		{ 
 			std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 			if (pChar == nullptr)
-				return 0;
+				return (uint8_t)0;
 
-			return (int)pChar->GetState();
+			return (uint8_t)pChar->GetState();
 		},
 		{
 			// 배치 순서는 Character EState 순서대로

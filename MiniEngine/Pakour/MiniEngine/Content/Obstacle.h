@@ -24,6 +24,8 @@ private:
 		const MiniEngine::Vector3& _localPos,
 		const MiniEngine::Vector3& _halfExtent,
 		const MiniEngine::Quaternion& _localRot);
+
+	std::vector<std::weak_ptr<MiniEngine::SceneComponent>> m_pLedges;
 };
 
 class ObstacleFactory 
