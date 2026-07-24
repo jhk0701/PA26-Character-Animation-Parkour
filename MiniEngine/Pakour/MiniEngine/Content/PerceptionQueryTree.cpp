@@ -75,14 +75,14 @@ namespace
 	}
 
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 장애물이 있는지 체크
-	bool CheckObstacle(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist)
+	bool CheckObstacle(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist, const float _hMultiplier = 2.0f)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		const Transform& TF = pChar->GetRoot()->localTransform;
 
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
-		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * 2.0f; //- CAPSULE_CONTACT_OFFSET;
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * _hMultiplier; //- CAPSULE_CONTACT_OFFSET;
 		capParam.m_startPos = _pos; // GetCharacterCenterPosition(_context); // 
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
@@ -159,14 +159,14 @@ namespace
 			bool bIsHit = CapsuleCast(_context, rayPosition, _dir, MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
 			if (bIsHit)
 			{
-				// MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
+				MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
 				// 이 높이에선 아직 닿음
 				_context.m_units++; // 단위 상승
 				_context.m_ledge = rayPosition.y; // 대략적인 위치만 기입
 			}
 			else
 			{
-				// MG_LOG_INFO("[QueryTree] Obstacle valutable : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
+				MG_LOG_INFO("[QueryTree] Obstacle valutable : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
 				return true; // 이 높이에선 닿지 않음 -> 넘어갈 수 있음
 			}
 		}
@@ -237,7 +237,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 	// Landing
 	std::shared_ptr<ConditionNode> pStateLanding = std::make_shared<ConditionNode>(); // 평지상태 : 장애물 찾기
-	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::make_shared<SelectorNode>(); // 장애물 태그 확인 // 추후 늘어날 수 있으므로 selector로 적용
+	std::shared_ptr<SelectorNode> pCheckObstacleTag = std::make_shared<SelectorNode>(); // 장애물 태그 확인
 	
 	// Obstacle Default
 	std::shared_ptr<ConditionNode> pCheckHeight = std::make_shared<ConditionNode>(); // 장애물 높이 확인
@@ -256,6 +256,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<ConditionNode> pOnHangingClimbable = std::make_shared<ConditionNode>();
 
 	std::shared_ptr<ConditionNode> pOnHangingDown = std::make_shared<ConditionNode>();
+	std::shared_ptr<SelectorNode> pOnHangingCheckObstacleTag = std::make_shared<SelectorNode>(); // 장애물 태그 확인
+
 	std::shared_ptr<ConditionNode> pOnHangingLeft = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pOnHangingRight = std::make_shared<ConditionNode>();
 	std::shared_ptr<ConditionNode> pOnSideDetected = std::make_shared<ConditionNode>();	// 사이드 레이캐스트 결과 장애물이 감지됨
@@ -525,29 +527,54 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			{
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 
-				RaycastParam param;
-				param.m_origin = pChar->GetRoot()->localTransform.position;
+				SpherecastParam param;
+				param.m_startPos = pChar->GetRoot()->localTransform.position;
 				param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 				param.m_maxDistance = 1.0f;
+				param.m_radius = pChar->GetCapsuleRadius();
 
 				RaycastResult result;
-				bool bIsHit = _ctx.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground);
+				bool bIsHit = _ctx.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground);
+				if (bIsHit == false)
+					return false;
 
-				if (bIsHit)
-				{
-					MG_LOG_INFO("[QueryTree] Hang to idle");
-					
-					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
-					_ctx.m_firstObstacleHitPos = result.m_pos;
-					_ctx.m_distance = result.m_distance;
-					_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
-				}
-
-				return bIsHit;
-			},
-			pReturn,
+				_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
+				_ctx.m_firstObstacleHitPos = result.m_pos;
+				_ctx.m_ledge = result.m_pos.y;
+				_ctx.m_distance = result.m_distance;
+				
+				return true;
+			}, 
+			pOnHangingCheckObstacleTag,
 			pEmpty
 		);
+		
+			// 결론 노드-> 굳이 셀렉터를 써야하나?
+			// Leaf 노드로 바꿔도 무관할 듯
+			pOnHangingCheckObstacleTag->SetCondition(
+				[](TravelContext& _ctx)
+				{
+					// 장애물 태그로 종류 판단
+					uint8_t t = 0;
+					bool bHasTag = _ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+					if (bHasTag == false || t == (uint8_t)ETagEnvDetail::Default)
+					{
+						MG_LOG_INFO("[QueryTree] Hang to idle");
+						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
+					}
+					else
+					{
+						MG_LOG_INFO("[QueryTree] Hang to Beam");
+						// 내려가는 절차이므로 stand로 통일
+						_ctx.m_predictedActTag = (uint8_t)ETagAct::Beam_IdleToStand;
+					}
+
+					return 0;
+				},
+				{
+					pReturn
+				}
+			);
 
 		pOnHangingRight->SetCondition(
 			[](TravelContext& _ctx)

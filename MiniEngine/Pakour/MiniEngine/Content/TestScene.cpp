@@ -116,6 +116,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 6.5f, 27.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
 			->SetName(BAR_NAME.c_str());
+		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 9.5f, 26.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
+			->SetName(BAR_NAME.c_str());
 		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 2.5f, 31.0f), Vector3(3.0f, 5.0f, 5.0f), identity);
 
 		// 공중 큐브

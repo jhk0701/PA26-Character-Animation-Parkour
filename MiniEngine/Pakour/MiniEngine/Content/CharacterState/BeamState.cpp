@@ -16,6 +16,7 @@ void BeamState::OnStart()
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack((uint8_t)pChar->GetState());
+	pChar->SetUseGravity(false);
 
 	Refresh(); // 최초에도 한번 refresh 호출
 }
@@ -23,7 +24,6 @@ void BeamState::OnStart()
 void BeamState::Refresh()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
 	// Beam 상태 진입의 전제
 	// Beam 태그가 달린 오브젝트를 처리하고 있을 것
 	const Character::PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
@@ -41,6 +41,9 @@ void BeamState::Refresh()
 void BeamState::OnEnd()
 {
 	CameraFixedState::OnEnd();
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetUseGravity(true);
 
 	m_pCurObs = nullptr;
 }
@@ -105,16 +108,15 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	uint8_t t = 0;
 	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
 	if (t == (uint8_t)ETagEnvDetail::Default) 
-	{
-		// Beam Stand -> Landing
-		// Beam Stand에서 Land
-		if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
-			pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
-
-		return;
-	}
+		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 	
-	DefaultProcessPerceptionResult(_info);
+	if (_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetStepThreshold())
+	{
+		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
+			pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
+	}
+	else
+		DefaultProcessPerceptionResult(_info);
 }
 
 void BeamStandState::OrientByAxis()
@@ -233,24 +235,6 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 }
 
 // Beam Hanging
-void BeamHangingState::OnStart()
-{
-	BeamState::OnStart();
-
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	pChar->SetUseGravity(false);
-
-	Refresh();
-}
-
-void BeamHangingState::OnEnd()
-{
-	BeamState::OnEnd();
-
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	pChar->SetUseGravity(true);
-}
-
 void BeamHangingState::Tick(float _dt)
 {
 	BeamState::Tick(_dt);
@@ -294,9 +278,9 @@ void BeamHangingState::ProcessMovement(float _dt)
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
 	ETagAct eAct = ETagAct::End;
-	if (INPUT_DIR.x > 0 && CheckEnableToMove(pChar, INPUT_DIR) == false)
+	if (INPUT_DIR.x > 0 && CheckEnableToMove(pChar, INPUT_DIR))
 		eAct = ETagAct::Beam_HangingMoveRight;
-	else if (INPUT_DIR.x < 0 && CheckEnableToMove(pChar, INPUT_DIR) == false)
+	else if (INPUT_DIR.x < 0 && CheckEnableToMove(pChar, INPUT_DIR))
 		eAct = ETagAct::Beam_HangingMoveLeft;
 	else if (INPUT_DIR.y > 0)
 		eAct = ETagAct::Beam_HangingMoveUp;

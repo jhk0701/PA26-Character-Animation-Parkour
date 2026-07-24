@@ -353,11 +353,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(30));
 		pActionClip->SetApplyRootBone(false);
 
-		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
-		pTransition->SetState((uint8_t)Character::EState::Landing);
-		pTransition->SetTime(0.6f);
-		pActionClip->AddNotify(pTransition);
-
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.5f);
 		pCorrectRM->SetBezierY(1.0f);
@@ -406,11 +401,11 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
 		pEnableCollision->SetEnable(true);
-		pEnableCollision->SetTime(1.0f);
+		pEnableCollision->SetTime(1.2f);
 		pActionClip->AddNotify(pEnableCollision);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 1.0f);
+		pCorrectRM->SetTime(0.3f, 0.7f);
 		pCorrectRM->SetEndOffset({0.0f, -2.2f, 0.0f});
 		pActionClip->AddNotify(pCorrectRM);
 
