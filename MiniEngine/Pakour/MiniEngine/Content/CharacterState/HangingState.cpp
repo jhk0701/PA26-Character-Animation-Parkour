@@ -6,6 +6,8 @@
 #include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
 
+#include "Core/Log.h"
+
 using namespace Content::Config;
 using namespace MiniEngine::Physics;
 
@@ -49,7 +51,23 @@ void HangingState::Refresh()
 
 void HangingState::AlignToNormal()
 {
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Vector3 nrm = pChar->GetCurObstacleInfo().m_obstacleHitNrm;
+	nrm.y = 0.0f;
 
+	MG_LOG_INFO("[HangingState] :: Hit Normal : ({},{},{})", nrm.x, nrm.y, nrm.z);
+
+	const Vector3 FWD = pChar->GetRoot()->localTransform.Forward();
+	float dot = FWD.Dot(nrm);
+	
+
+
+	// Quaternion rot;
+	// Quaternion::LookRotation(nrm, Vector3(0.0f, -1.0f, 0.0f), rot);
+	// rot *= Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
+	// rot.Normalize();
+
+	pChar->GetRoot()->localTransform.rotation = rot;
 }
 
 void HangingState::ProcessMovement(float _dt)
