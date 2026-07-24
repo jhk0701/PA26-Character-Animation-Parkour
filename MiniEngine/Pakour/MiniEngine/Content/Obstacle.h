@@ -21,7 +21,6 @@ public:
 
 private:
 	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
-		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh,
 		const MiniEngine::Vector3& _localPos,
 		const MiniEngine::Vector3& _halfExtent,
 		const MiniEngine::Quaternion& _localRot);
@@ -36,6 +35,6 @@ public:
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
-		const std::vector<uint8_t>& _detailTags = { 0U }, // (uint8_t)Content::Config::ETagEnvDetail::Default
+		const std::vector<uint8_t>& _detailTags = { 0U },
 		bool _addLedge = true);
 };

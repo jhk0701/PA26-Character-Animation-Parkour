@@ -42,43 +42,36 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
 
-	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.1f, 0.1f);
-	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.1f, 0.1f);
+	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.02f, 0.02f);
+	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.02f, 0.02f);
 
 	if (_addLedge == false)
 		return;
 
 	std::shared_ptr<Actor> pSharedThis = shared_from_this();
 	AddLedge(pSharedThis,
-		_pStaticMesh,
 		_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
 		commonLedgeExtentX,
 		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
 	);
 	AddLedge(pSharedThis,
-		_pStaticMesh,
 		_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
 		commonLedgeExtentX,
 		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
 	);
 	AddLedge(pSharedThis,
-		_pStaticMesh,
 		_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
 		commonLedgeExtentY,
 		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
 	);
 	AddLedge(pSharedThis,
-		_pStaticMesh,
 		_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
 		commonLedgeExtentY,
 		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
 	);
-
-	
 }
 
 void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget, 
-	std::shared_ptr<StaticMesh> _pStaticMesh, 
 	const Vector3& _localPos, 
 	const Vector3& _halfExtent, 
 	const Quaternion& _localRot)
@@ -87,15 +80,13 @@ void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget,
 	// box, static rigid body, size, position
 	// scene, rigidbody comp
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
-	std::shared_ptr<StaticMeshComponent> pSubMesh = _pTarget->AddComponent<StaticMeshComponent>();
-	pSubMesh->SetMesh(_pStaticMesh);
-	pSubMesh->SetColor(Vector3(1.0f));
-	pSubMesh->localTransform.position = _localPos;
-	pSubMesh->localTransform.rotation = _localRot;
-	pSubMesh->localTransform.scale = _halfExtent;
+	std::shared_ptr<SceneComponent> pScene = _pTarget->AddComponent<SceneComponent>();
+	pScene->localTransform.position = _localPos;
+	pScene->localTransform.rotation = _localRot;
+	pScene->localTransform.scale = _halfExtent;
 
 	std::shared_ptr<RigidBodyComponent> pRB = _pTarget->AddComponent<RigidBodyComponent>();
-	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pSubMesh, 10.0f, true);
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pScene, 10.0f, true);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::ObstacleLedge);
 }
 

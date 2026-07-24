@@ -465,7 +465,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		mapActions[(uint8_t)ETagAct::Beam_HangToIdle] = pActionClip;
 	}
 
-	// Beam Hanging이동
+	// Beam Hanging 이동
 	{
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(36));

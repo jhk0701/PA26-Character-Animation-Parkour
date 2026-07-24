@@ -134,8 +134,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pChar->SetName("Character");
 		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));
 
+		/*
+		* // 디버그용
 		auto ui = UIManager::GetInstance()->CreateUI<UIDebugConsole>();
 		ui.lock()->SetCharacter(pChar);
+		*/
 	}
 }
 
@@ -144,6 +147,6 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 
 #ifdef MG_DEBUG
-	// ApplyPhysicsDebug(true);
+	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }
