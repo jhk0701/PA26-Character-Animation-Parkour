@@ -8,6 +8,11 @@ namespace MiniEngine
 	// 로코모션 재생용 (loop)
 	class BlendClip
 	{
+		struct Tri
+		{
+			int i0 = -1, i1 = -1, i2 = -1;
+		};
+
 		struct Axis
 		{
 			float m_val{ 0.0f };
@@ -42,11 +47,10 @@ namespace MiniEngine
 		void SetAxisValue(const Vector2& _vec);
 		void AddAnimClip(Vector2 _coord, AnimClip* _pClip);
 
+		const std::vector<Tri>& GetTris() const { return m_tris; }
+		const std::vector<Placement>& GetPlacement() const{ return m_placements; }
+
 	private:
-		struct Tri 
-		{ 
-			int i0 = -1, i1 = -1, i2 = -1; 
-		};
 		// 삼각분할 결과
 		enum class EFallback 
 		{ 

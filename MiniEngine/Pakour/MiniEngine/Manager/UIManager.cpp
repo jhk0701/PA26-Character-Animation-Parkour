@@ -78,6 +78,9 @@ namespace MiniEngine
 		// ImGuizmo::BeginFrame();
 		// ImGuiIO& io = ImGui::GetIO();
 
+		for (std::shared_ptr<UIBase>& ui : m_uiInsts)
+			ui->Render();
+
 		// 디버깅용 로그 콘솔
 		//ImGui::Begin("Debug Console");
 		////
@@ -88,9 +91,6 @@ namespace MiniEngine
 	{
 		if (!m_initialized)
 			return;
-
-		for (std::shared_ptr<UIBase>& ui : m_uiInsts)
-			ui->Render();
 
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

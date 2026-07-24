@@ -14,6 +14,9 @@
 #include "Content/Character.h"
 #include "Content/Obstacle.h"
 
+#include "Manager/UIManager.h"
+#include "Content/UIDebugConsole.h"
+
 using namespace MiniEngine;
 
 TestScene::TestScene()
@@ -130,6 +133,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
 		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));
+
+		auto ui = UIManager::GetInstance()->CreateUI<UIDebugConsole>();
+		ui.lock()->SetCharacter(pChar);
 	}
 }
 
@@ -138,6 +144,6 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 
 #ifdef MG_DEBUG
-	ApplyPhysicsDebug(true);
+	// ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

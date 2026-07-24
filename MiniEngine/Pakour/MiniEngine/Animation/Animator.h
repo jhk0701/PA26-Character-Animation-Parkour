@@ -57,6 +57,7 @@ namespace MiniEngine
 		RootMotionDelta ConsumeRootMotionDelta(); // 델타를 읽고 0 으로 
 
 		// base track api
+		AnimStateMachine& GetBaseTrack() { return m_baseTrack; }
 		void SetBaseTrackInputAxis(const Vector2& _axis);
 		void TranstionBaseTrack(int _nextIdx, float _duration = 0.5f);
 		void ReserveBaseLocomotion(uint8_t _cnt) { m_baseTrack.Reserve(_cnt); }

@@ -20,7 +20,6 @@ void CameraFixedState::CameraRotate(float _dt)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Input& input = InputManager::GetInstance()->GetInput();
 
-	// 마우스 델타에 이미 델타타임이 곱해져 있음
 	const Vector2 camRotSpeed = pChar->GetCamRotateSpeed() * input.GetMouseDelta();
 	Vector2& camRot = pChar->CamRotate();
 	const float MAX_PITCH = pChar->GetCamPitchMaxDeg();
@@ -48,6 +47,7 @@ void CameraFixedState::HandOverCameraRotate(std::shared_ptr<Character>& _pChar)
 	Vector2& camRot = _pChar->CamRotate();
 	camRot.x += m_prevYaw;
 
+	return;
 	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(camRot.x));
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(camRot.y));
 	qYaw.Normalize();

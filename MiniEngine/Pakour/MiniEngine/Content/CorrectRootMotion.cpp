@@ -127,6 +127,7 @@ void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	// 베지어로 보간
 	m_elapsedTime += _dt;
 	const float w = std::clamp(m_elapsedTime / GetDuration(), 0.0f, 1.0f);
+
 	Vector3 p1 = Vector3::Lerp(m_startPoint, m_midPoint, w);
 	Vector3 p2 = Vector3::Lerp(m_midPoint, m_endPoint, w);
 	Vector3 p3 = Vector3::Lerp(p1, p2, w);
@@ -158,7 +159,6 @@ void RotateMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 
 	// 자체 회전 반영
 	m_elapsedTime += _dt;
-
 	const float w = std::clamp(m_elapsedTime / GetDuration(), 0.0f, 1.0f);
 	m_pChar->GetRoot()->localTransform.rotation = Quaternion::Slerp(m_startRotation, m_endRotation, w);
 }

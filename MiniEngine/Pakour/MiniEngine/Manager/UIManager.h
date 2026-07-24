@@ -37,6 +37,6 @@ namespace MiniEngine
 
 		pInst->Construct();
 
-		return m_uiInsts.back();
+		return pInst;
 	}
 }

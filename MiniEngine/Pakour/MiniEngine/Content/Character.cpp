@@ -62,7 +62,7 @@ void Character::Construct(const Vector3& _initPosition)
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
+		pCamComp->localTransform.position = Vector3(0.0f, -1.0f, -5.0f);
 		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;

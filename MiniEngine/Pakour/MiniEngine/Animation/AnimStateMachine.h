@@ -22,6 +22,7 @@ namespace MiniEngine
 		bool IsValid() const { return m_states.size() > 0 && m_bIsInitialized; }
 
 		void SetInputAxis(const Vector2& _axis) { m_InputAxis = _axis; }
+		std::shared_ptr<BlendClip> GetClip(int _idx) { return m_states[_idx]; }
 
 	private:
 		bool m_bIsInitialized{ false };
