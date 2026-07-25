@@ -25,19 +25,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -131,6 +131,7 @@
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
+    <ClInclude Include="Content\CharacterController.h" />
     <ClInclude Include="Content\CharacterStateMachine.h" />
     <ClInclude Include="Content\CharacterState\BeamState.h" />
     <ClInclude Include="Content\CharacterState\CameraFixedState.h" />
@@ -163,6 +164,8 @@
     <ClInclude Include="Physics\CollsionLayer.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Scene\CharacterControllerComponent.h" />
+    <ClInclude Include="Scene\Controller.h" />
+    <ClInclude Include="Scene\Pawn.h" />
     <ClInclude Include="Scene\PerceptionComponent.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="Scene\Tag.h" />
@@ -202,6 +205,7 @@
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
+    <ClCompile Include="Content\CharacterController.cpp" />
     <ClCompile Include="Content\CharacterStateMachine.cpp" />
     <ClCompile Include="Content\CharacterState\BeamState.cpp" />
     <ClCompile Include="Content\CharacterState\CameraFixedState.cpp" />
@@ -237,6 +241,8 @@
     <ClCompile Include="Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Platform\Input.cpp" />
     <ClCompile Include="Scene\CharacterControllerComponent.cpp" />
+    <ClCompile Include="Scene\Controller.cpp" />
+    <ClCompile Include="Scene\Pawn.cpp" />
     <ClCompile Include="Scene\PerceptionComponent.cpp" />
     <ClCompile Include="Scene\RigidBodyComponent.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />

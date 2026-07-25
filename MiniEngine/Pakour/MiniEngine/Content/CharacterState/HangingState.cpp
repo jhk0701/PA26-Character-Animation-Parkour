@@ -59,15 +59,13 @@ void HangingState::AlignToNormal()
 
 	const Vector3 FWD = pChar->GetRoot()->localTransform.Forward();
 	float dot = FWD.Dot(nrm);
-	
-
 
 	// Quaternion rot;
 	// Quaternion::LookRotation(nrm, Vector3(0.0f, -1.0f, 0.0f), rot);
 	// rot *= Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 	// rot.Normalize();
 
-	pChar->GetRoot()->localTransform.rotation = rot;
+	// pChar->GetRoot()->localTransform.rotation = rot;
 }
 
 void HangingState::ProcessMovement(float _dt)

@@ -118,17 +118,22 @@ void Character::PostConstruct()
 
 void Character::BeginPlay()
 {
-	Actor::BeginPlay();
+	Pawn::BeginPlay();
 
 	m_charCont.lock()->SetCheckFalling(true);
 
 	InitCollisionLayer();
-	InitInput();
+	ResetCamRot();
 }
 
 void Character::Tick(float _dt)
 {
-	Actor::Tick(_dt);
+	Pawn::Tick(_dt);
+}
+
+void Character::OnPossessed(Input& _input)
+{
+	Pawn::OnPossessed(_input);
 }
 
 void Character::TryPerception()
@@ -261,94 +266,6 @@ void Character::TransitionStateMachine(uint8_t _state)
 {
 	SetState(static_cast<Character::EState>(_state));
 	m_charFSM.lock()->Transition(_state);
-}
-
-void Character::InitInput()
-{
-	ResetCamRot();
-
-	// 바인딩
-	Input& input = InputManager::GetInstance()->GetInput();
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::Escape).OnPressed = std::bind([this]() { PostQuitMessage(0); });
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::W).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = -1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.y = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::D).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnPressed = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = -1.0f;
-			SetInputDir(inputDir);
-		});
-	input.GetKeyBind(DirectX::Keyboard::Keys::A).OnReleased = std::bind(
-		[this]()
-		{
-			Vector2 inputDir = GetInputDir();
-			inputDir.x = 0.0f;
-			SetInputDir(inputDir);
-		});
-
-	// 테스트용 점프
-	input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
-		[this]() { InputJump(); }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() { TryPerception();  }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
-		[this]() { ResetCamRot(); }
-	);
-	input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
-		[this]() 
-		{
-			SetPosition(Vector3(0.0f));
-			// std::shared_ptr<ActionClip> pTest = GetActions((uint8_t)Content::Config::ETagAct::Test);
-			// GetAnim().lock()->PlayActionClip(pTest, 0.2f);
-		}
-	);
 }
 
 void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)

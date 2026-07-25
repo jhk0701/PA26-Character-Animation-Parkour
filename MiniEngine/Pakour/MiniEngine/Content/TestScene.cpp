@@ -12,6 +12,7 @@
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
+#include "Content/CharacterController.h"
 #include "Content/Obstacle.h"
 
 #include "Manager/UIManager.h"
@@ -133,6 +134,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
 		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));
+
+		std::shared_ptr<CharacterController> pCont = SpawnActor<CharacterController>();
+		pCont->SetName("CharacterController");
+		pCont->Construct();
+
+		pCont->Possess(pChar);
 
 		/*
 		* // 디버그용

@@ -101,6 +101,12 @@
     <Filter Include="Content\03.Object\Component\CharacterState">
       <UniqueIdentifier>{759554ca-a749-4484-ba7d-ecc526c81c42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Controller">
+      <UniqueIdentifier>{5f1a6585-d3ad-4dc2-9903-2b034ebf8010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\03.Object\CharacterController">
+      <UniqueIdentifier>{79a9b5f6-d3a5-47b7-82c4-7e2dd4bd7cbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -310,6 +316,15 @@
     <ClInclude Include="Content\CharacterState\CameraFixedState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\Pawn.h">
+      <Filter>Engine\07.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Controller.h">
+      <Filter>Engine\07.Object\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\CharacterController.h">
+      <Filter>Content\03.Object\CharacterController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -494,6 +509,15 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterState\CameraFixedState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Pawn.cpp">
+      <Filter>Engine\07.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Controller.cpp">
+      <Filter>Engine\07.Object\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterController.cpp">
+      <Filter>Content\03.Object\CharacterController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

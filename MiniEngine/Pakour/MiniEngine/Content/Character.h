@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene/Actor.h"
+#include "Scene/Pawn.h"
 #include "Scene/PerceptionComponent.h"
 #include "Content/PerceptionQueryTree.h"
 
@@ -18,7 +18,7 @@ namespace MiniEngine
 using namespace MiniEngine;
 
 class CharacterStateMachine;
-class Character : public Actor
+class Character : public Pawn
 {
 public:
 	enum class EState : uint8_t
@@ -53,6 +53,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float _dt) override;
+	void OnPossessed(Input& _input) override;
 
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
@@ -112,7 +113,6 @@ public:
 
 private:
 	void InitCollisionLayer();
-	void InitInput();
 
 	std::weak_ptr<Animator> GetAnim() const;
 
