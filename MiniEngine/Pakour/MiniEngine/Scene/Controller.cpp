@@ -8,7 +8,7 @@ using namespace MiniEngine;
 
 void Controller::Construct()
 {
-	AddComponent<SceneComponent>();
+	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
 }
 
 void Controller::Possess(std::shared_ptr<Pawn> _pawn)
@@ -25,5 +25,5 @@ void Controller::Unpossess()
 
 void Controller::OnPossessed(Input& _input)
 {
-	m_possesed.lock()->OnPossessed(_input);
+	m_possesed.lock()->OnPossessed(std::static_pointer_cast<Controller>(shared_from_this()), _input);
 }

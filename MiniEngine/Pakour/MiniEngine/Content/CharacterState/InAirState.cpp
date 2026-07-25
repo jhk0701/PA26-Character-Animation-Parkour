@@ -19,7 +19,7 @@ void InAirState::OnEnd()
 void InAirState::Tick(float _dt)
 {
 	// 떨어지는 중엔 movement 막기
-	DefaultCameraRotate(_dt);
+	// DefaultCameraRotate(_dt);
 	CheckState();
 }
 

@@ -44,6 +44,7 @@ void CharacterController::OnPossessed(Input& _input)
 			inputDir.y = -1.0f;
 			pChar->SetInputDir(inputDir);
 		});
+
 	_input.GetKeyBind(DirectX::Keyboard::Keys::S).OnReleased = std::bind(
 		[this]()
 		{

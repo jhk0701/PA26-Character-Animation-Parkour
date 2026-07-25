@@ -51,7 +51,7 @@ void BeamState::OnEnd()
 void BeamState::Tick(float _dt)
 {
 	CheckState();
-	CameraRotate(_dt);
+	// CameraRotate(_dt);
 }
 
 void BeamState::CheckState()

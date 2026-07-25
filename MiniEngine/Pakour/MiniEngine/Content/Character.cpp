@@ -62,8 +62,8 @@ void Character::Construct(const Vector3& _initPosition)
 		pCamComp->RegisterMainCamera();
 
 		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, -1.0f, -5.0f);
-		pCamComp->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
+		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
+		pCamComp->localTransform.rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);// Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;
 	}
@@ -76,6 +76,7 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.stepOffset = m_stepOffset;
 		desc.contactOffset = m_capsuleContactOffset;
 		pCharCont->Init(*GetScene()->GetPhysics().lock(), desc, GetRoot());
+
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
 		pCharCont->SetFallingSecondThreshold(0.3f); // 낙하 인정 시간 설정
@@ -124,16 +125,6 @@ void Character::BeginPlay()
 
 	InitCollisionLayer();
 	ResetCamRot();
-}
-
-void Character::Tick(float _dt)
-{
-	Pawn::Tick(_dt);
-}
-
-void Character::OnPossessed(Input& _input)
-{
-	Pawn::OnPossessed(_input);
 }
 
 void Character::TryPerception()
