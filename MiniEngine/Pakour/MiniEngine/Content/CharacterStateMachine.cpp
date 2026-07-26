@@ -73,42 +73,27 @@ void CharacterState::DefaultMovement(float _dt)
 	
 	if (INPUT_DIR.x != 0 || INPUT_DIR.y != 0)
 		inputLerp.Normalize();
+	else 
+	{
+		pChar->SetAnimBaseTrackInputAxis(inputLerp);
+		return;
+	}
 	
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
-	const Transform& CONT_TF = pChar->GetRoot()->localTransform; //  pChar->GetControllerActor()->GetRoot()->localTransform;
-	// ;
+	const Transform& CONT_TF = pChar->GetControllerActor()->GetRoot()->localTransform;
+	
 	pChar->AddMovementInput(
 		DELTA_SPD * inputLerp.y * CONT_TF.Forward() +
 		DELTA_SPD * inputLerp.x * CONT_TF.Right()
 	);
 	pChar->SetAnimBaseTrackInputAxis(inputLerp);
-
-	pChar->GetRoot()->localTransform.rotation = CONT_TF.rotation;
 }
 
-void CharacterState::DefaultCameraRotate(float _dt)
+void CharacterState::SyncControllerRotate()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Input& input = InputManager::GetInstance()->GetInput();
+	if (pChar->IsActionClipPlaying())
+		return;
 
-	// 마우스 델타에 이미 델타타임이 곱해져 있음
-	const Vector2 camRotSpeed = pChar->GetCamRotateSpeed() * input.GetMouseDelta();
-	Vector2& camRot = pChar->CamRotate();
-	const float MAX_PITCH = pChar->GetCamPitchMaxDeg();
-
-	camRot.x += camRotSpeed.x;
-	camRot.y += camRotSpeed.y;
-	camRot.y = std::clamp(camRot.y, - MAX_PITCH, MAX_PITCH);
-
-	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(camRot.x));
-	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(camRot.y));
-
-	Quaternion& camHolderRot = pChar->GetCamHolder().lock()->localTransform.rotation;
-	camHolderRot = qPitch;
-	camHolderRot *= qYaw;
-	camHolderRot.Normalize();
-
-	// 카메라 yaw 회전에 대한 동기화
-	std::shared_ptr<Controller> pCharCont = pChar->GetControllerActor();
-	// pCharCont->GetRoot()->localTransform.rotation = qYaw;
+	pChar->GetRoot()->localTransform.rotation = pChar->GetControllerActor()->GetRoot()->localTransform.rotation;
 }

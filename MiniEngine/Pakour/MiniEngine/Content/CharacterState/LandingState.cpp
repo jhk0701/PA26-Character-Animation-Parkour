@@ -15,8 +15,7 @@ void LandingState::OnEnd()
 
 void LandingState::Tick(float _dt)
 {
-	DefaultMovement(_dt);
-	DefaultCameraRotate(_dt);
+	DefaultMovement(_dt); SyncControllerRotate();
 
 	CheckState();
 }

@@ -9,7 +9,6 @@
 #include "Manager/PathManager.h"
 
 #include "Scene/Scene.h"
-#include "Scene/CameraComponent.h"
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
 #include "Scene/CharacterControllerComponent.h"
@@ -50,20 +49,6 @@ void Character::Construct(const Vector3& _initPosition)
 	InitAnimation(skinComp);
 
 	{
-		// 캐릭터 카메라 설정
-		std::shared_ptr<SceneComponent> pCamHolder = AddComponent<SceneComponent>();
-		pCamHolder->AttachTo(GetRoot());
-		pCamHolder->localTransform.position = Vector3(0.0f, 1.5f, 0.0f);
-
-		std::shared_ptr<CameraComponent> pCamComp = AddComponent<CameraComponent>();
-		pCamComp->RegisterMainCamera();
-
-		pCamComp->AttachTo(pCamHolder);
-		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
-
-		m_cameraHolder = pCamHolder;
-	}
-	{
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
 		Physics::CapsuleControllerDesc desc;
@@ -100,7 +85,6 @@ void Character::Construct(const Vector3& _initPosition)
 	}
 
 	pRoot->localTransform.position = _initPosition;
-	// pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	PostConstruct();
 }
@@ -123,7 +107,6 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 
 	InitCollisionLayer();
-	ResetCamRot();
 }
 
 void Character::TryPerception()

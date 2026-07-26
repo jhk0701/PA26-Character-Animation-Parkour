@@ -74,13 +74,6 @@ public:
 	float GetInputLerpWeight() const { return std::clamp(m_lerpWeight, 0.0f, 1.0f); }
 	Vector2& InputLerp() { return m_lerpInputDir; }
 
-	// 카메라
-	float GetCamRotateSpeed() const { return m_camRotateSpeed; }
-	float GetCamPitchMaxDeg() const { return m_camPitchMaxDeg; }
-	Vector2& CamRotate() { return m_camRotate; }
-	std::weak_ptr<SceneComponent> GetCamHolder() const { return m_cameraHolder; }
-	void ResetCamRot() { m_camRotate.x = 0.0f; m_camRotate.y = 0.0f; }
-
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);
 	void TranstionBaseTrack(uint8_t _state, float _transitionTime = 0.25f);
@@ -125,10 +118,6 @@ private:
 	float m_stepThreshold{ 0.5f };
 	float m_checkingDistance{ 1.5f };
 
-	float m_camRotateSpeed{ 20.0f };
-	float m_camPitchMaxDeg{ 85.0f };
-	Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
-
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };
 	float m_capsuleContactOffset{ 0.05f };
@@ -136,7 +125,6 @@ private:
 
 	EState m_state{ EState::Landing };
 	
-	std::weak_ptr<SceneComponent> m_cameraHolder;
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 

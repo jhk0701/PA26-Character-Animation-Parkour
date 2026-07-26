@@ -14,12 +14,4 @@ public:
 	virtual void OnStart() override;
 	virtual void OnEnd() override;
 
-protected:
-	void CameraRotate(float _dt);
-
-private:
-	void TakeOverCameraRotate(std::shared_ptr<Character>& _pChar);
-	void HandOverCameraRotate(std::shared_ptr<Character>& _pChar);
-
-	float m_prevYaw{ 0.0f };
 };

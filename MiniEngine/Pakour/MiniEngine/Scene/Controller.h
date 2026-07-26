@@ -8,7 +8,7 @@ namespace MiniEngine
 	class Controller : public Actor
 	{
 	public:
-		void Construct();
+		virtual void Construct();
 		void Possess(std::shared_ptr<Pawn> _pawn);
 		void Unpossess();
 

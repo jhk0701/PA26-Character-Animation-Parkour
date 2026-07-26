@@ -34,7 +34,6 @@ void HangingState::OnEnd()
 void HangingState::Tick(float _dt)
 {
 	ProcessMovement(_dt);
-	CameraRotate(_dt);
 }
 
 void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
