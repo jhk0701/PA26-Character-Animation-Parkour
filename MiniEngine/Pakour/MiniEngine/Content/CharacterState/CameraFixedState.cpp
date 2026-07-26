@@ -26,7 +26,7 @@ void CameraFixedState::CameraRotate(float _dt)
 
 	camRot.x += camRotSpeed.x;
 	camRot.y += camRotSpeed.y;
-	camRot.y = std::clamp(camRot.y, 180.0f - MAX_PITCH, 180.0f + MAX_PITCH);
+	camRot.y = std::clamp(camRot.y, - MAX_PITCH, MAX_PITCH);
 
 	Quaternion qRot = Quaternion::CreateFromYawPitchRoll(ToRadians(camRot.x), ToRadians(camRot.y), 0.0f);
 	qRot.Normalize();

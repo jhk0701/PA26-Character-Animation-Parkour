@@ -79,7 +79,7 @@ public:
 	float GetCamPitchMaxDeg() const { return m_camPitchMaxDeg; }
 	Vector2& CamRotate() { return m_camRotate; }
 	std::weak_ptr<SceneComponent> GetCamHolder() const { return m_cameraHolder; }
-	void ResetCamRot() { m_camRotate.x = 180.0f; m_camRotate.y = 0.0f; }
+	void ResetCamRot() { m_camRotate.x = 0.0f; m_camRotate.y = 0.0f; }
 
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);

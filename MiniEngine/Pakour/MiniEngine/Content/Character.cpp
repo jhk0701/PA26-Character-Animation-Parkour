@@ -37,9 +37,6 @@ Character::~Character()
 void Character::Construct(const Vector3& _initPosition)
 {
 	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
-	pRoot->localTransform.position = _initPosition;
-	pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
-
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
@@ -63,7 +60,6 @@ void Character::Construct(const Vector3& _initPosition)
 
 		pCamComp->AttachTo(pCamHolder);
 		pCamComp->localTransform.position = Vector3(0.0f, 0.0f, -5.0f);
-		pCamComp->localTransform.rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);// Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, ToRadians(180.0f));
 
 		m_cameraHolder = pCamHolder;
 	}
@@ -102,6 +98,9 @@ void Character::Construct(const Vector3& _initPosition)
 			});
 		m_charFSM = pCharFSM;
 	}
+
+	pRoot->localTransform.position = _initPosition;
+	// pRoot->localTransform.rotation = Quaternion::CreateFromYawPitchRoll(ToRadians(180.0f), 0.0f, 0.0f);
 
 	PostConstruct();
 }

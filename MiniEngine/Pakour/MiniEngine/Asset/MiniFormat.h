@@ -46,9 +46,10 @@ namespace MiniEngine
         AnimClip,
     };
 
-    // 본/클립 이름의 고정 길이(널 종단 포함)
+    // 본/클립 이름의 고정 길이
     constexpr uint32_t MINI_NAME_LENGTH = 64;
     constexpr uint32_t MINI_BAKE_AXIS_NORMALIZED = 1u << 0;
+    constexpr uint32_t MINI_BAKE_FORWARD_NORMALIZED = 1u << 1;
 
 #pragma pack(push, 4)
 

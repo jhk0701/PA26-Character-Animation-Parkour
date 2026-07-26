@@ -75,7 +75,7 @@ void CharacterState::DefaultMovement(float _dt)
 		inputLerp.Normalize();
 	
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
-	const Transform& CONT_TF = pChar->GetControllerActor()->GetRoot()->localTransform;
+	const Transform& CONT_TF = pChar->GetRoot()->localTransform; //  pChar->GetControllerActor()->GetRoot()->localTransform;
 	// ;
 	pChar->AddMovementInput(
 		DELTA_SPD * inputLerp.y * CONT_TF.Forward() +
@@ -98,7 +98,7 @@ void CharacterState::DefaultCameraRotate(float _dt)
 
 	camRot.x += camRotSpeed.x;
 	camRot.y += camRotSpeed.y;
-	// camRot.y = std::clamp(camRot.y, 180.0f - MAX_PITCH, 180.0f + MAX_PITCH);
+	camRot.y = std::clamp(camRot.y, - MAX_PITCH, MAX_PITCH);
 
 	Quaternion qYaw = Quaternion::CreateFromAxisAngle(Vector3::Transform(Vector3(.0f, 1.0f, .0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)), ToRadians(camRot.x));
 	Quaternion qPitch = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), ToRadians(camRot.y));
@@ -110,5 +110,5 @@ void CharacterState::DefaultCameraRotate(float _dt)
 
 	// 카메라 yaw 회전에 대한 동기화
 	std::shared_ptr<Controller> pCharCont = pChar->GetControllerActor();
-	pCharCont->GetRoot()->localTransform.rotation = qYaw;
+	// pCharCont->GetRoot()->localTransform.rotation = qYaw;
 }

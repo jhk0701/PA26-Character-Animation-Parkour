@@ -20,8 +20,8 @@ namespace MiniEngine
                  * Matrix::CreateTranslation(position);
         }
 
-        inline Vector3 Forward() const { return GetMatrix().Forward(); }
-        inline Vector3 Right() const { return -GetMatrix().Right(); }
-        inline Vector3 Up() const { return GetMatrix().Up(); }
+        inline Vector3 Forward()    const { return Vector3::Transform(Vector3(0.0f, 0.0f, 1.0f), rotation); }
+        inline Vector3 Right()      const { return Vector3::Transform(Vector3(1.0f, 0.0f, 0.0f), rotation); }
+        inline Vector3 Up()         const { return Vector3::Transform(Vector3(0.0f, 1.0f, 0.0f), rotation); }
     };
 }

@@ -2,7 +2,6 @@
 #include "Editor/AssimpBaker.h"
 
 #if defined(WITH_EDITOR)
-// ─── Editor 구성: 실제 Assimp 구현 ──────────────────────────────────────────
 #include "Asset/MiniFormat.h"
 #include "Asset/MiniLoader.h" // WriteStaticMesh/WriteSkinnedMesh (+Skeleton/AnimClip 타입)
 #include "Asset/BoneNaming.h" // NormalizeBoneName/ResolveHumanoidBone (런타임과 공용)
@@ -60,17 +59,6 @@ namespace MiniEngine
                 // FBX pivot 헬퍼 노드($AssimpFbx$_PreRotation 등)를 본 노드로 병합 — 스켈레톤이
                 // 실제 본 수의 몇 배로 부풀어 MAX_BONES(128)를 넘는 것을 방지(예: Mixamo 65→219).
                 _importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-                // LH 변환: 엔진은 왼손 좌표계(LH·CW 정면 — DX11 네이티브)로 통일. Assimp 기본은
-                //   RH·CCW 이므로 ConvertToLeftHanded 로 뒤집는다.
-                //   = MakeLeftHanded(정점 pos/normal Z·노드 트랜스폼·본 오프셋 행렬·애니 채널 키 일괄)
-                //   + FlipWindingOrder(CW 정면 → DirectXBase 래스터라이저 FrontCounterClockwise=FALSE 와 정합)
-                //   + FlipUVs(UV V 뒤집기 → DX 좌상단 원점 텍스처 관례와 정합).
-                //   정적/스키닝/애니(리타게팅 포함) 경로가 모두 자동 정합 — 별도 변환 코드 불필요.
-                // LimitBoneWeights: 정점당 본 영향 4개 제한(MiniSkinnedVertex 슬롯과 일치).
-                // GlobalScale: FBX 파일의 UnitScaleFactor(관례상 cm) 를 읽어 미터로 자동 변환.
-                //   FBX 임포터가 SetFileScale(UnitScaleFactor*0.01) 로 넣은 스케일을 ScaleProcess 가
-                //   정점·본 오프셋 행렬 translation·노드 translation·애니 position 키에 균일 적용한다
-                //   (정적/스키닝 경로 모두 정합). 이미 m 이거나 OBJ/glTF 처럼 파일 스케일이 없으면 무동작.
                 const unsigned int flags =
                     aiProcess_Triangulate |
                     aiProcess_GenSmoothNormals |
@@ -239,7 +227,17 @@ namespace MiniEngine
                 }
             }
 
-            // 파일 내 애니메이션 클립 이름 처리
+            // 클립 이름 규칙: **파일 stem 이 1순위.** 소스 FBX 의 내부 트랙 이름은 건드리지 않고,
+            // `.mini` 에 삽입할 때의 이름만 파일명으로 짓는다(언리얼/유니티 임포터 관례).
+            //   익스포터의 기본 트랙 이름은 정보성이 없다 — Mixamo 는 전부 "mixamo.com",
+            //   UE FBX 익스포트는 전부 "Unreal Take"(Assets\UE_Anim\ 44개 전부 동일). 이런 이름을
+            //   junk 목록으로 하나씩 쫓아다니면 익스포터가 늘 때마다 깨지고, 무엇보다 **클립명이
+            //   베이크 순서에 의존**하게 된다(첫 파일이 "Unreal Take" 를 선점 → 나머지는 중복
+            //   fallback 으로 우연히 stem 을 받음, docs/UEFN_Bone.md §5.7). stem 을 정본으로 삼아
+            //   이 문제를 근본에서 없앤다.
+            //   _name(내부 이름)은 stem 을 구할 수 없을 때만 쓰는 예비 경로다.
+            //   한 FBX 안에 트랙이 여러 개면 stem, stem_2, stem_3 … 으로 붙는다.
+            //   (이 규칙은 신규 베이크에만 적용 — 이미 구운 .mini 는 저장된 이름을 그대로 유지한다.)
             std::string ResolveClipName(std::string _name, const std::string& _stem,
                 const std::vector<AnimClip>& _clips)
             {
@@ -324,7 +322,7 @@ namespace MiniEngine
                 return unmatched;
             }
 
-            // 리타게팅 헬퍼
+            // ─── 리타게팅 헬퍼 (베이크 타임, §9) ─────────────────────────────
             // 본 이름 정규화(NormalizeBoneName)와 휴머노이드 역할 사전(ResolveHumanoidBone)은
             // 런타임(루트 모션 본 탐색)과 공유하므로 Asset/BoneNaming 에 있다.
 
@@ -376,7 +374,7 @@ namespace MiniEngine
                 return Matrix::CreateFromQuaternion(q);
             }
 
-            // 리그 정렬
+            // ─── 리그 정렬(§9) ────────────────────────────────────────────────
             // 모델스페이스 리타게팅은 소스·타깃이 **같은 기준계**를 공유할 때만 성립한다. 실제 리그는
             // 두 가지가 어긋난다:
             //   (1) 월드 기저 — Mixamo 는 Y-up, UE 마네킹 FBX 는 Z-up 으로 임포트된다(측정: 88.9° 차).
@@ -415,7 +413,8 @@ namespace MiniEngine
                 return b;
             }
 
-
+            // _from → _to 로 보내는 **최소(swing) 회전**. row-vector 규약: _from · M ≈ _to.
+            // twist(축 둘레 롤)는 미결정 — 방향만 맞춘다(rest 정렬의 알려진 한계, §9).
             Matrix MinimalRotation(Vector3 _from, Vector3 _to)
             {
                 if (_from.Length() < 1e-6f || _to.Length() < 1e-6f) return Matrix();
@@ -520,7 +519,15 @@ namespace MiniEngine
                 return _na->mPositionKeys[n - 1].mValue;
             }
 
-            // 리타게팅 확인
+            // ─── 리타게팅 품질 진단(§5.6 지표) ────────────────────────────────
+            // RetargetAndExtractClips 가 **실제 베이크 경로 위에서** 채워주는 선택적 출력.
+            // 별도 함수로 수학을 복제하지 않는 이유: 복제본은 본 경로와 조용히 어긋날 수 있고,
+            // 그러면 지표가 "복제본이 자기 자신과 일치한다"만 재는 무의미한 값이 된다.
+            //
+            // limbAngle = 소스 사지 방향 vs 리타게팅 결과 사지 방향(**각자의 캐릭터 공간**) 각도.
+            // 리타게팅 공식이 목표로 하는 항등 `childDir_t·Gt ≡ childDir_s·Gs`(위 주석 참조)의
+            // 잔차이므로 0 이 정답이다. 실측 이력(UEFN_Bone.md §5.6): 깨졌을 때 149°/170°,
+            // 고친 뒤 0.02°. aligned=false(역할 본 부재로 기저 유도 실패)면 측정 불가 → -1.
             struct RetargetDiag
             {
                 bool    aligned = false;
@@ -532,7 +539,9 @@ namespace MiniEngine
                 Vector3 rootMotionNet;        // 루트모션 순변위(방출 공간 = 타깃 루트본 부모 로컬)
             };
 
-
+            // 지표를 재는 사지 구간 — 각 역할의 rest 자식 방향이 정의되는 본들(ChildRoleCandidates).
+            // 스파인/목은 다대일 근사(spine_02~05→UpperChest)라 잔차가 구조적으로 남으므로 제외하고,
+            // 리그 차가 가장 크게 드러나는 사지만 본다(§5.6 이 측정한 것과 동일 집합).
             const HumanoidBone kLimbRoles[] = {
                 HumanoidBone::LeftUpperArm,  HumanoidBone::LeftLowerArm,
                 HumanoidBone::RightUpperArm, HumanoidBone::RightLowerArm,
@@ -540,7 +549,39 @@ namespace MiniEngine
                 HumanoidBone::RightUpperLeg, HumanoidBone::RightLowerLeg,
             };
 
-            // 추가 애니 소스를 타깃 스켈레톤으로 리타게팅해 클립으로 추출·병합
+            // 추가 애니 소스를 타깃 스켈레톤으로 "리타게팅"해 클립으로 추출·병합.
+            //  - 채널→본 매칭: _overrides(소스본이름→타깃인덱스, -1=스킵) 우선 → 없으면 자동
+            //          (MatchChannelToTarget: 정규화 이름 exact → 휴머노이드 역할 fallback). 둘 다 실패 = 미매칭(수 반환).
+            //  - 회전: **모델스페이스 방향 리타게팅 + 리그 정렬**(언리얼 IK Retargeter/유니티 휴머노이드 정석).
+            //          목표는 "타깃 본이 소스 본과 **같은 방향을 가리키게** 한다" 이며, 본별 상수 하나로 접힌다:
+            //              Gt^w = Kpre · Gs^w · Kpost
+            //              Kpre  = GtRest^w · inv(Bt) · S · Bs · inv(GsRest^w)
+            //              Kpost = inv(Bs) · Bt
+            //              local = Gt^w · inv(부모 Gt^w)      (row-vector, global = local·parent)
+            //          B  = 리그의 캐릭터 공간 기저(rest 에서 유도, MakeCharBasis) — Y-up↔Z-up 기저 차 흡수.
+            //          S  = 타깃 rest 사지 방향 → 소스 rest 사지 방향 최소 회전 — T-pose↔A-pose 및 rest 에
+            //               임의 포즈가 구워진 UEFN FBX 를 흡수(= 자동 Retarget Pose / 유니티 Enforce T-Pose).
+            //          이 조합은 childDir_t·Gt ≡ childDir_s·Gs 로 떨어져 **소스의 절대 사지 방향을 재현**한다.
+            //          **동일 리그면 Bs=Bt, GsRest=GtRest, S=I → Kpre=Kpost=I → Gt=Gs (무회귀 항등).**
+            //          ⚠ S 는 swing 만 정의 — 축 둘레 twist(손/발 롤)는 미결정(문서화된 한계).
+            //          [폐기 이력] ① 채널별 로컬 바인드 델타(qFix) → 크로스 리그 방향 실패(캐릭터가 누움).
+            //            ② `Gs·inv(GsRest)·GtRest` → **column-vector 공식을 row-vector 엔진에 적용**한 것이라
+            //               실제로는 "본 로컬 프레임 델타" 전이였다. 동일 리그는 항등이라 회귀 검사를 통과했으나,
+            //               본 축 규약이 다른 크로스 리그(Mixamo Y-down-bone ↔ UE X-down-bone, 측정 90°)에서
+            //               사지가 엉뚱한 평면으로 회전했다.
+            //  - 트랜슬레이션(루트모션): 소스 hip(역할==Hips) 본의 **글로벌 위치**(부모 root 의 전진/수직
+            //          이동 포함)를 매 tick 뽑아 타깃 루트모션 본(FindRootMotionBone)에 방출한다. UE 는 이동을
+            //          전용 root 에 저작 → hip 로컬만 쓰면 전진이 소실되므로 글로벌로 합성한다. 나머지 본 pos 는
+            //          방출 안 함(런타임 바인드 fallback). scale 드롭.
+            //          **기저 정렬(Kpost)로 소스 월드 → 타깃 월드 변환**하고, 높이 비율은 각 리그의 **up 축
+            //          투영**(rest hip 높이)으로 낸다 — 월드 Y 를 쓰면 Z-up 리그에서 무의미한 값이 나온다
+            //          (마네킹 측정: tgtHipY=-0.023 → ratio -0.023 으로 깨져 있었다).
+            //          런타임이 XZ(+yaw)만 추출·strip → 수직 hop 은 포즈에 남아 몸이 떠오른다.
+            //          (타깃이 전용 root 본을 갖는 케이스는 hip 글로벌을 root 에 실으면 수직 오프셋 → 후속 과제.)
+            //          **축 규약**: 방출 공간은 타깃 rest 를 유도한 공간 = 노드 체인(2번 주석 참조)이다.
+            //          BakeSkinned 의 NormalizeSkeletonSpace 후처리가 루트모션 본의 조상을 접어
+            //          "루트 본 local == 메시 공간" 을 성립시키므로 RootMotion.h 의 Y-up·메시로컬 전제가
+            //          실제로 참이 된다(구: 마네킹이 −Z-up 으로 구워져 전진이 소실됐다 — UEFN_Bone.md §5.8).
             unsigned int RetargetAndExtractClips(
                 const aiScene* _animScene,
                 const Skeleton& _targetSkeleton,
@@ -549,9 +590,15 @@ namespace MiniEngine
                 const std::string& _fallbackStem,
                 std::vector<AnimClip>& _inoutClips,
                 const std::unordered_map<std::string, int>* _overrides = nullptr,
-                RetargetDiag* _outDiag = nullptr)
+                RetargetDiag* _outDiag = nullptr,
+                // 소스 애셋 전체에 적용할 월드 회전(= 소스 루트의 부모). Up Axis 오버라이드가
+                // UpAxisMatrix 로 넘겨준다. 기본 항등 → 소스 raw 그대로(무영향). 회전만이므로
+                // 원점 기준 월드 후치 회전(row-vector: global = local·…·root·N). ⚠ **정렬된
+                // 휴머노이드 소스는 무영향** — 기저 Bs 가 rest 에서 유도돼 이미 축을 흡수한다.
+                // raw 모델스페이스 폴백(역할 본 부재)에서만 실효.
+                const Matrix& _srcWorldRot = Matrix())
             {
-                // 1. 소스 계층(순서·부모)·rest 포즈 수집. FlattenNodes 는 pre-order 라 부모 인덱스 < 자기
+                // 1) 소스 계층(순서·부모)·rest 포즈 수집. FlattenNodes 는 pre-order 라 부모 인덱스 < 자기
                 //    인덱스 → rest/anim 글로벌 회전을 단일 전방 패스로 누적할 수 있다.
                 std::vector<std::string> srcNames;
                 std::vector<int>         srcParents;
@@ -559,7 +606,7 @@ namespace MiniEngine
                 FlattenNodes(_animScene->mRootNode, -1, srcNames, srcParents, srcIndex);
 
                 std::unordered_map<std::string, Matrix> srcLocal, srcGlobal;
-                CollectRestPose(_animScene->mRootNode, Matrix(), srcLocal, srcGlobal);
+                CollectRestPose(_animScene->mRootNode, _srcWorldRot, srcLocal, srcGlobal);
 
                 const size_t srcCount = srcNames.size();
                 std::vector<Matrix> srcRestLocalRot(srcCount);      // 회전만(스케일/이동 제거)
@@ -572,13 +619,24 @@ namespace MiniEngine
                     srcRestGlobalPos[i] = srcGlobal[srcNames[i]].Translation();
                     const int p = srcParents[i];
                     srcRestGlobalRot[i] = (p < 0)
-                        ? srcRestLocalRot[i] : srcRestLocalRot[i] * srcRestGlobalRot[p];
+                        ? srcRestLocalRot[i] * _srcWorldRot : srcRestLocalRot[i] * srcRestGlobalRot[p];
                     const HumanoidBone role = ResolveHumanoidBone(NormalizeBoneName(srcNames[i]));
                     if (role != HumanoidBone::None)
                         srcRoleIndex.emplace(role, static_cast<int>(i));
                 }
 
-                // 2. 타깃 rest(로컬·글로벌) 미리 계산
+                // 2) 타깃 rest(로컬·글로벌) 미리 계산. GtRest = **localBindPose 부모 체인 누적**.
+                //    ⚠ inverseBindPose.Invert() 를 쓰면 안 된다 — 둘은 **다른 공간**이다:
+                //      · localBindPose = aiNode::mTransformation. 노드 체인은 assimp 가 FBX UpAxis
+                //        메타데이터로 만든 **축 변환 A** 를 RootNode 에 담고 있다(마네킹 실측 A=R_x(+90°)).
+                //      · inverseBindPose = aiBone::mOffsetMatrix. assimp 는 여기에 **A 를 적용하지 않는다**.
+                //        (실측: 모든 스킨 본에서 inverseBindPose·globalBind = A ≠ I)
+                //    이 자체는 정상이다 — 스키닝 계약 final = invBind·G = raw⁻¹·raw·A = A 라서 A 가 노드
+                //    체인을 통해 정점에 도달한다. 문제는 rest 를 invBind⁻¹(=raw, A 가 빠진 변환 전 공간)에서
+                //    유도하면 리타게팅 클립이 **바인드 포즈와 다른 공간**(마네킹의 경우 −Z-up)에 저작된다는 것.
+                //    노드 체인으로 유도하면 Kpre 는 불변이고 Kpost 만 ·A 를 얻어 회전 채널과 루트모션 pos
+                //    트랙이 **함께** 바인드 포즈와 같은 공간으로 옮겨간다. Y-up 리그는 A=I 라 무회귀.
+                //    (BuildSkeleton 이 pre-order → parentIndex < 자기 인덱스 보장 → 단일 전방 패스.)
                 const size_t tgtCount = _targetSkeleton.bones.size();
                 std::vector<Matrix>  tgtRestLocalRot(tgtCount), tgtRestGlobalRot(tgtCount);
                 std::vector<Vector3> tgtRestGlobalPos(tgtCount);
@@ -814,7 +872,7 @@ namespace MiniEngine
                                 localRot = Matrix::CreateFromQuaternion(SampleAiRot(naPtr, tick));
                             else
                                 localRot = srcRestLocalRot[i];
-                            srcGlobalRot[i] = (p < 0) ? localRot : localRot * srcGlobalRot[p];
+                            srcGlobalRot[i] = (p < 0) ? localRot * _srcWorldRot : localRot * srcGlobalRot[p];
 
                             if (emitRootMotion)
                             {
@@ -836,7 +894,7 @@ namespace MiniEngine
                                 }
                                 else
                                     localFull = restL;
-                                srcGlobalFull[i] = (p < 0) ? localFull : localFull * srcGlobalFull[p];
+                                srcGlobalFull[i] = (p < 0) ? localFull * _srcWorldRot : localFull * srcGlobalFull[p];
                             }
                         }
                         // 루트모션: 소스 hip 글로벌 위치(부모 root 이동 포함)를 타깃 루트모션 본 이동으로 전이.
@@ -847,6 +905,12 @@ namespace MiniEngine
                             Vector3 hipG = srcGlobalFull[srcHipsIdx].Translation();
                             hipG = Vector3::TransformNormal(hipG, Kpost); // 기저 정렬(동일 리그면 항등)
                             hipG *= heightRatio;
+                            // 월드 → **부모 로컬**. 채널 키는 로컬이므로 아래 회전 방출이
+                            // `desiredG · inv(parentG)` 로 환산하는 것과 동일하게 맞춰야 한다.
+                            // (구 코드는 이 환산을 빠뜨렸고, 그 오류가 "타깃 rest 를 invBind⁻¹(=축 변환 A 가
+                            //  빠진 raw 공간)에서 유도" 하던 또 다른 오류와 **정확히 상쇄**돼 포즈만 맞아 보였다.
+                            //  두 오류가 상쇄된 탓에 방출 트랙 자체는 raw 공간에 남았고, 채널을 직접 읽는
+                            //  ExtractClipRootMotion 의 Y-up 전제가 깨져 있었다 — UEFN_Bone.md §5.8.)
                             hipG = Vector3::Transform(hipG, rootMotionParentInv);
                             tgtChannels[tgtRootMotionBone].pos.push_back(
                                 { static_cast<float>(tick), hipG });
@@ -916,7 +980,9 @@ namespace MiniEngine
                         }
                     }
 
-                    // 4. 매칭(사용된) 채널만 클립에 추가.
+                    // (루트모션 pos 는 위 tick 루프에서 타깃 루트모션 본에 이미 방출됨.)
+
+                    // (d) 매칭(사용된) 채널만 클립에 추가.
                     for (size_t tb = 0; tb < tgtCount; ++tb)
                         if (used[tb])
                         {
@@ -940,7 +1006,7 @@ namespace MiniEngine
                         _outDiag->meanLimbAngleDeg =
                             static_cast<float>(diagAngleSum / diagSamples);
                     }
-                    // 루트모션 순변위 = 마지막 − 처음 pos 키(방출된 그 트랙에서 직접).
+                    // 루트모션 순변위 = 마지막 − 처음 pos 키(방출된 그 트랙에서 직접). 축 결함(§5.8)
                     // 회귀 감시용 — 전진이 수평 성분에 실려야 한다.
                     if (emitRootMotion && !_inoutClips.empty())
                     {
@@ -1046,22 +1112,42 @@ namespace MiniEngine
                 }
             }
 
-            // up 벡터 → 사람이 읽는 문자열("character up=(0.00, 1.00, 0.00) => +Y-up").
-            // 정규화 안 된 영벡터면 빈 문자열. (up 을 이미 손에 쥔 호출부와 공용 — 유도 중복 방지.)
-            std::string DescribeUpVector(Vector3 _up)
+            // BakeForwardAxis → up 을 세운 **뒤** 곱할 yaw 회전 (row-vector: v·N). 정면을 +Z 로 보낸다.
+            //   NegZ: 180° / PosX: -90° / NegX: +90° / PosZ: 항등
+            // 부호 주의: CreateRotationY(+90°) 는 **+Z → +X** 이므로, +X 정면을 +Z 로 되돌리려면 -90° 다.
+            // (Auto 는 호출부가 MeasureForwardYaw 의 실측값으로 대체한다.)
+            Matrix ForwardAxisMatrix(BakeForwardAxis _axis)
             {
-                if (_up.Length() < 1e-5f)
+                switch (_axis)
+                {
+                case BakeForwardAxis::NegZ: return Matrix::CreateRotationY(DirectX::XM_PI);
+                case BakeForwardAxis::PosX: return Matrix::CreateRotationY(-DirectX::XM_PIDIV2);
+                case BakeForwardAxis::NegX: return Matrix::CreateRotationY(+DirectX::XM_PIDIV2);
+                case BakeForwardAxis::Auto:
+                case BakeForwardAxis::PosZ:
+                default:                    return Matrix();
+                }
+            }
+
+            // 방향 벡터 → 사람이 읽는 문자열("character up=(0.00, 1.00, 0.00) => +Y-up").
+            // _label 은 축의 역할 이름("up"/"forward") — 우세축 접미사에도 같은 단어를 쓴다.
+            // 정규화 안 된 영벡터면 빈 문자열. (벡터를 이미 손에 쥔 호출부와 공용 — 유도 중복 방지.)
+            std::string DescribeAxisVector(const char* _label, Vector3 _v)
+            {
+                if (_v.Length() < 1e-5f)
                     return {};
-                _up.Normalize();
-                const float ax[3] = { std::fabs(_up.x), std::fabs(_up.y), std::fabs(_up.z) };
+                _v.Normalize();
+                const float ax[3] = { std::fabs(_v.x), std::fabs(_v.y), std::fabs(_v.z) };
                 const int   dom = (ax[0] > ax[1] && ax[0] > ax[2]) ? 0 : (ax[1] > ax[2] ? 1 : 2);
                 const char* names[3] = { "X", "Y", "Z" };
-                const float comp[3] = { _up.x, _up.y, _up.z };
-                char buf[128];
-                std::snprintf(buf, sizeof(buf), "character up=(%.2f, %.2f, %.2f) => %c%s-up",
-                    _up.x, _up.y, _up.z, comp[dom] < 0.0f ? '-' : '+', names[dom]);
+                const float comp[3] = { _v.x, _v.y, _v.z };
+                char buf[160];
+                std::snprintf(buf, sizeof(buf), "character %s=(%.2f, %.2f, %.2f) => %c%s-%s",
+                    _label, _v.x, _v.y, _v.z, comp[dom] < 0.0f ? '-' : '+', names[dom], _label);
                 return buf;
             }
+
+            std::string DescribeUpVector(Vector3 _up) { return DescribeAxisVector("up", _up); }
 
             // rest 에서 실측한 캐릭터 up(hips→head) 을 사람이 읽는 문자열로. upAxis 오버라이드를
             // 눈으로 고르게 하는 진단값 — 측정 불가면 빈 문자열.
@@ -1084,9 +1170,80 @@ namespace MiniEngine
                     - g[hips->second].Translation());
             }
 
+            Matrix MeasureForwardYaw(const Skeleton& _skeleton,
+                const std::unordered_map<HumanoidBone, int>& _roleIdx,
+                const Matrix& _U, std::string& _outDetected)
+            {
+                _outDetected.clear();
+
+                std::vector<Matrix> g(_skeleton.bones.size());
+                for (size_t i = 0; i < _skeleton.bones.size(); ++i)
+                {
+                    const int p = _skeleton.bones[i].parentIndex;
+                    g[i] = (p < 0) ? _skeleton.bones[i].localBindPose
+                        : _skeleton.bones[i].localBindPose * g[p];
+                }
+
+                const HumanoidBone want[4] = { HumanoidBone::Hips, HumanoidBone::Head,
+                                               HumanoidBone::LeftUpperLeg, HumanoidBone::RightUpperLeg };
+                Vector3 pos[4];
+                for (int i = 0; i < 4; ++i)
+                {
+                    const auto it = _roleIdx.find(want[i]);
+                    if (it == _roleIdx.end() || it->second < 0
+                        || it->second >= static_cast<int>(g.size()))
+                    {
+                        MG_LOG_WARN("AssimpBaker: forward normalize skipped — "
+                            "missing Hips/Head/UpperLeg role bone");
+                        return Matrix();
+                    }
+                    pos[i] = g[it->second].Translation();
+                }
+
+                const CharBasis basis = MakeCharBasis(pos[0], pos[1], pos[2], pos[3]);
+                if (!basis.valid)
+                {
+                    MG_LOG_WARN("AssimpBaker: forward normalize skipped — degenerate rest basis");
+                    return Matrix();
+                }
+
+                Vector3 f = Vector3::TransformNormal(basis.fwd, _U);
+                _outDetected = DescribeAxisVector("forward", f);
+
+                f.y = 0.0f; // 수평 성분만으로 yaw 를 정한다(pitch/roll 은 up 축 정규화의 몫)
+                if (f.Length() < 1e-4f)
+                {
+                    MG_LOG_WARN("AssimpBaker: forward normalize skipped — forward is parallel to up ({})",
+                        _outDetected);
+                    return Matrix();
+                }
+                f.Normalize();
+
+                // 가장 가까운 ±Z/±X 로 스냅 — 이미 +Z 인 애셋에 **정확히 항등**을 주기 위함이다.
+                float   degrees = 0.0f;
+                Vector3 snapped(0.0f, 0.0f, 1.0f);
+                if (std::fabs(f.z) >= std::fabs(f.x))
+                {
+                    if (f.z < 0.0f) { degrees = 180.0f; snapped = Vector3(0.0f, 0.0f, -1.0f); }
+                }
+                else if (f.x > 0.0f) { degrees = -90.0f; snapped = Vector3(1.0f, 0.0f, 0.0f); }
+                else { degrees = +90.0f; snapped = Vector3(-1.0f, 0.0f, 0.0f); }
+
+                const float dot = (std::max)(-1.0f, (std::min)(1.0f, f.Dot(snapped)));
+                const float residualDeg = ToDegrees(std::acos(dot));
+                if (residualDeg > 15.0f)
+                    MG_LOG_WARN("AssimpBaker: measured {} is {:.1f} deg off the nearest axis — "
+                        "snapping to yaw {:.0f} deg anyway (override with forwardAxis if wrong)",
+                        _outDetected, residualDeg, degrees);
+                else
+                    MG_LOG_INFO("AssimpBaker: pre-normalize {} => yaw {:.0f} deg to face +Z",
+                        _outDetected, degrees);
+
+                return Matrix::CreateRotationY(ToRadians(degrees));
+            }
+
             // 축/공간 정규화 (베이크 후처리)
-            void NormalizeSkeletonSpace(Skeleton& _skeleton, std::vector<AnimClip>& _clips,
-                const Matrix& _N)
+            void NormalizeSkeletonSpace(Skeleton& _skeleton, std::vector<AnimClip>& _clips, const Matrix& _N)
             {
                 const int count = static_cast<int>(_skeleton.bones.size());
                 const int rm = FindRootMotionBone(_skeleton);
@@ -1363,10 +1520,14 @@ namespace MiniEngine
                     }
                 }
 
-                // 4. 애니메이션 AnimClip 변환
+                // 4) 애니메이션 → AnimClip (채널은 스켈레톤에 있는 노드만).
+                //    메인 소스 클립은 타깃 스켈레톤용이라 리타게팅 불필요(기존 경로).
                 std::vector<AnimClip> clips;
                 ExtractClips(_scene, indexByName, FileStemUtf8(_srcPath), clips);
 
+                // 4-b) 추가 애니 소스 병합 — 타깃 스켈레톤으로 리타게팅(본 이름 매핑 + 바인드 보정, §9).
+                //      정규화 이름 매핑과 타깃 hips 로컬 바인드 높이는 소스마다 재계산 불필요 → 1회 준비.
+                //      정규화 이름 map(동일 리그 exact 매칭) + 휴머노이드 역할 map(크로스 리그 fallback).
                 std::unordered_map<std::string, int>  normalizedIndexByName;
                 std::unordered_map<HumanoidBone, int> roleIndex;
                 BuildRetargetTargetMaps(skeleton, normalizedIndexByName, roleIndex);
@@ -1401,11 +1562,24 @@ namespace MiniEngine
                 result.detectedUp = DescribeCharacterUp(skeleton, roleIndex);
                 if (!result.detectedUp.empty())
                     MG_LOG_INFO("AssimpBaker: pre-normalize {}", result.detectedUp);
-                NormalizeSkeletonSpace(skeleton, clips, UpAxisMatrix(_options.upAxis));
+
+                //      정면(yaw)까지 세운다 — N = U · Y (row-vector: up 을 세운 **뒤** yaw).
+                //      Auto 는 rest 실측(90° 스냅), 명시값은 "이 애셋의 정면은 이 축"이라는 단언.
+                //      두 회전을 한 N 으로 합쳐 넘기므로 클립/바인드 재작성은 여전히 **1회**다.
+                //      실측은 오버라이드일 때도 돌린다 — detectedForward 는 진단값이라 항상 채운다.
+                const Matrix U = UpAxisMatrix(_options.upAxis);
+                const Matrix measured = MeasureForwardYaw(skeleton, roleIndex, U, result.detectedForward);
+                const bool   autoFwd = (_options.forwardAxis == BakeForwardAxis::Auto);
+                if (!autoFwd)
+                    MG_LOG_INFO("AssimpBaker: forward axis overridden by option — "
+                        "measurement above is diagnostic only");
+                NormalizeSkeletonSpace(skeleton, clips,
+                    U * (autoFwd ? measured : ForwardAxisMatrix(_options.forwardAxis)));
 
                 // 5) 직렬화 (증분 15 WriteSkinnedMesh 재사용 — 쓰기 단일 출처).
                 if (!MiniLoader::WriteSkinnedMesh(_outMiniPath, verts, indices, skeleton, clips,
-                    MINI_BAKE_AXIS_NORMALIZED))
+                    MINI_BAKE_AXIS_NORMALIZED
+                    | MINI_BAKE_FORWARD_NORMALIZED))
                 {
                     result.message = "failed to write .mini";
                     return result;
@@ -1490,7 +1664,8 @@ namespace MiniEngine
 
         BakeResult AssimpBaker::RetargetAnims(const Skeleton& _targetSkeleton,
             const std::vector<std::wstring>& _animSources,
-            std::vector<AnimClip>& _inoutClips)
+            std::vector<AnimClip>& _inoutClips,
+            const BakeOptions& _options)
         {
             BakeResult result;
             result.skinned = true;
@@ -1509,6 +1684,9 @@ namespace MiniEngine
                 MG_LOG_WARN("AssimpBaker::RetargetAnims: {}", result.message);
                 return result;
             }
+
+            // Up Axis 오버라이드 → 소스에 적용할 월드 회전. Auto/YUp = 항등(무영향).
+            const Matrix srcWorldRot = UpAxisMatrix(_options.upAxis);
 
             // 타깃 매칭 맵 준비 (BakeSkinned 와 공용 헬퍼 — 정규화 이름/역할 맵).
             std::unordered_map<std::string, int>  normalizedIndexByName;
@@ -1532,7 +1710,7 @@ namespace MiniEngine
                 const size_t before = _inoutClips.size();
                 const unsigned int unmatched = RetargetAndExtractClips(
                     animScene, _targetSkeleton, normalizedIndexByName, roleIndex,
-                    FileStemUtf8(animSrc), _inoutClips);
+                    FileStemUtf8(animSrc), _inoutClips, nullptr, nullptr, srcWorldRot);
                 totalUnmatched += unmatched;
                 addedClips += static_cast<unsigned int>(_inoutClips.size() - before);
                 if (unmatched > 0)
@@ -1598,7 +1776,8 @@ namespace MiniEngine
         BakeResult AssimpBaker::RetargetAnims(const Skeleton& _targetSkeleton,
             const std::wstring& _animSource,
             const std::unordered_map<std::string, int>& _overrides,
-            std::vector<AnimClip>& _inoutClips)
+            std::vector<AnimClip>& _inoutClips,
+            const BakeOptions& _options)
         {
             BakeResult result;
             result.skinned = true;
@@ -1611,6 +1790,9 @@ namespace MiniEngine
                 MG_LOG_ERROR("AssimpBaker::RetargetAnims(override): {}", result.message);
                 return result;
             }
+
+            // Up Axis 오버라이드 → 소스에 적용할 월드 회전. Auto/YUp = 항등(무영향).
+            const Matrix srcWorldRot = UpAxisMatrix(_options.upAxis);
 
             std::unordered_map<std::string, int>  normalizedIndexByName;
             std::unordered_map<HumanoidBone, int> roleIndex;
@@ -1629,7 +1811,7 @@ namespace MiniEngine
             const size_t before = _inoutClips.size();
             const unsigned int unmatched = RetargetAndExtractClips(
                 animScene, _targetSkeleton, normalizedIndexByName, roleIndex,
-                FileStemUtf8(_animSource), _inoutClips, &_overrides);
+                FileStemUtf8(_animSource), _inoutClips, &_overrides, nullptr, srcWorldRot);
 
             const unsigned int addedClips = static_cast<unsigned int>(_inoutClips.size() - before);
             result.clipCount = static_cast<uint32_t>(_inoutClips.size());
@@ -1745,7 +1927,8 @@ namespace MiniEngine
 
         BakeResult AssimpBaker::RetargetAnims(const Skeleton&,
             const std::vector<std::wstring>&,
-            std::vector<AnimClip>&)
+            std::vector<AnimClip>&,
+            const BakeOptions&)
         {
             BakeResult result;
             result.message = "Baker unavailable (Editor only)";
@@ -1761,7 +1944,8 @@ namespace MiniEngine
 
         BakeResult AssimpBaker::RetargetAnims(const Skeleton&, const std::wstring&,
             const std::unordered_map<std::string, int>&,
-            std::vector<AnimClip>&)
+            std::vector<AnimClip>&,
+            const BakeOptions&)
         {
             BakeResult result;
             result.message = "Baker unavailable (Editor only)";
