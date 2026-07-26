@@ -12,7 +12,7 @@ using namespace Content::Config;
 
 void BeamState::OnStart()
 {
-	CameraFixedState::OnStart();
+	RotateFixState::OnStart();
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack((uint8_t)pChar->GetState());
@@ -40,7 +40,7 @@ void BeamState::Refresh()
 
 void BeamState::OnEnd()
 {
-	CameraFixedState::OnEnd();
+	RotateFixState::OnEnd();
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true);

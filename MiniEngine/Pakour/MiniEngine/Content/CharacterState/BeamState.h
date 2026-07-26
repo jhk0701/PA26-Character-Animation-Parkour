@@ -1,10 +1,10 @@
 #pragma once
-#include "Content/CharacterState/CameraFixedState.h"
+#include "Content/CharacterState/RotateFixState.h"
 #include "Content/ContentConfig.h"
 
 class Character;
 
-class BeamState : public CameraFixedState 
+class BeamState : public RotateFixState
 {
 public:
 	virtual void OnStart() override;

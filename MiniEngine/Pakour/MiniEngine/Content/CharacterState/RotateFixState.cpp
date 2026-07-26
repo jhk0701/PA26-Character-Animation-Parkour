@@ -1,0 +1,24 @@
+#include "pch.h"
+#include "Content/CharacterState/RotateFixState.h"
+#include "Content/Character.h"
+#include "Platform/Input.h"
+
+void RotateFixState::OnStart()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+}
+
+void RotateFixState::OnEnd()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+}
+
+bool RotateFixState::TryYawRotateToward(const Vector3& _inDir, Quaternion& _outRot)
+{
+	// yaw 방향에 대해서 유효성 확인
+	if (_inDir.x * _inDir.x + _inDir.z * _inDir.z < 1e-10f)
+		return false;
+
+	_outRot = Quaternion::CreateFromYawPitchRoll(atan2f(_inDir.x, _inDir.z), 0.0f, 0.0f);
+	return true;
+}

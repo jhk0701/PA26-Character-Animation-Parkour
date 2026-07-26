@@ -27,6 +27,6 @@ private:
 
 	void RotateCamera(float _dt);
 
-	float m_followLerpWeight{ 0.1f };
+	float m_followLerpWeight{ 0.15f };
 	void FollowPawn(float _dt);
 };

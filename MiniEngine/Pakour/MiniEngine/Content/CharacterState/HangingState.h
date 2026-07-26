@@ -1,8 +1,8 @@
 #pragma once
-#include "Content/CharacterState/CameraFixedState.h"
+#include "Content/CharacterState/RotateFixState.h"
 #include "Content/ContentConfig.h"
 
-class HangingState : public CameraFixedState
+class HangingState : public RotateFixState
 {
 public:
 	void OnStart() override;

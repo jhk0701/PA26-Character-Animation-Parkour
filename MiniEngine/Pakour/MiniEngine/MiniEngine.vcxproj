@@ -134,7 +134,7 @@
     <ClInclude Include="Content\CharacterController.h" />
     <ClInclude Include="Content\CharacterStateMachine.h" />
     <ClInclude Include="Content\CharacterState\BeamState.h" />
-    <ClInclude Include="Content\CharacterState\CameraFixedState.h" />
+    <ClInclude Include="Content\CharacterState\RotateFixState.h" />
     <ClInclude Include="Content\CharacterState\HangingState.h" />
     <ClInclude Include="Content\CharacterState\InAirState.h" />
     <ClInclude Include="Content\CharacterState\LandingState.h" />
@@ -208,7 +208,7 @@
     <ClCompile Include="Content\CharacterController.cpp" />
     <ClCompile Include="Content\CharacterStateMachine.cpp" />
     <ClCompile Include="Content\CharacterState\BeamState.cpp" />
-    <ClCompile Include="Content\CharacterState\CameraFixedState.cpp" />
+    <ClCompile Include="Content\CharacterState\RotateFixState.cpp" />
     <ClCompile Include="Content\CharacterState\HangingState.cpp" />
     <ClCompile Include="Content\CharacterState\InAirState.cpp" />
     <ClCompile Include="Content\CharacterState\LandingState.cpp" />

@@ -313,7 +313,7 @@
     <ClInclude Include="Content\UseGravity.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\CharacterState\CameraFixedState.h">
+    <ClInclude Include="Content\CharacterState\RotateFixState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Pawn.h">
@@ -507,7 +507,7 @@
     <ClCompile Include="Content\UseGravity.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
-    <ClCompile Include="Content\CharacterState\CameraFixedState.cpp">
+    <ClCompile Include="Content\CharacterState\RotateFixState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
     <ClCompile Include="Scene\Pawn.cpp">

@@ -95,5 +95,7 @@ void CharacterState::SyncControllerRotate()
 	if (pChar->IsActionClipPlaying())
 		return;
 
-	pChar->GetRoot()->localTransform.rotation = pChar->GetControllerActor()->GetRoot()->localTransform.rotation;
+	const Vector2& INPUT_DIR = pChar->GetInputDir();
+	if (INPUT_DIR.LengthSquared() > 0.0f)
+		pChar->GetRoot()->localTransform.rotation = pChar->GetControllerActor()->GetRoot()->localTransform.rotation;
 }
