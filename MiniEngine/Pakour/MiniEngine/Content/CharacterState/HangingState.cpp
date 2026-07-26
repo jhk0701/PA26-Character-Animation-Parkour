@@ -83,7 +83,7 @@ void HangingState::ProcessMovement(float _dt)
 		return;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
-		pChar->PlayActionClip(pAct, 0.1f);
+		pChar->PlayActionClip(pAct, 0.2f);
 }
 
 bool HangingState::CheckEnableToMove(ETagAct _tag)
@@ -93,7 +93,7 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const float CHECK_DIST = pChar->GetCheckingDistance();
+	const float CHECK_DIST = 1.0f;
 
 	RaycastParam param;
 	param.m_maxDistance = CHECK_DIST;

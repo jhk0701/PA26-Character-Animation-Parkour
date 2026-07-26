@@ -94,11 +94,11 @@ void BeamState::AlignByAxis()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Transform& charTF = pChar->GetRoot()->localTransform;
 
-	Vector3 obsDir;
+	Vector3 obsDir; // Beam 지형의 주 방향 (긴쪽 방향)
 	GetDirectionByAxis(obsDir);
 	obsDir.y = 0.0f;
 	obsDir.Normalize();
-	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x };
+	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x }; // Beam 지형의 넓은 쪽 방향 (긴쪽의 90도 왼쪽 회전)
 
 	const float DOT_DIR = obsDir.Dot(charTF.Forward());
 	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
@@ -134,7 +134,7 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	if (t == (uint8_t)ETagEnvDetail::Default) 
 		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 	
-	if (_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetStepThreshold())
+	if (_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
 	{
 		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
 			pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);

@@ -99,8 +99,6 @@ public:
 	
 	// 지형 인식
 	const PerceptedObstacleInfo& GetCurObstacleInfo() const { return m_curObstacleInfo; };
-	float GetStepThreshold() const { return m_stepThreshold; }
-	float GetCheckingDistance() const { return m_checkingDistance; }
 
 private:
 	void InitCollisionLayer();
@@ -115,8 +113,6 @@ private:
 	float m_lerpWeight{ 0.25f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
-	float m_stepThreshold{ 0.5f };
-	float m_checkingDistance{ 1.5f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.5f };

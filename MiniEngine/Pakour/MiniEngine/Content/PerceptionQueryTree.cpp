@@ -417,10 +417,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					Actor* pObs = _ctx.m_pFirstObstacle;
 
-					const Vector3& CHAR_POS = pChar->GetRoot()->localTransform.position;
+					const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
 					const Vector3& OBS_POS = pObs->GetRoot()->localTransform.position;
 
-					bool bStepable = OBS_POS.y <= (CHAR_POS.y + pChar->GetStepThreshold());
+					bool bStepable = OBS_POS.y <= CHAR_POS.y;
 					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = OBS_POS.y;
 
@@ -482,16 +482,26 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 뒤로 1단위 물러나서 다시 위로 레이캐스트
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					const Transform& TF = pChar->GetRoot()->localTransform;
-					const Vector3 POS = _ctx.m_raycastPos - TF.Forward();
 
-					bool bIsHit = SphereCast(_ctx, POS, Vector3(0.0f, 1.0f, 0.0f), MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
+					SpherecastParam param;
+					param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
+					param.m_startPos = _ctx.m_raycastPos - TF.Forward();
+					param.m_radius = pChar->GetCapsuleRadius();
+					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
+
+					RaycastResult result;
+					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle));
 					if (bIsHit == false)
 					{
 						// MG_LOG_INFO("[QueryTree] Can detour");
 						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
-					}
 
-					return bIsHit == false;
+						// Ledge 찾기
+						if (bIsHit = CheckLedge(_ctx, param.m_startPos, param.m_dir, param.m_radius * 2.0f, result))
+							_ctx.m_ledge = result.m_pos.y;
+					} 
+
+					return true;
 				},
 				pReturn,	// 우회접근 가능
 				pEmpty		// 불가능할 시 아무 행동 x
