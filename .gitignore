@@ -44,6 +44,12 @@ build/
 Build/
 build-*/
 
+# Build related files
+*.tlog
+*.idb
+*.ipdb
+*.recipe
+
 # CMake generated files
 CMakeFiles/
 CMakeCache.txt
@@ -71,7 +77,6 @@ Testing/
 # .vs path
 .vs/
 
-CLAUDE.md
-.claude
+# assets
 *.mini
 *.fbx
