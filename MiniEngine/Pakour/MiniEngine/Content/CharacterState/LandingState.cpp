@@ -15,7 +15,8 @@ void LandingState::OnEnd()
 
 void LandingState::Tick(float _dt)
 {
-	DefaultMovement(_dt); SyncControllerRotate();
+	ProcessMovement(_dt);
+	SyncControllerRotate();
 
 	CheckState();
 }

@@ -60,7 +60,7 @@ void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedOb
 		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
 }
 
-void CharacterState::DefaultMovement(float _dt)
+void CharacterState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	if (pChar->IsActionClipPlaying())

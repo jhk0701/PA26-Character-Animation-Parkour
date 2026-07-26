@@ -24,7 +24,7 @@ public:
 protected:
 	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }
 
-	void DefaultMovement(float _dt);
+	void ProcessMovement(float _dt);
 	void SyncControllerRotate();
 	void DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info);
 

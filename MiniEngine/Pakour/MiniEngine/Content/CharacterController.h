@@ -25,6 +25,8 @@ private:
 	float m_camPitchMaxDeg{ 70.0f };
 	MiniEngine::Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
 
-	void FollowPawn(float _dt);
 	void RotateCamera(float _dt);
+
+	float m_followLerpWeight{ 0.1f };
+	void FollowPawn(float _dt);
 };

@@ -179,7 +179,8 @@ void CharacterController::FollowPawn(float _dt)
 	if (!IsPossessing())
 		return;
 
-	GetRoot()->localTransform.position = GetChar()->GetRoot()->localTransform.position;
+	Vector3& pos = GetRoot()->localTransform.position;
+	pos = Vector3::Lerp(pos, GetChar()->GetRoot()->localTransform.position, m_followLerpWeight);
 }
 
 void CharacterController::RotateCamera(float _dt)
