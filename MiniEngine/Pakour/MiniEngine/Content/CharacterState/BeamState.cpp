@@ -84,6 +84,36 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 	}
 }
 
+void BeamState::AlignByAxis()
+{
+	// 좁은 발판에 선 상황
+	const Actor* pCurObs = GetCurObs();
+	if (!pCurObs)
+		return;
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Transform& charTF = pChar->GetRoot()->localTransform;
+
+	Vector3 obsDir;
+	GetDirectionByAxis(obsDir);
+	obsDir.y = 0.0f;
+	obsDir.Normalize();
+	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x };
+
+	const float DOT_DIR = obsDir.Dot(charTF.Forward());
+	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
+
+	Vector3 toward =
+		abs(DOT_DIR) >= cosf(ToRadians(45.0f)) ?
+		(DOT_DIR >= 0.0f ? obsDir : -obsDir) :
+		(DOT_LEFT_DIR >= 0.0f ? obsLeftAngled : -obsLeftAngled);
+
+	Quaternion rot;
+	if (TryYawRotateToward(toward, rot))
+		charTF.rotation = rot;
+}
+
+
 // Beam Stand
 void BeamStandState::Tick(float _dt)
 {
@@ -111,35 +141,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	}
 	else
 		DefaultProcessPerceptionResult(_info);
-}
-
-void BeamStandState::AlignByAxis()
-{
-	// 좁은 발판에 선 상황
-	const Actor* pCurObs = GetCurObs();
-	if (!pCurObs)
-		return;
-
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Transform& charTF = pChar->GetRoot()->localTransform;
-	
-	Vector3 obsDir;
-	GetDirectionByAxis(obsDir);
-	obsDir.y = 0.0f;
-	obsDir.Normalize();
-	Vector3 obsLeftAngled{-obsDir.z, obsDir.y, obsDir.x};
-
-	const float DOT_DIR = obsDir.Dot(charTF.Forward());
-	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
-
-	Vector3 toward = 
-		abs(DOT_DIR) >= cosf(ToRadians(45.0f)) ?
-		(DOT_DIR >= 0.0f ? obsDir : -obsDir) : 
-		(DOT_LEFT_DIR >= 0.0f ? obsLeftAngled : -obsLeftAngled);
-
-	Quaternion rot;
-	if (TryYawRotateToward(toward, rot))
-		charTF.rotation = rot;
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -173,7 +174,6 @@ void BeamStandState::ProcessMovement(float _dt)
 	inputLerp = Vector2::Lerp(inputLerp, INPUT_DIR, pChar->GetInputLerpWeight());
 	
 	// 가지 못하는 상황
-	/*IsAlignToAxis(pChar) == false ||*/
 	if (CheckEnableToMove(pChar) == false ||
 		inputLerp.y < 0)
 	{
@@ -191,16 +191,6 @@ void BeamStandState::ProcessMovement(float _dt)
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
-bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character>& _pChar)
-{
-	return true;
-	/*Vector3 dir = GetDirectionByAxis();
-	dir.y = 0.0f;
-	dir.Normalize();
-
-	float dot = fabs(dir.Dot(_pChar->GetRoot()->localTransform.Forward()));
-	return dot >= 0.90f;*/
-}
 
 bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 {
@@ -248,11 +238,6 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 
 	// BeamHanging -> BeamHanging
 	DefaultProcessPerceptionResult(_info);
-}
-
-void BeamHangingState::AlignByAxis()
-{
-	return;
 }
 
 void BeamHangingState::ProcessMovement(float _dt)

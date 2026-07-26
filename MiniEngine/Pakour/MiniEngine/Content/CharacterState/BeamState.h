@@ -15,7 +15,7 @@ public:
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
-	virtual void AlignByAxis() = 0;
+	void AlignByAxis();
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
 	Actor* GetCurObs() const { return m_pCurObs; }
@@ -37,12 +37,8 @@ public:
 	// void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
-protected:
-	void AlignByAxis() override;
-
 private:
 	void ProcessMovement(float _dt);
-	bool IsAlignToAxis(std::shared_ptr<Character>& _pChar);
 	bool CheckEnableToMove(std::shared_ptr<Character>& _pChar);
 };
 
@@ -53,9 +49,6 @@ class BeamHangingState : public BeamState
 public:
 	void Tick(float _dt) override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
-
-protected:
-	void AlignByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);
