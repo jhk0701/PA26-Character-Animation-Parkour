@@ -19,6 +19,7 @@ bool RotateFixState::TryYawRotateToward(const Vector3& _inDir, Quaternion& _outR
 	if (_inDir.x * _inDir.x + _inDir.z * _inDir.z < 1e-10f)
 		return false;
 
+	// x,z 값이 유효 -> 각도 계산
 	_outRot = Quaternion::CreateFromYawPitchRoll(atan2f(_inDir.x, _inDir.z), 0.0f, 0.0f);
 	return true;
 }

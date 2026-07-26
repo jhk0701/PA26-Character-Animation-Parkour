@@ -15,13 +15,13 @@ public:
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
-	virtual void OrientByAxis() = 0;
+	virtual void AlignByAxis() = 0;
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
 	Actor* GetCurObs() const { return m_pCurObs; }
 	bool ObstacleIsBeamType(Actor* _pObs);
 	
-	Vector3 GetDirectionByAxis();
+	void GetDirectionByAxis(Vector3& _outDir);
 
 private:
 	Content::Config::ETagAxis m_curAxis;
@@ -38,7 +38,7 @@ public:
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
-	void OrientByAxis() override;
+	void AlignByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);
@@ -55,7 +55,7 @@ public:
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
-	void OrientByAxis() override;
+	void AlignByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);

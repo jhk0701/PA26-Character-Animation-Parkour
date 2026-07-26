@@ -35,7 +35,7 @@ void BeamState::Refresh()
 	m_curAxis = (ETagAxis)subInfoTag;
 	m_pCurObs = OBS_INFO.m_pObstacle;
 
-	OrientByAxis();
+	AlignByAxis();
 }
 
 void BeamState::OnEnd()
@@ -70,24 +70,18 @@ bool BeamState::ObstacleIsBeamType(Actor* _pObs)
 	return false;
 }
 
-Vector3 BeamState::GetDirectionByAxis()
+void BeamState::GetDirectionByAxis(Vector3& _outDir)
 {
-	Vector3 dir;
-
 	switch (GetAxis())
 	{
 	case ETagAxis::X:
-		dir = GetCurObs()->GetRoot()->localTransform.Right();
+		_outDir = GetCurObs()->GetRoot()->localTransform.Right();
 		break;
-	case ETagAxis::Y:
-		dir = GetCurObs()->GetRoot()->localTransform.Up();
-		break;
+	// case ETagAxis::Y : y 방향으로 긴 경우 -> 이건 기둥 형태라 생각하고 배제
 	case ETagAxis::Z:
-		dir = GetCurObs()->GetRoot()->localTransform.Forward();
+		_outDir = GetCurObs()->GetRoot()->localTransform.Forward();
 		break;
 	}
-
-	return dir;
 }
 
 // Beam Stand
@@ -119,11 +113,8 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 		DefaultProcessPerceptionResult(_info);
 }
 
-void BeamStandState::OrientByAxis()
+void BeamStandState::AlignByAxis()
 {
-	// 회전각 제한은 우선 보류
-	return;
-
 	// 좁은 발판에 선 상황
 	const Actor* pCurObs = GetCurObs();
 	if (!pCurObs)
@@ -132,28 +123,23 @@ void BeamStandState::OrientByAxis()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Transform& charTF = pChar->GetRoot()->localTransform;
 	
-	Vector3 obsDir, obsLeftAngled;
-	obsDir = GetDirectionByAxis();
-
-	// 발판을 전제로 함
-	// y 방향으로 향하는 경우는 우선 배제
+	Vector3 obsDir;
+	GetDirectionByAxis(obsDir);
 	obsDir.y = 0.0f;
 	obsDir.Normalize();
-	obsLeftAngled = Vector3(0.0f, 1.0f, 0.0f).Cross(obsDir);
-	obsLeftAngled.Normalize();
+	Vector3 obsLeftAngled{-obsDir.z, obsDir.y, obsDir.x};
 
-	const Vector3 CHAR_FWD = charTF.Forward();
-	
-	const float OBS_AXIS_DOT = CHAR_FWD.Dot(obsDir);
-	const float OBS_LEFT_DOT = CHAR_FWD.Dot(obsLeftAngled);
-	
-	bool bAlignToAxis = fabs(OBS_AXIS_DOT) >= cosf(ToRadians(45.0f));
-	Vector3 toward = bAlignToAxis ? obsDir : obsLeftAngled;
+	const float DOT_DIR = obsDir.Dot(charTF.Forward());
+	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
 
-	if (bAlignToAxis == false && OBS_LEFT_DOT < 0)
-		toward *= -1;
-	
-	charTF.rotation = Quaternion::LookRotation(toward, Vector3(0.0f, 1.0f, 0.0f));
+	Vector3 toward = 
+		abs(DOT_DIR) >= cosf(ToRadians(45.0f)) ?
+		(DOT_DIR >= 0.0f ? obsDir : -obsDir) : 
+		(DOT_LEFT_DIR >= 0.0f ? obsLeftAngled : -obsLeftAngled);
+
+	Quaternion rot;
+	if (TryYawRotateToward(toward, rot))
+		charTF.rotation = rot;
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -207,12 +193,13 @@ void BeamStandState::ProcessMovement(float _dt)
 
 bool BeamStandState::IsAlignToAxis(std::shared_ptr<Character>& _pChar)
 {
-	Vector3 dir = GetDirectionByAxis();
+	return true;
+	/*Vector3 dir = GetDirectionByAxis();
 	dir.y = 0.0f;
 	dir.Normalize();
 
 	float dot = fabs(dir.Dot(_pChar->GetRoot()->localTransform.Forward()));
-	return dot >= 0.90f;
+	return dot >= 0.90f;*/
 }
 
 bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
@@ -263,7 +250,7 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 	DefaultProcessPerceptionResult(_info);
 }
 
-void BeamHangingState::OrientByAxis()
+void BeamHangingState::AlignByAxis()
 {
 	return;
 }
