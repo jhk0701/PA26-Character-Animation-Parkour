@@ -431,14 +431,24 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					IObstacle* pObs = _ctx.m_pFirstObstacle;
 
+					SpherecastParam param;
+					param.m_dir = pChar->GetRoot()->localTransform.Forward();
+					param.m_startPos = _ctx.m_raycastPos;
+					param.m_radius = pChar->GetCapsuleRadius();
+					param.m_maxDistance = 1.0f;
+					RaycastResult result;
+					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge));
+
 					const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
 					const Vector3& OBS_POS = pObs->GetTransform().position;
-
 					bool bStepable = OBS_POS.y <= CHAR_POS.y;
 					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
-					_ctx.m_ledge = OBS_POS.y;
+					_ctx.m_ledge = bIsHit ? result.m_pos.y : OBS_POS.y;
 
-					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : {}", bStepable ? "will step" : "will hang");
+					/*
+					const Vector3 DebugVec = { _ctx.m_firstObstacleHitPos.x, _ctx.m_ledge, _ctx.m_firstObstacleHitPos.z };
+					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : ({}, {}, {}) {}", DebugVec.x, DebugVec.y, DebugVec.z, bStepable ? "will step" : "will hang");
+					*/
 					return bStepable;
 				},
 				pReturn,

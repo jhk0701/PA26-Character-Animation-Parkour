@@ -32,21 +32,21 @@ namespace MiniEngine
 	{
 		m_playElapsed += _dt;
 
-		if (m_playElapsed < m_start || m_playElapsed > m_end)
-			return;
-
 		if (!m_bStartCalled && m_playElapsed >= m_start)
 		{
 			m_bStartCalled = true;
 			OnStart(_param);
 		}
-
-		Activate(_dt, _param);
-
 		if (!m_bEndCalled && m_playElapsed >= m_end)
 		{
 			m_bEndCalled = true;
 			OnEnd(_param);
 		}
+
+		if (m_playElapsed < m_start || m_playElapsed > m_end)
+			return;
+
+		Activate(_dt, _param);
+
 	}
 }

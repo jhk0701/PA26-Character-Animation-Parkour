@@ -133,7 +133,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.2f, 0.9f);
-		// pCorrectRM->SetBezierY(0.3f);
 		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.25f});
 		pActionClip->AddNotify(pCorrectRM);
 
@@ -407,7 +406,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.3f, 0.7f);
-		pCorrectRM->SetEndOffset({0.0f, -2.2f, 0.0f});
+		pCorrectRM->SetEndOffset({0.0f, -2.0f, 0.0f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_StandMoveDown] = pActionClip;
@@ -434,7 +433,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.3f);
-		pCorrectRM->SetEndOffset({0.0f, -2.2f, 0.0f});
+		pCorrectRM->SetEndOffset({0.0f, -1.8f, 0.0f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_IdleToHang] = pActionClip;
@@ -507,7 +506,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(33));
 
 		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
-		pTransition->SetTime(1.6f);
+		pTransition->SetTime(1.9f);
 		pTransition->SetState((uint8_t)Character::EState::BeamStand);
 		pActionClip->AddNotify(pTransition);
 
@@ -518,12 +517,11 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
 		pEnableCollision->SetEnable(true);
-		pEnableCollision->SetTime(1.8f);
+		pEnableCollision->SetTime(1.9f);
 		pActionClip->AddNotify(pEnableCollision);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
-		pCorrectRM->SetTime(1.0f, 1.8f);
-		// pCorrectRM->SetBezierY(0.5f);
+		pCorrectRM->SetTime(0.7f, 1.7f);
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::Beam_HangingMoveUp] = pActionClip;

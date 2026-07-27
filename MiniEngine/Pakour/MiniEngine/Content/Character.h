@@ -129,7 +129,6 @@ private:
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	
-	float m_ledgeOffset{ 0.5f };
 	PerceptedObstacleInfo m_curObstacleInfo;
 };
 

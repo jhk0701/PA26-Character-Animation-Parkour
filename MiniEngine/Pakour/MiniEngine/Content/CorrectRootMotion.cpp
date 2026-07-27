@@ -105,8 +105,6 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 
 		m_endPoint = OBS_INFO.m_obstacleHitPos;
 		m_endPoint.y = OBS_INFO.m_obstacleLedge;
-
-		MG_LOG_INFO("[Bezier Correction] : EP ({}, {}, {})", m_endPoint.x, m_endPoint.y, m_endPoint.z);
 		
 		Vector3 offset = Vector3(0.0f);
 		offset += TF.Right() * m_endOffset.x;
@@ -116,9 +114,22 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 
 		m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);
 		m_midPoint.y += m_bezierY;
+
+		MG_LOG_INFO("[Bezier Correction]\nStart P ({}, {}, {})\nMid P ({}, {}, {})\nEnd P ({}, {}, {})", 
+			m_startPoint.x, m_startPoint.y, m_startPoint.z,
+			m_midPoint.x, m_midPoint.y, m_midPoint.z,
+			m_endPoint.x, m_endPoint.y, m_endPoint.z);
 	}
 
 	assert(GetDuration() > 1e-4f);
+}
+
+void BezierCorrectRootMotion::OnEnd(MiniEngine::AnimNotifyParam& _param)
+{
+	AnimNotifyState::OnEnd(_param);
+
+	const Vector3 POS = m_pChar->GetRoot()->localTransform.position;
+	MG_LOG_INFO("[Bezier Correction] End :: charPos : ({}, {}, {})", POS.x, POS.y, POS.z);
 }
 
 void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
@@ -133,7 +144,9 @@ void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	Vector3 p1 = Vector3::Lerp(m_startPoint, m_midPoint, w);
 	Vector3 p2 = Vector3::Lerp(m_midPoint, m_endPoint, w);
 	Vector3 p3 = Vector3::Lerp(p1, p2, w);
-	
+
+	MG_LOG_INFO("[Bezier Correct] w : {},  pos : ({}, {}, {})", w, p3.x, p3.y, p3.z);
+
 	m_pChar->SetPosition(p3);
 }
 

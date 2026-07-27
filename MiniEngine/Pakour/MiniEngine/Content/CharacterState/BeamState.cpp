@@ -37,8 +37,6 @@ void BeamState::Refresh()
 		m_pCurObs = OBS_INFO.m_pObstacle;
 
 		AlignByAxis();
-
-		MG_LOG_INFO("[BeamState::Refresh] Update Current Obs : {}", (uint32_t)m_pCurObs);
 	}
 }
 

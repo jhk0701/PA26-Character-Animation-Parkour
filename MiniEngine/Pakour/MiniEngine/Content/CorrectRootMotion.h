@@ -36,6 +36,7 @@ class BezierCorrectRootMotion : public MiniEngine::AnimNotifyState
 {
 public:
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
+	void OnEnd(MiniEngine::AnimNotifyParam& _param) override;
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 	
 	// 캐릭터 트랜스폼 기준

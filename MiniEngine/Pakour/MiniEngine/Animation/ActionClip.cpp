@@ -34,18 +34,26 @@ namespace MiniEngine
 		}
 
 		m_playTime += _dt;
-		if (m_playTime > m_duration)
+		bool bIsLast = false;
+
+		if (m_playTime >= m_duration)
+		{
+			m_playTime = m_duration;
+			bIsLast = true;
+		}
+
+		// 포즈는 바로 적용할 것
+		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
+		
+		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
+			n->Update(_dt, _notifyParam);
+
+		if (bIsLast)
 		{
 			// 재생 종료
 			Stop();
 			return;
 		}
-
-		// 포즈는 바로 적용할 것
-		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
-
-		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
-			n->Update(_dt, _notifyParam);
 	}
 
 	const float ActionClip::GetTickPerSec() const

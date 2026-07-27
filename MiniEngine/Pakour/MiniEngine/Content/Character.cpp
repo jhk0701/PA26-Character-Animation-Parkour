@@ -133,7 +133,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
 		m_curObstacleInfo.m_obstacleDistance = _result.m_distanceObstacle;
-		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge + m_ledgeOffset;
+		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
 		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
