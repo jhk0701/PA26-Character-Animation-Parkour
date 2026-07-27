@@ -134,6 +134,7 @@
     <ClInclude Include="Content\CharacterController.h" />
     <ClInclude Include="Content\CharacterStateMachine.h" />
     <ClInclude Include="Content\CharacterState\BeamState.h" />
+    <ClInclude Include="Content\CharacterState\ProtrudeState.h" />
     <ClInclude Include="Content\CharacterState\RotateFixState.h" />
     <ClInclude Include="Content\CharacterState\HangingState.h" />
     <ClInclude Include="Content\CharacterState\InAirState.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Content\CharacterController.cpp" />
     <ClCompile Include="Content\CharacterStateMachine.cpp" />
     <ClCompile Include="Content\CharacterState\BeamState.cpp" />
+    <ClCompile Include="Content\CharacterState\ProtrudeState.cpp" />
     <ClCompile Include="Content\CharacterState\RotateFixState.cpp" />
     <ClCompile Include="Content\CharacterState\HangingState.cpp" />
     <ClCompile Include="Content\CharacterState\InAirState.cpp" />

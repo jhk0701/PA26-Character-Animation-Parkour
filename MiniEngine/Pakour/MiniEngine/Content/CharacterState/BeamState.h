@@ -11,6 +11,8 @@ namespace MiniEngine
 class BeamState : public RotateFixState
 {
 public:
+	virtual ~BeamState() {};
+
 	virtual void OnStart() override;
 	virtual void Refresh() override;
 	virtual void OnEnd() override;

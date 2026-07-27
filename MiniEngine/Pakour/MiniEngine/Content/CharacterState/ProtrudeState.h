@@ -4,13 +4,13 @@
 class ProtrudeState : public RotateFixState
 {
 public:
-	virtual void OnStart() override;
-	virtual void OnEnd() override;
-	virtual void Refresh() override;
+	void OnStart() override;
+	void OnEnd() override;
+	void Refresh() override;
 
-	virtual void Tick(float _dt);
+	void Tick(float _dt) override;
+	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result) override;
 
 private:
-	void ProcessMovement(float _dt);
 	void AlignToNormal();
 };

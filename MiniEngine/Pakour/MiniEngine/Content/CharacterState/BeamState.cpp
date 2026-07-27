@@ -13,8 +13,6 @@ using namespace Content::Config;
 
 void BeamState::OnStart()
 {
-	RotateFixState::OnStart();
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack((uint8_t)pChar->GetState());
 	pChar->SetUseGravity(false);
@@ -42,8 +40,6 @@ void BeamState::Refresh()
 
 void BeamState::OnEnd()
 {
-	RotateFixState::OnEnd();
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true);
 

@@ -12,14 +12,11 @@ void InAirState::OnStart()
 
 void InAirState::OnEnd() 
 {
-	// 강제로 떨어지는 경우
-	// vertical velocity 초기화
+	// 강제로 떨어지는 경우?
 }
 
 void InAirState::Tick(float _dt)
 {
-	// 떨어지는 중엔 movement 막기
-	// DefaultCameraRotate(_dt);
 	CheckState();
 }
 

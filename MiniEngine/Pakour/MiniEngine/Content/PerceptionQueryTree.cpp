@@ -781,6 +781,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pEmpty
 	);
 
+	// 키 입력 기준 상하좌우 방향 탐색
 	// pStateProtrude
 
 	return pRootQuery;

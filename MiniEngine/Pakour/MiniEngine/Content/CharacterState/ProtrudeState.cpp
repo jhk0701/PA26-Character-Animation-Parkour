@@ -8,8 +8,6 @@ using namespace MiniEngine::Physics;
 
 void ProtrudeState::OnStart()
 {
-	RotateFixState::OnStart();
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
@@ -19,8 +17,6 @@ void ProtrudeState::OnStart()
 
 void ProtrudeState::OnEnd()
 {
-	RotateFixState::OnEnd();
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true);  // 매달림 상태 해제 중력 적용
 }
@@ -33,16 +29,11 @@ void ProtrudeState::Refresh()
 	AlignToNormal();
 }
 
-void ProtrudeState::Tick(float _dt)
-{
-	ProcessMovement(_dt);
-}
+void ProtrudeState::Tick(float _dt){}
 
-void ProtrudeState::ProcessMovement(float _dt)
+void ProtrudeState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result)
 {
-	// 이동 중 주변 돌출부 탐색
-	// 없으면 이동 x
-
+	DefaultProcessPerceptionResult(_result);
 }
 
 void ProtrudeState::AlignToNormal()

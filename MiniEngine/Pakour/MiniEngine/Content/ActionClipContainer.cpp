@@ -565,4 +565,54 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Protrude_IdleToHang] = pActionClip;
 	}
+
+	{
+		// Protruce - MoveUp
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(19)); // 추후 교체
+		
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.2f, 0.6f);
+		pCorrectRM->SetEndOffset({ 0.0f, -1.0f, 0.0f });
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Protrude_JumpUp] = pActionClip;
+	}
+	{
+		// Protruce - MoveDown
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(20)); // 추후 교체
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.2f, 0.6f);
+		pCorrectRM->SetEndOffset({ 0.0f, -1.0f, 0.0f });
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Protrude_JumpDown] = pActionClip;
+	}
+	{
+		// Protruce - MoveL
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(21)); // 추후 교체
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.2f, 0.6f);
+		pCorrectRM->SetEndOffset({ 0.0f, -1.0f, 0.0f });
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Protrude_JumpLeft] = pActionClip;
+	}
+	{
+		// Protruce - MoveR
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(22)); // 추후 교체
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.2f, 0.6f);
+		pCorrectRM->SetEndOffset({ 0.0f, -1.0f, 0.0f });
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Protrude_JumpRight] = pActionClip;
+	}
+
 }
