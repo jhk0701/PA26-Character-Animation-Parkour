@@ -15,7 +15,7 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	const Vector3& _scale,
 	const Quaternion& _rot,
 	const std::vector<uint8_t>& _detailTags,
-	bool _addLedge)
+	ELedgeOption _opt)
 {
 	if (_pStaticMesh == nullptr)
 		return;
@@ -27,7 +27,6 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	for (const uint8_t t : _detailTags)
 		tag += t;
 	
-
 	const Vector3 halfExtent = _scale * 0.5f;
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = AddComponent<StaticMeshComponent>();
 	staticMeshComp->SetColor(Vector3(0.7f, 0.5f, 0.2f));
@@ -36,40 +35,48 @@ void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh,
 	staticMeshComp->localTransform.scale = halfExtent;
 	staticMeshComp->localTransform.rotation = _rot;
 
-	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
 
+	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
 	std::shared_ptr<RigidBodyComponent> pRB = AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
 
+	if (_opt == ELedgeOption::None)
+		return;
+
+	std::shared_ptr<Actor> pSharedThis = shared_from_this();
 	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.02f, 0.02f);
 	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.02f, 0.02f);
 
-	if (_addLedge == false)
-		return;
+	m_pLedges.reserve(_opt == ELedgeOption::All ? 4 : 2);
+	
+	if (_opt == ELedgeOption::All || _opt == ELedgeOption::Horizontal)
+	{
+		AddLedge(pSharedThis,
+			_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
+		);
+		AddLedge(pSharedThis,
+			_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
+		);
+	}
 
-	m_pLedges.reserve(4);
-	std::shared_ptr<Actor> pSharedThis = shared_from_this();
-	AddLedge(pSharedThis,
-		_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
-		commonLedgeExtentX,
-		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
-	);
-	AddLedge(pSharedThis,
-		_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
-		commonLedgeExtentX,
-		Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
-	);
-	AddLedge(pSharedThis,
-		_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
-		commonLedgeExtentY,
-		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
-	);
-	AddLedge(pSharedThis,
-		_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
-		commonLedgeExtentY,
-		Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
-	);
+	if (_opt == ELedgeOption::All || _opt == ELedgeOption::Vertical) 
+	{
+		AddLedge(pSharedThis,
+			_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
+			commonLedgeExtentY,
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
+		);
+		AddLedge(pSharedThis,
+			_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
+			commonLedgeExtentY,
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
+		);
+	}
 }
 
 void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget, 
@@ -93,6 +100,25 @@ void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget,
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::ObstacleLedge);
 }
 
+float Obstacle::GetNearestLedgeHeight(const Vector3& _pos) const
+{
+	float result = FLT_MAX;
+	for (std::weak_ptr<SceneComponent> pScene : m_pLedges)
+		result = min(result, Vector3::DistanceSquared(pScene.lock()->localTransform.position, _pos));
+
+	return result;
+}
+
+bool Obstacle::TryGetTag(uint8_t _idx, uint8_t& _outTag)
+{
+	return GetTag().GetTagAt(_idx, _outTag);
+}
+
+const Transform& Obstacle::GetTransform() const
+{
+	return GetRoot()->localTransform;
+}
+
 std::shared_ptr<Actor> ObstacleFactory::Create(
 	std::shared_ptr<Scene> _pScene, 
 	std::shared_ptr<StaticMesh> _pStaticMesh,
@@ -100,13 +126,13 @@ std::shared_ptr<Actor> ObstacleFactory::Create(
 	const Vector3& _scale,
 	const Quaternion& _rot,
 	const std::vector<uint8_t>& _detailTags,
-	bool _addLedge)
+	Obstacle::ELedgeOption _opt)
 {
 	if (_pScene == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Obstacle> pObs = _pScene->SpawnActor<Obstacle>();
-	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _detailTags, _addLedge);
+	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _detailTags, _opt);
 
 	return pObs;
 }

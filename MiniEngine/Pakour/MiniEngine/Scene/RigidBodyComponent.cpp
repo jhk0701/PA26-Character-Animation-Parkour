@@ -52,7 +52,7 @@ namespace MiniEngine
 
 		// UserData로 owner 액터 포인터 적용
 		if (std::shared_ptr<Actor> o = owner.lock())
-			m_actor->userData = o.get();
+			m_actor->userData = reinterpret_cast<void*>(o.get());
 	}
 
 	void RigidBodyComponent::SyncTransform()

@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene/Actor.h"
+#include "Scene/IObstacle.h"
 
 namespace MiniEngine 
 { 
@@ -7,9 +8,17 @@ namespace MiniEngine
 	class Scene;
 };
 
-class Obstacle : public MiniEngine::Actor
+class Obstacle : public MiniEngine::Actor, public MiniEngine::IObstacle
 {
 public:
+	enum ELedgeOption 
+	{
+		None,
+		Vertical,
+		Horizontal,
+		All
+	};
+
 	virtual ~Obstacle() {};
 	void Construct(
 		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
@@ -17,7 +26,7 @@ public:
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
 		const std::vector<uint8_t>& _detailTags,
-		bool _addLedge);
+		ELedgeOption _opt);
 
 private:
 	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
@@ -26,6 +35,12 @@ private:
 		const MiniEngine::Quaternion& _localRot);
 
 	std::vector<std::weak_ptr<MiniEngine::SceneComponent>> m_pLedges;
+
+public:
+	// IObstacle을(를) 통해 상속됨
+	virtual float GetNearestLedgeHeight(const MiniEngine::Vector3& _pos) const override;
+	virtual bool TryGetTag(uint8_t _idx, uint8_t& _outTag) override;
+	virtual const MiniEngine::Transform& GetTransform() const override;
 };
 
 class ObstacleFactory 
@@ -38,5 +53,5 @@ public:
 		const MiniEngine::Vector3& _scale,
 		const MiniEngine::Quaternion& _rot,
 		const std::vector<uint8_t>& _detailTags = { 0U },
-		bool _addLedge = true);
+		Obstacle::ELedgeOption _opt = Obstacle::ELedgeOption::All);
 };

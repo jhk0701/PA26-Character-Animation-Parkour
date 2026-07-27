@@ -2,6 +2,9 @@
 #include "Content/PerceptionQueryTree.h"
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
+#include "Content/Obstacle.h"
+#include "Scene/IObstacle.h"
+
 #include "Scene/PerceptionComponent.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Log.h"
@@ -43,6 +46,16 @@ namespace
 			return Vector3(0.0f);
 
 		return pChar->GetRoot()->localTransform.position + Vector3(0.0f, pChar->GetCharacterHalfHeight(), 0.0f);
+	}
+
+	IObstacle* ToIObstacle(void* _p) 
+	{
+		Actor* pActor = reinterpret_cast<Actor*>(_p);
+
+		if (!pActor)
+			return nullptr;
+
+		return dynamic_cast<IObstacle*>(pActor);
 	}
 
 	// 심플하게 결과값 상관없이 히트하는지만 보려는 때 사용
@@ -118,7 +131,7 @@ namespace
 				m_bIsEmpty = false;
 				const HitResult& r = hits.m_hitResults[i];
 
-				_context.m_pFirstObstacle = reinterpret_cast<Actor*>(r.GetActor());
+				_context.m_pFirstObstacle = ToIObstacle(r.GetActor());
 				_context.m_raycastPos = r.m_pos;
 				_context.m_firstObstacleHitPos = r.m_pos;
 				_context.m_ledge = r.m_pos.y;
@@ -136,7 +149,7 @@ namespace
 			// 바닥이 있지도 않은 상태에서 장애물을 확인
 			const HitResult& r = hits.m_hitResults.front();
 
-			_context.m_pFirstObstacle = reinterpret_cast<Actor*>(r.GetActor());
+			_context.m_pFirstObstacle = ToIObstacle(r.GetActor());
 			_context.m_firstObstacleHitPos = r.m_pos;
 			_context.m_firstObstacleHitNrm = r.m_nrm;
 			_context.m_distance = r.m_distance;
@@ -334,7 +347,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				[](TravelContext& _ctx) 
 				{
 					uint8_t detailTag = 0;
-					_ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, detailTag);
+					_ctx.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, detailTag);
 
 					return detailTag;
 				}, 
@@ -415,10 +428,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					// 장애물 y 위치 비교
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					Actor* pObs = _ctx.m_pFirstObstacle;
+					IObstacle* pObs = _ctx.m_pFirstObstacle;
 
 					const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
-					const Vector3& OBS_POS = pObs->GetRoot()->localTransform.position;
+					const Vector3& OBS_POS = pObs->GetTransform().position;
 
 					bool bStepable = OBS_POS.y <= CHAR_POS.y;
 					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
@@ -519,7 +532,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					bool bIsHit = CheckLedge(_ctx, POS, DIR, 1.0f, result);
 					if (bIsHit)
 					{
-						_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
+						_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 						_ctx.m_firstObstacleHitPos = result.m_pos;
 						_ctx.m_distance = result.m_distance;
 						_ctx.m_ledge = result.m_pos.y;
@@ -550,7 +563,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit == false)
 					return false;
 
-				_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
+				_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 				_ctx.m_firstObstacleHitPos = result.m_pos;
 				_ctx.m_ledge = result.m_pos.y;
 				_ctx.m_distance = result.m_distance;
@@ -568,7 +581,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				{
 					// 장애물 태그로 종류 판단
 					uint8_t t = 0;
-					bool bHasTag = _ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+					bool bHasTag = _ctx.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, t);
 					if (bHasTag == false || t == (uint8_t)ETagEnvDetail::Default)
 					{
 						MG_LOG_INFO("[QueryTree] Hang to idle");
@@ -599,7 +612,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit) 
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
+					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
 					_ctx.m_distance = result.m_distance;
 				}
@@ -621,7 +634,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				if (bIsHit)
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_pFirstObstacle = reinterpret_cast<Actor*>(result.GetActor());
+					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
 					_ctx.m_distance = result.m_distance;
 				}
@@ -640,7 +653,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 					// Beam 지형인 경우 처리
 					uint8_t detailTag = 0;
-					bool bHasTag = _ctx.m_pFirstObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, detailTag);
+					bool bHasTag = _ctx.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, detailTag);
 					if (bHasTag && detailTag == (uint8_t)ETagEnvDetail::Beam)
 						return false; // beam 지형 처리로 전환
 

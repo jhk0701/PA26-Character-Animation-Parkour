@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Content/CharacterState/BeamState.h"
+#include "Scene/IObstacle.h"
 #include "Content/Character.h"
 #include "Platform/Input.h"
 
@@ -30,12 +31,13 @@ void BeamState::Refresh()
 	assert(OBS_INFO.IsValid());
 
 	uint8_t subInfoTag;
-	OBS_INFO.m_pObstacle->GetTag().GetTagAt(TAG_SUB_INFO, subInfoTag);
+	if (OBS_INFO.m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfoTag))
+	{
+		m_curAxis = (ETagAxis)subInfoTag;
+		m_pCurObs = OBS_INFO.m_pObstacle;
 
-	m_curAxis = (ETagAxis)subInfoTag;
-	m_pCurObs = OBS_INFO.m_pObstacle;
-
-	AlignByAxis();
+		AlignByAxis();
+	}
 }
 
 void BeamState::OnEnd()
@@ -75,11 +77,11 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 	switch (GetAxis())
 	{
 	case ETagAxis::X:
-		_outDir = GetCurObs()->GetRoot()->localTransform.Right();
+		_outDir = GetCurObs()->GetTransform().Right();
 		break;
 	// case ETagAxis::Y : y 방향으로 긴 경우 -> 이건 기둥 형태라 생각하고 배제
 	case ETagAxis::Z:
-		_outDir = GetCurObs()->GetRoot()->localTransform.Forward();
+		_outDir = GetCurObs()->GetTransform().Forward();
 		break;
 	}
 }
@@ -87,7 +89,7 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 void BeamState::AlignByAxis()
 {
 	// 좁은 발판에 선 상황
-	const Actor* pCurObs = GetCurObs();
+	const IObstacle* pCurObs = GetCurObs();
 	if (!pCurObs)
 		return;
 
@@ -130,7 +132,12 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 
 	// Beam Stand -> Beam Hanging
 	uint8_t t = 0;
-	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t))
+	{
+		DefaultProcessPerceptionResult(_info);
+		return;
+	}
+
 	if (t == (uint8_t)ETagEnvDetail::Default) 
 		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 	
@@ -138,9 +145,11 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	{
 		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
 			pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
+
+		return;
 	}
-	else
-		DefaultProcessPerceptionResult(_info);
+
+	DefaultProcessPerceptionResult(_info);
 }
 
 void BeamStandState::ProcessMovement(float _dt)
@@ -226,7 +235,12 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t t = 0;
-	bool bHasTag = _info.m_pObstacle->GetTag().GetTagAt(TAG_ENV_DETAIL, t);
+	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t))
+	{
+		DefaultProcessPerceptionResult(_info);
+		return;
+	}
+
 	if (t == (uint8_t)ETagEnvDetail::Default)
 	{
 		// BeamHanging -> Landing

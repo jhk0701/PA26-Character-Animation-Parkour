@@ -3,6 +3,10 @@
 #include "Content/ContentConfig.h"
 
 class Character;
+namespace MiniEngine 
+{
+	class IObstacle;
+}
 
 class BeamState : public RotateFixState
 {
@@ -18,14 +22,14 @@ protected:
 	void AlignByAxis();
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
-	Actor* GetCurObs() const { return m_pCurObs; }
+	MiniEngine::IObstacle* GetCurObs() const { return m_pCurObs; }
 	bool ObstacleIsBeamType(Actor* _pObs);
 	
 	void GetDirectionByAxis(Vector3& _outDir);
 
 private:
 	Content::Config::ETagAxis m_curAxis;
-	Actor* m_pCurObs{ nullptr };
+	MiniEngine::IObstacle* m_pCurObs{ nullptr };
 };
 
 // Beam 지형에 올라탄 상태

@@ -107,6 +107,12 @@
     <Filter Include="Content\03.Object\CharacterController">
       <UniqueIdentifier>{79a9b5f6-d3a5-47b7-82c4-7e2dd4bd7cbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\03.Object\Obstacle">
+      <UniqueIdentifier>{222fb038-20b4-4c3f-9c10-b87c38459a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\07.Object\Interface">
+      <UniqueIdentifier>{85c544df-6a01-489b-bb7c-044bbaf9f18e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -292,9 +298,6 @@
     <ClInclude Include="Content\UIDebugConsole.h">
       <Filter>Content\06.UI</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Obstacle.h">
-      <Filter>Content\03.Object</Filter>
-    </ClInclude>
     <ClInclude Include="Content\CharacterStateMachine.h">
       <Filter>Content\03.Object\Component</Filter>
     </ClInclude>
@@ -324,6 +327,12 @@
     </ClInclude>
     <ClInclude Include="Content\CharacterController.h">
       <Filter>Content\03.Object\CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Obstacle.h">
+      <Filter>Content\03.Object\Obstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\IObstacle.h">
+      <Filter>Engine\07.Object\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -486,9 +495,6 @@
     <ClCompile Include="Content\UIDebugConsole.cpp">
       <Filter>Content\06.UI</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Obstacle.cpp">
-      <Filter>Content\03.Object</Filter>
-    </ClCompile>
     <ClCompile Include="Content\CharacterStateMachine.cpp">
       <Filter>Content\03.Object\Component</Filter>
     </ClCompile>
@@ -518,6 +524,9 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterController.cpp">
       <Filter>Content\03.Object\CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Obstacle.cpp">
+      <Filter>Content\03.Object\Obstacle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,7 @@ namespace MiniEngine
 	class Animator;
 	class BlendClip;
 	class ActionClip;
+	class IObstacle;
 }
 
 using namespace MiniEngine;
@@ -35,7 +36,7 @@ public:
 	struct PerceptedObstacleInfo
 	{
 		uint8_t m_actTag;
-		Actor* m_pObstacle{ nullptr };
+		IObstacle* m_pObstacle{ nullptr };
 		float m_obstacleDistance{ 0.0f };
 		float m_obstacleLedge{ 0.0f };
 		Vector3 m_obstacleHitPos{ 0.0f };
