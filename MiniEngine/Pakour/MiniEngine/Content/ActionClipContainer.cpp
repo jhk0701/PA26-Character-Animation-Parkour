@@ -132,8 +132,9 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
-		pCorrectRM->SetTime(0.2f, 0.9f);
-		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.25f});
+		pCorrectRM->SetTime(0.1f, 0.9f);
+		pCorrectRM->SetBezierY(1.0f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.4f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
@@ -145,7 +146,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(14));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.1f);
+		pIgnoreObstacle->SetTime(0.0f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -154,10 +155,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.01f, 0.5f);
-		pCorrectRM->SetProperDistance(1.0f);
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.5f);
+		pCorrectRM->SetBezierY(0.5f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.3f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
@@ -179,11 +180,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
-		std::shared_ptr<CorrectRootMotion> pCorrectRM = std::make_shared<CorrectRootMotion>();
-		pCorrectRM->SetCorrectAxis(ECorrectAxis::YZ);
-		pCorrectRM->SetTime(0.0f, 0.9f);
-		pCorrectRM->SetLerpWeight(0.85f);
-		pCorrectRM->SetProperDistance(0.5f);
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.1f, 0.9f);
+		pCorrectRM->SetBezierY(1.0f);
+		pCorrectRM->SetEndOffset({ 0.0f, 0.0f, 0.3f });
 		pActionClip->AddNotify(pCorrectRM);
 
 		mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
@@ -344,6 +344,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCorrectRM->SetBezierY(1.5f);
 		pCorrectRM->SetEndOffset({ 0.0f, 0.0f, 0.3f });
 		pActionClip->AddNotify(pCorrectRM);
+
+		std::shared_ptr<CorrectRotationTowardObstacle> pCorrectRot = std::make_shared<CorrectRotationTowardObstacle>();
+		pCorrectRot->SetTime(0.0f, 0.3f);
+		pActionClip->AddNotify(pCorrectRot);
 
 		mapActions[(uint8_t)ETagAct::Beam_IdleToStand] = pActionClip;
 	}

@@ -1,30 +1,13 @@
 #include "pch.h"
 #include "CorrectRotation.h"
 #include "Content/Character.h"
-#include "Content/ContentConfig.h"
 #include "Scene/IObstacle.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine;
-using namespace Content::Config;
 
 namespace 
 {
-	Vector3 GetAxis(IObstacle* _pObs, ETagAxis _axis) 
-	{
-		switch (_axis)
-		{
-		case ETagAxis::X:
-			return _pObs->GetTransform().Right();
-		case ETagAxis::Y:
-			return _pObs->GetTransform().Up();
-		case ETagAxis::Z:
-			return _pObs->GetTransform().Forward();
-		}
-
-		return Vector3(0.0f);
-	}
-
 	bool TryYawRotate(const Vector3& _inDir, Quaternion& _outRot) 
 	{
 		// yaw 방향에 대해서 유효성 확인
@@ -86,30 +69,11 @@ void CorrectRotationTowardObstacle::OnStart(AnimNotifyParam& _param)
 
 	assert(GetDuration() > 1e-4f);
 
-	//uint8_t t = 0;
-	//if (pObs->TryGetTag(TAG_ENV_DETAIL, t) && (ETagEnvDetail)t == ETagEnvDetail::Beam)
-	//{
-	//	// beam 지형물
-	//	pObs->TryGetTag(TAG_SUB_INFO, t);
-	//	Vector3 dir = GetAxis(pObs, (ETagAxis)t);
-	//	dir = { -dir.z, dir.y, dir.x };
-
-	//	const float DOT = dir.Dot(TF.Forward());
-	//	Vector3 toward = DOT > 0.0f ? dir : dir;
-
-	//	if (TryYawRotate(toward, m_endRotation) == false)
-	//		m_endRotation = m_startRotation;
-	//	
-	//	return;
-	//}
-
 	// 일반 지형물 
 	// 부딪힌 노멀 기준으로 정렬
 	Vector3 nrm = -m_pChar->GetCurObstacleInfo().m_obstacleHitNrm;
 	nrm.y = 0.0f;
 	nrm.Normalize();
-
-	MG_LOG_INFO("[CorrectRotationTowardObs] nrm : ({}, {}, {})", nrm.x, nrm.y, nrm.z);
 
 	if (TryYawRotate(nrm, m_endRotation) == false)
 		m_endRotation = m_startRotation;

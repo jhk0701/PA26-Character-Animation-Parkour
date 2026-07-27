@@ -58,35 +58,6 @@ namespace
 		return dynamic_cast<IObstacle*>(pActor);
 	}
 
-	// 심플하게 결과값 상관없이 히트하는지만 보려는 때 사용
-	bool SphereCast(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist, const uint32_t _layer)
-	{
-		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
-
-		SpherecastParam param;
-		param.m_startPos = _pos;
-		param.m_dir = _dir;
-		param.m_radius = pChar->GetCapsuleRadius();
-		param.m_maxDistance = _dist;
-
-		RaycastResult result;
-		return _context.m_physics->SphereCast(param, result, _layer);
-	}
-	bool CapsuleCast(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist, const uint32_t _layer)
-	{
-		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
-
-		CapsulecastParam param;
-		param.m_startPos = _pos;
-		param.m_dir = _dir;
-		param.m_radius = pChar->GetCapsuleRadius();
-		param.m_halfHeight = pChar->GetCapsuleHalfHeight();
-		param.m_maxDistance = _dist;
-
-		RaycastResult result;
-		return _context.m_physics->CapsuleCast(param, result, _layer);
-	}
-
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 장애물이 있는지 체크
 	bool CheckObstacle(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist, const float _hMultiplier = 2.0f)
 	{
@@ -165,13 +136,22 @@ namespace
 	bool CheckVaultable(TravelContext& _context, const Vector3& _initPos, const Vector3& _dir, const float _unit, uint8_t _maxCnt = 2)
 	{
 		const Vector3 UP = Vector3(0.0f, _unit, 0.0f);
-		Vector3 rayPosition = _initPos; 
+		Vector3 rayPosition = _initPos;
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 
 		for (uint8_t i = 0; i < _maxCnt; ++i)
 		{
 			rayPosition += UP;
-			
-			bool bIsHit = CapsuleCast(_context, rayPosition, _dir, MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
+
+			CapsulecastParam param;
+			param.m_startPos = rayPosition;
+			param.m_dir = _dir;
+			param.m_radius = pChar->GetCapsuleRadius();
+			param.m_halfHeight = pChar->GetCapsuleHalfHeight();
+			param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
+
+			RaycastResult result;
+			bool bIsHit = _context.m_physics->CapsuleCast(param, result, ToMask(Layer::Obstacle));
 			if (bIsHit)
 			{
 				MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
@@ -709,10 +689,16 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 이동하려고 예측하는 위치에서 전방으로 레이
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					const Transform& TF = pChar->GetRoot()->localTransform;
-					const Vector3 POS = GetCharacterCenterPosition(_ctx) + 
-						(_ctx.m_bIsRight ? 1 : -1) * MIN_OBSTACLE_DETECT_DIST * TF.Right();
 
-					bool bIsHit = CapsuleCast(_ctx, POS, TF.Forward(), MIN_OBSTACLE_DETECT_DIST, ToMask(Layer::Obstacle));
+					CapsulecastParam param;
+					param.m_startPos = GetCharacterCenterPosition(_ctx) + (_ctx.m_bIsRight ? 1 : -1) * MIN_OBSTACLE_DETECT_DIST * TF.Right();
+					param.m_dir = TF.Forward();
+					param.m_halfHeight = pChar->GetCapsuleHalfHeight();
+					param.m_radius = pChar->GetCapsuleRadius();
+					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
+
+					RaycastResult result;
+					bool bIsHit = _ctx.m_physics->CapsuleCast(param, result, ToMask(Layer::Obstacle));
 					// true : 닿음 -> 여전히 벽 -> 별다른 액션 x
 					if (bIsHit == false)
 					{

@@ -38,7 +38,6 @@ class BeamStandState : public BeamState
 {
 public:
 	void Tick(float _dt) override;
-	// void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:

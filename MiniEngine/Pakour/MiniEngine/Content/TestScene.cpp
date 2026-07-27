@@ -89,7 +89,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-
 		// 3. mantle -> vault
 		desc.pos = Vector3(5.0f, 0.5f, 5.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
@@ -123,6 +122,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 5-2. 벽 - 지붕
 		desc.pos = Vector3(20.0f, 5.0f, 6.0f);
 		desc.scale = Vector3(4.0f, 0.05f, 1.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		// 벽면 돌출물 설치
+		desc.detailTags = { (uint8_t)Content::Config::ETagEnvDetail::Protrude };
+		desc.color += Vector3(0.3f, -0.2f, 0.0f);
+		desc.scale = Vector3(0.2f);
+
+		desc.pos = Vector3(13.0f, 3.0f, 4.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(14.0f, 4.0f, 4.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(15.0f, 5.0f, 4.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(16.0f, 6.0f, 4.5f);
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
@@ -264,6 +280,6 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 
 #ifdef MG_DEBUG
-	ApplyPhysicsDebug(true);
+	// ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

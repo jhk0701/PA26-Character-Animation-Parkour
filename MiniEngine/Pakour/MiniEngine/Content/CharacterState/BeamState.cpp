@@ -110,7 +110,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
-	// Beam Stand -> Beam Hanging
 	uint8_t t = 0;
 	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t))
 	{
@@ -118,17 +117,26 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 		return;
 	}
 
-	if (t == (uint8_t)ETagEnvDetail::Default) 
-		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
-	
-	if (_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
+	if (t == (uint8_t)ETagEnvDetail::Default)
 	{
-		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions((uint8_t)ETagAct::Beam_StandToIdle))
+		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
+		
+		ETagAct recommanded = (ETagAct)_info.m_actTag;
+		uint8_t actTag = 0;
+
+		if (recommanded == ETagAct::VaultHigh || recommanded == ETagAct::MantleHigh || recommanded == ETagAct::Wall)
+			actTag = _info.m_actTag;
+		else if(_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
+			actTag = (uint8_t)ETagAct::Beam_StandToIdle;
+			
+		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))
 			pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
 
 		return;
 	}
 
+	// Beam Stand -> Beam Hanging
+	// Beam Stand -> Beam Stand
 	DefaultProcessPerceptionResult(_info);
 }
 
