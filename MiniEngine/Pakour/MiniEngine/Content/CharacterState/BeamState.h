@@ -19,13 +19,13 @@ public:
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
-	void AlignByAxis();
+	virtual void AlignByAxis() = 0;
 
 	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
 	MiniEngine::IObstacle* GetCurObs() const { return m_pCurObs; }
 	bool ObstacleIsBeamType(Actor* _pObs);
-	
 	void GetDirectionByAxis(Vector3& _outDir);
+	void AdjustPositionToObstacleInfo();
 
 private:
 	Content::Config::ETagAxis m_curAxis;
@@ -41,6 +41,9 @@ public:
 	// void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
+protected:
+	void AlignByAxis() override;
+
 private:
 	void ProcessMovement(float _dt);
 	bool CheckEnableToMove(std::shared_ptr<Character>& _pChar);
@@ -53,6 +56,9 @@ class BeamHangingState : public BeamState
 public:
 	void Tick(float _dt) override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+
+protected:
+	void AlignByAxis() override;
 
 private:
 	void ProcessMovement(float _dt);

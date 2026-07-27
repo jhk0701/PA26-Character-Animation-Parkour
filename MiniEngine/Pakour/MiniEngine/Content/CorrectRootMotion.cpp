@@ -145,35 +145,6 @@ void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	Vector3 p2 = Vector3::Lerp(m_midPoint, m_endPoint, w);
 	Vector3 p3 = Vector3::Lerp(p1, p2, w);
 
-	MG_LOG_INFO("[Bezier Correct] w : {},  pos : ({}, {}, {})", w, p3.x, p3.y, p3.z);
-
+	// MG_LOG_INFO("[Bezier Correct] w : {},  pos : ({}, {}, {})", w, p3.x, p3.y, p3.z);
 	m_pChar->SetPosition(p3);
-}
-
-void RotateMotion::OnStart(MiniEngine::AnimNotifyParam& _param)
-{
-	AnimNotifyState::OnStart(_param);
-
-	if (!_param.m_pActor)
-		return;
-
-	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
-	m_elapsedTime = 0.0f;
-
-	m_startRotation = m_pChar->GetRoot()->localTransform.rotation;
-	m_endRotation = m_startRotation * Quaternion::CreateFromYawPitchRoll(ToRadians(m_rotateDegree.x), ToRadians(m_rotateDegree.y), ToRadians(m_rotateDegree.z));
-	m_endRotation.Normalize();
-
-	assert(GetDuration() > 1e-4f);
-}
-
-void RotateMotion::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
-{
-	if (!m_pChar)
-		return;
-
-	// 자체 회전 반영
-	m_elapsedTime += _dt;
-	const float w = std::clamp(m_elapsedTime / GetDuration(), 0.0f, 1.0f);
-	m_pChar->GetRoot()->localTransform.rotation = Quaternion::Slerp(m_startRotation, m_endRotation, w);
 }

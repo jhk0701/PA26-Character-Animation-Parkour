@@ -149,7 +149,6 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
 }
 
-
 void Character::InitCollisionLayer()
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);

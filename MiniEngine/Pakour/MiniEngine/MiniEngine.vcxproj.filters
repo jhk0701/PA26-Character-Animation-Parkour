@@ -334,6 +334,9 @@
     <ClInclude Include="Scene\IObstacle.h">
       <Filter>Engine\07.Object\Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CorrectRotation.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -527,6 +530,9 @@
     </ClCompile>
     <ClCompile Include="Content\Obstacle.cpp">
       <Filter>Content\03.Object\Obstacle</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CorrectRotation.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -624,6 +624,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 사이드에 캡슐을 쐈고, 히트한 상황
 					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
+					_ctx.m_firstObstacleHitNrm = result.m_nrm;
 					_ctx.m_distance = result.m_distance;
 				}
 
@@ -646,6 +647,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// 사이드에 캡슐을 쐈고, 히트한 상황
 					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
 					_ctx.m_firstObstacleHitPos = result.m_pos;
+					_ctx.m_firstObstacleHitNrm = result.m_nrm;
 					_ctx.m_distance = result.m_distance;
 				}
 

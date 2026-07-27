@@ -14,7 +14,7 @@
 #include "Content/EnableCollisionObstacle.h"
 #include "Content/TransitionState.h"
 #include "Content/CorrectRootMotion.h"
-#include "Content/UseGravity.h"
+#include "Content/CorrectRotation.h"
 
 using namespace MiniEngine;
 using namespace Content::Config;
@@ -365,7 +365,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<ActionClip> pRotateLeft = std::make_shared<ActionClip>();
 		pRotateLeft->AddClip(skinnedMesh->GetClipPtr(40));
 
-		std::shared_ptr<RotateMotion> pCorrectRotateLeft = std::make_shared<RotateMotion>();
+		std::shared_ptr<CorrectFixedRotation> pCorrectRotateLeft = std::make_shared<CorrectFixedRotation>();
 		pCorrectRotateLeft->SetTime(0.1, 0.7);
 		pCorrectRotateLeft->SetRotateDeg({ -90.0f, 0.0f, 0.0f });
 		pRotateLeft->AddNotify(pCorrectRotateLeft);
@@ -376,7 +376,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<ActionClip> pRotateRight = std::make_shared<ActionClip>();
 		pRotateRight->AddClip(skinnedMesh->GetClipPtr(40));
 
-		std::shared_ptr<RotateMotion> pCorrectRotateRight = std::make_shared<RotateMotion>();
+		std::shared_ptr<CorrectFixedRotation> pCorrectRotateRight = std::make_shared<CorrectFixedRotation>();
 		pCorrectRotateRight->SetTime(0.1, 0.7);
 		pCorrectRotateRight->SetRotateDeg({ 90.0f, 0.0f, 0.0f });
 		pRotateRight->AddNotify(pCorrectRotateRight);
@@ -435,6 +435,10 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCorrectRM->SetTime(0.0f, 0.3f);
 		pCorrectRM->SetEndOffset({0.0f, -1.8f, 0.0f});
 		pActionClip->AddNotify(pCorrectRM);
+
+		std::shared_ptr<CorrectRotationTowardObstacle> pCorrectRot = std::make_shared<CorrectRotationTowardObstacle>();
+		pCorrectRot->SetTime(0.0f, 0.3f);
+		pActionClip->AddNotify(pCorrectRot);
 
 		mapActions[(uint8_t)ETagAct::Beam_IdleToHang] = pActionClip;
 	}

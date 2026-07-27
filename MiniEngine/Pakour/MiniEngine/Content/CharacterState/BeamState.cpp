@@ -86,35 +86,15 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 	}
 }
 
-void BeamState::AlignByAxis()
+void BeamState::AdjustPositionToObstacleInfo()
 {
-	// 좁은 발판에 선 상황
-	const IObstacle* pCurObs = GetCurObs();
-	if (!pCurObs)
-		return;
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Transform& charTF = pChar->GetRoot()->localTransform;
-
-	Vector3 obsDir; // Beam 지형의 주 방향 (긴쪽 방향)
-	GetDirectionByAxis(obsDir);
-	obsDir.y = 0.0f;
-	obsDir.Normalize();
-	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x }; // Beam 지형의 넓은 쪽 방향 (긴쪽의 90도 왼쪽 회전)
-
-	const float DOT_DIR = obsDir.Dot(charTF.Forward());
-	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
-
-	Vector3 toward =
-		abs(DOT_DIR) >= cosf(ToRadians(45.0f)) ?
-		(DOT_DIR >= 0.0f ? obsDir : -obsDir) :
-		(DOT_LEFT_DIR >= 0.0f ? obsLeftAngled : -obsLeftAngled);
-
-	Quaternion rot;
-	if (TryYawRotateToward(toward, rot))
-		charTF.rotation = rot;
+	Character::PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
+	
+	const Vector3& curPos = pChar->GetRoot()->localTransform.position;
+	obsInfo.m_obstacleHitPos.x = curPos.x;
+	obsInfo.m_obstacleHitPos.z = curPos.z;
 }
-
 
 // Beam Stand
 void BeamStandState::Tick(float _dt)
@@ -152,6 +132,35 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	DefaultProcessPerceptionResult(_info);
 }
 
+void BeamStandState::AlignByAxis()
+{
+	// 좁은 발판에 선 상황
+	const IObstacle* pCurObs = GetCurObs();
+	if (!pCurObs)
+		return;
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Transform& charTF = pChar->GetRoot()->localTransform;
+
+	Vector3 obsDir; // Beam 지형의 주 방향 (긴쪽 방향)
+	GetDirectionByAxis(obsDir);
+	obsDir.y = 0.0f;
+	obsDir.Normalize();
+	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x }; // Beam 지형의 넓은 쪽 방향 (긴쪽의 90도 왼쪽 회전)
+
+	const float DOT_DIR = obsDir.Dot(charTF.Forward());
+	const float DOT_LEFT_DIR = obsLeftAngled.Dot(charTF.Forward());
+
+	Vector3 toward =
+		abs(DOT_DIR) >= cosf(ToRadians(45.0f)) ?
+		(DOT_DIR >= 0.0f ? obsDir : -obsDir) :
+		(DOT_LEFT_DIR >= 0.0f ? obsLeftAngled : -obsLeftAngled);
+
+	Quaternion rot;
+	if (TryYawRotateToward(toward, rot))
+		charTF.rotation = rot;
+}
+
 void BeamStandState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -174,8 +183,12 @@ void BeamStandState::ProcessMovement(float _dt)
 	}
 	else if (INPUT_DIR.y < 0) 
 	{
+		// Beam 위에서 움직였다면 그만큼 위치를 변경
+		AdjustPositionToObstacleInfo();
+
 		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandMoveDown))
-			pChar->PlayActionClip(pAct, 0.1f);
+			pChar->PlayActionClip(pAct, 0.2f);
+
 		return;
 	}
 	
@@ -214,10 +227,14 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 
 	MiniEngine::Physics::RaycastResult result;
 	bool bIsHit = _pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
-	if (bIsHit && result.GetActor() == GetCurObs())
-		return true;
 
-	return false;
+	if (!bIsHit)
+		return false;
+
+	Actor* pActor = reinterpret_cast<Actor*>(result.GetActor());
+	IObstacle* pObs = dynamic_cast<IObstacle*>(pActor);
+
+	return pObs == GetCurObs();
 }
 
 // Beam Hanging
@@ -254,6 +271,32 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 	DefaultProcessPerceptionResult(_info);
 }
 
+void BeamHangingState::AlignByAxis()
+{
+	// 봉에 매달린 상황
+	const IObstacle* pCurObs = GetCurObs();
+	if (!pCurObs)
+		return;
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Transform& charTF = pChar->GetRoot()->localTransform;
+
+	// 봉은 긴쪽을 기준으로만 매달리기 -> 둘다 해봤을 때, 이 방식이 그나마 자연스러움
+	Vector3 obsDir; // Beam 지형의 주 방향 (긴쪽 방향)
+	GetDirectionByAxis(obsDir);
+	obsDir.y = 0.0f;
+	obsDir.Normalize();
+	obsDir = { -obsDir.z, obsDir.y, obsDir.x };
+
+	const float DOT_DIR = obsDir.Dot(charTF.Forward());
+	Vector3 toward = DOT_DIR > 0.0f ? obsDir : -obsDir;
+	
+	Quaternion rot;
+	if (TryYawRotateToward(toward, rot))
+		charTF.rotation = rot;
+
+}
+
 void BeamHangingState::ProcessMovement(float _dt)
 {
 	// 봉의 방향에 따라 좌우로만 이동
@@ -269,9 +312,15 @@ void BeamHangingState::ProcessMovement(float _dt)
 	else if (INPUT_DIR.x < 0 && CheckEnableToMove(pChar, INPUT_DIR))
 		eAct = ETagAct::Beam_HangingMoveLeft;
 	else if (INPUT_DIR.y > 0)
+	{
+		AdjustPositionToObstacleInfo(); // Beam 위에서 움직였다면 그만큼 위치를 변경
 		eAct = ETagAct::Beam_HangingMoveUp;
+	}
 	else if (INPUT_DIR.y < 0)
+	{
+		AdjustPositionToObstacleInfo(); // Beam 위에서 움직였다면 그만큼 위치를 변경
 		eAct = ETagAct::Beam_HangingMoveDown;
+	}
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
 		pChar->PlayActionClip(pAct, 0.2f);

@@ -139,6 +139,7 @@
     <ClInclude Include="Content\CharacterState\InAirState.h" />
     <ClInclude Include="Content\CharacterState\LandingState.h" />
     <ClInclude Include="Content\ContentConfig.h" />
+    <ClInclude Include="Content\CorrectRotation.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
     <ClInclude Include="Content\JumpTiming.h" />
     <ClInclude Include="Content\Obstacle.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="Content\CharacterState\InAirState.cpp" />
     <ClCompile Include="Content\CharacterState\LandingState.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
+    <ClCompile Include="Content\CorrectRotation.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
     <ClCompile Include="Content\JumpTiming.cpp" />
     <ClCompile Include="Content\Obstacle.cpp" />

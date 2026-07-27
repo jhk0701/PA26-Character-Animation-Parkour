@@ -99,7 +99,7 @@ public:
 	void TransitionStateMachine(uint8_t _state);
 	
 	// 지형 인식
-	const PerceptedObstacleInfo& GetCurObstacleInfo() const { return m_curObstacleInfo; };
+	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
 
 private:
 	void InitCollisionLayer();
