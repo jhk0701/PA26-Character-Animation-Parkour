@@ -95,8 +95,8 @@ namespace
 
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
-		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * _hMultiplier; //- CAPSULE_CONTACT_OFFSET;
-		capParam.m_startPos = _pos; // GetCharacterCenterPosition(_context); // 
+		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * _hMultiplier;
+		capParam.m_startPos = _pos;
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
@@ -134,10 +134,10 @@ namespace
 				_context.m_pFirstObstacle = ToIObstacle(r.GetActor());
 				_context.m_firstObstacleHitPos = r.m_pos;
 				_context.m_firstObstacleHitNrm = r.m_nrm;
-				_context.m_raycastPos = r.m_pos;
-				_context.m_ledge = r.m_pos.y;
 				_context.m_distance = r.m_distance;
+				_context.m_ledge = r.m_pos.y;
 				_context.m_units = 1;
+				_context.m_raycastPos = r.m_pos;
 
 				break; // 순회 종료
 			}
@@ -338,7 +338,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				const Transform& TF = pChar->GetRoot()->localTransform;
 				const Vector3 POS = GetCharacterCenterPosition(_ctx);
 
-				return CheckObstacle(_ctx, POS, TF.Forward(), MAX_OBSTACLE_DETECT_DIST); 
+				return CheckObstacle(_ctx, POS, TF.Forward(), MAX_OBSTACLE_DETECT_DIST, 1.0f); 
 			},
 			pCheckObstacleTag,	// 찾은 경우 태그 확인
 			pEmpty			// 찾지 못한 경우 empty return 

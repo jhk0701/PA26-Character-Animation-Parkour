@@ -45,7 +45,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		Obstacle::ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.color = Vector3(0.5f, 0.5f, 0.5f);
-		desc.pos = Vector3(0.0f, -0.5f, 0.0f);
+		desc.pos = Vector3(0.0f, -0.25f, 0.0f);
 		desc.scale = Vector3(100.0f, 0.5f, 100.0f);
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Ground;
@@ -79,6 +79,16 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pos = Vector3(0.0f, 0.5f, 3.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
+
+		// 2-2. valut complex
+		desc.pos = Vector3(0.0f, 0.5f, -3.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 2.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(0.0f, 3.0f, -3.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
 
 		// 3. mantle -> vault
 		desc.pos = Vector3(5.0f, 0.5f, 5.0f);
@@ -174,6 +184,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pos = Vector3(-3.0f, 5.4f, 32.0f);
 		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
 		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-4.25, 7.0f, 22.0f);
+		desc.scale = Vector3(1.0f, 0.25f, 0.25f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-4.25f, 8.0f, 23.0f);
+		desc.scale = Vector3(1.0f, 0.25f, 0.25f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-4.25, 9.0f, 24.0f);
+		desc.scale = Vector3(1.0f, 0.25f, 0.25f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+		desc.rot = identity;
 
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
