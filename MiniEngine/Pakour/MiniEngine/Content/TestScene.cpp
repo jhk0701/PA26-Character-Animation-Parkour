@@ -81,12 +81,44 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		// 2-2. valut complex
-		desc.pos = Vector3(0.0f, 0.5f, -3.0f);
-		desc.scale = Vector3(4.0f, 1.0f, 2.0f);
+		// celing 
+		desc.pos = Vector3(0.0f, 0.5f, -5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = Vector3(0.0f, 3.0f, -3.0f);
+		desc.pos = Vector3(0.0f, 2.0f, -6.25f);
+		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		// celing 2
+		desc.pos = Vector3(-5.0f, 0.5f, -5.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-5.0f, 3.0f, -6.25f);
+		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		// celing 3
+		desc.pos = Vector3(-10.0f, 0.5f, -5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-10.0f, 4.0f, -6.25f);
+		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		// 좁은 창틀형
+		desc.pos = Vector3(-15.0f, 0.5f, -5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-16.2f, 2.0f, -5.0f);
+		desc.scale = Vector3(1.6f, 2.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+		
+		desc.pos = Vector3(-13.8f, 2.0f, -5.0f);
+		desc.scale = Vector3(1.6f, 2.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
 		// 3. mantle -> vault
@@ -280,6 +312,6 @@ void TestScene::BeginPlay()
 	Scene::BeginPlay();
 
 #ifdef MG_DEBUG
-	// ApplyPhysicsDebug(true);
+	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

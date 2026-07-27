@@ -547,4 +547,22 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Beam_HangingMoveDown] = pActionClip;
 	}
+
+	{
+		// Protrude - IdleToHang
+		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>(); 
+		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 추후 교체
+		
+		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
+		pTransition->SetTime(0.3f);
+		pTransition->SetState((uint8_t)Character::EState::ProtrudeHanging);
+		pActionClip->AddNotify(pTransition);
+
+		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
+		pCorrectRM->SetTime(0.0f, 0.3f);
+		pCorrectRM->SetEndOffset({ 0.0f, -1.0f, 0.0f});
+		pActionClip->AddNotify(pCorrectRM);
+
+		mapActions[(uint8_t)ETagAct::Protrude_IdleToHang] = pActionClip;
+	}
 }

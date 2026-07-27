@@ -28,7 +28,6 @@ void HangingState::OnEnd()
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
-	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
 }
 
 void HangingState::Tick(float _dt)
@@ -51,11 +50,10 @@ void HangingState::Refresh()
 void HangingState::AlignToNormal()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
 	Vector3 nrm = -pChar->GetCurObstacleInfo().m_obstacleHitNrm;
 	nrm.y = 0.0f;
 	nrm.Normalize();
-	
-	MG_LOG_INFO("[Hanging State] Normal : ({}, {}, {})", nrm.x, nrm.y, nrm.z);
 
 	Quaternion rot;
 	if (TryYawRotateToward(nrm, rot))

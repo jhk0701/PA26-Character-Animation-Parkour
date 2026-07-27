@@ -29,6 +29,7 @@ public:
 		Hanging,
 		BeamStand,
 		BeamHanging,
+		ProtrudeHanging,
 
 		End
 	};
@@ -116,7 +117,7 @@ private:
 	float m_jumpSpeed{ 6.0f };
 
 	float m_capsuleRadius{ 0.25f };
-	float m_capsuleHeight{ 1.5f };
+	float m_capsuleHeight{ 1.6f };
 	float m_capsuleContactOffset{ 0.05f };
 	float m_stepOffset{ 0.2f };
 

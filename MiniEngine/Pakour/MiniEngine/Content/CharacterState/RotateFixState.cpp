@@ -3,15 +3,6 @@
 #include "Content/Character.h"
 #include "Platform/Input.h"
 
-void RotateFixState::OnStart()
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-}
-
-void RotateFixState::OnEnd()
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-}
 
 bool RotateFixState::TryYawRotateToward(const Vector3& _inDir, Quaternion& _outRot)
 {
