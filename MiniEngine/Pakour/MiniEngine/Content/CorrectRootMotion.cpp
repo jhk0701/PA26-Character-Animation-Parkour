@@ -105,6 +105,8 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 
 		m_endPoint = OBS_INFO.m_obstacleHitPos;
 		m_endPoint.y = OBS_INFO.m_obstacleLedge;
+
+		MG_LOG_INFO("[Bezier Correction] : EP ({}, {}, {})", m_endPoint.x, m_endPoint.y, m_endPoint.z);
 		
 		Vector3 offset = Vector3(0.0f);
 		offset += TF.Right() * m_endOffset.x;

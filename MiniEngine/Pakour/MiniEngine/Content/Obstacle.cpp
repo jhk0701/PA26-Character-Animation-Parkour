@@ -113,6 +113,11 @@ const Transform& Obstacle::GetTransform() const
 	return GetRoot()->localTransform;
 }
 
+const std::string& Obstacle::DebugName()
+{
+	return GetName();
+}
+
 std::shared_ptr<Actor> ObstacleFactory::Create(
 	std::shared_ptr<Scene> _pScene, const Obstacle::ObstacleDesc& _desc)
 {

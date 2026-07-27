@@ -37,6 +37,8 @@ void BeamState::Refresh()
 		m_pCurObs = OBS_INFO.m_pObstacle;
 
 		AlignByAxis();
+
+		MG_LOG_INFO("[BeamState::Refresh] Update Current Obs : {}", (uint32_t)m_pCurObs);
 	}
 }
 
@@ -274,7 +276,7 @@ void BeamHangingState::ProcessMovement(float _dt)
 		eAct = ETagAct::Beam_HangingMoveDown;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
-		pChar->PlayActionClip(pAct, 0.1f);
+		pChar->PlayActionClip(pAct, 0.2f);
 }
 
 bool BeamHangingState::CheckEnableToMove(std::shared_ptr<Character>& _pChar, const Vector2& _inputDir)
@@ -291,9 +293,12 @@ bool BeamHangingState::CheckEnableToMove(std::shared_ptr<Character>& _pChar, con
 	MiniEngine::Physics::RaycastResult result;
 	bool bIsHit = _pChar->GetScene()->GetPhysics().lock()->SphereCast(param, result, MiniEngine::Physics::ToMask(MiniEngine::Physics::Layer::Obstacle));
 
-	if (bIsHit && result.GetActor() == GetCurObs())
-		return true;
+	if (!bIsHit)
+		return false;
 
-	return false;
+	Actor* pActor =  reinterpret_cast<Actor*>(result.GetActor());
+	IObstacle* pObs = dynamic_cast<IObstacle*>(pActor);
+
+	return pObs == GetCurObs();
 }
-;
+
