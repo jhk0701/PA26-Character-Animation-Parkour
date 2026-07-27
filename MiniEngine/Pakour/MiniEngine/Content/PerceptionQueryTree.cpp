@@ -132,8 +132,9 @@ namespace
 				const HitResult& r = hits.m_hitResults[i];
 
 				_context.m_pFirstObstacle = ToIObstacle(r.GetActor());
-				_context.m_raycastPos = r.m_pos;
 				_context.m_firstObstacleHitPos = r.m_pos;
+				_context.m_firstObstacleHitNrm = r.m_nrm;
+				_context.m_raycastPos = r.m_pos;
 				_context.m_ledge = r.m_pos.y;
 				_context.m_distance = r.m_distance;
 				_context.m_units = 1;
@@ -559,8 +560,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				param.m_radius = pChar->GetCapsuleRadius();
 
 				RaycastResult result;
-				bool bIsHit = _ctx.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground);
-				if (bIsHit == false)
+				if (_ctx.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)
 					return false;
 
 				_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());

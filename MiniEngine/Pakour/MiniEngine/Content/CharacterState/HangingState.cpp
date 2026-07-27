@@ -55,6 +55,8 @@ void HangingState::AlignToNormal()
 	nrm.y = 0.0f;
 	nrm.Normalize();
 	
+	MG_LOG_INFO("[Hanging State] Normal : ({}, {}, {})", nrm.x, nrm.y, nrm.z);
+
 	Quaternion rot;
 	if (TryYawRotateToward(nrm, rot))
 		pChar->GetRoot()->localTransform.rotation = rot;

@@ -10,71 +10,65 @@
 
 using namespace MiniEngine;
 
-void Obstacle::Construct(std::shared_ptr<StaticMesh> _pStaticMesh, 
-	const Vector3& _pos, 
-	const Vector3& _scale,
-	const Quaternion& _rot,
-	const std::vector<uint8_t>& _detailTags,
-	ELedgeOption _opt)
+void Obstacle::Construct(const ObstacleDesc& _desc)
 {
-	if (_pStaticMesh == nullptr)
+	if (_desc.pMesh == nullptr)
 		return;
 	
 	SetName("Obstacle");
 
 	Tag& tag = GetTag();
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
-	for (const uint8_t t : _detailTags)
+	for (const uint8_t t : _desc.detailTags)
 		tag += t;
 	
-	const Vector3 halfExtent = _scale * 0.5f;
+	const Vector3 halfExtent = _desc.scale * 0.5f;
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = AddComponent<StaticMeshComponent>();
-	staticMeshComp->SetColor(Vector3(0.7f, 0.5f, 0.2f));
-	staticMeshComp->SetMesh(_pStaticMesh);
-	staticMeshComp->localTransform.position = _pos;
+	staticMeshComp->SetColor(_desc.color);
+	staticMeshComp->SetMesh(_desc.pMesh);
+	staticMeshComp->localTransform.position = _desc.pos;
 	staticMeshComp->localTransform.scale = halfExtent;
-	staticMeshComp->localTransform.rotation = _rot;
-
+	staticMeshComp->localTransform.rotation = _desc.rot;
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
 	std::shared_ptr<RigidBodyComponent> pRB = AddComponent<RigidBodyComponent>();
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
-	pRB->SetQueryLayer(MiniEngine::Physics::Layer::Obstacle);
+	pRB->SetQueryLayer(_desc.layer);
 
-	if (_opt == ELedgeOption::None)
+	if (_desc.ledgeOpt == ELedgeOption::None)
 		return;
 
 	std::shared_ptr<Actor> pSharedThis = shared_from_this();
 	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.02f, 0.02f);
 	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.02f, 0.02f);
 
-	m_pLedges.reserve(_opt == ELedgeOption::All ? 4 : 2);
+	m_pLedges.reserve(_desc.ledgeOpt == ELedgeOption::All ? 4 : 2);
 	
-	if (_opt == ELedgeOption::All || _opt == ELedgeOption::Horizontal)
+	if (_desc.ledgeOpt == ELedgeOption::All || _desc.ledgeOpt == ELedgeOption::Horizontal)
 	{
 		AddLedge(pSharedThis,
-			_pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
+			_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
 			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
 		);
 		AddLedge(pSharedThis,
-			_pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
+			_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
 			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _rot
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
 		);
 	}
 
-	if (_opt == ELedgeOption::All || _opt == ELedgeOption::Vertical) 
+	if (_desc.ledgeOpt == ELedgeOption::All || _desc.ledgeOpt == ELedgeOption::Vertical)
 	{
 		AddLedge(pSharedThis,
-			_pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
+			_desc.pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
 			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
 		);
 		AddLedge(pSharedThis,
-			_pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
+			_desc.pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
 			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _rot
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
 		);
 	}
 }
@@ -120,19 +114,13 @@ const Transform& Obstacle::GetTransform() const
 }
 
 std::shared_ptr<Actor> ObstacleFactory::Create(
-	std::shared_ptr<Scene> _pScene, 
-	std::shared_ptr<StaticMesh> _pStaticMesh,
-	const Vector3& _pos, 
-	const Vector3& _scale,
-	const Quaternion& _rot,
-	const std::vector<uint8_t>& _detailTags,
-	Obstacle::ELedgeOption _opt)
+	std::shared_ptr<Scene> _pScene, const Obstacle::ObstacleDesc& _desc)
 {
 	if (_pScene == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Obstacle> pObs = _pScene->SpawnActor<Obstacle>();
-	pObs->Construct(_pStaticMesh, _pos, _scale, _rot, _detailTags, _opt);
+	pObs->Construct(_desc);
 
 	return pObs;
 }

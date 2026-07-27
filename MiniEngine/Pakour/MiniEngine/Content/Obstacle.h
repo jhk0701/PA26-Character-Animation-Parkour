@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Actor.h"
 #include "Scene/IObstacle.h"
+#include "Physics/CollsionLayer.h"
 
 namespace MiniEngine 
 { 
@@ -19,14 +20,20 @@ public:
 		All
 	};
 
+	struct ObstacleDesc 
+	{
+		std::shared_ptr<MiniEngine::StaticMesh> pMesh;
+		MiniEngine::Vector3 color = MiniEngine::Vector3(0.7f, 0.5f, 0.2f);
+		MiniEngine::Vector3 pos;
+		MiniEngine::Vector3 scale;
+		MiniEngine::Quaternion rot = MiniEngine::Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		std::vector<uint8_t> detailTags;
+		MiniEngine::Physics::Layer layer = MiniEngine::Physics::Layer::Obstacle;
+		ELedgeOption ledgeOpt = ELedgeOption::All;
+	};
+
 	virtual ~Obstacle() {};
-	void Construct(
-		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
-		const MiniEngine::Vector3& _pos, 
-		const MiniEngine::Vector3& _scale,
-		const MiniEngine::Quaternion& _rot,
-		const std::vector<uint8_t>& _detailTags,
-		ELedgeOption _opt);
+	void Construct(const ObstacleDesc& _desc);
 
 private:
 	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
@@ -46,12 +53,6 @@ public:
 class ObstacleFactory 
 {
 public:
-	static std::shared_ptr<MiniEngine::Actor> Create(
-		std::shared_ptr<MiniEngine::Scene> _pScene, 
-		std::shared_ptr<MiniEngine::StaticMesh> _pStaticMesh, 
-		const MiniEngine::Vector3& _pos, 
-		const MiniEngine::Vector3& _scale,
-		const MiniEngine::Quaternion& _rot,
-		const std::vector<uint8_t>& _detailTags = { 0U },
-		Obstacle::ELedgeOption _opt = Obstacle::ELedgeOption::All);
+	static std::shared_ptr<MiniEngine::Actor> Create(std::shared_ptr<MiniEngine::Scene> _pScene,
+		const Obstacle::ObstacleDesc& _desc);
 };

@@ -37,97 +37,184 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	std::wstring assetPath = PathManager::GetInstance()->ResolveAssetPath(L"Cube.mini");
 	pCubeMesh = AssetManager::GetInstance()->LoadStaticMesh(assetPath);
 
+	std::shared_ptr<Scene> pScene = shared_from_this();
+	Quaternion identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// 강체 바닥
 	{
-		// 강체 바닥 설치
-		const Vector3 size(100.0f, 0.5f, 100.0f);
-		std::shared_ptr<Actor> pGround = SpawnActor<Actor>();
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.color = Vector3(0.5f, 0.5f, 0.5f);
+		desc.pos = Vector3(0.0f, -0.5f, 0.0f);
+		desc.scale = Vector3(100.0f, 0.5f, 100.0f);
+		desc.detailTags = { 0U };
+		desc.layer = MiniEngine::Physics::Layer::Ground;
+		desc.ledgeOpt = Obstacle::ELedgeOption::None;
+
+		std::shared_ptr<Actor> pGround = ObstacleFactory::Create(pScene, desc);
 		pGround->SetName("Ground");
-
-		Tag& tag = pGround->GetTag();
-		tag += (uint8_t)Content::Config::ETagEnv::Land;
-		tag += (uint8_t)Content::Config::ETagAct::Landing;
-
-		std::shared_ptr<StaticMeshComponent> pMeshComp = pGround->AddComponent<StaticMeshComponent>();
-		pMeshComp->SetMesh(pCubeMesh);
-		pMeshComp->localTransform.position = Vector3(0.0f, -0.5f, 0.0f);
-		pMeshComp->localTransform.scale = size;
-
-		std::shared_ptr<RigidBodyComponent> pRB = pGround->AddComponent<RigidBodyComponent>();
-		pRB->Init(*physics, RigidBodyComponent::EBodyType::Static, size, pMeshComp);
-		pRB->SetQueryLayer(MiniEngine::Physics::Layer::Ground);
 	}
 	{
-		std::shared_ptr<Scene> pScene = shared_from_this();
-		Quaternion identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.detailTags = { 0U };
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 1. mantle
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 1.25f, 3.0f), Vector3(2.5f), identity);
-		
+		desc.pos = Vector3(-5.0f, 1.25f, 3.0f);
+		desc.scale = Vector3(2.5f);
+		ObstacleFactory::Create(pScene, desc);
+
 		// 2. mantle 3.0
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-8.0f, 1.75f, 3.0f), Vector3(3.5f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-13.0f, 2.5f, 3.0f), Vector3(5.0f), identity);
+		desc.pos = Vector3(-8.0f, 1.75f, 3.0f);
+		desc.scale = Vector3(3.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-13.0f, 2.5f, 3.0f);
+		desc.scale = Vector3(5.0f);
+		ObstacleFactory::Create(pScene, desc);
 
 		// 2. vault
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 0.5f, 3.0f), Vector3(4.0f, 1.0f, 0.5f), identity);
+		desc.pos = Vector3(0.0f, 0.5f, 3.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
 
 		// 3. mantle -> vault
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 1.0, 7.5f), Vector3(4.0f, 2.0f, 0.5f), identity);
+		desc.pos = Vector3(5.0f, 0.5f, 5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+		desc.pos = Vector3(5.0f, 1.0, 7.5f);
+		desc.scale = Vector3(4.0f, 2.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
 
 		// 4. mantle -> mantle
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 1.5f, 6.0f), Vector3(4.0f, 4.0f, 3.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(10.0f, 3.0f, 7.5f), Vector3(4.0f, 1.0f, 0.5f), identity);
+		desc.pos = Vector3(10.0f, 0.5f, 5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+		desc.pos = Vector3(10.0f, 1.5f, 6.0f);
+		desc.scale = Vector3(4.0f, 4.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
+		desc.pos = Vector3(10.0f, 3.0f, 7.5f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
 
 		// 5. hanging 벽
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 0.5f, 5.0f), Vector3(4.0f, 1.0f, 5.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(15.0f, 3.5f, 6.0f), Vector3(4.0f, 7.0f, 3.0f), identity);
+		desc.pos = Vector3(15.0f, 0.5f, 5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+		desc.pos = Vector3(15.0f, 3.5f, 6.0f);
+		desc.scale = Vector3(4.0f, 7.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
 		// 5-1. 벽 - 벽
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(20.0f, 3.5f, 8.0f), Vector3(6.0f, 7.0f, 3.0f), identity);
+		desc.pos = Vector3(20.0f, 3.5f, 8.0f);
+		desc.scale = Vector3(6.0f, 7.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
 		// 5-2. 벽 - 지붕
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(20.0f, 5.0f, 6.0f), Vector3(4.0f, 0.05f, 1.0f), identity);
+		desc.pos = Vector3(20.0f, 5.0f, 6.0f);
+		desc.scale = Vector3(4.0f, 0.05f, 1.0f);
+		ObstacleFactory::Create(pScene, desc);
+	}
+	{
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.detailTags = { 0U };
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
-		// 6. 경사로 + 건물
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.0f, 14.0f), Vector3(10.0f, 1.0f, 10.0f), 
-			Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f), { 0U }, Obstacle::ELedgeOption::Vertical);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 2.5f, 20.5f), Vector3(10.0f, 5.0f, 5.0f), identity);
+		// 6. 건물
+		desc.pos = Vector3(0.0f, 2.5f, 20.5f);
+		desc.scale = Vector3(10.0f, 5.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
 		// 벽
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-5.0f, 7.5f, 29.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(5.0f, 7.5f, 29.0f), Vector3(0.5f, 8.0f, 20.0f), identity);
+		desc.pos = Vector3(-5.0f, 7.5f, 29.0f);
+		desc.scale = Vector3(0.5f, 8.0f, 20.0f);
+		ObstacleFactory::Create(pScene, desc);
 
-		// Foot Hold // 밟는 용도
-		const std::vector<uint8_t> DETAIL_TAGS = 
-		{ 
+		desc.pos = Vector3(5.0f, 7.5f, 29.0f);
+		desc.scale = Vector3(0.5f, 8.0f, 20.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		// 경사로
+		desc.pos = Vector3(0.0f, 2.0f, 14.0f);
+		desc.scale = Vector3(10.0f, 1.0f, 10.0f);
+		desc.rot = Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f);
+		desc.ledgeOpt = Obstacle::ELedgeOption::Vertical;
+		ObstacleFactory::Create(pScene, desc);
+	}
+	{
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.detailTags = {
 			(uint8_t)Content::Config::ETagEnvDetail::Beam,
 			(uint8_t)Content::Config::ETagAxis::X,
 		};
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
+		// Foot Hold // 밟는 용도
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 24.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
-			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.8f, 26.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
-			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 28.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
-			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.0f, 30.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
-			->SetName(FOOT_HOLD_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(-3.0f, 5.4f, 32.0f), Vector3(4.0f, 0.5f, 0.5f), identity, DETAIL_TAGS)
-			->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-3.0f, 5.4f, 24.0f);
+		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-3.0f, 5.8f, 26.0f);
+		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-3.0f, 5.4f, 28.0f);
+		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-3.0f, 5.0f, 30.0f);
+		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
+
+		desc.pos = Vector3(-3.0f, 5.4f, 32.0f);
+		desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+		ObstacleFactory::Create(pScene, desc)->SetName(FOOT_HOLD_NAME.c_str());
 
 		// Bar // 잡는 용도
 		const std::string BAR_NAME = "Bar";
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 6.5f, 25.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
-			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 6.5f, 27.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
-			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 9.5f, 26.0f), Vector3(4.0f, 0.2f, 0.2f), identity, DETAIL_TAGS)
-			->SetName(BAR_NAME.c_str());
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(3.0f, 2.5f, 31.0f), Vector3(3.0f, 5.0f, 5.0f), identity);
+
+		desc.pos = Vector3(3.0f, 6.5f, 25.0);
+		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
+
+		desc.pos = Vector3(3.0f, 6.5f, 27.0f);
+		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
+
+		desc.pos = Vector3(3.0f, 9.5f, 26.0f);
+		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
+
+		desc.pos = Vector3(3.0f, 2.5f, 31.0f);
+		desc.scale = Vector3(3.0f, 5.0f, 5.0f);
+		desc.detailTags = { 0U };
+		ObstacleFactory::Create(pScene, desc);
+	}
+	{
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.detailTags = { 0U };
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 공중 큐브
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 28.5f, 0.0f), Vector3(3.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 15.0f, 7.0f), Vector3(5.0f), identity);
-		ObstacleFactory::Create(pScene, pCubeMesh, Vector3(0.0f, 17.5f, 7.0f), Vector3(5.0f, 1.0f, 0.05f), identity);
+		desc.pos = Vector3(0.0f, 28.5f, 0.0f);
+		desc.scale = Vector3(3.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(0.0f, 15.0f, 7.0f);
+		desc.scale = Vector3(5.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(0.0f, 17.5f, 7.0f);
+		desc.scale = Vector3(5.0f, 1.0f, 0.05f);
+		ObstacleFactory::Create(pScene, desc);
+
 	}
 	{
 		// 캐릭터 생성
