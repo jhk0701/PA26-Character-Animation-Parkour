@@ -11,9 +11,10 @@ namespace MiniEngine
     void SkeletalMeshComponent::SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh)
     {
         m_mesh = _mesh;
-
+        
         // 새로 변경하며 기존 것은 레퍼런스 카운트 0으로 변할 것
         m_anim = std::make_shared<Animator>(std::dynamic_pointer_cast<SkeletalMeshComponent>(shared_from_this()));
+        m_anim->ResetForMesh();
     }
 
     void SkeletalMeshComponent::Tick(float _dt)
@@ -49,8 +50,7 @@ namespace MiniEngine
             pContext->Unmap(_context.m_perObjectCB, 0);
         }
 
-        // TODO : 객체별 색상 받아오기
-        _context.m_perFrame.albedo = Vector3(0.5f, 0.7f, 0.5f);
+        _context.m_perFrame.albedo = m_color;
 
         if (SUCCEEDED(pContext->Map(
             _context.m_perFrameCB, 0,

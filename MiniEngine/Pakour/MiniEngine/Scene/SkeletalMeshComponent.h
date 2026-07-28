@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <memory>
 #include <vector>
 #include "Scene/SceneComponent.h"
@@ -31,9 +31,13 @@ namespace MiniEngine
         RootMotionDelta ConsumeRootMotionDelta();
         bool IsRootMotionEnabled() const;
 
+        void SetColor(const Vector3& _col) { m_color = _col; }
+
     private:
         std::shared_ptr<SkinnedMesh> m_mesh;    // 스킨 메시 소유
         std::shared_ptr<Animator> m_anim;       // 본 애니메이션용
         std::vector<Matrix> m_boneMatrices;     // 스키닝 최종 행렬
+
+        Vector3 m_color{ 0.5f, 0.7f, 0.5f };
     };
 }

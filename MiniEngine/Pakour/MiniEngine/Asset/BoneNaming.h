@@ -5,7 +5,7 @@ namespace MiniEngine
 {
     class Skeleton;
 
-    enum class HumanoidBone
+    enum class HumanoidBone : uint8_t
     {
         None,
         Hips, Spine, Chest, UpperChest, Neck, Head,           // 중심(사이드 무관)
@@ -35,7 +35,6 @@ namespace MiniEngine
         bool Has(HumanoidBone _role) const { return Get(_role) >= 0; }
     };
 
-    
     // 리타겟시, 본 구조를 읽고 매핑
     void BuildHumanoidBoneMap(const Skeleton& _skeleton, HumanoidBoneMap& _out);
 }

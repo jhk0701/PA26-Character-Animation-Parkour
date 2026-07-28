@@ -128,6 +128,7 @@
     <ClInclude Include="Animation\IAnimNotify.h" />
     <ClInclude Include="Asset\BoneNaming.h" />
     <ClInclude Include="Asset\DataAsset.h" />
+    <ClInclude Include="Asset\IK.h" />
     <ClInclude Include="Asset\RootMotion.h" />
     <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="Animation\IAnimNotify.cpp" />
     <ClCompile Include="Asset\BoneNaming.cpp" />
     <ClCompile Include="Asset\DataAsset.cpp" />
+    <ClCompile Include="Asset\IK.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
     <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />

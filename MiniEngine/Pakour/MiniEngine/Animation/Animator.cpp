@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "Animation/Animator.h"
-#include "Core/Log.h"
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
 #include "Scene/Actor.h"
 #include "Scene/SkeletalMeshComponent.h"
+
+#include "Asset/IK.h"
+#include "Core/Log.h"
 
 namespace MiniEngine 
 {
@@ -104,7 +106,8 @@ namespace MiniEngine
 		}
 
 		ComposePose(m_poseTarget, m_localPose);
-		skeleton.ComputeBoneMatrices(m_localPose, *m_pBoneMatrices);
+		skeleton.ComputeGlobalPose(m_localPose, m_globalPose);
+		skeleton.ApplyInverseBind(m_globalPose, *m_pBoneMatrices); // 저장된 값을 스키닝 행렬에 반영
 	}
 
 	void Animator::PlayActionClip(std::shared_ptr<ActionClip>& _action, float _fadeDuration, uint8_t _priority)
@@ -168,4 +171,236 @@ namespace MiniEngine
 	{
 		return m_meshComp.lock()->GetMesh().lock()->GetSkeleton();
 	}
+	
+	// IK 관련
+	void Animator::SetIKGoal(const TwoBoneIKBinding& _binding, const IKGoal& _goal)
+	{
+		const HumanoidBoneMap& BONE_MAP = m_meshComp.lock()->GetMesh().lock()->GetHumanoidBones();
+		if (!BONE_MAP.Has(_binding.upper) || !BONE_MAP.Has(_binding.lower) || !BONE_MAP.Has(_binding.end))
+		{
+			MG_LOG_WARN("[Animator]::SetIKGoal Warning:: _binding bone is not included");
+			return;
+		}
+		
+		m_ikGoals[static_cast<size_t>(_binding.end)] = _goal;
+		m_mapIKBinding[_binding.end] = _binding;
+
+		RefreshIKAny();
+	}
+
+	void Animator::ClearIKGoal(HumanoidBone _end)
+	{
+		if (_end == HumanoidBone::None || _end >= HumanoidBone::Count) 
+			return;
+
+		m_ikGoals[static_cast<size_t>(_end)] = IKGoal();
+		m_mapIKBinding.clear();
+		RefreshIKAny();
+	}
+
+	void Animator::ClearAllIKGoals()
+	{
+		for (IKGoal& g : m_ikGoals)
+			g = IKGoal();
+
+		m_ikPelvisOffset = Vector3(0.0f);
+		m_bUseIK = false;
+	}
+
+	const IKGoal* Animator::GetIKGoal(HumanoidBone _end) const
+	{
+		if (_end == HumanoidBone::None || _end >= HumanoidBone::Count)
+			return nullptr;
+
+		const IKGoal& g = m_ikGoals[static_cast<size_t>(_end)];
+		return (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f) ? &g : nullptr;
+	}
+
+	void Animator::SetIKPelvisOffset(const Vector3& _offsetMeshLocal)
+	{
+		m_ikPelvisOffset = _offsetMeshLocal;
+		RefreshIKAny();
+	}
+
+	void Animator::SolveIKAndRefresh(const SkinnedMesh* _mesh)
+	{
+		if (!m_bUseIK || !_mesh)
+			return;
+
+		if (m_localPose.empty() || m_localPose.size() != _mesh->GetSkeleton().bones.size())
+			return;
+
+		// 애니메이션 적용 후 포즈 불러오기
+		// 재연산하지 않고 보존된 결과값만 가져옴
+		const Skeleton& skeleton = _mesh->GetSkeleton();
+		skeleton.ComputeGlobalPose(m_localPose, m_globalPose);
+		
+		// two bone ik만 있으므로 바로 적용
+		// 다른 종류의 ik가 생기면 추후 이 부분을 수정
+		ApplyIKGoals(skeleton, _mesh->GetHumanoidBones());
+		
+		// 스켈레톤에 최종 바인드
+		skeleton.ApplyInverseBind(m_globalPose, *m_pBoneMatrices);
+	}
+
+	void Animator::ResetForMesh()
+	{
+		ClearAllIKGoals();
+	}
+
+	void Animator::BindGlobal(int _boneIdx, const Skeleton& _inSkeleton, Matrix& _out) const
+	{
+		_out = _inSkeleton.bones[_boneIdx].localBindPose;
+
+		for (int p = _inSkeleton.bones[_boneIdx].parentIndex; p >= 0; p = _inSkeleton.bones[p].parentIndex)
+			_out = _out * _inSkeleton.bones[p].localBindPose;
+	}
+
+	bool Animator::BindPole(const Skeleton& _skeleton, int _upperBone, int _lowerBone, int _endBone, Vector3& _outPole) const
+	{
+		const int count = static_cast<int>(_skeleton.bones.size());
+		if (_upperBone < 0 || _lowerBone < 0 || _endBone < 0 ||
+			_upperBone >= count || _lowerBone >= count || _endBone >= count) 
+			return false;
+
+		Matrix bindU;
+		Matrix bindL;
+		Matrix bindE;
+		
+		BindGlobal(_upperBone, _skeleton, bindU);
+		BindGlobal(_lowerBone, _skeleton, bindL);
+		BindGlobal(_endBone, _skeleton, bindE);
+
+		Vector3 bindPole;
+		TwoBoneIKBone bone;
+		bone.upperPos = bindU.Translation();
+		bone.lowerPos = bindL.Translation();
+		bone.endPos = bindE.Translation();
+
+		if (!FallbackPole(bone, bindPole))
+			return false; // 바인드조차 완전히 편 경우 -> false
+
+		// 굽힌 방향을 upper 바인드 로컬로
+		// 현재 upper 글로벌로 재적용
+		const Vector3 DIR_BIND_LOCAL = Vector3::Transform(bindPole - bindU.Translation(), bindU.Invert());
+		const Matrix& CUR_U = m_globalPose[static_cast<size_t>(_upperBone)];
+
+		_outPole = CUR_U.Translation() + Vector3::TransformNormal(DIR_BIND_LOCAL, CUR_U);
+		return true;
+	}
+
+	void Animator::RotateGlobalInPlace(Matrix& _global, const Quaternion& _delta)
+	{
+		const Vector3 pos = _global.Translation();
+		_global.Translation(Vector3(0.0f, 0.0f, 0.0f));
+		_global = _global * Matrix::CreateFromQuaternion(_delta);
+		_global.Translation(pos);
+	}
+
+	void Animator::ApplyIKGoals(const Skeleton& _skeleton, const HumanoidBoneMap& _map)
+	{
+		// 골반 오프셋 - 몸 전체 내리기 발 ik 처리용
+		if (m_ikPelvisOffset.LengthSquared() > 1e-12f && _map.Has(HumanoidBone::Hips))
+		{
+			const int HIPS = _map.Get(HumanoidBone::Hips);
+			m_globalPose[static_cast<size_t>(HIPS)].Translation(
+				m_globalPose[static_cast<size_t>(HIPS)].Translation() + m_ikPelvisOffset
+			);
+
+			// 하위 본 재연산
+			_skeleton.RecomputeGlobalPoseFrom(m_localPose, HIPS + 1, m_globalPose);
+		}
+
+		// end들 goal에 대한 연산
+		for (const std::pair<HumanoidBone, TwoBoneIKBinding>& p : m_mapIKBinding)
+		{
+			const IKGoal& GOAL = m_ikGoals[static_cast<size_t>(p.first)];
+			if (GOAL.positionAlpha <= 0.0f && GOAL.rotationAlpha <= 0.0f)
+				continue;
+
+			const TwoBoneIKBinding& binding = p.second;
+			if (!_map.Has(binding.upper) || !_map.Has(binding.lower) || !_map.Has(binding.end))
+				continue;
+
+			const int UPPER_IDX = _map.Get(binding.upper);
+			const int LOWER_IDX = _map.Get(binding.lower);
+			const int END_IDX = _map.Get(binding.end);
+
+			if (GOAL.positionAlpha > 0.0f) 
+			{
+				const Vector3 U = m_globalPose[static_cast<size_t>(UPPER_IDX)].Translation();
+				const Vector3 L = m_globalPose[static_cast<size_t>(LOWER_IDX)].Translation();
+				const Vector3 E = m_globalPose[static_cast<size_t>(END_IDX)].Translation();
+
+				TwoBoneIKBone bone;
+				bone.upperPos = U;
+				bone.lowerPos = L;
+				bone.endPos = E;
+
+				Vector3 pole;
+				bool bHasPole = false;
+
+				// pole 구하기 
+				if (GOAL.bUsePoleTarget)
+				{
+					pole = GOAL.poleTarget;
+					bHasPole = true;
+				}
+
+				// 불가 시, fallback용 pole
+				if (!bHasPole)
+					bHasPole = FallbackPole(bone, pole);
+
+				// 불가 시, pole 새로 바인딩
+				if (!bHasPole)
+					bHasPole = BindPole(_skeleton, UPPER_IDX, LOWER_IDX, END_IDX, pole);
+
+				Quaternion qU, qL;
+				TwoBoneIKTarget target;
+				target.targetPos = GOAL.position;
+				target.poleTargetPos = pole;
+				target.alpha = GOAL.positionAlpha;
+				TwoBoneIKResult result;
+				if (bHasPole && SolveTwoBone(bone, target, result)) 
+				{
+					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(UPPER_IDX)], qU);
+					_skeleton.RecomputeGlobalPoseFrom(m_localPose, UPPER_IDX + 1, m_globalPose);
+
+					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(LOWER_IDX)], qL);
+					_skeleton.RecomputeGlobalPoseFrom(m_localPose, LOWER_IDX + 1, m_globalPose);
+				}
+			}
+
+			if (GOAL.rotationAlpha > 0.0f) 
+			{
+				Matrix& endGlobal = m_globalPose[static_cast<size_t>(END_IDX)];
+
+				const Vector3 POS = endGlobal.Translation();
+				const Quaternion CUR = Quaternion::CreateFromRotationMatrix(endGlobal);
+				const float ALPHA = std::clamp(GOAL.rotationAlpha, 0.0f, 1.0f);
+
+				endGlobal = Matrix::CreateFromQuaternion(Quaternion::Slerp(CUR, GOAL.rotation, ALPHA));
+				endGlobal.Translation(POS);
+				_skeleton.RecomputeGlobalPoseFrom(m_localPose, END_IDX + 1, m_globalPose); // 자식 본들 위치 정리
+			}
+		}
+
+	}
+
+	void Animator::RefreshIKAny()
+	{
+		m_bUseIK = m_ikPelvisOffset.LengthSquared() > 1e-12f;
+		
+		if (m_bUseIK) return;
+
+		for (const IKGoal& g : m_ikGoals)
+			if (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f) 
+			{ 
+				m_bUseIK = true;
+				return; 
+			}
+	}
+
+
 }
+

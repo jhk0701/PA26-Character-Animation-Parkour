@@ -3,6 +3,8 @@
 
 #include "Core/Math.h"
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
+
 #include "Physics/CollsionLayer.h"
 #include "Platform/Input.h"
 #include "Manager/AssetManager.h"
@@ -108,6 +110,7 @@ void Character::BeginPlay()
 
 	InitCollisionLayer();
 }
+
 
 void Character::TryPerception()
 {

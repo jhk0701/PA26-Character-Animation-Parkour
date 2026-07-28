@@ -3,6 +3,7 @@
 #include "Asset/AnimClip.h"
 #include "Asset/RootMotion.h"
 #include <functional>
+#include <array>
 
 namespace MiniEngine 
 {
@@ -31,6 +32,24 @@ namespace MiniEngine
 		bool IsEnd() const { return m_actionElapsed >= m_actionDuration; }
 		bool IsEndArea() const { return m_actionElapsed >= m_actionEndTime; }
 		float GetProgress() const { return m_fadeElapsed / m_fadeDuration; }
+	};
+
+	// IK
+	struct TwoBoneIKBinding
+	{
+		HumanoidBone upper;
+		HumanoidBone lower;
+		HumanoidBone end;
+	};
+
+	struct IKGoal 
+	{
+		Vector3 position;		// end effector 본 원점이 도달할 지점
+		Quaternion rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f); // 회전 (델타) x
+		Vector3 poleTarget;	// 중간 관절이 향할 지점 bUsePoleTarget으로 토글
+		float positionAlpha = 0.0f;
+		float rotationAlpha = 0.0f;
+		bool bUsePoleTarget = false;
 	};
 
 	// Animator : 애니메이션 총괄 관리
@@ -79,6 +98,22 @@ namespace MiniEngine
 		void SetOverrideTrackStartEvent(std::function<void()>&& _event) { m_overrideTrack.m_onClipStarted = _event; }
 		void SetOverrideTrackEndEvent(std::function<void()>&& _event) { m_overrideTrack.m_onClipEnded = _event; }
 
+		// IK
+		void SetIKGoal(const TwoBoneIKBinding& _binding, const IKGoal& _goal);
+		void ClearIKGoal(HumanoidBone _end);
+		void ClearAllIKGoals();
+		const IKGoal* GetIKGoal(HumanoidBone _end) const;
+
+		// 골반 글로벌 위치에 더할 오프셋
+		void SetIKPelvisOffset(const Vector3& _offsetMeshLocal);
+		const Vector3& GetIKPelvisOffset() const { return m_ikPelvisOffset; }
+		const std::vector<Matrix>& GetGlobalPose() const { return m_globalPose; }  // 발 IK 레이캐스트 원점용
+
+		// IK 소비 후 팔레트 갱신
+		// FinalizePose에서 호출하진 않을 것 -> 캐릭터의 이동 등등의 과정이 모두 끝난 다음 별도로 호출 예정
+		void SolveIKAndRefresh(const SkinnedMesh* _mesh); 
+		void ResetForMesh();
+
 	private:
 		bool m_bIsInitialized{ false };
 
@@ -87,6 +122,7 @@ namespace MiniEngine
 
 		LocalPoseTRS m_poseTarget;		// 블렌드, 트랜지션 등 연산이 반영되는 본 위계구조
 		std::vector<Matrix> m_localPose;	// 합성 로컬 행렬 스크래치
+		std::vector<Matrix> m_globalPose;	// 메시 로컬 글로벌 포즈(inverseBind 전) IK 작업 공간 
 		std::vector<Matrix>* m_pBoneMatrices;	// 스키닝 최종 행렬
 
 		bool m_bEnableRootMotion{ false };
@@ -96,5 +132,22 @@ namespace MiniEngine
 
 		AnimStateMachine m_baseTrack; // 로코모션 루프용
 		AnimLayer m_overrideTrack;	// 단발 액션 오버라이드용
+
+		// IK
+		// m_globalPose의 값을 in-place로 변경. SolveIKAndRefresh에서 사용
+		void ApplyIKGoals(const Skeleton& _skeleton, const HumanoidBoneMap& _map);
+		void RefreshIKAny();
+		void BindGlobal(int _boneIdx, const Skeleton& _inSkeleton, Matrix& _out) const;
+		bool BindPole(const Skeleton& _skeleton, int _upperBone, int _lowerBone, int _endBone, Vector3& _outPole) const;
+		
+		// 본 원점을 피벗으로 한 회전
+		void RotateGlobalInPlace(Matrix& _global, const Quaternion& _delta);
+
+		// 컴파일 타임 배열 -> 런타임 중 사이즈 수정 불가
+		std::array<IKGoal, static_cast<size_t>(HumanoidBone::Count)> m_ikGoals{};
+		std::unordered_map<HumanoidBone, TwoBoneIKBinding> m_mapIKBinding; // ik의 경우 동적이기 보단 이미 초기화 시 정해져 있을 것
+
+		Vector3 m_ikPelvisOffset{ 0.0f, 0.0f, 0.0f };
+		bool m_bUseIK{ false };
 	};
 }

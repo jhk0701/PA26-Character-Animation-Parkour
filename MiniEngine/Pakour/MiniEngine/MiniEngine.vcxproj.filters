@@ -343,6 +343,9 @@
     <ClInclude Include="Core\DebugMarkers.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\IK.h">
+      <Filter>Engine\03.Asset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -545,6 +548,9 @@
     </ClCompile>
     <ClCompile Include="Core\DebugMarkers.cpp">
       <Filter>Engine\02.Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\IK.cpp">
+      <Filter>Engine\03.Asset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
