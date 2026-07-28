@@ -117,12 +117,9 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	{
 		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 		
-		ETagAct recommanded = (ETagAct)_info.m_actTag;
+		// ETagAct recommanded = (ETagAct)_info.m_actTag;
 		uint8_t actTag = 0;
-
-		if (recommanded == ETagAct::VaultHigh || recommanded == ETagAct::MantleHigh || recommanded == ETagAct::Wall)
-			actTag = _info.m_actTag;
-		else if(_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
+		if(_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
 			actTag = (uint8_t)ETagAct::Beam_StandToIdle;
 			
 		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))

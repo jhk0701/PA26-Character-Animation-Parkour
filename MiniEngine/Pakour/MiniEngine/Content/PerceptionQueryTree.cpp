@@ -268,10 +268,6 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		{
 			TravelResult result;
 			result.m_bIsEmpty = false;
-			/*
-			result.m_actTag = _context.m_predictedActTag;
-			result.m_units = _context.m_units;
-			*/
 			result.m_pFirstObstacle = _context.m_pFirstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_firstObstacleHitNrm = _context.m_firstObstacleHitNrm;
@@ -386,15 +382,14 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						RaycastResult result;
 						bool bIsLandable = _ctx.m_physics->Raycast(param, result, ToMask(Layer::Obstacle));
 
-						// TODO : depth 측정 방식 변경 필요
-						// TODO : 상징 수치 변경 필요
-						_ctx.m_depth = bIsLandable ?  10.0f : MIN_MANTLE_DEPTH_THRESHOLD;
-
 						if (bIsLandable)
 							MG_LOG_INFO("[QueryTree] Mantle");
 						else
 							MG_LOG_INFO("[QueryTree] Vault");
 
+						// TODO : depth 측정 방식 변경 필요
+						// TODO : 상징 수치 변경 필요
+						_ctx.m_depth = bIsLandable ? MIN_MANTLE_DEPTH_THRESHOLD : -MIN_MANTLE_DEPTH_THRESHOLD;
 						return bIsLandable;
 					},
 					pReturn,
@@ -416,9 +411,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					RaycastResult result;
 					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge));
 
-					const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
+					// const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
 					const Vector3& OBS_POS = pObs->GetTransform().position;
-					bool bStepable = OBS_POS.y <= CHAR_POS.y;
+					// bool bStepable = OBS_POS.y <= CHAR_POS.y;
 					// _ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = bIsHit ? result.m_pos.y : OBS_POS.y;
 
@@ -426,7 +421,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const Vector3 DebugVec = { _ctx.m_firstObstacleHitPos.x, _ctx.m_ledge, _ctx.m_firstObstacleHitPos.z };
 					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : ({}, {}, {}) {}", DebugVec.x, DebugVec.y, DebugVec.z, bStepable ? "will step" : "will hang");
 					*/
-					return bStepable;
+					return true;
 				},
 				pReturn,
 				pReturn
