@@ -48,7 +48,7 @@ public:
 
 	struct PerceptedObstacleInfo
 	{
-		uint8_t m_actTag;
+		// uint8_t m_actTag;
 		IObstacle* m_pObstacle{ nullptr };
 		float m_obstacleDistance{ 0.0f };
 		float m_obstacleLedge{ 0.0f };

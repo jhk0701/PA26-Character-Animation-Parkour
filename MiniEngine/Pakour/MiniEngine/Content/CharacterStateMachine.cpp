@@ -55,8 +55,23 @@ std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	uint8_t actTag = 0;
 
-	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(_info.m_actTag))
+	// 기준 값들은 튜닝가능하게 외부로 별도로 데이터화
+	float diffHeight = _info.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
+	if (diffHeight > 0)
+	{
+		// 올라가야함
+		if (diffHeight > 3.0f)
+			actTag = (uint8_t)Content::Config::ETagAct::Wall;
+		
+	}
+	else 
+	{
+		// 내려라가야함
+	}
+
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
 		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
 }
 
