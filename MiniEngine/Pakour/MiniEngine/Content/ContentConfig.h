@@ -1,10 +1,22 @@
 #pragma once
 
-namespace Content::Config 
+namespace Content::Config
 {
 	inline constexpr uint8_t TAG_ENV		= 0;
 	inline constexpr uint8_t TAG_ENV_DETAIL	= 1;
 	inline constexpr uint8_t TAG_SUB_INFO	= 2;
+
+	// 일반 장애물 측량 파라미터
+	// 측정(PerceptionQueryTree)과 분류(CharacterState)가 같은 값을 봐야 하므로 공유 헤더에 둔다
+	inline constexpr float   HEIGHT_PROBE_RADIUS	= 0.5f;	// STEP 과 커플링 — 함께 바꿀 것
+	inline constexpr float   HEIGHT_PROBE_STEP		= 1.0f;	// = RADIUS * 2 여야 밴드가 틈/중복 없이 접한다
+	inline constexpr uint8_t HEIGHT_PROBE_MAX_BAND	= 3;	// 3.0m 이상은 벽으로 보고 매달린다
+	inline constexpr float   HEIGHT_PROBE_FORWARD	= 0.1f;	// 스윕이 eMTD 라 초기 겹침도 히트 — 짧아도 된다
+	inline constexpr float   DEPTH_PROBE_STEP		= 0.5f;
+	inline constexpr uint8_t DEPTH_PROBE_MAX_STEP	= 2;	// 최대 1.0m 까지만 잰다
+	inline constexpr float   DEPTH_PROBE_DOWN_DIST	= 2.0f;
+	inline constexpr float   DEPTH_PROBE_LIFT		= 0.05f;// 꼭대기 표면에서 시작하는 퇴화 방지
+	inline constexpr float   MIN_MANTLE_DEPTH		= 1.0f;	// 이 값 이상이어야 Mantle, 미만은 Vault
 
 	enum class ETagEnv : uint8_t
 	{
