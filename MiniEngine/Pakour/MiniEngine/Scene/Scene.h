@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <vector>
 #include <memory>
 #include <type_traits>
@@ -58,6 +58,7 @@ namespace MiniEngine
         const std::vector<std::shared_ptr<Actor>>& GetActors() const { return m_actors; }
         std::weak_ptr<Physics::PhysicsWorld> GetPhysics() const { return m_physics; };
 
+        void ApplyMarkerDebug(bool _enable);
         void ApplyPhysicsDebug(bool _enable);
 
     protected:
@@ -79,8 +80,11 @@ namespace MiniEngine
         void WriteCameraData(Graphics::RenderContext& _outContext);
         void WriteFrameCB(Graphics::RenderContext& _outContext);
 
+        // 디버깅 렌더러
+        bool m_bMarkerDebug{ false };
+
         // 물리엔진 디버깅 렌더러
-        bool m_PhysicsDebug{ false };
+        bool m_bPhysicsDebug{ false };
         MiniEngine::DebugDrawer m_debugDraw;
         std::vector<MiniEngine::DebugLine> m_debugLines;
     };

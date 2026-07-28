@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 #include "DirectXBase.h"
 #include "Editor/EditorUI.h"
@@ -26,8 +26,6 @@ public:
 private:
 	// Lambert 셰이더 + 상수버퍼 생성.
 	bool InitRenderResources();
-	// 주어진 .mini 를 로드해 씬에 메시 Actor 로 스폰(Baker "Bake & Load" 소비).
-	bool SpawnMeshFromMini(const std::wstring& _miniPath);
 
 	// 에디터 UI
 	MiniEngine::Editor::EditorUI				m_editor;

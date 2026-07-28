@@ -265,7 +265,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<ConditionNode> pStateBeam = std::make_shared<ConditionNode>();
 
 	// Protrude
-	std::shared_ptr<ConditionNode> pStateProtrude = std::make_shared<ConditionNode>();
+	std::shared_ptr<SelectorNode> pStateProtrude = std::make_shared<SelectorNode>();
 
 	// Leaf
 	std::shared_ptr<LeafNode> pEmpty = std::make_shared<LeafNode>(); // 빈 결과 리턴, 탐색 계속 신호
@@ -782,7 +782,15 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	);
 
 	// 키 입력 기준 상하좌우 방향 탐색
-	// pStateProtrude
+	pStateProtrude->SetCondition(
+		[](TravelContext& _ctx)
+		{
+			return 0;
+		}, 
+		{
+			pEmpty	
+		}
+	);
 
 	return pRootQuery;
 }

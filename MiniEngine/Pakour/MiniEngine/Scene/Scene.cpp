@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
 #include "Core/Graphics.h"
 #include "Scene/Scene.h"
 #include "Scene/CameraComponent.h"
@@ -58,6 +59,9 @@ namespace MiniEngine
 
     void Scene::Tick(float _dt)
     {
+        if (m_bMarkerDebug)
+            MiniEngine::Debug::NewFrame(_dt);
+
         for (std::shared_ptr<Actor>& actor : m_actors)
             actor->Tick(_dt);
     }
@@ -71,11 +75,16 @@ namespace MiniEngine
             actor->Render(_context);
 
 #ifdef MG_DEBUG || WITH_EDITOR
-        if (m_PhysicsDebug)
+        if (m_bPhysicsDebug || m_bMarkerDebug)
         {
             m_debugLines.clear();
-            m_physics->CollectDebugLines(m_debugLines);
 
+            if (m_bPhysicsDebug)
+                m_physics->CollectDebugLines(m_debugLines);
+
+            if (m_bMarkerDebug)
+                MiniEngine::Debug::Collect(m_debugLines);
+            
             std::shared_ptr<CameraComponent> mainCam = GetMainCamera().lock();
             m_debugDraw.Draw(m_debugLines, mainCam->GetViewMatrix() * mainCam->GetProjectionMatrix());
         }
@@ -90,12 +99,22 @@ namespace MiniEngine
         m_physics->Shutdown();
     }
 
-    void Scene::ApplyPhysicsDebug(bool _enable)
+    void Scene::ApplyMarkerDebug(bool _enable)
     {
-        if (m_PhysicsDebug == _enable)
+        if (m_bMarkerDebug == _enable)
             return;
 
-        m_PhysicsDebug = _enable;
+        m_bMarkerDebug = _enable;
+
+        MG_LOG_INFO("[Scene]::Apply Marker Debug {}", _enable ? "On" : "Off");
+    }
+
+    void Scene::ApplyPhysicsDebug(bool _enable)
+    {
+        if (m_bPhysicsDebug == _enable)
+            return;
+
+        m_bPhysicsDebug = _enable;
         
         m_physics->SetDebugVisualization(_enable);
         m_physics->SetDrawQueries(_enable);

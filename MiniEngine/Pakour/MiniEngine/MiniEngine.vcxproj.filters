@@ -340,6 +340,9 @@
     <ClInclude Include="Content\CharacterState\ProtrudeState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
+    <ClInclude Include="Core\DebugMarkers.h">
+      <Filter>Engine\02.Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -539,6 +542,9 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterState\ProtrudeState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DebugMarkers.cpp">
+      <Filter>Engine\02.Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
