@@ -69,6 +69,7 @@ public:
 	virtual void OnBeforeSortComponent() override;
 
 	virtual void Tick(float _dt) override;
+	virtual void LateTick(float _dt) override;
 
 
 	void TryPerception();
@@ -149,7 +150,7 @@ private:
 	
 	std::weak_ptr<FootIKComponent> m_footIK;
 
-
 	IKHandle m_hLeftLeg;
+	float m_sinElpased{ 0.0f };
 };
 

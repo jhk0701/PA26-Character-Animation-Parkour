@@ -88,15 +88,11 @@ void Character::Construct(const Vector3& _initPosition)
 	}
 	{
 		// 캐릭터 IK 설정
-		{
-			m_hLeftLeg.m_binding.upper = HumanoidBone::LeftUpperLeg;
-			m_hLeftLeg.m_binding.lower = HumanoidBone::LeftLowerLeg;
-			m_hLeftLeg.m_binding.end = HumanoidBone::LeftFoot;
-			m_hLeftLeg.m_targetPos = GetRoot()->localTransform.position + Vector3(-0.3f, 0.0f, 0.0f);
-		}
-		
-		// std::shared_ptr<FootIKComponent> pFootIK = AddComponent<FootIKComponent>();
-		// m_footIK = pFootIK;
+		m_hLeftLeg.m_binding.upper =	HumanoidBone::LeftUpperLeg;
+		m_hLeftLeg.m_binding.lower =	HumanoidBone::LeftLowerLeg;
+		m_hLeftLeg.m_binding.end =		HumanoidBone::LeftFoot;
+		m_hLeftLeg.m_targetPos = GetRoot()->localTransform.position + Vector3(-0.3f, 0.0f, 0.0f);
+		m_hLeftLeg.m_alpha = 1.0f;
 	}
 
 	pRoot->localTransform.position = _initPosition;
@@ -135,8 +131,18 @@ void Character::OnBeforeSortComponent()
 void Character::Tick(float _dt)
 {
 	Pawn::Tick(_dt);
+}
+
+void Character::LateTick(float _dt)
+{
+	m_sinElpased += _dt;
+	m_hLeftLeg.m_targetPos.y = std::abs(std::sin(m_sinElpased));
+	m_hLeftLeg.m_targetPos.z = 1.0f;
+	MiniEngine::Debug::DrawPoint(m_hLeftLeg.m_targetPos, MiniEngine::DebugColor::RED, 0.1f, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
 
 	GetSkin().lock()->SetIKGoalWorld(m_hLeftLeg.m_binding, m_hLeftLeg.m_targetPos, m_hLeftLeg.m_alpha);
+
+	Pawn::LateTick(_dt);
 }
 
 void Character::TryPerception()

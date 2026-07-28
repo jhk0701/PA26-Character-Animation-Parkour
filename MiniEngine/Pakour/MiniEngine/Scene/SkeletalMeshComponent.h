@@ -25,12 +25,15 @@ namespace MiniEngine
 
         void SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh);
         void SetColor(const Vector3& _col) { m_color = _col; }
+
         std::weak_ptr<SkinnedMesh> GetMesh() const { return m_mesh; }
         std::weak_ptr<Animator> GetAnim() const { return m_anim; }
 
         // 렌더러가 b2 에 업로드할 본 최종 행렬 (본 개수만큼).
         std::vector<Matrix>* GetBoneMatricesPtr() { return &m_boneMatrices; }
         
+        void SampleAnimation(float _dt);
+
         RootMotionDelta ConsumeRootMotionDelta();
         bool IsRootMotionEnabled() const;
 
@@ -58,8 +61,8 @@ namespace MiniEngine
         void SolveIK();
 
     private:
-        std::shared_ptr<SkinnedMesh> m_mesh;    // 스킨 메시 소유
         Vector3 m_color{ 0.5f, 0.7f, 0.5f };
+        std::shared_ptr<SkinnedMesh> m_mesh;    // 스킨 메시 소유
 
         std::shared_ptr<Animator> m_anim;       // 본 애니메이션용
         std::vector<Matrix> m_boneMatrices;     // 스키닝 최종 행렬

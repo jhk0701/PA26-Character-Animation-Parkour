@@ -48,9 +48,7 @@ namespace MiniEngine
 		if (m_baseTrack.IsValid() == false)
 			return;
 
-		const Skeleton& skeleton = GetSkeleton();
-
-		m_baseTrack.Update(_dt, skeleton, m_poseTarget);
+		m_baseTrack.Update(_dt, GetSkeleton(), m_poseTarget);
 	}
 
 	void Animator::SampleOverrideTrack(float _dt)
@@ -391,15 +389,17 @@ namespace MiniEngine
 	void Animator::RefreshIKAny()
 	{
 		m_bUseIK = m_ikPelvisOffset.LengthSquared() > 1e-12f;
-		
-		if (m_bUseIK) return;
+		if (m_bUseIK) 
+			return;
 
 		for (const IKGoal& g : m_ikGoals)
-			if (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f) 
-			{ 
+		{
+			if (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f)
+			{
 				m_bUseIK = true;
-				return; 
+				return;
 			}
+		}
 	}
 
 

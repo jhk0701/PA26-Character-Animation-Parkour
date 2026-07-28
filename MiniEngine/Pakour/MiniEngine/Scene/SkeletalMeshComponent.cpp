@@ -25,7 +25,8 @@ namespace MiniEngine
         if (!m_mesh || !m_anim)
             return;
 
-        m_anim->Update(_dt);
+        // 현재 애니메이션 샘플링
+        SampleAnimation(_dt);
     }
 
     void SkeletalMeshComponent::LateTick(float _dt)
@@ -104,7 +105,13 @@ namespace MiniEngine
         pContext->DrawIndexed(m_mesh->GetIndexCount(), 0, 0);
     }
 
-    RootMotionDelta SkeletalMeshComponent::ConsumeRootMotionDelta() 
+    void SkeletalMeshComponent::SampleAnimation(float _dt)
+    {
+        m_anim->Update(_dt);
+    }
+
+
+    RootMotionDelta SkeletalMeshComponent::ConsumeRootMotionDelta()
     {
         return m_anim->ConsumeRootMotionDelta();
     }
@@ -189,8 +196,6 @@ namespace MiniEngine
 
     void SkeletalMeshComponent::SolveIK()
     {
-        MG_LOG_INFO("[SkeletalMeshComponent]::SolveIK");
-
         m_anim->SolveIKAndRefresh(m_mesh.get());
     }
 

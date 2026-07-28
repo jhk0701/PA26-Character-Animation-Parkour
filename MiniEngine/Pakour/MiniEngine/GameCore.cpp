@@ -191,7 +191,7 @@ void GameCore::Update(float _dt)
 #endif
     
     // Actor/컴포넌트 Tick 전파.
-    pScnMgr->Update(_dt); 
+    pScnMgr->Update(_dt);
     pScnMgr->LateUpdate(_dt);
 }
 
