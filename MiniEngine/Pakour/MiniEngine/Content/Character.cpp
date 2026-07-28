@@ -202,7 +202,7 @@ void Character::AddMovementInput(const Vector3& _moveDelta)
 
 void Character::SetPosition(const Vector3& _newPos)
 {
-	m_charCont.lock()->SetPosition(_newPos + Vector3(0.0f, GetCapsuleHalfHeight(), 0.0f));
+	m_charCont.lock()->SetPosition(_newPos);
 }
 
 void Character::ClearMovement()

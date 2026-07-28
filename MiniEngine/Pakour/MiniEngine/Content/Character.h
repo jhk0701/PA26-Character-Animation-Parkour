@@ -71,7 +71,6 @@ public:
 	virtual void Tick(float _dt) override;
 	virtual void LateTick(float _dt) override;
 
-
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
 
@@ -113,11 +112,11 @@ public:
 	bool IsGrounded() const;
 	void SetUseGravity(bool _bUse);
 
-	// 상태머신
-	void TransitionStateMachine(uint8_t _state);
-	
 	// 지형 인식
 	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
+
+	// 상태머신
+	void TransitionStateMachine(uint8_t _state);
 
 private:
 	void InitCollisionLayer();
@@ -148,8 +147,7 @@ private:
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	PerceptedObstacleInfo m_curObstacleInfo;
 	
-	std::weak_ptr<FootIKComponent> m_footIK;
-
+	// IK 테스트
 	IKHandle m_hLeftLeg;
 	float m_sinElpased{ 0.0f };
 };

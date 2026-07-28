@@ -170,7 +170,7 @@ namespace MiniEngine
 
 	void CharacterControllerComponent::SetPosition(const Vector3& _newPos)
 	{
-		m_controller->setPosition(physx::PxExtendedVec3(_newPos.x, _newPos.y, _newPos.z));
+		m_controller->setFootPosition(physx::PxExtendedVec3(_newPos.x, _newPos.y, _newPos.z));
 	}
 
 	Vector3 CharacterControllerComponent::GetFootPosition() const
