@@ -14,7 +14,6 @@ namespace MiniEngine
 	class CharacterControllerComponent : public Component
 	{
 	public:
-        void FixedTick(float _dt) override;
         void Tick(float _dt) override;
 
 		void Init(Physics::PhysicsWorld& _world, const Physics::CapsuleControllerDesc& _desc,

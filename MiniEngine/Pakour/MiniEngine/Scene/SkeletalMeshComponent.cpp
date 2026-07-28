@@ -9,7 +9,13 @@ using namespace MiniEngine::Graphics;
 
 namespace MiniEngine
 {
-    SkeletalMeshComponent::SkeletalMeshComponent() { }
+    SkeletalMeshComponent::SkeletalMeshComponent() 
+    {
+        // 일반 컴포넌트의 정렬 순서는 0
+        // 애니메이션 등 초기화를 이유로 먼저 Tick 되도록 설정
+        SetSortOrder(1); 
+    }
+
     void SkeletalMeshComponent::SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh)
     {
         m_mesh = _mesh;
@@ -27,6 +33,14 @@ namespace MiniEngine
             return;
 
         m_anim->Update(_dt);
+    }
+
+    void SkeletalMeshComponent::LateTick(float _dt)
+    {
+        SceneComponent::LateTick(_dt);
+
+        // 캐릭터의 움직임, 애니메이션 연산이 끝나고 IK 적용
+        SolveIK();
     }
 
     void SkeletalMeshComponent::Render(Graphics::RenderContext& _context)

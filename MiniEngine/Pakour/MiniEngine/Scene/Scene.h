@@ -47,6 +47,8 @@ namespace MiniEngine
         virtual void BeginPlay();
         virtual void FixedTick(float _dt);
         virtual void Tick(float _dt);
+        virtual void LateTick(float _dt);
+
         virtual void Render(Graphics::RenderContext& _context);
         virtual void EndPlay();
 

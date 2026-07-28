@@ -113,6 +113,9 @@
     <Filter Include="Engine\07.Object\Interface">
       <UniqueIdentifier>{85c544df-6a01-489b-bb7c-044bbaf9f18e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Animation\IK">
+      <UniqueIdentifier>{37b13630-9b42-450a-b4ed-f2f60de759a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -346,6 +349,9 @@
     <ClInclude Include="Asset\IK.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
+    <ClInclude Include="Animation\IK\FootIKComponent.h">
+      <Filter>Engine\07.Object\Animation\IK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -551,6 +557,9 @@
     </ClCompile>
     <ClCompile Include="Asset\IK.cpp">
       <Filter>Engine\03.Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\IK\FootIKComponent.cpp">
+      <Filter>Engine\07.Object\Animation\IK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

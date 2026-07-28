@@ -21,6 +21,8 @@ namespace MiniEngine
         SkeletalMeshComponent();
 
         void Tick(float _dt) override; // 애니메이터를 통해 본 최종 행렬(inverseBindPose * global) 갱신
+        void LateTick(float _dt) override;
+
         void Render(Graphics::RenderContext& _context) override;
 
         void SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh);

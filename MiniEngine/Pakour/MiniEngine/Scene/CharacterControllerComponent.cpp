@@ -15,17 +15,13 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
-	void CharacterControllerComponent::FixedTick(float _dt)
-	{
-		Component::FixedTick(_dt);
-
-		Move(_dt);
-		SyncTransform();
-	}
-
 	void CharacterControllerComponent::Tick(float _dt)
 	{
 		Component::Tick(_dt);
+
+		// Tick에서 루트모션 연산이 끝나고 호출할 수 있도록 LateTick 적용
+		Move(_dt);
+		SyncTransform();
 
 		CheckFalling(_dt);
 	}

@@ -24,10 +24,15 @@ void CharacterController::Construct()
 	m_camHolder = pCamHolder;
 }
 
-void CharacterController::Tick(float _dt)
+//void CharacterController::Tick(float _dt)
+//{
+//	Controller::Tick(_dt);
+//}
+
+void CharacterController::LateTick(float _dt)
 {
-	Controller::Tick(_dt);
-	
+	Controller::LateTick(_dt);
+
 	FollowPawn(_dt);
 	RotateCamera(_dt);
 }

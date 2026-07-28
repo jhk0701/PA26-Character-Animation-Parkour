@@ -43,6 +43,14 @@ namespace MiniEngine
 		m_pCurScene->Tick(_dt);
 	}
 
+	void SceneManager::LateUpdate(float _dt)
+	{
+		if (!m_pCurScene)
+			return;
+
+		m_pCurScene->LateTick(_dt);
+	}
+
 	void SceneManager::Render(Graphics::RenderContext& _context)
 	{
 		if (!m_pCurScene)

@@ -16,9 +16,10 @@ namespace MiniEngine
     public:
         virtual ~Actor() = default;
 
-        virtual void BeginPlay() {}
-        virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
+        virtual void BeginPlay();
         virtual void FixedTick(float _dt); // 물리 호출용 FixedTick
+        virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
+        virtual void LateTick(float _dt);
         virtual void Render(Graphics::RenderContext& _context);
         virtual void EndPlay() {}
 
@@ -46,13 +47,19 @@ namespace MiniEngine
 
         Tag& GetTag() { return m_tag; }
 
+        // Tick 관련 설정
+        void SetTickConfig(bool _bUseFixedTick, bool _bUseTick, bool _bUseLateTick);
+
     private:
         Tag m_tag;
-
         std::weak_ptr<Scene> m_scene;
         std::vector<std::shared_ptr<Component>> m_components;
         std::weak_ptr<SceneComponent> m_root;
         std::string m_name = "Actor";
+
+        bool m_bUseFixedTick{ true };
+        bool m_bUseTick{ true };
+        bool m_bUseLateTick{ true };
     };
 
     template<typename T, typename ...Args>

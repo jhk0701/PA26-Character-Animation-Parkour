@@ -8,7 +8,8 @@ class CharacterController : public MiniEngine::Controller
 {
 public:
 	void Construct() override;
-	void Tick(float _dt) override;
+	// void Tick(float _dt) override;
+	void LateTick(float _dt) override;
 
 	// 카메라
 	std::weak_ptr<MiniEngine::SceneComponent> GetCamHolder() const { return m_camHolder; }

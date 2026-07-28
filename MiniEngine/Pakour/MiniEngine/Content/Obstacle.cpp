@@ -71,6 +71,8 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
 		);
 	}
+
+	SetTickConfig(true, true, false);
 }
 
 void Obstacle::AddLedge(std::shared_ptr<Actor> _pTarget, 

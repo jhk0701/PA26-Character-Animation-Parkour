@@ -52,9 +52,7 @@ namespace MiniEngine
         }
 
         for (std::shared_ptr<Actor> pActor : GetActors())
-        {
             pActor->FixedTick(_dt);
-        }
     }
 
     void Scene::Tick(float _dt)
@@ -62,8 +60,14 @@ namespace MiniEngine
         if (m_bMarkerDebug)
             MiniEngine::Debug::NewFrame(_dt);
 
-        for (std::shared_ptr<Actor>& actor : m_actors)
-            actor->Tick(_dt);
+        for (std::shared_ptr<Actor>& pActor : m_actors)
+            pActor->Tick(_dt);
+    }
+
+    void Scene::LateTick(float _dt)
+    {
+        for (std::shared_ptr<Actor>& pActor : m_actors)
+            pActor->LateTick(_dt);
     }
 
     void Scene::Render(Graphics::RenderContext& _context)
@@ -71,8 +75,8 @@ namespace MiniEngine
         WriteCameraData(_context);
         WriteFrameCB(_context); // 라이트 등
 
-        for (std::shared_ptr<Actor>& actor : m_actors)
-            actor->Render(_context);
+        for (std::shared_ptr<Actor>& pActor : m_actors)
+            pActor->Render(_context);
 
 #ifdef MG_DEBUG || WITH_EDITOR
         if (m_bPhysicsDebug || m_bMarkerDebug)
@@ -93,8 +97,8 @@ namespace MiniEngine
 
     void Scene::EndPlay()
     {
-        for (std::shared_ptr<Actor>& actor : m_actors)
-            actor->EndPlay();
+        for (std::shared_ptr<Actor>& pActor : m_actors)
+            pActor->EndPlay();
 
         m_physics->Shutdown();
     }

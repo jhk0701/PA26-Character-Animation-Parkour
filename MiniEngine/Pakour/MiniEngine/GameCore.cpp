@@ -181,7 +181,7 @@ void GameCore::Update(float _dt)
 {
     SceneManager* pScnMgr = SceneManager::GetInstance();
     
-    pScnMgr->FixedUpdate(_dt); // 물리연산 처리
+    pScnMgr->FixedUpdate(_dt); // 물리연산 처리용
 
     InputManager::GetInstance()->Update(_dt); // 입력 처리
 
@@ -190,7 +190,9 @@ void GameCore::Update(float _dt)
     const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
 #endif
     
-    pScnMgr->Update(_dt); // Actor/컴포넌트 Tick 전파.
+    // Actor/컴포넌트 Tick 전파.
+    pScnMgr->Update(_dt); 
+    pScnMgr->LateUpdate(_dt);
 }
 
 void GameCore::Render()

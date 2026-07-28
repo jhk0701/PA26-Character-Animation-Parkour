@@ -16,6 +16,8 @@ namespace MiniEngine
 		void BeginPlay();
 		void FixedUpdate(float _dt);
 		void Update(float _dt);
+		void LateUpdate(float _dt);
+
 		void Render(Graphics::RenderContext& _context);
 		void EndPlay();
 
