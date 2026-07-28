@@ -108,12 +108,12 @@ namespace MiniEngine
 		const Vector3 BEND_DIR = bendNormal.Cross(dir); // dir에 수직, 폴 쪽 반 평면
 
 		// upper 관절 개방각
-		float cosA = (LEN_U * LEN_U + DIST * DIST + LEN_L * LEN_L) / 2.0f * LEN_U * DIST;
-		cosA = max(-1.0, min(1.0f, cosA));
+		float cosA = (LEN_U * LEN_U + DIST * DIST - LEN_L * LEN_L) / (2.0f * LEN_U * DIST);
+		cosA = max(-1.0f, min(1.0f, cosA));
 		const float ANGLE_A = std::acos(cosA);
 
 		const Vector3 NEW_LOWER = _inBone.upperPos + (dir * cos(ANGLE_A) + BEND_DIR * sin(ANGLE_A)) * LEN_U;
-		const Vector3 NEW_END = _inBone.endPos + dir * DIST;
+		const Vector3 NEW_END = _inBone.upperPos + dir * DIST;
 
 		// 위치 -> 델타 회전
 		const Quaternion Q_U = FromToRotation(_inBone.lowerPos - _inBone.upperPos, NEW_LOWER - _inBone.upperPos);

@@ -208,7 +208,11 @@ namespace MiniEngine
 		if (_end == HumanoidBone::None || _end >= HumanoidBone::Count)
 			return nullptr;
 
-		const IKGoal& g = m_mapIKBinding.at(_end).goal;
+		const auto IT = m_mapIKBinding.find(_end);
+		if (IT == m_mapIKBinding.end())
+			return nullptr;
+
+		const IKGoal& g =  IT->second.goal;
 		return (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f) ? &g : nullptr;
 	}
 
@@ -308,7 +312,7 @@ namespace MiniEngine
 		}
 
 		// end들 goal에 대한 연산
-		for (const std::pair<HumanoidBone, IKData>& p : m_mapIKBinding)
+		for (const std::pair<const HumanoidBone, IKData>& p : m_mapIKBinding)
 		{
 			const IKGoal& GOAL = p.second.goal;
 			if (GOAL.positionAlpha <= 0.0f && GOAL.rotationAlpha <= 0.0f)
@@ -351,7 +355,6 @@ namespace MiniEngine
 				if (!bHasPole)
 					bHasPole = BindPole(_skeleton, UPPER_IDX, LOWER_IDX, END_IDX, pole);
 
-				Quaternion qU, qL;
 				TwoBoneIKTarget target;
 				target.targetPos = GOAL.position;
 				target.poleTargetPos = pole;
@@ -359,10 +362,10 @@ namespace MiniEngine
 				TwoBoneIKResult result;
 				if (bHasPole && SolveTwoBone(bone, target, result)) 
 				{
-					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(UPPER_IDX)], qU);
+					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(UPPER_IDX)], result.upperDelta);
 					_skeleton.RecomputeGlobalPoseFrom(m_localPose, UPPER_IDX + 1, m_globalPose);
 
-					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(LOWER_IDX)], qL);
+					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(LOWER_IDX)], result.lowerDelta);
 					_skeleton.RecomputeGlobalPoseFrom(m_localPose, LOWER_IDX + 1, m_globalPose);
 				}
 			}
@@ -389,7 +392,7 @@ namespace MiniEngine
 		if (m_bUseIK) 
 			return;
 
-		for (const std::pair<HumanoidBone, IKData>& p : m_mapIKBinding)
+		for (const std::pair<const HumanoidBone, IKData>& p : m_mapIKBinding)
 		{
 			if (p.second.goal.positionAlpha > 0.0f || p.second.goal.rotationAlpha > 0.0f)
 			{
