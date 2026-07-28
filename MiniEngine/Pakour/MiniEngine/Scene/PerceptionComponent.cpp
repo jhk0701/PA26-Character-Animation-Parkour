@@ -10,11 +10,12 @@ namespace MiniEngine
 	void TravelResult::Reset()
 	{
 		m_bIsEmpty = true;
-		m_actTag = 0;
 		m_pFirstObstacle = nullptr;
 		m_firstObstacleHitPos = Vector3(0.0f);
-		m_distanceObstacle = 0.0f;
+		m_firstObstacleHitNrm = Vector3(0.0f);
+		m_obstacleDistance = 0.0f;
 		m_obstacleLedge = 0.0f;
+		m_obstacleDepth = 0.0f;
 	}
 
 	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 
@@ -84,7 +85,6 @@ namespace MiniEngine
 		TravelContext context;
 		context.m_owner = owner.lock();
 		context.m_physics = context.m_owner->GetScene()->GetPhysics().lock();
-		context.m_units = 0;
 
 		m_result = m_queryTree->Execute(context);
 		return;

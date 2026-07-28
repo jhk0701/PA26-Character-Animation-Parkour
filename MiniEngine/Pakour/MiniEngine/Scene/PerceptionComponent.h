@@ -16,25 +16,20 @@ namespace MiniEngine
 		IObstacle* m_pFirstObstacle{ nullptr };
 		Vector3 m_firstObstacleHitPos;
 		Vector3 m_firstObstacleHitNrm;
-		uint8_t m_predictedActTag;
-		uint8_t m_units;
-		Vector3 m_raycastPos;
 		float m_distance{ 0.0f };
 		float m_ledge{ 0.0f };
-		bool m_bIsRight{ false };
+		float m_depth{ 0.0f };
 	};
 
 	struct TravelResult 
 	{
 		bool m_bIsEmpty{ true };
-		uint8_t m_actTag; // 탐색한 결과 취해야할 행동 태그
-		uint8_t m_units;
-		
 		IObstacle* m_pFirstObstacle{ nullptr };
-		float m_distanceObstacle{ 0.0f };
 		Vector3 m_firstObstacleHitPos;
 		Vector3 m_firstObstacleHitNrm;
+		float m_obstacleDistance{ 0.0f };
 		float m_obstacleLedge{ 0.0f };
+		float m_obstacleDepth{ 0.0f };
 
 		void Reset();
 	};

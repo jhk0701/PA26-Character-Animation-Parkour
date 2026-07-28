@@ -44,11 +44,6 @@ namespace Content::Config
 		VaultMid,
 		VaultHigh,
 
-		Hurdle, // 뛰어 넘고, 계속 달림 (장애물 너머가 평지인 경우)
-		HurdleLow = Hurdle,
-		HurdleMid,
-		HurdleHigh,
-
 		Mantle, // 높은 장애물, 기어 올라가야하는 경우
 		MantleLow = Mantle, // 오르기
 		MantleMid,

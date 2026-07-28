@@ -52,6 +52,7 @@ public:
 		IObstacle* m_pObstacle{ nullptr };
 		float m_obstacleDistance{ 0.0f };
 		float m_obstacleLedge{ 0.0f };
+		float m_obstacleDepth{ 0.0f };
 		Vector3 m_obstacleHitPos{ 0.0f };
 		Vector3 m_obstacleHitNrm{ 0.0f };
 

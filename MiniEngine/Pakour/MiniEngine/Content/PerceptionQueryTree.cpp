@@ -107,8 +107,6 @@ namespace
 				_context.m_firstObstacleHitNrm = r.m_nrm;
 				_context.m_distance = r.m_distance;
 				_context.m_ledge = r.m_pos.y;
-				_context.m_units = 1;
-				_context.m_raycastPos = r.m_pos;
 
 				break; // 순회 종료
 			}
@@ -126,8 +124,6 @@ namespace
 			_context.m_firstObstacleHitNrm = r.m_nrm;
 			_context.m_distance = r.m_distance;
 			_context.m_ledge = r.m_pos.y;
-			_context.m_units = 1; // 1 단위 확정
-			_context.m_raycastPos = r.m_pos;
 		}
 
 		return bIsHit;
@@ -154,14 +150,14 @@ namespace
 			bool bIsHit = _context.m_physics->CapsuleCast(param, result, ToMask(Layer::Obstacle));
 			if (bIsHit)
 			{
-				MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
+				// MG_LOG_INFO("[QueryTree] Obstacle hit on : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
 				// 이 높이에선 아직 닿음
-				_context.m_units++; // 단위 상승
+				// _context.m_units++; // 단위 상승
 				_context.m_ledge = rayPosition.y; // 대략적인 위치만 기입
 			}
 			else
 			{
-				MG_LOG_INFO("[QueryTree] Obstacle valutable : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
+				// MG_LOG_INFO("[QueryTree] Obstacle valutable : ({}, {}, {}), unit : {}", rayPosition.x, rayPosition.y, rayPosition.z, _context.m_units);
 				return true; // 이 높이에선 닿지 않음 -> 넘어갈 수 있음
 			}
 		}
@@ -189,19 +185,6 @@ namespace
 		}
 
 		return bIsHit;
-	}
-
-	bool CheckLandable(TravelContext& _context, const Vector3& _pos, uint32_t _layerMask, float _dist)
-	{
-		// climbing 테스트를 완료하고 호출될 것
-		// 아래방향을 향해 레이캐스트
-		RaycastParam rayParam;
-		rayParam.m_origin = _pos;
-		rayParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-		rayParam.m_maxDistance = _dist;
-
-		RaycastResult result;
-		return _context.m_physics->Raycast(rayParam, result, _layerMask);
 	}
 
 	// 양쪽 사이드 확인
@@ -285,12 +268,15 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		{
 			TravelResult result;
 			result.m_bIsEmpty = false;
+			/*
 			result.m_actTag = _context.m_predictedActTag;
 			result.m_units = _context.m_units;
+			*/
 			result.m_pFirstObstacle = _context.m_pFirstObstacle;
 			result.m_firstObstacleHitPos = _context.m_firstObstacleHitPos;
 			result.m_firstObstacleHitNrm = _context.m_firstObstacleHitNrm;
-			result.m_distanceObstacle = _context.m_distance;
+			result.m_obstacleDistance = _context.m_distance;
+			result.m_obstacleDepth = _context.m_depth;
 			result.m_obstacleLedge = _context.m_ledge;
 			return result;
 		}
@@ -354,18 +340,18 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const float CHAR_H = GetCharHeight(_ctx);
 					const Vector3& FWD = ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward();
 
-					bool bVaultable = CheckVaultable(_ctx, _ctx.m_raycastPos, FWD, CHAR_H);
+					bool bVaultable = CheckVaultable(_ctx, _ctx.m_firstObstacleHitPos, FWD, CHAR_H);
 					if (bVaultable == false)
 					{
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall;
 						return false;
 					}
 
 					// ledge 체크
 					const float RADIUS = CHAR_H * 0.25f;
 
-					Vector3 rayPosition = _ctx.m_raycastPos;
-					rayPosition.y += (_ctx.m_units - 1) * CHAR_H;
+					Vector3 rayPosition = _ctx.m_firstObstacleHitPos;
+					rayPosition.y = _ctx.m_ledge;
 
 					// 상반신 크기 확인
 					RaycastResult result;
@@ -388,23 +374,26 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					[](TravelContext& _ctx)
 					{
 						std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-						const float CHAR_H = GetCharHeight(_ctx);
 
-						Vector3 rayPosition = _ctx.m_raycastPos; // 최초 장애물 접촉점
-						rayPosition.y += _ctx.m_units * CHAR_H;
-						rayPosition += pChar->GetRoot()->localTransform.Forward() * MIN_MANTLE_DEPTH_THRESHOLD;
+						RaycastParam param;
+						param.m_origin = _ctx.m_firstObstacleHitPos; // 최초 장애물 접촉점
+						param.m_origin += pChar->GetRoot()->localTransform.Forward() * MIN_MANTLE_DEPTH_THRESHOLD;
+						param.m_origin.y += _ctx.m_ledge;
 						// MG_LOG_INFO("[QueryTree] Check Landable ({}, {}, {})", rayPosition.x, rayPosition.y, rayPosition.z);
+						param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+						param.m_maxDistance = 2.0f;
 
-						bool bIsLandable = CheckLandable(_ctx, rayPosition, ToMask(Layer::Obstacle), CHAR_H);
+						RaycastResult result;
+						bool bIsLandable = _ctx.m_physics->Raycast(param, result, ToMask(Layer::Obstacle));
 
-						// 원래는 여기서 Vault / Hurdle 중에 갈려야함
-						// 모션이 제한적이라 우선 Mantle, Vault를 사용
-						_ctx.m_predictedActTag = (uint8_t)(bIsLandable ? ETagAct::Mantle : ETagAct::Vault) + _ctx.m_units;
+						// TODO : depth 측정 방식 변경 필요
+						// TODO : 상징 수치 변경 필요
+						_ctx.m_depth = bIsLandable ?  10.0f : MIN_MANTLE_DEPTH_THRESHOLD;
 
 						if (bIsLandable)
-							MG_LOG_INFO("[QueryTree] Mantle + {}", _ctx.m_units);
+							MG_LOG_INFO("[QueryTree] Mantle");
 						else
-							MG_LOG_INFO("[QueryTree] Vault + {}", _ctx.m_units);
+							MG_LOG_INFO("[QueryTree] Vault");
 
 						return bIsLandable;
 					},
@@ -421,7 +410,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 					SpherecastParam param;
 					param.m_dir = pChar->GetRoot()->localTransform.Forward();
-					param.m_startPos = _ctx.m_raycastPos;
+					param.m_startPos = _ctx.m_firstObstacleHitPos;
 					param.m_radius = pChar->GetCapsuleRadius();
 					param.m_maxDistance = 1.0f;
 					RaycastResult result;
@@ -430,7 +419,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
 					const Vector3& OBS_POS = pObs->GetTransform().position;
 					bool bStepable = OBS_POS.y <= CHAR_POS.y;
-					_ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
+					// _ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = bIsHit ? result.m_pos.y : OBS_POS.y;
 
 					/*
@@ -452,7 +441,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					param.m_dir = pChar->GetRoot()->localTransform.Forward();
 					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
 					param.m_radius = 0.5f;
-					param.m_startPos = _ctx.m_raycastPos;
+					param.m_startPos = _ctx.m_firstObstacleHitPos;
 					
 					RaycastResult result;
 					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge));
@@ -461,7 +450,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						_ctx.m_ledge = result.m_pos.y;
 						_ctx.m_firstObstacleHitNrm = result.m_nrm;
 
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Protrude;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Protrude;
 					}
 
 					return bIsHit; 
@@ -524,7 +513,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 					SpherecastParam param;
 					param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-					param.m_startPos = _ctx.m_raycastPos - TF.Forward();
+					param.m_startPos = _ctx.m_firstObstacleHitPos - TF.Forward();
 					param.m_radius = pChar->GetCapsuleRadius();
 					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
 
@@ -533,7 +522,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					if (bIsHit == false)
 					{
 						// MG_LOG_INFO("[QueryTree] Can detour");
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 
 						// Ledge 찾기
 						if (bIsHit = CheckLedge(_ctx, param.m_startPos, param.m_dir, param.m_radius * 2.0f, result))
@@ -564,7 +553,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 						_ctx.m_ledge = result.m_pos.y;
 
 						// MG_LOG_INFO("[QueryTree] Wall Ledge Climb");
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 					}
 
 					return bIsHit;
@@ -610,13 +599,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					if (bHasTag == false || t == (uint8_t)ETagEnvDetail::Default)
 					{
 						MG_LOG_INFO("[QueryTree] Hang to idle");
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
 					}
 					else
 					{
 						MG_LOG_INFO("[QueryTree] Hang to Beam");
 						// 내려가는 절차이므로 stand로 통일
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Beam_IdleToStand;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Beam_IdleToStand;
 					}
 
 					return 0;
