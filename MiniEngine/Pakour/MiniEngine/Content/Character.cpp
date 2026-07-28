@@ -16,6 +16,7 @@
 #include "Scene/CharacterControllerComponent.h"
 #include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
+#include "Animation/IK/FootIKComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/ActionClipContainer.h"
@@ -85,6 +86,18 @@ void Character::Construct(const Vector3& _initPosition)
 			});
 		m_charFSM = pCharFSM;
 	}
+	{
+		// 캐릭터 IK 설정
+		{
+			m_hLeftLeg.m_binding.upper = HumanoidBone::LeftUpperLeg;
+			m_hLeftLeg.m_binding.lower = HumanoidBone::LeftLowerLeg;
+			m_hLeftLeg.m_binding.end = HumanoidBone::LeftFoot;
+			m_hLeftLeg.m_targetPos = GetRoot()->localTransform.position + Vector3(-0.3f, 0.0f, 0.0f);
+		}
+		
+		// std::shared_ptr<FootIKComponent> pFootIK = AddComponent<FootIKComponent>();
+		// m_footIK = pFootIK;
+	}
 
 	pRoot->localTransform.position = _initPosition;
 
@@ -111,6 +124,20 @@ void Character::BeginPlay()
 	InitCollisionLayer();
 }
 
+void Character::OnBeforeSortComponent()
+{
+	Pawn::OnBeforeSortComponent();
+
+	// 컴포넌트 우선순위 설정
+	m_skinMeshComp.lock()->SetSortOrder(2); 
+}
+
+void Character::Tick(float _dt)
+{
+	Pawn::Tick(_dt);
+
+	GetSkin().lock()->SetIKGoalWorld(m_hLeftLeg.m_binding, m_hLeftLeg.m_targetPos, m_hLeftLeg.m_alpha);
+}
 
 void Character::TryPerception()
 {

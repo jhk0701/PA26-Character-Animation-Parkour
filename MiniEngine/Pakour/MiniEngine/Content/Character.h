@@ -2,6 +2,7 @@
 #include "Scene/Pawn.h"
 #include "Scene/PerceptionComponent.h"
 #include "Content/PerceptionQueryTree.h"
+#include "Animation/Animator.h"
 
 #include <unordered_map>
 
@@ -13,10 +14,21 @@ namespace MiniEngine
 	class Animator;
 	class BlendClip;
 	class ActionClip;
+	class FootIKComponent;
 	class IObstacle;
 }
 
 using namespace MiniEngine;
+
+// 테스트용 ik handle
+struct IKHandle
+{
+	TwoBoneIKBinding m_binding;
+
+	float m_alpha{ 1.0f };
+	Vector3 m_targetPos{ 0.0f, 0.0f, 0.0f };
+};
+
 
 class CharacterStateMachine;
 class Character : public Pawn
@@ -54,6 +66,10 @@ public:
 	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
 
 	virtual void BeginPlay() override;
+	virtual void OnBeforeSortComponent() override;
+
+	virtual void Tick(float _dt) override;
+
 
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
@@ -129,7 +145,11 @@ private:
 	PerceptionQueryTree m_perceptQueryTree;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
-	
 	PerceptedObstacleInfo m_curObstacleInfo;
+	
+	std::weak_ptr<FootIKComponent> m_footIK;
+
+
+	IKHandle m_hLeftLeg;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Math.h"
 
-namespace MiniEngine 
+namespace MiniEngine
 {
 	struct TwoBoneIKBone
 	{

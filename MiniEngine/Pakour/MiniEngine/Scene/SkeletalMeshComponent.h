@@ -18,8 +18,6 @@ namespace MiniEngine
     class SkeletalMeshComponent : public SceneComponent
     {
     public:
-        SkeletalMeshComponent();
-
         void Tick(float _dt) override; // 애니메이터를 통해 본 최종 행렬(inverseBindPose * global) 갱신
         void LateTick(float _dt) override;
 
@@ -38,15 +36,15 @@ namespace MiniEngine
 
         // IK 관련
         // 월드 스페이스 Goal 좌표 입력
-        void SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos, const Quaternion& _worldRot, float _posAlpha, float _rotAlpha);
+        void SetIKGoalWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, const Quaternion& _worldRot, float _posAlpha, float _rotAlpha);
 
         // 위치만 입력하는 오버로드
         // 회전은 애니메이션대로 처리
-        void SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos, float _posAlpha);
+        void SetIKGoalWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, float _posAlpha);
 
         // 2본 ik에서 pole(중간 관절)이 향할 지점을 지정
         // 없으면 현재 애니메이션의 포즈의 굽힘 평면을 그대로 유지 -> 굳이 호출할 필요는 없음
-        void SetIKPoleTargetWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPole);
+        void SetIKPoleTargetWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPole);
 
         void ClearIKGoal(HumanoidBone _end);
         void ClearAllIKGoal();

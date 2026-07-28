@@ -9,13 +9,6 @@ using namespace MiniEngine::Graphics;
 
 namespace MiniEngine
 {
-    SkeletalMeshComponent::SkeletalMeshComponent() 
-    {
-        // 일반 컴포넌트의 정렬 순서는 0
-        // 애니메이션 등 초기화를 이유로 먼저 Tick 되도록 설정
-        SetSortOrder(1); 
-    }
-
     void SkeletalMeshComponent::SetMesh(const std::shared_ptr<SkinnedMesh>& _mesh)
     {
         m_mesh = _mesh;
@@ -122,7 +115,7 @@ namespace MiniEngine
     }
 
 
-    void SkeletalMeshComponent::SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos,
+    void SkeletalMeshComponent::SetIKGoalWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos,
                                                const Quaternion& _worldRot, float _posAlpha, float _rotAlpha)
     {
         const Matrix WORLD = GetWorldMatrix();
@@ -156,12 +149,12 @@ namespace MiniEngine
     }
 
 
-    void SkeletalMeshComponent::SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos, float _posAlpha)
+    void SkeletalMeshComponent::SetIKGoalWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, float _posAlpha)
     {
         SetIKGoalWorld(_boneBinding, _worldPos, Quaternion(0.0f, 0.0f, 0.0f, 1.0f), _posAlpha, 0.0f);
     }
 
-    void SkeletalMeshComponent::SetIKPoleTargetWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPole)
+    void SkeletalMeshComponent::SetIKPoleTargetWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPole)
     {
         const IKGoal* CUR = m_anim->GetIKGoal(_boneBinding.end);
         if (!CUR)
@@ -196,6 +189,8 @@ namespace MiniEngine
 
     void SkeletalMeshComponent::SolveIK()
     {
+        MG_LOG_INFO("[SkeletalMeshComponent]::SolveIK");
+
         m_anim->SolveIKAndRefresh(m_mesh.get());
     }
 

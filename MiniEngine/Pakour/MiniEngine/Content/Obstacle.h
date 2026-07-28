@@ -36,7 +36,7 @@ public:
 	void Construct(const ObstacleDesc& _desc);
 
 private:
-	void AddLedge(std::shared_ptr<MiniEngine::Actor> _pTarget,
+	void AddLedge(
 		const MiniEngine::Vector3& _localPos,
 		const MiniEngine::Vector3& _halfExtent,
 		const MiniEngine::Quaternion& _localRot);

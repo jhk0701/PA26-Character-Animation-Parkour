@@ -6,12 +6,12 @@ namespace MiniEngine
 {
     void Actor::BeginPlay()
     {
+        OnBeforeSortComponent();
+
         // 컴포넌트 정렬
         std::sort(m_components.begin(), m_components.end(),
-            [](const std::shared_ptr<Component>& _a, const std::shared_ptr<Component>& _b) 
-            {
-                return _a->GetSortOrder() >= _b->GetSortOrder();
-            }
+            [](const std::shared_ptr<Component> _a, const std::shared_ptr<Component> _b) 
+            { return _a->GetSortOrder() > _b->GetSortOrder(); }
         );
     }
 
