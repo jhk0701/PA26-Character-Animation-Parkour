@@ -18,6 +18,10 @@ namespace Content::Config
 	inline constexpr float   DEPTH_PROBE_LIFT		= 0.05f;// 꼭대기 표면에서 시작하는 퇴화 방지
 	inline constexpr float   MIN_MANTLE_DEPTH		= 1.0f;	// 이 값 이상이어야 Mantle, 미만은 Vault
 
+	// 매달린 상태(Hanging)의 주변 탐색 파라미터
+	inline constexpr float   HANG_PROBE_DIST		= 2.0f;	// 상하좌우 공통 탐지 거리
+	inline constexpr float   HANG_PROBE_RADIUS		= 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
+
 	enum class ETagEnv : uint8_t
 	{
 		Land,

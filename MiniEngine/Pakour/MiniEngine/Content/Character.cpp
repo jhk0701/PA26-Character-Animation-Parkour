@@ -26,6 +26,7 @@
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
 #include "Content/CharacterState/BeamState.h"
+#include "Content/CharacterState/ProtrudeState.h"
 
 using namespace Content::Config;
 
@@ -82,7 +83,8 @@ void Character::Construct(const Vector3& _initPosition)
 				std::make_shared<InAirState>(),
 				std::make_shared<HangingState>(),
 				std::make_shared<BeamStandState>(),
-				std::make_shared<BeamHangingState>()
+				std::make_shared<BeamHangingState>(),
+				std::make_shared<ProtrudeState>()
 			});
 		m_charFSM = pCharFSM;
 	}

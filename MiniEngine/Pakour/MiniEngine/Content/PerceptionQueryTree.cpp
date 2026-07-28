@@ -47,6 +47,18 @@ namespace
 		return dynamic_cast<IObstacle*>(pActor);
 	}
 
+	// 캐스트 결과를 컨텍스트로 옮긴다. 높이를 따로 재는 경로는 m_ledge 를 뒤에서 덮어쓴다
+	// RaycastResult / HitResult 둘 다 받는다 (필드는 같은데 타입이 갈려 있음)
+	template <typename THit>
+	void FillFromResult(TravelContext& _context, const THit& _result)
+	{
+		_context.m_pFirstObstacle = ToIObstacle(_result.GetActor());
+		_context.m_firstObstacleHitPos = _result.m_pos;
+		_context.m_firstObstacleHitNrm = _result.m_nrm;
+		_context.m_distance = _result.m_distance;
+		_context.m_ledge = _result.m_pos.y;
+	}
+
 	bool CheckLedge(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _radius, RaycastResult& _outResult)
 	{
 		SpherecastParam sphParam;
@@ -104,12 +116,7 @@ namespace
 			if (pGroundActor != nullptr && r.GetActor() == pGroundActor)
 				continue; // 이미 올라온 장애물 -> 다음 후보로
 
-			_context.m_pFirstObstacle = ToIObstacle(r.GetActor());
-			_context.m_firstObstacleHitPos = r.m_pos;
-			_context.m_firstObstacleHitNrm = r.m_nrm;
-			_context.m_distance = r.m_distance;
-			_context.m_ledge = r.m_pos.y; // 높이는 MeasureObstacleHeight 가 다시 잰다
-
+			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
 			return true;
 		}
 
@@ -200,22 +207,19 @@ namespace
 		_context.m_depth = depth;
 	}
 
-	// 양쪽 사이드 확인
+	// 양쪽 사이드 확인 (매달린 상태의 좌우 탐색)
 	bool CheckSide(TravelContext& _context, RaycastResult& _outResult, bool _bIsRight, uint32_t _layerMask, float _dist)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		const Transform& TF = pChar->GetRoot()->localTransform;
 
-		CapsulecastParam param;
+		SpherecastParam param;
 		param.m_startPos = GetCharacterCenterPosition(_context);
 		param.m_dir = _bIsRight ? TF.Right() : -TF.Right();
 		param.m_maxDistance = _dist;
-		param.m_radius = pChar->GetCapsuleRadius();
-		param.m_halfHeight = pChar->GetCapsuleHalfHeight();
-		
-		// MG_LOG_INFO("[QueryTree] Check Side :: is right? {}, ({},{},{})", _bIsRight ? "R" : "L", param.m_dir.x, param.m_dir.y, param.m_dir.z);
+		param.m_radius = HANG_PROBE_RADIUS;
 
-		return _context.m_physics->CapsuleCast(param, _outResult, _layerMask);
+		return _context.m_physics->SphereCast(param, _outResult, _layerMask);
 	}
 }
 
@@ -243,19 +247,12 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 	// InAir
 	std::shared_ptr<ConditionNode> pStateInAir = std::make_shared<ConditionNode>();
 
-	// Hanging
+	// Hanging — 입력 방향으로 2.0m 프로브 1발. 넷 다 { pReturn, pEmpty } 로 모양이 같다
 	std::shared_ptr<SelectorNode> pStateHanging = std::make_shared<SelectorNode>();
-	std::shared_ptr<ConditionNode> pOnHangingUp = std::make_shared<ConditionNode>();
-	std::shared_ptr<ConditionNode> pOnHangingUpDetourableObs = std::make_shared<ConditionNode>(); // 천장 우회 가능한지 확인
-	std::shared_ptr<ConditionNode> pOnHangingClimbable = std::make_shared<ConditionNode>();
-
-	std::shared_ptr<ConditionNode> pOnHangingDown = std::make_shared<ConditionNode>();
-	std::shared_ptr<SelectorNode> pOnHangingCheckObstacleTag = std::make_shared<SelectorNode>(); // 장애물 태그 확인
-
-	std::shared_ptr<ConditionNode> pOnHangingLeft = std::make_shared<ConditionNode>();
-	std::shared_ptr<ConditionNode> pOnHangingRight = std::make_shared<ConditionNode>();
-	std::shared_ptr<ConditionNode> pOnSideDetected = std::make_shared<ConditionNode>();	// 사이드 레이캐스트 결과 장애물이 감지됨
-	std::shared_ptr<ConditionNode> pOnSideEmpty = std::make_shared<ConditionNode>();	// 사이드 레이캐스트 결과, 장애물이 감지되지 않음 // 전방을 향해 레이캐스트	true : empty, false : outer rotate
+	std::shared_ptr<ConditionNode> pOnHangingUp = std::make_shared<ConditionNode>();		// 올라설 벽 ledge
+	std::shared_ptr<ConditionNode> pOnHangingDown = std::make_shared<ConditionNode>();	// 내려설 지면
+	std::shared_ptr<ConditionNode> pOnHangingLeft = std::make_shared<ConditionNode>();	// 새 장애물
+	std::shared_ptr<ConditionNode> pOnHangingRight = std::make_shared<ConditionNode>();	// 새 장애물
 
 	// Beam
 	std::shared_ptr<ConditionNode> pStateBeam = std::make_shared<ConditionNode>();
@@ -462,251 +459,80 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		}
 	);
 
+		// 위 : 올라설 벽 ledge 를 찾는다. 못 찾으면 아무 행동 없음
+		// authored ObstacleLedge 를 직접 겨냥하므로 m_ledge 가 곧 정확한 꼭대기이고,
+		// 그대로 Wall_HangToMantle 의 베지어 워프 목표가 된다
 		pOnHangingUp->SetCondition(
-			[](TravelContext& _ctx) 
+			[](TravelContext& _ctx)
 			{
-				// 윗방향 확인
-				// 천장 따위로 막혀있는지
-				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-				const Transform& TF = pChar->GetRoot()->localTransform;
-				const Vector3 POS = GetCharacterCenterPosition(_ctx);
+				SpherecastParam param;
+				param.m_startPos = GetCharacterCenterPosition(_ctx);
+				param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
+				param.m_radius = HANG_PROBE_RADIUS;
+				param.m_maxDistance = HANG_PROBE_DIST;
 
-				return CheckObstacle(_ctx, POS, TF.Up(), MAX_OBSTACLE_DETECT_DIST);
+				RaycastResult result;
+				if (_ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)) == false)
+					return false;
+
+				FillFromResult(_ctx, result);
+				return true;
 			},
-			pOnHangingUpDetourableObs,	// 천장을 우회해서 타고 올라갈 수 있는지 확인
-			pOnHangingClimbable			// 천장 없음 climbable 확인
+			pReturn,
+			pEmpty
 		);
-			
-			pOnHangingUpDetourableObs->SetCondition(
-				[](TravelContext& _ctx) 
-				{
-					MG_LOG_INFO("[QueryTree] Ceiling is detected. Check detour.");
 
-					// 천장 우회 가능한지
-					// 뒤로 1단위 물러나서 다시 위로 레이캐스트
-					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const Transform& TF = pChar->GetRoot()->localTransform;
-
-					SpherecastParam param;
-					param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-					param.m_startPos = _ctx.m_firstObstacleHitPos - TF.Forward();
-					param.m_radius = pChar->GetCapsuleRadius();
-					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
-
-					RaycastResult result;
-					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle));
-					if (bIsHit == false)
-					{
-						// MG_LOG_INFO("[QueryTree] Can detour");
-						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
-
-						// Ledge 찾기
-						if (bIsHit = CheckLedge(_ctx, param.m_startPos, param.m_dir, param.m_radius * 2.0f, result))
-							_ctx.m_ledge = result.m_pos.y;
-					} 
-
-					return true;
-				},
-				pReturn,	// 우회접근 가능
-				pEmpty		// 불가능할 시 아무 행동 x
-			);
-
-			pOnHangingClimbable->SetCondition(
-				[](TravelContext& _ctx) 
-				{
-					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const Vector3 POS = GetCharacterCenterPosition(_ctx) + Vector3(0.0f, 1.0f, 0.0f);
-					const Vector3 DIR = pChar->GetRoot()->localTransform.Forward();
-
-					// MG_LOG_INFO("[QueryTree] Check Ledge to climbing :: Dir ({}, {}, {})", DIR.x, DIR.y, DIR.z);
-					RaycastResult result;
-					bool bIsHit = CheckLedge(_ctx, POS, DIR, 1.0f, result);
-					if (bIsHit)
-					{
-						_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
-						_ctx.m_firstObstacleHitPos = result.m_pos;
-						_ctx.m_distance = result.m_distance;
-						_ctx.m_ledge = result.m_pos.y;
-
-						// MG_LOG_INFO("[QueryTree] Wall Ledge Climb");
-						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
-					}
-
-					return bIsHit;
-				},
-				pReturn,
-				pEmpty
-			);
-
+		// 아래 : 내려설 지면. 좁게 볼 필요가 없어 단순 레이로 충분하다
+		// 지면(Ground)도 Obstacle 액터라 IObstacle 포인터가 유효하다
 		pOnHangingDown->SetCondition(
 			[](TravelContext& _ctx)
 			{
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 
-				SpherecastParam param;
-				param.m_startPos = pChar->GetRoot()->localTransform.position;
+				RaycastParam param;
+				param.m_origin = pChar->GetRoot()->localTransform.position;
 				param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-				param.m_maxDistance = 1.0f;
-				param.m_radius = pChar->GetCapsuleRadius();
+				param.m_maxDistance = HANG_PROBE_DIST;
 
 				RaycastResult result;
-				if (_ctx.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)
+				if (_ctx.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground) == false)
 					return false;
 
-				_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
-				_ctx.m_firstObstacleHitPos = result.m_pos;
-				_ctx.m_ledge = result.m_pos.y;
-				_ctx.m_distance = result.m_distance;
-				
+				FillFromResult(_ctx, result);
 				return true;
-			}, 
-			pOnHangingCheckObstacleTag,
+			},
+			pReturn,
 			pEmpty
 		);
-		
-			// 결론 노드-> 굳이 셀렉터를 써야하나?
-			// Leaf 노드로 바꿔도 무관할 듯
-			pOnHangingCheckObstacleTag->SetCondition(
-				[](TravelContext& _ctx)
-				{
-					// 장애물 태그로 종류 판단
-					uint8_t t = 0;
-					bool bHasTag = _ctx.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, t);
-					if (bHasTag == false || t == (uint8_t)ETagEnvDetail::Default)
-					{
-						MG_LOG_INFO("[QueryTree] Hang to idle");
-						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToIdle;
-					}
-					else
-					{
-						MG_LOG_INFO("[QueryTree] Hang to Beam");
-						// 내려가는 절차이므로 stand로 통일
-						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Beam_IdleToStand;
-					}
 
-					return 0;
-				},
-				{
-					pReturn
-				}
-			);
-
+		// 좌우 : 옮겨갈 새 장애물 탐색. 종류 판단과 상태 전환은 HangingState 담당
 		pOnHangingRight->SetCondition(
 			[](TravelContext& _ctx)
 			{
-				// 캡슐 캐스트
 				RaycastResult result;
-				bool bIsHit = CheckSide(_ctx, result, true, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
-				if (bIsHit) 
-				{
-					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
-					_ctx.m_firstObstacleHitPos = result.m_pos;
-					_ctx.m_firstObstacleHitNrm = result.m_nrm;
-					_ctx.m_distance = result.m_distance;
-				}
+				if (CheckSide(_ctx, result, true, ToMask(Layer::Obstacle), HANG_PROBE_DIST) == false)
+					return false;
 
-				return bIsHit;
+				FillFromResult(_ctx, result);
+				return true;
 			},
-			pOnSideDetected,		// 장애물 식별
-			pOnSideEmpty			// 장애물이 없음 -> 전방으로 레이
+			pReturn,
+			pEmpty
 		);
 
 		pOnHangingLeft->SetCondition(
-			[](TravelContext& _ctx) 
+			[](TravelContext& _ctx)
 			{
-				// 캡슐 캐스트
 				RaycastResult result;
-				bool bIsHit = CheckSide(_ctx, result, false, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
-				if (bIsHit)
-				{
-					// 사이드에 캡슐을 쐈고, 히트한 상황
-					_ctx.m_pFirstObstacle = ToIObstacle(result.GetActor());
-					_ctx.m_firstObstacleHitPos = result.m_pos;
-					_ctx.m_firstObstacleHitNrm = result.m_nrm;
-					_ctx.m_distance = result.m_distance;
-				}
+				if (CheckSide(_ctx, result, false, ToMask(Layer::Obstacle), HANG_PROBE_DIST) == false)
+					return false;
 
-				return bIsHit;
-			}, 
-			pOnSideDetected,		// 장애물 식별
-			pOnSideEmpty			// 장애물이 없음 -> 전방으로 레이
+				FillFromResult(_ctx, result);
+				return true;
+			},
+			pReturn,
+			pEmpty
 		);
-
-			// Right, Left 공통 처리 구간
-			pOnSideDetected->SetCondition(
-				[](TravelContext& _ctx) 
-				{
-					MG_LOG_INFO("[QueryTree] Check Side Obstacle Detected");
-
-					// Beam 지형인 경우 처리
-					uint8_t detailTag = 0;
-					bool bHasTag = _ctx.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, detailTag);
-					if (bHasTag && detailTag == (uint8_t)ETagEnvDetail::Beam)
-						return false; // beam 지형 처리로 전환
-
-					// 장애물이 식별된 상황
-					// Ledge 인지 확인 true : climb , false : inner rotate
-					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const Transform& TF = pChar->GetRoot()->localTransform;
-					const Vector3 DIR = TF.Right(); // _ctx.m_bIsRight ? TF.Right() : -TF.Right();
-
-					RaycastResult result;
-					bool bLedgeHit = CheckLedge(_ctx, 
-						GetCharacterCenterPosition(_ctx),
-						DIR,
-						pChar->GetCapsuleRadius(),
-						result);
-
-					if (bLedgeHit) 
-					{
-						// climb
-						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
-					}
-					else
-					{
-						// outer rotate
-						// 세부 판별이 더 필요할 수 있음
-						// _ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_OuterRotateRight : ETagAct::Wall_OuterRotateLeft);
-					}
-
-					// Ledge 확인 후 결과 반환
-					return bLedgeHit;
-				},
-				pReturn,
-				pBeamCompareHeight
-			);
-
-			pOnSideEmpty->SetCondition(
-				[](TravelContext& _ctx)
-				{
-					MG_LOG_INFO("[QueryTree] Side Obstacle is empty");
-
-					// 이동하려고 예측하는 위치에서 전방으로 레이
-					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
-					const Transform& TF = pChar->GetRoot()->localTransform;
-
-					CapsulecastParam param;
-					param.m_startPos = GetCharacterCenterPosition(_ctx) + TF.Right(); //  (_ctx.m_bIsRight ? 1 : -1)* MIN_OBSTACLE_DETECT_DIST* TF.Right();
-					param.m_dir = TF.Forward();
-					param.m_halfHeight = pChar->GetCapsuleHalfHeight();
-					param.m_radius = pChar->GetCapsuleRadius();
-					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
-
-					RaycastResult result;
-					bool bIsHit = _ctx.m_physics->CapsuleCast(param, result, ToMask(Layer::Obstacle));
-					// true : 닿음 -> 여전히 벽 -> 별다른 액션 x
-					if (bIsHit == false)
-					{
-						// false : 닿지 않음 회전 필요 inner 270 회전
-						// _ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_InnerRotateRight : ETagAct::Wall_InnerRotateLeft);
-					}
-
-					return bIsHit;
-				},
-				pEmpty,
-				pReturn
-			);
 
 	
 	pStateInAir->SetCondition(
