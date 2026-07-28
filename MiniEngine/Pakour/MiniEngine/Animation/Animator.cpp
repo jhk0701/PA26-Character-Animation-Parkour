@@ -180,9 +180,7 @@ namespace MiniEngine
 			MG_LOG_WARN("[Animator]::SetIKGoal Warning:: _binding bone is not included");
 			return;
 		}
-		
-		m_ikGoals[static_cast<size_t>(_binding.end)] = _goal;
-		m_mapIKBinding[_binding.end] = _binding;
+		m_mapIKBinding[_binding.end] = { _binding, _goal };
 
 		RefreshIKAny();
 	}
@@ -192,15 +190,14 @@ namespace MiniEngine
 		if (_end == HumanoidBone::None || _end >= HumanoidBone::Count) 
 			return;
 
-		m_ikGoals[static_cast<size_t>(_end)] = IKGoal();
-		m_mapIKBinding.clear();
+		m_mapIKBinding[_end].Reset();
 		RefreshIKAny();
 	}
 
 	void Animator::ClearAllIKGoals()
 	{
-		for (IKGoal& g : m_ikGoals)
-			g = IKGoal();
+		for (auto it = m_mapIKBinding.begin(); it != m_mapIKBinding.end(); ++it)
+			it->second.Reset();
 
 		m_ikPelvisOffset = Vector3(0.0f);
 		m_bUseIK = false;
@@ -211,7 +208,7 @@ namespace MiniEngine
 		if (_end == HumanoidBone::None || _end >= HumanoidBone::Count)
 			return nullptr;
 
-		const IKGoal& g = m_ikGoals[static_cast<size_t>(_end)];
+		const IKGoal& g = m_mapIKBinding.at(_end).goal;
 		return (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f) ? &g : nullptr;
 	}
 
@@ -311,13 +308,13 @@ namespace MiniEngine
 		}
 
 		// end들 goal에 대한 연산
-		for (const std::pair<HumanoidBone, TwoBoneIKBinding>& p : m_mapIKBinding)
+		for (const std::pair<HumanoidBone, IKData>& p : m_mapIKBinding)
 		{
-			const IKGoal& GOAL = m_ikGoals[static_cast<size_t>(p.first)];
+			const IKGoal& GOAL = p.second.goal;
 			if (GOAL.positionAlpha <= 0.0f && GOAL.rotationAlpha <= 0.0f)
 				continue;
 
-			const TwoBoneIKBinding& binding = p.second;
+			const TwoBoneIKBinding& binding = p.second.binding;
 			if (!_map.Has(binding.upper) || !_map.Has(binding.lower) || !_map.Has(binding.end))
 				continue;
 
@@ -392,16 +389,15 @@ namespace MiniEngine
 		if (m_bUseIK) 
 			return;
 
-		for (const IKGoal& g : m_ikGoals)
+		for (const std::pair<HumanoidBone, IKData>& p : m_mapIKBinding)
 		{
-			if (g.positionAlpha > 0.0f || g.rotationAlpha > 0.0f)
+			if (p.second.goal.positionAlpha > 0.0f || p.second.goal.rotationAlpha > 0.0f)
 			{
 				m_bUseIK = true;
 				return;
 			}
 		}
 	}
-
 
 }
 

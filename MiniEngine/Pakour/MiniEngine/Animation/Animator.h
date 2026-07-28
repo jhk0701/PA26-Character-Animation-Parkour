@@ -3,7 +3,6 @@
 #include "Asset/AnimClip.h"
 #include "Asset/RootMotion.h"
 #include <functional>
-#include <array>
 
 namespace MiniEngine 
 {
@@ -52,9 +51,11 @@ namespace MiniEngine
 		bool bUsePoleTarget = false;
 	};
 
+
 	// Animator : 애니메이션 총괄 관리
 	class Animator
 	{
+
 	public:
 		Animator(std::shared_ptr<SkeletalMeshComponent> _meshComp);
 		virtual ~Animator() {};
@@ -115,10 +116,10 @@ namespace MiniEngine
 		void ResetForMesh();
 
 	private:
-		bool m_bIsInitialized{ false };
-
-		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // 메시 컴포넌트 약참조
 		const Skeleton& GetSkeleton() const;
+
+		bool m_bIsInitialized{ false };
+		std::weak_ptr<SkeletalMeshComponent> m_meshComp; // 메시 컴포넌트 약참조
 
 		LocalPoseTRS m_poseTarget;		// 블렌드, 트랜지션 등 연산이 반영되는 본 위계구조
 		std::vector<Matrix> m_localPose;	// 합성 로컬 행렬 스크래치
@@ -143,9 +144,18 @@ namespace MiniEngine
 		// 본 원점을 피벗으로 한 회전
 		void RotateGlobalInPlace(Matrix& _global, const Quaternion& _delta);
 
-		// 컴파일 타임 배열 -> 런타임 중 사이즈 수정 불가
-		std::array<IKGoal, static_cast<size_t>(HumanoidBone::Count)> m_ikGoals{};
-		std::unordered_map<HumanoidBone, TwoBoneIKBinding> m_mapIKBinding; // ik의 경우 동적이기 보단 이미 초기화 시 정해져 있을 것
+		struct IKData
+		{
+			TwoBoneIKBinding binding;
+			IKGoal goal;
+
+			void Reset()
+			{
+				binding = TwoBoneIKBinding();
+				goal = IKGoal();
+			}
+		};
+		std::unordered_map<HumanoidBone, IKData> m_mapIKBinding; // ik의 경우 런타임에 매번 동적이기 보단 이미 초기화 시 정해져 있을 것
 
 		Vector3 m_ikPelvisOffset{ 0.0f, 0.0f, 0.0f };
 		bool m_bUseIK{ false };
