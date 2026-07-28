@@ -34,6 +34,7 @@ namespace MiniEngine
 		if (m_meshComp.expired())
 		{
 			m_pBoneMatrices->clear();
+			m_globalPose.clear();
 			return;
 		}
 

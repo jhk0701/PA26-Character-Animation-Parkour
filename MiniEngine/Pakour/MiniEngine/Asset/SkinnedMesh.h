@@ -36,7 +36,7 @@ namespace MiniEngine
         // CPU 데이터로부터 GPU 정점/인덱스 버퍼를 생성. 성공 시 true.
         bool CreateGpuResources(ID3D11Device* _device);
 
-        // ---- 렌더용 접근자 ----
+        // 렌더용 getter
         ID3D11Buffer* GetVertexBuffer() const { return m_vertexBuffer.Get(); }
         ID3D11Buffer* GetIndexBuffer()  const { return m_indexBuffer.Get(); }
         uint32_t      GetIndexCount()   const { return m_indexCount; }

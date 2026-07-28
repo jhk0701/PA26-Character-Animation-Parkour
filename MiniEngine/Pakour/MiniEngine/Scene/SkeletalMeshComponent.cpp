@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "Scene/SkeletalMeshComponent.h"
-#include "Animation/Animator.h"
 #include "Core/Graphics.h"
+#include "Animation/Animator.h"
+#include "Asset/IK.h"
+#include "Core/Log.h"
 
 using namespace MiniEngine::Graphics;
 
@@ -103,6 +105,84 @@ namespace MiniEngine
     bool SkeletalMeshComponent::IsRootMotionEnabled() const
     {
         return m_anim->GetIsEnableRootMotion();
+    }
+
+
+    void SkeletalMeshComponent::SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos,
+                                               const Quaternion& _worldRot, float _posAlpha, float _rotAlpha)
+    {
+        const Matrix WORLD = GetWorldMatrix();
+        const Matrix INV_WORLD = WORLD.Invert();
+
+        IKGoal goal;
+        goal.position = Vector3::Transform(_worldPos, INV_WORLD);
+        goal.positionAlpha = _posAlpha;
+        goal.rotationAlpha = _rotAlpha;
+
+        if (_rotAlpha > 0.0f) 
+        {
+            // 스케일이 비균등일 시 경고
+            const Vector3& SCALE = localTransform.scale;
+            if (std::fabs(SCALE.x - SCALE.y) > 1e-4f || std::fabs(SCALE.y - SCALE.z) > 1e-4f)
+                MG_LOG_INFO("[SkeletalComponent] non-uniform scale. IK rotation goal will be skewed");
+
+            Matrix rotWorld = Matrix::CreateFromQuaternion(_worldRot) * INV_WORLD;
+            rotWorld.Translation(Vector3(0.0f));
+
+            Vector3 sc, tr;
+            Quaternion rot;
+
+            if (rotWorld.Decompose(sc, rot, tr))
+                goal.rotation = rot;
+            else
+                goal.rotation = _worldRot; // 월드 회전 그대로
+        }
+
+        m_anim->SetIKGoal(_boneBinding, goal);
+    }
+
+
+    void SkeletalMeshComponent::SetIKGoalWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPos, float _posAlpha)
+    {
+        SetIKGoalWorld(_boneBinding, _worldPos, Quaternion(0.0f, 0.0f, 0.0f, 1.0f), _posAlpha, 0.0f);
+    }
+
+    void SkeletalMeshComponent::SetIKPoleTargetWorld(TwoBoneIKBinding _boneBinding, const Vector3& _worldPole)
+    {
+        const IKGoal* CUR = m_anim->GetIKGoal(_boneBinding.end);
+        if (!CUR)
+            return;
+
+        IKGoal goal = *CUR;
+        goal.bUsePoleTarget = true;
+        goal.poleTarget = Vector3::Transform(_worldPole, GetWorldMatrix().Invert());
+        m_anim->SetIKGoal(_boneBinding, goal);
+    }
+
+    void SkeletalMeshComponent::ClearIKGoal(HumanoidBone _end) { m_anim->ClearIKGoal(_end); }
+
+    void SkeletalMeshComponent::ClearAllIKGoal() { m_anim->ClearAllIKGoals(); }
+
+    const IKGoal* SkeletalMeshComponent::GetIKGoal(HumanoidBone _end) const { return m_anim->GetIKGoal(_end); }
+
+    void SkeletalMeshComponent::SetIKPelvisOffsetWorld(const Vector3& _worldOffset)
+    {
+        const Matrix INV_WORLD = GetWorldMatrix().Invert();
+        m_anim->SetIKPelvisOffset(Vector3::TransformNormal(_worldOffset, INV_WORLD));
+    }
+
+    bool SkeletalMeshComponent::GetBoneWorldMatrix(int _boneIdx, Matrix& _out) const
+    {
+        const std::vector<Matrix>& global = m_anim->GetGlobalPose();
+        if (_boneIdx < 0 || _boneIdx >= static_cast<int>(global.size())) return false;
+
+        _out = global[static_cast<size_t>(_boneIdx)] * GetWorldMatrix();
+        return true;
+    }
+
+    void SkeletalMeshComponent::SolveIK()
+    {
+        m_anim->SolveIKAndRefresh(m_mesh.get());
     }
 
 }
