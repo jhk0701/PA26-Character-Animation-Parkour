@@ -618,11 +618,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pOnHangingRight->SetCondition(
 			[](TravelContext& _ctx)
 			{
-				_ctx.m_bIsRight = true; // 오른쪽 방향 설정
-
 				// 캡슐 캐스트
 				RaycastResult result;
-				bool bIsHit = CheckSide(_ctx, result, _ctx.m_bIsRight, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
+				bool bIsHit = CheckSide(_ctx, result, true, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
 				if (bIsHit) 
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
@@ -641,11 +639,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pOnHangingLeft->SetCondition(
 			[](TravelContext& _ctx) 
 			{
-				_ctx.m_bIsRight = false; // 왼쪽 방향 설정
-
 				// 캡슐 캐스트
 				RaycastResult result;
-				bool bIsHit = CheckSide(_ctx, result, _ctx.m_bIsRight, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
+				bool bIsHit = CheckSide(_ctx, result, false, ToMask(Layer::Obstacle), MIN_OBSTACLE_DETECT_DIST);
 				if (bIsHit)
 				{
 					// 사이드에 캡슐을 쐈고, 히트한 상황
@@ -677,7 +673,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					// Ledge 인지 확인 true : climb , false : inner rotate
 					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 					const Transform& TF = pChar->GetRoot()->localTransform;
-					const Vector3 DIR = _ctx.m_bIsRight ? TF.Right() : -TF.Right();
+					const Vector3 DIR = TF.Right(); // _ctx.m_bIsRight ? TF.Right() : -TF.Right();
 
 					RaycastResult result;
 					bool bLedgeHit = CheckLedge(_ctx, 
@@ -689,13 +685,13 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					if (bLedgeHit) 
 					{
 						// climb
-						_ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
+						// _ctx.m_predictedActTag = (uint8_t)ETagAct::Wall_HangToMantle;
 					}
 					else
 					{
 						// outer rotate
 						// 세부 판별이 더 필요할 수 있음
-						_ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_OuterRotateRight : ETagAct::Wall_OuterRotateLeft);
+						// _ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_OuterRotateRight : ETagAct::Wall_OuterRotateLeft);
 					}
 
 					// Ledge 확인 후 결과 반환
@@ -715,7 +711,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					const Transform& TF = pChar->GetRoot()->localTransform;
 
 					CapsulecastParam param;
-					param.m_startPos = GetCharacterCenterPosition(_ctx) + (_ctx.m_bIsRight ? 1 : -1) * MIN_OBSTACLE_DETECT_DIST * TF.Right();
+					param.m_startPos = GetCharacterCenterPosition(_ctx) + TF.Right(); //  (_ctx.m_bIsRight ? 1 : -1)* MIN_OBSTACLE_DETECT_DIST* TF.Right();
 					param.m_dir = TF.Forward();
 					param.m_halfHeight = pChar->GetCapsuleHalfHeight();
 					param.m_radius = pChar->GetCapsuleRadius();
@@ -727,7 +723,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					if (bIsHit == false)
 					{
 						// false : 닿지 않음 회전 필요 inner 270 회전
-						_ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_InnerRotateRight : ETagAct::Wall_InnerRotateLeft);
+						// _ctx.m_predictedActTag = (uint8_t)(_ctx.m_bIsRight ? ETagAct::Wall_InnerRotateRight : ETagAct::Wall_InnerRotateLeft);
 					}
 
 					return bIsHit;
