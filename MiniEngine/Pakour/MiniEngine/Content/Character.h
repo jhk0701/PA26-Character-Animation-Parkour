@@ -20,16 +20,6 @@ namespace MiniEngine
 
 using namespace MiniEngine;
 
-// 테스트용 ik handle
-struct IKHandle
-{
-	TwoBoneIKBinding m_binding;
-
-	float m_alpha{ 1.0f };
-	Vector3 m_targetPos{ 0.0f, 0.0f, 0.0f };
-};
-
-
 class CharacterStateMachine;
 class Character : public Pawn
 {
@@ -115,6 +105,7 @@ public:
 
 	// 지형 인식
 	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
+	const PerceptionConfig& GetPerceptionConfig() const;
 
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);
@@ -147,9 +138,5 @@ private:
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	PerceptedObstacleInfo m_curObstacleInfo;
-	
-	// IK 테스트
-	IKHandle m_hLeftLeg;
-	float m_sinElpased{ 0.0f };
 };
 

@@ -55,9 +55,8 @@ std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	// 깊이는 실측값 {0, 0.5, 1.0} — 두 발을 올려놓을 만큼 깊어야 오르기로 본다
-	uint8_t actTag = _info.m_obstacleDepth >= Content::Config::MIN_MANTLE_DEPTH ?
+	
+	uint8_t actTag = _info.m_obstacleDepth >= pChar->GetPerceptionConfig().minMantleDepth ?
 		(uint8_t)Content::Config::ETagAct::Mantle :
 		(uint8_t)Content::Config::ETagAct::Vault;
 

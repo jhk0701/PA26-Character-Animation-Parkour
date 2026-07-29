@@ -69,6 +69,9 @@ void Character::Construct(const Vector3& _initPosition)
 		m_charCont = pCharCont;
 	}
 	{
+		PerceptionConfig config; // 우선 기본값 사용
+		m_perceptQueryTree.Init(config);
+
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
 		pPerceptComp->SetQueryTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
@@ -88,15 +91,6 @@ void Character::Construct(const Vector3& _initPosition)
 			});
 		m_charFSM = pCharFSM;
 	}
-	{
-		// 캐릭터 IK 설정
-		m_hLeftLeg.m_binding.upper =	HumanoidBone::LeftUpperLeg;
-		m_hLeftLeg.m_binding.lower =	HumanoidBone::LeftLowerLeg;
-		m_hLeftLeg.m_binding.end =		HumanoidBone::LeftFoot;
-		m_hLeftLeg.m_targetPos = GetRoot()->localTransform.position + Vector3(-0.3f, 0.0f, 0.0f);
-		m_hLeftLeg.m_alpha = 1.0f;
-	}
-
 	pRoot->localTransform.position = _initPosition;
 
 	PostConstruct();
@@ -137,13 +131,6 @@ void Character::Tick(float _dt)
 
 void Character::LateTick(float _dt)
 {
-	m_sinElpased += _dt;
-	m_hLeftLeg.m_targetPos.y = std::abs(std::sin(m_sinElpased));
-	m_hLeftLeg.m_targetPos.z = 1.0f;
-	MiniEngine::Debug::DrawPoint(m_hLeftLeg.m_targetPos, MiniEngine::DebugColor::RED, 0.1f, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
-
-	GetSkin().lock()->SetIKGoalWorld(m_hLeftLeg.m_binding, m_hLeftLeg.m_targetPos, m_hLeftLeg.m_alpha);
-
 	Pawn::LateTick(_dt);
 }
 
@@ -271,6 +258,11 @@ void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transit
 		return;
 
 	GetAnim().lock()->PlayActionClip(_clip, _transitionTime, _priority);
+}
+
+const PerceptionConfig& Character::GetPerceptionConfig() const
+{
+	return m_perceptQueryTree.GetConfig();
 }
 
 void Character::TransitionStateMachine(uint8_t _state)

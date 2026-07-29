@@ -17,10 +17,6 @@ using namespace Content::Config;
 namespace 
 {
 	// 헬퍼 메서드 모음
-	// Config
-	constexpr float MIN_OBSTACLE_DETECT_DIST = 1.0f;
-	constexpr float MAX_OBSTACLE_DETECT_DIST = 2.5f;
-	constexpr float CAPSULE_CONTACT_OFFSET = 0.2f;
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor) 
 	{
@@ -65,7 +61,7 @@ namespace
 		sphParam.m_startPos = _pos;
 		sphParam.m_dir = _dir;
 		sphParam.m_radius = _radius;
-		sphParam.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
+		sphParam.m_maxDistance = ToChar(_context.m_owner)->GetPerceptionConfig().minObstacleDetectDist;
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 
@@ -123,53 +119,40 @@ namespace
 		return false; // 딛고 선 장애물 외에 아무것도 없음 -> 찾지 못한 것
 	}
 
-	// 장애물의 높이를 캐릭터 발 기준 1.0m 밴드로 스캔한다.
-	//
-	// 전방 캡슐 스윕의 접촉점은 y 를 믿을 수 없다(세운 캡슐 x 벽면 = 접촉이 선분이라 y 가 구현 정의).
-	// 그래서 x/z 만 가져다 쓰고 y 는 캐릭터 발에서 다시 쌓아 올린다.
-	// 반지름 0.5 구는 [c-0.5, c+0.5] 를 덮으므로 스텝 1.0 이면 밴드가 정확히 접한다(틈/중복 없음).
-	// 스윕이 eMTD 라 초기 겹침도 히트로 잡히므로, 짧게 쏘는 전방 캐스트가 사실상 오버랩 테스트가 된다.
-	//
-	// 반환 = 처음으로 비어 있던 밴드 인덱스
-	//   0                   : 꼭대기가 발 높이 이하 (CCT stepOffset 이 처리할 턱)
-	//   1 ~ MAX_BAND-1      : 넘거나 오를 수 있는 높이
-	//   MAX_BAND            : 3.0m 이상 = 벽
+	// 장애물 높이 측정
+	// 횟수는 config를 통해서 조절
 	uint8_t MeasureObstacleHeight(TravelContext& _context, const Vector3& _dir)
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 		const float FOOT_Y = pChar->GetRoot()->localTransform.position.y;
 		const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
 
 		uint8_t band = 0;
-		for (; band < HEIGHT_PROBE_MAX_BAND; ++band)
+		for (; band < CONFIG.maxHeightStep; ++band)
 		{
 			SpherecastParam param;
 			param.m_startPos = Vector3(
 				PROBE_XZ.x,
-				FOOT_Y + HEIGHT_PROBE_RADIUS + band * HEIGHT_PROBE_STEP,
+				FOOT_Y + CONFIG.heightRadius + band * CONFIG.heightStep,
 				PROBE_XZ.z);
-			param.m_radius = HEIGHT_PROBE_RADIUS;
+			param.m_radius = CONFIG.heightRadius;
 			param.m_dir = _dir;
-			param.m_maxDistance = HEIGHT_PROBE_FORWARD;
+			param.m_maxDistance = CONFIG.heightSearchtDist;
 
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
-				break; // 이 밴드는 비었다 -> 꼭대기가 이 아래
+				break; // 닿지 않음
 		}
 
-		// 밴드 band 에서 처음 비었으므로 실제 꼭대기는 (FOOT_Y+(band-1)*STEP, FOOT_Y+band*STEP] 안에 있다.
-		// 이 값이 베지어 착지 목표 Y 로 직행하므로 상한을 쓴다
-		// (과대추정 = 위에서 떨어짐, 과소추정 = 장애물에 박힘)
-		_context.m_ledge = FOOT_Y + band * HEIGHT_PROBE_STEP;
+		_context.m_ledge = FOOT_Y + band * CONFIG.heightStep;
 
-		// authored ObstacleLedge 볼륨이 있으면 정확한 꼭대기 y 로 덮어쓴다.
-		// 마지막으로 히트한 밴드의 프로브 중심에서 쏘면 위 불확실 구간과 구가 정확히 겹친다.
 		if (band > 0)
 		{
-			const Vector3 LEDGE_ORIGIN(PROBE_XZ.x, _context.m_ledge - HEIGHT_PROBE_RADIUS, PROBE_XZ.z);
+			const Vector3 LEDGE_ORIGIN(PROBE_XZ.x, _context.m_ledge - CONFIG.heightRadius, PROBE_XZ.z);
 
 			RaycastResult ledgeResult;
-			CheckLedge(_context, LEDGE_ORIGIN, _dir, HEIGHT_PROBE_RADIUS, ledgeResult);
+			CheckLedge(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, ledgeResult);
 		}
 
 		return band;
@@ -179,18 +162,22 @@ namespace
 	// 결과는 {0, 0.5, 1.0}
 	void MeasureObstacleDepth(TravelContext& _context, const Vector3& _dir)
 	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+
 		const Vector3 TOP(
 			_context.m_firstObstacleHitPos.x,
-			_context.m_ledge + DEPTH_PROBE_LIFT,
-			_context.m_firstObstacleHitPos.z);
+			_context.m_ledge + CONFIG.depthLift,
+			_context.m_firstObstacleHitPos.z
+		);
 
 		float depth = 0.0f;
-		for (uint8_t i = 1; i <= DEPTH_PROBE_MAX_STEP; ++i)
+		for (uint8_t i = 1; i <= CONFIG.maxDepthStep; ++i)
 		{
 			RaycastParam param;
-			param.m_origin = TOP + _dir * (DEPTH_PROBE_STEP * i);
+			param.m_origin = TOP + _dir * (CONFIG.depthStep * i);
 			param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-			param.m_maxDistance = DEPTH_PROBE_DOWN_DIST;
+			param.m_maxDistance = CONFIG.depthSearchDownDist;
 
 			RaycastResult result;
 			if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
@@ -201,7 +188,7 @@ namespace
 			if (ToIObstacle(result.GetActor()) != _context.m_pFirstObstacle)
 				break;
 
-			depth = DEPTH_PROBE_STEP * i;
+			depth = CONFIG.depthStep * i;
 		}
 
 		_context.m_depth = depth;
@@ -217,10 +204,15 @@ namespace
 		param.m_startPos = GetCharacterCenterPosition(_context);
 		param.m_dir = _bIsRight ? TF.Right() : -TF.Right();
 		param.m_maxDistance = _dist;
-		param.m_radius = HANG_PROBE_RADIUS;
+		param.m_radius = pChar->GetPerceptionConfig().onHangingSearchRadius;
 
 		return _context.m_physics->SphereCast(param, _outResult, _layerMask);
 	}
+}
+
+void PerceptionQueryTree::Init(const PerceptionConfig& _newConfig)
+{
+	m_config = _newConfig;
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
@@ -316,8 +308,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 				const Transform& TF = pChar->GetRoot()->localTransform;
 				const Vector3 POS = GetCharacterCenterPosition(_ctx);
+				const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
 
-				return CheckObstacle(_ctx, POS, TF.Forward(), MAX_OBSTACLE_DETECT_DIST, 1.0f, true);
+				return CheckObstacle(_ctx, POS, TF.Forward(), DIST, 1.0f, true);
 			},
 			pCheckObstacleTag,	// 찾은 경우 태그 확인
 			pEmpty			// 찾지 못한 경우 empty return
@@ -339,18 +332,19 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				}
 			);
 
-			// 높이를 재고 세 갈래로 나눈다. 액션 태그 결정은 여기서 하지 않는다(소비처 담당)
+			// 높이를 재고 세 갈래로 나눈다. 
 			pCheckHeight->SetCondition(
 				[](TravelContext& _ctx)
 				{
-					const Vector3& FWD = ToChar(_ctx.m_owner)->GetRoot()->localTransform.Forward();
+					std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+					const Vector3& FWD = pChar->GetRoot()->localTransform.Forward();
 					const uint8_t BAND = MeasureObstacleHeight(_ctx, FWD);
 
 					if (BAND == 0)
 						return (uint8_t)0; // 꼭대기가 발보다 낮다 -> CCT stepOffset 이 처리할 턱
 
-					if (BAND >= HEIGHT_PROBE_MAX_BAND)
-						return (uint8_t)2; // 3.0m 이상 -> 벽. ledge 값만 넘기고 소비처가 Wall 로 판정
+					if (BAND >= pChar->GetPerceptionConfig().maxHeightStep)
+						return (uint8_t)2; // 3.0m 이상 -> 벽 판정
 
 					return (uint8_t)1; // 넘거나 오를 수 있는 높이 -> 깊이 측정으로
 				},
@@ -412,7 +406,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 					SpherecastParam param;
 					param.m_dir = pChar->GetRoot()->localTransform.Forward();
-					param.m_maxDistance = MIN_OBSTACLE_DETECT_DIST;
+					param.m_maxDistance = pChar->GetPerceptionConfig().maxObstacleDetectDist;
 					param.m_radius = 0.5f;
 					param.m_startPos = _ctx.m_firstObstacleHitPos;
 					
@@ -459,17 +453,18 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		}
 	);
 
-		// 위 : 올라설 벽 ledge 를 찾는다. 못 찾으면 아무 행동 없음
-		// authored ObstacleLedge 를 직접 겨냥하므로 m_ledge 가 곧 정확한 꼭대기이고,
-		// 그대로 Wall_HangToMantle 의 베지어 워프 목표가 된다
+		// 위 방향 탐색 -> 올라설 벽 ledge 를 찾기
 		pOnHangingUp->SetCondition(
 			[](TravelContext& _ctx)
 			{
+				std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
+				const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+
 				SpherecastParam param;
 				param.m_startPos = GetCharacterCenterPosition(_ctx);
 				param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-				param.m_radius = HANG_PROBE_RADIUS;
-				param.m_maxDistance = HANG_PROBE_DIST;
+				param.m_radius = CONFIG.onHangingSearchRadius;
+				param.m_maxDistance = CONFIG.onHangingSearchDist;
 
 				RaycastResult result;
 				if (_ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)) == false)
@@ -492,7 +487,7 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 				RaycastParam param;
 				param.m_origin = pChar->GetRoot()->localTransform.position;
 				param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-				param.m_maxDistance = HANG_PROBE_DIST;
+				param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchDist;
 
 				RaycastResult result;
 				if (_ctx.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground) == false)
@@ -509,8 +504,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pOnHangingRight->SetCondition(
 			[](TravelContext& _ctx)
 			{
+				const float DIST = ToChar(_ctx.m_owner)->GetPerceptionConfig().onHangingSearchDist;
 				RaycastResult result;
-				if (CheckSide(_ctx, result, true, ToMask(Layer::Obstacle), HANG_PROBE_DIST) == false)
+				if (CheckSide(_ctx, result, true, ToMask(Layer::Obstacle), DIST) == false)
 					return false;
 
 				FillFromResult(_ctx, result);
@@ -523,8 +519,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 		pOnHangingLeft->SetCondition(
 			[](TravelContext& _ctx)
 			{
+				const float DIST = ToChar(_ctx.m_owner)->GetPerceptionConfig().onHangingSearchDist;
+
 				RaycastResult result;
-				if (CheckSide(_ctx, result, false, ToMask(Layer::Obstacle), HANG_PROBE_DIST) == false)
+				if (CheckSide(_ctx, result, false, ToMask(Layer::Obstacle), DIST) == false)
 					return false;
 
 				FillFromResult(_ctx, result);
@@ -541,9 +539,10 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 			const Transform& TF = pChar->GetRoot()->localTransform;
 			const Vector3 POS = GetCharacterCenterPosition(_ctx);
+			const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
 
 			// 떨어지는 중에 주변 장애물 탐색
-			bool bFindObstacle = CheckObstacle(_ctx, POS, TF.Forward(), MAX_OBSTACLE_DETECT_DIST, 2.0f, true);
+			bool bFindObstacle = CheckObstacle(_ctx, POS, TF.Forward(), DIST, 2.0f, true);
 
 			if (bFindObstacle)
 				pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // 낙하 상태 강제 종료
@@ -561,8 +560,9 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 			std::shared_ptr<Character> pChar = ToChar(_ctx.m_owner);
 			const Transform& TF = pChar->GetRoot()->localTransform;
 			const Vector3 POS = GetCharacterCenterPosition(_ctx) + pChar->GetCapsuleRadius() * 2.0f * TF.Forward();
+			const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
 
-			return CheckObstacle(_ctx, POS, TF.Forward(), MAX_OBSTACLE_DETECT_DIST, 2.0f, true);
+			return CheckObstacle(_ctx, POS, TF.Forward(), DIST, 2.0f, true);
 		},
 		pCheckObstacleTag,
 		pEmpty
@@ -581,3 +581,4 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 
 	return pRootQuery;
 }
+
