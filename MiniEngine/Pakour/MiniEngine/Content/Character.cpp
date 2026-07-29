@@ -334,7 +334,7 @@ void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
 	targetPos += _posOffset;
 
-	// MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
