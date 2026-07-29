@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "Animation/IK/LimbIKComponent.h"
+#include "Scene/Actor.h"
 #include "Scene/SkeletalMeshComponent.h"
+#include "Animation/Animator.h"
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
 
 namespace MiniEngine 
 {
@@ -10,6 +13,9 @@ namespace MiniEngine
 	{
 		m_pSkeletal = _pSkeletal;
 		m_desc = _desc;
+		for (Vector3& poleDir : m_desc.poleDir)
+			poleDir.Normalize();
+
 		m_pelvisOffset = 0.0f;
 
 		IKHandle& hLeftArm = m_handles[(uint8_t)ELimbType::LeftArm];
@@ -33,11 +39,11 @@ namespace MiniEngine
 		hRightLeg.binding.end = HumanoidBone::RightFoot;
 	}
 
-	void LimbIKComponent::SetEnableAllIK(bool _bEnable)
-	{
-		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
-			m_handles[i].bEnable = _bEnable;
-	}
+	//void LimbIKComponent::SetEnableAllIK(bool _bEnable)
+	//{
+	//	for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
+	//		m_handles[i].bEnable = _bEnable;
+	//}
 
 	void LimbIKComponent::ClearPendingTask()
 	{
@@ -67,7 +73,7 @@ namespace MiniEngine
 	{
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
-			if (!m_handles[i].bEnable)
+			if (!IsEnable(m_handles[i]))
 				continue;
 
 			IKHandle& handle = m_handles[i];
@@ -96,7 +102,7 @@ namespace MiniEngine
 		IKHandle& hLeftLeg = m_handles[(uint8_t)ELimbType::LeftLeg];
 		IKHandle& hRightLeg = m_handles[(uint8_t)ELimbType::RightLeg];
 
-		if (!hLeftLeg.bEnable && !hRightLeg.bEnable)
+		if (!IsEnable(hLeftLeg) && !IsEnable(hRightLeg))
 			return;
 
 		m_pelvisOffset = 
@@ -111,20 +117,35 @@ namespace MiniEngine
 	void LimbIKComponent::UpdateIK()
 	{
 		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
+		std::shared_ptr<Animator> pAnim = pSkeletal->GetAnim().lock();
+
+		// MG_LOG_INFO("[LimbIKComp] Left Arm : {}", m_handles[(uint8_t)ELimbType::LeftArm].posAlpha);
 
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
-			if (!m_handles[i].bEnable)
+			if (!IsEnable(m_handles[i]))
 				continue;
 
 			IKHandle& handle = m_handles[i];
+
+			// MiniEngine::Debug::DrawPoint(handle.targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
 			pSkeletal->SetIKGoalWorld(
 				handle.binding,
 				handle.targetPos,
-				handle.targetRot,
-				handle.posAlpha,
-				handle.rotAlpha
+				// handle.targetRot,
+				handle.posAlpha// ,
+				// handle.rotAlpha
 			);
+
+			Vector3 localDir = owner.lock()->ConvertToLocalDir(m_desc.poleDir[i]);
+			const Matrix& LOWER = pAnim->GetGlobalPose()[(uint8_t)handle.binding.lower];
+			Vector3 pos = LOWER.Translation();
+
+			// MiniEngine::Debug::DrawLine(pos, pos + localDir, MiniEngine::DebugColor::YELLOW, 0.01f);
+			pos += localDir;
+
+			pSkeletal->SetIKPoleTargetWorld(handle.binding, pos);
 		}
 	}
 

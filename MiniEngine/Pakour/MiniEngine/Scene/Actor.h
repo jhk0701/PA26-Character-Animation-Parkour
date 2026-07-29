@@ -52,6 +52,9 @@ namespace MiniEngine
         // Tick 관련 설정
         void SetTickConfig(bool _bUseFixedTick, bool _bUseTick, bool _bUseLateTick);
 
+        // dir을 캐릭터 기준의 방향으로 전환
+        Vector3 ConvertToLocalDir(const Vector3& _dir);
+
     private:
         Tag m_tag;
         std::weak_ptr<Scene> m_scene;

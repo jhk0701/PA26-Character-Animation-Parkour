@@ -89,7 +89,7 @@ public:
 	// IK
 	void ReserveIKDetectGround();
 	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
-	void IKDetectObstacle(uint8_t _ik);
+	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
 	void ClearIKReserve();
 
 	void SetIKAlpha(uint8_t _ik, float _alpha);

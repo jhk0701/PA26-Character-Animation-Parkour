@@ -28,9 +28,7 @@ void LandingState::Tick(float _dt)
 	CheckState();
 }
 
-void LandingState::LateTick(float _dt)
-{
-}
+void LandingState::LateTick(float _dt) {}
 
 void LandingState::CheckState()
 {
@@ -52,11 +50,4 @@ void LandingState::CheckState()
 void LandingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	DefaultProcessPerceptionResult(_info);
-}
-
-Vector3 LandingState::DetectLand()
-{
-
-
-	return Vector3();
 }

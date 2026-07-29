@@ -16,6 +16,7 @@ private:
 	uint8_t m_ikType;
 	Character* m_pChar{ nullptr };
 
+	float m_elapsedTime{ 0.0f };
 	float m_from{ 0.0f };
 	float m_to{ 1.0f };
 };
@@ -27,8 +28,10 @@ public:
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 
 	void SetIKType(uint8_t _type) { m_ikType = _type; }
+	void SetPositionOffset(const MiniEngine::Vector3& _offset) { m_posOffset = _offset; }
 
 private:
 	uint8_t m_ikType;
 	Character* m_pChar{ nullptr };
+	MiniEngine::Vector3 m_posOffset;
 };

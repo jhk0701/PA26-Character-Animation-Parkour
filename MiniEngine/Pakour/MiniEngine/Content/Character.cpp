@@ -57,6 +57,8 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
+		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RigthArm] = Vector3(1.0f, 0.0f, -1.0f);
 
 		pLimbIK->Init(skinComp, desc);
 		m_limbIKComp = pLimbIK;
@@ -255,8 +257,6 @@ void Character::ReserveIKDetectGround()
 		return;
 
 	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
-	pLimbIK->SetEnableIK(ELimbType::LeftLeg, true);
-	pLimbIK->SetEnableIK(ELimbType::RightLeg, true);
 	pLimbIK->SetPendingTask(ELimbType::LeftLeg, [this]() { return IKDetectGround((uint8_t)ELimbType::LeftLeg); });
 	pLimbIK->SetPendingTask(ELimbType::RightLeg, [this]() { return IKDetectGround((uint8_t)ELimbType::RightLeg); });
 }
@@ -322,7 +322,7 @@ LimbIKComponent::TaskResult Character::IKDetectGround(uint8_t _ik)
 	return result;
 }
 
-void Character::IKDetectObstacle(uint8_t _ik)
+void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 {
 	// 노티파이를 통해서 호출될 것
 	// 파쿠르 중 장애물에 손, 발을 가져다 대는 용도
@@ -332,15 +332,15 @@ void Character::IKDetectObstacle(uint8_t _ik)
 
 	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
 	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
+	targetPos += _posOffset;
 
-	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
-	// m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
+	// MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
 void Character::ClearIKReserve()
 {
 	m_limbIKComp.lock()->ClearPendingTask();
-	m_limbIKComp.lock()->SetEnableAllIK(false);
 }
 
 void Character::SetIKAlpha(uint8_t _ik, float _alpha)
