@@ -118,6 +118,13 @@ namespace MiniEngine
 	{
 		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
 		std::shared_ptr<Animator> pAnim = pSkeletal->GetAnim().lock();
+		std::shared_ptr<SkinnedMesh> pMesh = pSkeletal->GetMesh().lock();
+
+		if (!pAnim || !pMesh)
+			return;
+
+		const HumanoidBoneMap& BONE_MAP = pMesh->GetHumanoidBones();
+		const std::vector<Matrix>& GLOBAL_POSE = pAnim->GetGlobalPose();
 
 		// MG_LOG_INFO("[LimbIKComp] Left Arm : {}", m_handles[(uint8_t)ELimbType::LeftArm].posAlpha);
 
@@ -139,9 +146,12 @@ namespace MiniEngine
 				// handle.rotAlpha
 			);
 
+			const int LOWER_IDX = BONE_MAP.Get(handle.binding.lower);
+			if (LOWER_IDX < 0 || LOWER_IDX >= static_cast<int>(GLOBAL_POSE.size()))
+				continue;
+
 			Vector3 localDir = owner.lock()->ConvertToLocalDir(m_desc.poleDir[i]);
-			const Matrix& LOWER = pAnim->GetGlobalPose()[(uint8_t)handle.binding.lower];
-			Vector3 pos = LOWER.Translation();
+			Vector3 pos = GLOBAL_POSE[static_cast<size_t>(LOWER_IDX)].Translation();
 
 			// MiniEngine::Debug::DrawLine(pos, pos + localDir, MiniEngine::DebugColor::YELLOW, 0.01f);
 			pos += localDir;

@@ -1,0 +1,6 @@
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Release\Shaders\Triangle.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Release\Shaders\SceneColor.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Release\Shaders\StaticMeshLambert.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Release\Shaders\SkinnedMeshLambert.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Release\Assets\pyramid.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\Release\MiniEngi.25EFF4BB.Up2Date
