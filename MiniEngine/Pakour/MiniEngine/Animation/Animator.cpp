@@ -417,9 +417,9 @@ namespace MiniEngine
 				const Quaternion CUR = Quaternion::CreateFromRotationMatrix(endGlobal);
 				const float ALPHA = std::clamp(GOAL.rotationAlpha, 0.0f, 1.0f);
 
-				// 델타면 현재 포즈 뒤에 이어 붙인다 (row-vector : 현재 -> 델타 순)
+				// 델타면 현재 포즈 뒤에 이어 붙이기
 				const Quaternion TARGET = GOAL.bRotationIsDelta
-					? Quaternion::Concatenate(CUR, GOAL.rotation)
+					? CUR * GOAL.rotation
 					: GOAL.rotation;
 
 				endGlobal = Matrix::CreateFromQuaternion(Quaternion::Slerp(CUR, TARGET, ALPHA));
