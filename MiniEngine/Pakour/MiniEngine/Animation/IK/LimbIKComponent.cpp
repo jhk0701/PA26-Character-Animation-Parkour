@@ -30,6 +30,18 @@ namespace MiniEngine
 		hRightLeg.binding.end = HumanoidBone::RightFoot;
 	}
 
+	void LimbIKComponent::SetEnableAllIK(bool _bEnable)
+	{
+		for (uint8_t i = 0; i < ELimbType::End; ++i)
+			m_handles[i].bEnable = _bEnable;
+	}
+
+	void LimbIKComponent::ClearPendingTask()
+	{
+		for (uint8_t i = 0; i < ELimbType::End; ++i)
+			m_pendingTask[i] = nullptr;
+	}
+
 	void LimbIKComponent::LateTick(float _dt)
 	{
 		Component::LateTick(_dt);
@@ -40,17 +52,28 @@ namespace MiniEngine
 		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
 		
 		// ik 갱신
-		for (const IKHandle& handle : m_handles)
+		for (uint8_t i = 0; i < ELimbType::End; ++i)
 		{
-			if (!handle.bEnable)
+			if (!m_handles[i].bEnable)
 				continue;
+
+			IKHandle& handle = m_handles[i];
+
+			if (m_pendingTask[i])
+			{
+				TaskResult result = m_pendingTask[i]();
+				handle.targetPos = result.position;
+				handle.targetRot = result.rotation;
+				handle.posAlpha = result.posAlpha;
+				handle.rotAlpha = result.rotAlpha;
+			}
 
 			pSkeletal->SetIKGoalWorld(
 				handle.binding,
 				handle.targetPos,
 				handle.targetRot,
-				handle.alpha,
-				handle.alpha
+				handle.posAlpha,
+				handle.rotAlpha
 			);
 		}
 	}

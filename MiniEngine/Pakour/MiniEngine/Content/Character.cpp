@@ -16,7 +16,6 @@
 #include "Scene/CharacterControllerComponent.h"
 #include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
-#include "Animation/IK/LimbIKComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/ActionClipContainer.h"
@@ -52,6 +51,11 @@ void Character::Construct(const Vector3& _initPosition)
 	InitAnimation(skinComp);
 
 	{
+		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
+		pLimbIK->Init(skinComp);
+		m_limbIKComp = pLimbIK;
+	}
+	{
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
 		Physics::CapsuleControllerDesc desc;
@@ -86,11 +90,6 @@ void Character::Construct(const Vector3& _initPosition)
 			});
 		m_charFSM = pCharFSM;
 	}
-	{
-		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
-		pLimbIK->Init(skinComp);
-		m_limbIKComp = pLimbIK;
-	}
 
 	pRoot->localTransform.position = _initPosition;
 
@@ -112,17 +111,20 @@ void Character::OnBeforeSortComponent()
 	Pawn::OnBeforeSortComponent();
 
 	// 컴포넌트 우선순위 설정
-	m_charCont.lock()->SetSortOrder(1); // 1. 입력에 따라 움직인다.
-	m_limbIKComp.lock()->SetSortOrder(2); // 2. 움직인 후 IK를 확인한다.
-	m_skinMeshComp.lock()->SetSortOrder(3); // 3. IK Solver 호출 필요한 지점에 타켓 위치
+	// m_charFSM.lock()->SetSortOrder(0);				단순 명시용, FSM에 따라 인지 결과 처리
+	// m_charCont.lock()->SetSortOrder(0);				// 1. 게임 로직 입력에 따라 움직인다.
+	m_limbIKComp.lock()->SetSortOrder(1);				// 2. 움직인 후 IK 타겟을 설정한다.
+	m_skinMeshComp.lock()->SetSortOrder(2);				// 3. IK Solver 호출로 필요한 지점에 타켓 위치시킨다.
+
+	// 이후 Rendering될 것
 }
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();
 
-	m_charCont.lock()->SetCheckFalling(true);
-
 	InitCollisionLayer();
+	m_charFSM.lock()->Start();
+	m_charCont.lock()->SetCheckFalling(true);
 }
 
 void Character::TryPerception()
@@ -217,7 +219,6 @@ void Character::InputJump()
 		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
 }
 
-
 std::weak_ptr<Animator> Character::GetAnim() const
 {
 	return m_skinMeshComp.lock()->GetAnim();
@@ -240,6 +241,73 @@ void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transit
 		return;
 
 	GetAnim().lock()->PlayActionClip(_clip, _transitionTime, _priority);
+}
+
+void Character::ReserveIKDetectGround()
+{
+	if (m_limbIKComp.expired())
+		return;
+
+	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
+	pLimbIK->SetEnableIK(LimbIKComponent::LeftLeg, true);
+	pLimbIK->SetEnableIK(LimbIKComponent::RightLeg, true);
+	pLimbIK->SetPendingTask(LimbIKComponent::LeftLeg, [this]() { return DetectGround(LimbIKComponent::LeftLeg); });
+	pLimbIK->SetPendingTask(LimbIKComponent::RightLeg, [this]() { return DetectGround(LimbIKComponent::RightLeg); });
+}
+
+LimbIKComponent::TaskResult Character::DetectGround(uint8_t _ik)
+{
+	std::shared_ptr<LimbIKComponent> pIKComp = m_limbIKComp.lock();
+	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+
+	LimbIKComponent::TaskResult result;
+	result.posAlpha = 0.0f;
+	result.rotAlpha = 0.0f;
+
+	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((LimbIKComponent::ELimbType)_ik).end);
+	if (BONE_IDX < 0)
+		return result;
+
+	Matrix endBoneW;
+	if (!pSkin->GetBoneWorldMatrix(BONE_IDX, endBoneW))
+		return result;
+
+	result.position = endBoneW.Translation();
+
+	Physics::RaycastParam param;
+	param.m_dir = Vector3(0.0f, - 1.0f, 0.0f);
+	param.m_maxDistance = m_rayDownDistance;
+	param.m_origin = result.position;
+
+	Physics::RaycastResult hitResult;
+
+	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
+	if (!pPhysics->Raycast(param, hitResult, Physics::Layer::Ground | Physics::Layer::Obstacle))
+		return result;
+
+	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.05f);
+
+	result.position = hitResult.m_pos;
+	result.posAlpha = 1.0f;
+	
+	hitResult.m_nrm.Normalize();
+	const Vector3 UP(0.0f, 1.0f, 0.0f);
+	const float SLOPE = std::acos(std::clamp(UP.Dot(hitResult.m_nrm), -1.0f, 1.0f)); // 경사각 라디안
+	Quaternion q = FromToRotation(UP, hitResult.m_nrm);
+
+	const float MAX_SLOPE = ToRadians(m_maxSlopeDeg);
+	if (SLOPE > MAX_SLOPE && SLOPE > 1e-4f)
+		result.rotation = Quaternion::Slerp(Quaternion(0.0f, 0.0f, 0.0f, 1.0f), q, MAX_SLOPE / SLOPE);
+	else
+		result.rotation = q;
+	result.rotAlpha = 1.0f;
+	return result;
+}
+
+void Character::ClearIKReserve()
+{
+	m_limbIKComp.lock()->ClearPendingTask();
+	m_limbIKComp.lock()->SetEnableAllIK(false);
 }
 
 void Character::TransitionStateMachine(uint8_t _state)

@@ -57,6 +57,12 @@ void CharacterState::SyncControllerRotate()
 }
 
 
+void CharacterStateMachine::Start(uint8_t _startID)
+{
+	m_bInitialized = true;
+	Transition(0);
+}
+
 void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states)
 {
 	m_states = _states;
@@ -64,7 +70,6 @@ void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<Character
 		pState->RegisterMachine(shared_from_this());
 	
 	assert(m_states.size() > 0); // false 중단
-	Transition(0);
 }
 
 void CharacterStateMachine::Tick(float _dt)
@@ -89,7 +94,8 @@ void CharacterStateMachine::Transition(uint8_t _nextID)
 		return;
 	}
 
-	m_states[m_curState]->OnEnd();
+	if (m_curState >= 0)
+		m_states[m_curState]->OnEnd();
 
 	m_curState = _nextID;
 
