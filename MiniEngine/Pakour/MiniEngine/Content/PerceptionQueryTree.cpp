@@ -8,6 +8,7 @@
 #include "Scene/PerceptionComponent.h"
 #include "Physics/PhysicsWorld.h"
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
 
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
@@ -43,8 +44,6 @@ namespace
 		return dynamic_cast<IObstacle*>(pActor);
 	}
 
-	// 캐스트 결과를 컨텍스트로 옮긴다. 높이를 따로 재는 경로는 m_ledge 를 뒤에서 덮어쓴다
-	// RaycastResult / HitResult 둘 다 받는다 (필드는 같은데 타입이 갈려 있음)
 	template <typename THit>
 	void FillFromResult(TravelContext& _context, const THit& _result)
 	{
@@ -72,8 +71,6 @@ namespace
 	}
 
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 장애물이 있는지 체크
-	// _bExcludeGroundActor : 지금 딛고 선 장애물(경사로 등 이미 올라온 것)을 후보에서 제외한다.
-	//                        전방 탐지에만 의미가 있으므로 위/옆으로 쏘는 호출부는 끄고 쓸 것
 	bool CheckObstacle(TravelContext& _context, const Vector3& _pos, const Vector3& _dir, const float _dist,
 		const float _hMultiplier = 2.0f, const bool _bExcludeGroundActor = false)
 	{
@@ -92,7 +89,7 @@ namespace
 		if (_context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
 
-		// 지금 딛고 선 액터를 찾아둔다 (없으면 nullptr -> 아래 순회가 자연히 첫 히트를 집는다)
+		// 지금 장애물 위에 있는지 확인
 		void* pGroundActor = nullptr;
 		if (_bExcludeGroundActor)
 		{
@@ -139,6 +136,11 @@ namespace
 			param.m_radius = CONFIG.heightRadius;
 			param.m_dir = _dir;
 			param.m_maxDistance = CONFIG.heightSearchtDist;
+
+			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
+			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+
 
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
@@ -383,16 +385,8 @@ std::shared_ptr<QueryNodeBase> PerceptionQueryTree::ConstructTree()
 					RaycastResult result;
 					bool bIsHit = _ctx.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge));
 
-					// const Vector3& CHAR_POS = GetCharacterCenterPosition(_ctx);
 					const Vector3& OBS_POS = pObs->GetTransform().position;
-					// bool bStepable = OBS_POS.y <= CHAR_POS.y;
-					// _ctx.m_predictedActTag = (uint8_t)(bStepable ? ETagAct::BeamStand : ETagAct::BeamHanging);
 					_ctx.m_ledge = bIsHit ? result.m_pos.y : OBS_POS.y;
-
-					/*
-					const Vector3 DebugVec = { _ctx.m_firstObstacleHitPos.x, _ctx.m_ledge, _ctx.m_firstObstacleHitPos.z };
-					MG_LOG_INFO("[QueryTree] Beam Obstacle is found : ({}, {}, {}) {}", DebugVec.x, DebugVec.y, DebugVec.z, bStepable ? "will step" : "will hang");
-					*/
 					return true;
 				},
 				pReturn,

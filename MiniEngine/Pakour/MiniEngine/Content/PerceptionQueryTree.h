@@ -12,9 +12,14 @@ struct PerceptionConfig
 	float minObstacleDetectDist = 1.0f;
 	float maxObstacleDetectDist = 2.5f;
 
+	// 장애물 파쿠르 기준
+	float thresholdWallHeight	= 3.0f;
+	float thresholdHighObstacle = 2.0f;
+	float thresholdLowObstacle	= 1.0f;
+
 	// 일반 장애물 측량 파라미터
-	float heightRadius = 0.5f;	// STEP 과 커플링 — 함께 바꿀 것
-	float heightStep = 1.0f;	// = RADIUS * 2 여야 밴드가 틈/중복 없이 접한다
+	float heightRadius = 0.5f;	// heightStep과 함께 바꿀 것
+	float heightStep = 1.0f;	// = heightRadius * 2 여야 밴드가 틈이 없음
 	uint8_t maxHeightStep = 3;	// 3.0m 이상은 벽으로 보고 매달린다
 	float heightSearchtDist = 0.1f;	
 	

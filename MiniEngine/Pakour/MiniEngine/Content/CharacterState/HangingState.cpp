@@ -152,7 +152,7 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const float CHECK_DIST = 1.0f;
+	const float CHECK_DIST = pChar->GetPerceptionConfig().onHangingSearchDist;
 
 	RaycastParam param;
 	param.m_maxDistance = CHECK_DIST;
