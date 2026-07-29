@@ -27,6 +27,10 @@ protected:
 	void ProcessMovement(float _dt);
 	void SyncControllerRotate();
 	void DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info);
+	void ProcessDefaultObstacle(const Character::PerceptedObstacleInfo& _info);
+	void ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info);
+	void ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info);
+
 
 private:
 	std::weak_ptr<CharacterStateMachine> m_machine;

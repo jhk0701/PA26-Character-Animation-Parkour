@@ -30,7 +30,7 @@ struct PerceptionConfig
 	float minMantleDepth = 1.0f;	// 이 값 이상이어야 Mantle, 미만은 Vault
 
 	// 매달린 상태(Hanging)의 주변 탐색 파라미터
-	float onHangingSearchDist = 2.0f;	// 상하좌우 공통 탐지 거리
+	float onHangingSearchDist = 1.5f;	// 상하좌우 공통 탐지 거리
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
 
 };

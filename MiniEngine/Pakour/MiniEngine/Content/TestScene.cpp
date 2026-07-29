@@ -90,21 +90,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
 		ObstacleFactory::Create(pScene, desc);
 
-		// celing 2
-		desc.pos = Vector3(-5.0f, 0.5f, -5.0f);
+		// celing 
+		desc.pos = Vector3(-7.5f, 0.5f, -5.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = Vector3(-5.0f, 3.0f, -6.25f);
-		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
-		ObstacleFactory::Create(pScene, desc);
-
-		// celing 3
-		desc.pos = Vector3(-10.0f, 0.5f, -5.0f);
-		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
-
-		desc.pos = Vector3(-10.0f, 4.0f, -6.25f);
+		desc.pos = Vector3(-7.5f, 4.0f, -6.25f);
 		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
 		ObstacleFactory::Create(pScene, desc);
 
@@ -113,12 +104,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = Vector3(-16.2f, 2.0f, -5.0f);
-		desc.scale = Vector3(1.6f, 2.0f, 0.5f);
+		desc.pos = Vector3(-16.5f, 1.8f, -5.0f);
+		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 		
-		desc.pos = Vector3(-13.8f, 2.0f, -5.0f);
-		desc.scale = Vector3(1.6f, 2.0f, 0.5f);
+		desc.pos = Vector3(-14.0f, 1.8f, -5.0f);
+		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
 		// 3. mantle -> vault

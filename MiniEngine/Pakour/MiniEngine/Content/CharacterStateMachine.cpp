@@ -8,6 +8,8 @@
 
 #include "Core/Log.h"
 
+using namespace Content::Config;
+
 void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states)
 {
 	m_states = _states;
@@ -54,10 +56,34 @@ std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 
 void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
+	uint8_t type;
+	if (_info.m_pObstacle->TryGetTag(Content::Config::TAG_ENV_DETAIL, type) == false)
+	{
+		ProcessDefaultObstacle(_info);
+		return;
+	}
+
+	switch ((ETagEnvDetail)type)
+	{
+	case ETagEnvDetail::Beam:
+		ProcessBeamObstacle(_info);
+		break;
+	case ETagEnvDetail::Protrude:
+		ProcessProstrudeObstacle(_info);
+		break;
+	case ETagEnvDetail::Default: __fallthrough;
+	default:
+		ProcessDefaultObstacle(_info);
+		break;
+	}
+}
+
+void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleInfo& _info)
+{
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
-	uint8_t actTag = 
+	uint8_t actTag =
 		_info.m_obstacleDepth >= CONFIG.minMantleDepth ?
 		(uint8_t)Content::Config::ETagAct::Mantle :
 		(uint8_t)Content::Config::ETagAct::Vault;
@@ -68,14 +94,22 @@ void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedOb
 		// 올라가야함
 		if (diffHeight >= CONFIG.thresholdWallHeight)
 			actTag = (uint8_t)Content::Config::ETagAct::Wall;
-		else if(diffHeight >= CONFIG.thresholdHighObstacle)
+		else if (diffHeight >= CONFIG.thresholdHighObstacle)
 			actTag += 2;
-		else if(diffHeight >= CONFIG.thresholdLowObstacle)
+		else if (diffHeight >= CONFIG.thresholdLowObstacle)
 			actTag += 1;
 	}
 
 	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
 		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+}
+
+void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info)
+{
+}
+
+void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)
+{
 }
 
 void CharacterState::ProcessMovement(float _dt)
