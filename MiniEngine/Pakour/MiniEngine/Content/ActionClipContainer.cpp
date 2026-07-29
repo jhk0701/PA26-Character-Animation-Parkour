@@ -125,13 +125,13 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
 		pIKEnabler->SetTime(0.3f, 0.4f);
 		pIKEnabler->SetFromTo(0.0f, 1.0f);
-		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
 		pActionClip->AddNotify(pIKEnabler);
 
 		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
 		pIKDisabler->SetTime(0.6f, 0.7f);
 		pIKDisabler->SetFromTo(1.0f, 0.0f);
-		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
 		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
@@ -214,13 +214,13 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
 		pIKEnabler->SetTime(0.2f, 0.3f);
 		pIKEnabler->SetFromTo(0.0f, 1.0f);
-		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
 		pActionClip->AddNotify(pIKEnabler);
 
 		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
 		pIKDisabler->SetTime(0.4f, 0.5f);
 		pIKDisabler->SetFromTo(1.0f, 0.0f);
-		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
 		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
