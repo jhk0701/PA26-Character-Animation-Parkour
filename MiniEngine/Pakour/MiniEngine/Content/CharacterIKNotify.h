@@ -9,11 +9,11 @@ public:
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 	void OnEnd(MiniEngine::AnimNotifyParam& _param) override;
 
-	void SetIKType(uint8_t _type) { m_ikType = _type; }
+	void SetIKType(std::vector<uint8_t>&& _ikTypes) { m_ikTypes = _ikTypes; }
 	void SetFromTo(float _from, float _to) { m_from = _from; m_to = _to; }
 
 private:
-	uint8_t m_ikType;
+	std::vector<uint8_t> m_ikTypes;
 	Character* m_pChar{ nullptr };
 
 	float m_elapsedTime{ 0.0f };

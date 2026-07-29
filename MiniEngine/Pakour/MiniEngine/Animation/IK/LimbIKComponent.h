@@ -86,7 +86,6 @@ namespace MiniEngine
 		void UpdateIK();
 
 		std::weak_ptr<SkeletalMeshComponent> m_pSkeletal;
-
 		std::array<IKHandle, (uint8_t)ELimbType::End> m_handles; // 사지 IK 핸들
 		std::array<std::function<TaskResult()>, (uint8_t)ELimbType::End> m_pendingTask; // IK LateUpdate 직전에 행할 태스크, 주로 위치 탐지를 위함
 

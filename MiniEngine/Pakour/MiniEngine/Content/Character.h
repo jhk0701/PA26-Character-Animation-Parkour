@@ -58,6 +58,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
 
+	// void LateTick(float _dt) override;
+
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
 
@@ -90,6 +92,7 @@ public:
 	void ReserveIKDetectGround();
 	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
 	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
+	
 	void ClearIKReserve();
 
 	void SetIKAlpha(uint8_t _ik, float _alpha);
@@ -123,7 +126,7 @@ private:
 
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
-	float m_lerpWeight{ 0.25f };
+	float m_lerpWeight{ 0.1f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 

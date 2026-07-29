@@ -125,11 +125,12 @@ namespace MiniEngine
 		{
 			if (!IsEnable(m_handles[i]))
 				continue;
+			else
+				MG_LOG_INFO("[LimbIKComp] type : {} is Enable : {:.2f}", i, m_handles[i].posAlpha);
 
 			IKHandle& handle = m_handles[i];
 
 			// MiniEngine::Debug::DrawPoint(handle.targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
-
 			pSkeletal->SetIKGoalWorld(
 				handle.binding,
 				handle.targetPos,

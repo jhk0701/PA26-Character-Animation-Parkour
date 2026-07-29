@@ -12,7 +12,9 @@ void CharacterIKEnabler::OnStart(MiniEngine::AnimNotifyParam& _param)
 	if (!m_pChar)
 		return;
 
-	m_pChar->SetIKAlpha(m_ikType, m_from);
+	for (const uint8_t& t : m_ikTypes)
+		m_pChar->SetIKAlpha(t, m_from);
+	
 	m_elapsedTime = 0.0f;
 
 	assert(GetDuration() > 1e-4f);
@@ -27,14 +29,20 @@ void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param
 	m_elapsedTime += _dt;
 	const float W = m_elapsedTime / GetDuration();
 	const float LERP = m_from + (m_to - m_from) * W;
-	m_pChar->SetIKAlpha(m_ikType, LERP);
+
+	for (const uint8_t& t : m_ikTypes)
+		m_pChar->SetIKAlpha(t, LERP);
 }
 
 void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnEnd(_param);
 
-	m_pChar->SetIKAlpha(m_ikType, m_to);
+	for (const uint8_t& t : m_ikTypes)
+	{
+		m_pChar->SetIKAlpha(t, m_to);
+		MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
+	}
 }
 
 

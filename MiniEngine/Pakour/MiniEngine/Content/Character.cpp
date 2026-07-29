@@ -135,6 +135,23 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 }
 
+//float sinElapsed = 0.0f;
+//void Character::LateTick(float _dt)
+//{
+//	Vector3 pos = GetRoot()->localTransform.position;
+//	pos.x -= 0.5f;
+//
+//	sinElapsed += _dt;
+//	pos.y += std::sin(sinElapsed) * 0.3f + GetCapsuleHalfHeight();
+//
+//	m_limbIKComp.lock()->SetAlphaIK(ELimbType::LeftArm, 1.0f);
+//	m_limbIKComp.lock()->SetTargetPosIK(ELimbType::LeftArm, pos);
+//
+//	MiniEngine::Debug::DrawPoint(pos, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
+//
+//	Pawn::LateTick(_dt);
+//}
+
 void Character::TryPerception()
 {
 	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
@@ -335,6 +352,7 @@ void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 	targetPos += _posOffset;
 
 	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
 	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
