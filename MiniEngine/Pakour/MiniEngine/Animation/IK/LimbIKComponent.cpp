@@ -1,30 +1,33 @@
 #include "pch.h"
 #include "Animation/IK/LimbIKComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
+#include "Core/Log.h"
 
 namespace MiniEngine 
 {
 
-	void LimbIKComponent::Init(const std::shared_ptr<SkeletalMeshComponent>& _pSkeletal)
+	void LimbIKComponent::Init(const std::shared_ptr<SkeletalMeshComponent>& _pSkeletal, const LimbIKDesc& _desc)
 	{
 		m_pSkeletal = _pSkeletal;
+		m_desc = _desc;
+		m_pelvisOffset = 0.0f;
 
-		IKHandle& hLeftArm = m_handles[ELimbType::LeftArm];
+		IKHandle& hLeftArm = m_handles[(uint8_t)ELimbType::LeftArm];
 		hLeftArm.binding.upper = HumanoidBone::LeftUpperArm;
 		hLeftArm.binding.lower = HumanoidBone::LeftLowerArm;
 		hLeftArm.binding.end = HumanoidBone::LeftHand;
 
-		IKHandle& hRightArm = m_handles[ELimbType::RigthArm];
+		IKHandle& hRightArm = m_handles[(uint8_t)ELimbType::RigthArm];
 		hRightArm.binding.upper = HumanoidBone::RightUpperArm;
 		hRightArm.binding.lower = HumanoidBone::RightLowerArm;
 		hRightArm.binding.end = HumanoidBone::RightHand;
 
-		IKHandle& hLeftLeg = m_handles[ELimbType::LeftLeg];
+		IKHandle& hLeftLeg = m_handles[(uint8_t)ELimbType::LeftLeg];
 		hLeftLeg.binding.upper = HumanoidBone::LeftUpperLeg;
 		hLeftLeg.binding.lower = HumanoidBone::LeftLowerLeg;
 		hLeftLeg.binding.end = HumanoidBone::LeftFoot;
 
-		IKHandle& hRightLeg = m_handles[ELimbType::RightLeg];
+		IKHandle& hRightLeg = m_handles[(uint8_t)ELimbType::RightLeg];
 		hRightLeg.binding.upper = HumanoidBone::RightUpperLeg;
 		hRightLeg.binding.lower = HumanoidBone::RightLowerLeg;
 		hRightLeg.binding.end = HumanoidBone::RightFoot;
@@ -32,13 +35,13 @@ namespace MiniEngine
 
 	void LimbIKComponent::SetEnableAllIK(bool _bEnable)
 	{
-		for (uint8_t i = 0; i < ELimbType::End; ++i)
+		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 			m_handles[i].bEnable = _bEnable;
 	}
 
 	void LimbIKComponent::ClearPendingTask()
 	{
-		for (uint8_t i = 0; i < ELimbType::End; ++i)
+		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 			m_pendingTask[i] = nullptr;
 	}
 
@@ -48,17 +51,26 @@ namespace MiniEngine
 		
 		if (m_pSkeletal.expired())
 			return;
-
-		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
 		
-		// ik 갱신
-		for (uint8_t i = 0; i < ELimbType::End; ++i)
+		// IK 예약 작업 실행
+		ProcessPendingTask();
+		PostPendingTask();
+
+		// 발 위치에 따른 골반 위치 보정
+		AdjustPelvisOffset();
+
+		// IK 갱신
+		UpdateIK();
+	}
+
+	void LimbIKComponent::ProcessPendingTask()
+	{
+		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
 			if (!m_handles[i].bEnable)
 				continue;
 
 			IKHandle& handle = m_handles[i];
-
 			if (m_pendingTask[i])
 			{
 				TaskResult result = m_pendingTask[i]();
@@ -67,7 +79,45 @@ namespace MiniEngine
 				handle.posAlpha = result.posAlpha;
 				handle.rotAlpha = result.rotAlpha;
 			}
+		}
+	}
 
+	void LimbIKComponent::PostPendingTask()
+	{
+		if (m_pendingTask[(uint8_t)ELimbType::LeftLeg])
+			m_handles[(uint8_t)ELimbType::LeftLeg].targetPos.y = std::clamp(m_handles[(uint8_t)ELimbType::LeftLeg].targetPos.y, -m_desc.maxFootDrop, m_desc.maxFootRaise);
+
+		if (m_pendingTask[(uint8_t)ELimbType::RightLeg])
+			m_handles[(uint8_t)ELimbType::RightLeg].targetPos.y = std::clamp(m_handles[(uint8_t)ELimbType::RightLeg].targetPos.y, -m_desc.maxFootDrop, m_desc.maxFootRaise);
+	}
+
+	void LimbIKComponent::AdjustPelvisOffset()
+	{
+		IKHandle& hLeftLeg = m_handles[(uint8_t)ELimbType::LeftLeg];
+		IKHandle& hRightLeg = m_handles[(uint8_t)ELimbType::RightLeg];
+
+		if (!hLeftLeg.bEnable && !hRightLeg.bEnable)
+			return;
+
+		m_pelvisOffset = 
+			hLeftLeg.targetPos.y < hRightLeg.targetPos.y ? 
+			hLeftLeg.targetPos.y - hLeftLeg.originPosW.y : hRightLeg.targetPos.y - hRightLeg.originPosW.y;
+		m_pelvisOffset = std::clamp(m_pelvisOffset, -m_desc.maxPelvisDrop, 0.0f);
+
+		// MG_LOG_INFO("[LimbIK] :: pelvis offset : {}", m_pelvisOffset);
+		// m_pSkeletal.lock()->SetIKPelvisOffsetWorld(Vector3(0.0f, m_pelvisOffset, 0.0f));
+	}
+
+	void LimbIKComponent::UpdateIK()
+	{
+		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
+
+		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
+		{
+			if (!m_handles[i].bEnable)
+				continue;
+
+			IKHandle& handle = m_handles[i];
 			pSkeletal->SetIKGoalWorld(
 				handle.binding,
 				handle.targetPos,

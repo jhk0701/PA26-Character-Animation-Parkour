@@ -52,7 +52,13 @@ void Character::Construct(const Vector3& _initPosition)
 
 	{
 		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
-		pLimbIK->Init(skinComp);
+		LimbIKDesc desc;
+		desc.footHeight = 0.0f;
+		desc.maxFootDrop = 0.4f;
+		desc.maxFootRaise = 0.4f;
+		desc.maxPelvisDrop = 0.45f;
+
+		pLimbIK->Init(skinComp, desc);
 		m_limbIKComp = pLimbIK;
 	}
 	{
@@ -249,22 +255,28 @@ void Character::ReserveIKDetectGround()
 		return;
 
 	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
-	pLimbIK->SetEnableIK(LimbIKComponent::LeftLeg, true);
-	pLimbIK->SetEnableIK(LimbIKComponent::RightLeg, true);
-	pLimbIK->SetPendingTask(LimbIKComponent::LeftLeg, [this]() { return DetectGround(LimbIKComponent::LeftLeg); });
-	pLimbIK->SetPendingTask(LimbIKComponent::RightLeg, [this]() { return DetectGround(LimbIKComponent::RightLeg); });
+	pLimbIK->SetEnableIK(ELimbType::LeftLeg, true);
+	pLimbIK->SetEnableIK(ELimbType::RightLeg, true);
+	pLimbIK->SetPendingTask(ELimbType::LeftLeg, [this]() { return IKDetectGround((uint8_t)ELimbType::LeftLeg); });
+	pLimbIK->SetPendingTask(ELimbType::RightLeg, [this]() { return IKDetectGround((uint8_t)ELimbType::RightLeg); });
 }
 
-LimbIKComponent::TaskResult Character::DetectGround(uint8_t _ik)
+LimbIKComponent::TaskResult Character::IKDetectGround(uint8_t _ik)
 {
 	std::shared_ptr<LimbIKComponent> pIKComp = m_limbIKComp.lock();
 	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	std::shared_ptr<Animator> pAnim = pSkin->GetAnim().lock();
 
 	LimbIKComponent::TaskResult result;
 	result.posAlpha = 0.0f;
 	result.rotAlpha = 0.0f;
 
-	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((LimbIKComponent::ELimbType)_ik).end);
+	// 예약된 작업은 override 사용, 이동 중엔 무시될 것
+	if (pAnim->IsActionClipPlaying() || 
+		m_inputDir.LengthSquared() > 1e-4f)
+		return result;
+
+	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((ELimbType)_ik).end);
 	if (BONE_IDX < 0)
 		return result;
 
@@ -276,8 +288,9 @@ LimbIKComponent::TaskResult Character::DetectGround(uint8_t _ik)
 
 	Physics::RaycastParam param;
 	param.m_dir = Vector3(0.0f, - 1.0f, 0.0f);
-	param.m_maxDistance = m_rayDownDistance;
+	param.m_maxDistance = m_ikRayDistance * 2.0f;
 	param.m_origin = result.position;
+	param.m_origin.y += m_ikRayDistance;
 
 	Physics::RaycastResult hitResult;
 
@@ -285,11 +298,14 @@ LimbIKComponent::TaskResult Character::DetectGround(uint8_t _ik)
 	if (!pPhysics->Raycast(param, hitResult, Physics::Layer::Ground | Physics::Layer::Obstacle))
 		return result;
 
-	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.05f);
+	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
+	// 위치 적용
+	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
 	result.position = hitResult.m_pos;
 	result.posAlpha = 1.0f;
 	
+	// 회전 적용
 	hitResult.m_nrm.Normalize();
 	const Vector3 UP(0.0f, 1.0f, 0.0f);
 	const float SLOPE = std::acos(std::clamp(UP.Dot(hitResult.m_nrm), -1.0f, 1.0f)); // 경사각 라디안
@@ -300,14 +316,36 @@ LimbIKComponent::TaskResult Character::DetectGround(uint8_t _ik)
 		result.rotation = Quaternion::Slerp(Quaternion(0.0f, 0.0f, 0.0f, 1.0f), q, MAX_SLOPE / SLOPE);
 	else
 		result.rotation = q;
-	result.rotAlpha = 1.0f;
+
+	result.rotation.Normalize();
+	// result.rotAlpha = 1.0f;
 	return result;
+}
+
+void Character::IKDetectObstacle(uint8_t _ik)
+{
+	// 노티파이를 통해서 호출될 것
+	// 파쿠르 중 장애물에 손, 발을 가져다 대는 용도
+	// 이미 장애물의 위치 등을 알고 있기 때문에 레이캐스트를 쏘진 않을 것
+	if (!m_curObstacleInfo.IsValid())
+		return;
+
+	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
+	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
+
+	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	// m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
 void Character::ClearIKReserve()
 {
 	m_limbIKComp.lock()->ClearPendingTask();
 	m_limbIKComp.lock()->SetEnableAllIK(false);
+}
+
+void Character::SetIKAlpha(uint8_t _ik, float _alpha)
+{
+	m_limbIKComp.lock()->SetAlphaIK((ELimbType)_ik, _alpha);
 }
 
 void Character::TransitionStateMachine(uint8_t _state)

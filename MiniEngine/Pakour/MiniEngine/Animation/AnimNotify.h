@@ -35,6 +35,7 @@ namespace MiniEngine
 		virtual void OnEnd(AnimNotifyParam& _param) {};
 
 		float GetDuration() const { return m_end - m_start; }
+		float GetElapsed() const { return m_playElapsed; }
 
 	private:
 		bool m_bStartCalled{ false };

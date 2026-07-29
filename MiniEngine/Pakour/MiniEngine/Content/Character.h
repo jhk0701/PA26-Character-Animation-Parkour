@@ -88,9 +88,11 @@ public:
 	
 	// IK
 	void ReserveIKDetectGround();
-	LimbIKComponent::TaskResult DetectGround(uint8_t _ik);
-	
+	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
+	void IKDetectObstacle(uint8_t _ik);
 	void ClearIKReserve();
+
+	void SetIKAlpha(uint8_t _ik, float _alpha);
 
 	// 콜라이더 및 물리
 	void AddMovementInput(const Vector3& _moveDelta);
@@ -142,13 +144,9 @@ private:
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 
 	// IK 튜닝 멤버 변수
-	float m_footHeight = 0.0f; // 로컬 foot의 기본 높이
-	float m_rayDownDistance = 0.5f; // 발의 아래를 체크할 높이
+	float m_ikRayDistance = 0.5f; // 발의 아래를 체크할 높이
 
 	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
-	float m_maxFootRaise = 0.0f;
-	float m_maxFootDrop = 0.45f;  // 다리 길이 절반 근처
-	float m_maxPelvisDrop = 0.45f;
-	float m_maxSlopeDeg = 60.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
+	float m_maxSlopeDeg = 45.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
 };
 

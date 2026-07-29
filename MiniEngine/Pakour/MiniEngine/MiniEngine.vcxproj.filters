@@ -352,6 +352,9 @@
     <ClInclude Include="Animation\IK\LimbIKComponent.h">
       <Filter>Engine\07.Object\Animation\IK</Filter>
     </ClInclude>
+    <ClInclude Include="Content\CharacterIKNotify.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -560,6 +563,9 @@
     </ClCompile>
     <ClCompile Include="Animation\IK\LimbIKComponent.cpp">
       <Filter>Engine\07.Object\Animation\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterIKNotify.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
