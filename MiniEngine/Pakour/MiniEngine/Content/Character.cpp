@@ -16,7 +16,7 @@
 #include "Scene/CharacterControllerComponent.h"
 #include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
-#include "Animation/IK/FootIKComponent.h"
+#include "Animation/IK/LimbIKComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/ActionClipContainer.h"
@@ -87,13 +87,11 @@ void Character::Construct(const Vector3& _initPosition)
 		m_charFSM = pCharFSM;
 	}
 	{
-		// 캐릭터 IK 설정
-		m_hLeftLeg.m_binding.upper =	HumanoidBone::LeftUpperLeg;
-		m_hLeftLeg.m_binding.lower =	HumanoidBone::LeftLowerLeg;
-		m_hLeftLeg.m_binding.end =		HumanoidBone::LeftFoot;
-		m_hLeftLeg.m_targetPos = GetRoot()->localTransform.position + Vector3(-0.3f, 0.0f, 0.0f);
-		m_hLeftLeg.m_alpha = 1.0f;
+		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
+		pLimbIK->Init(skinComp);
+		m_limbIKComp = pLimbIK;
 	}
+
 
 	pRoot->localTransform.position = _initPosition;
 
@@ -111,6 +109,16 @@ void Character::PostConstruct()
 	m_charFSM.lock()->Transition((uint8_t)EState::Landing);
 }
 
+void Character::OnBeforeSortComponent()
+{
+	Pawn::OnBeforeSortComponent();
+
+	// 컴포넌트 우선순위 설정
+	m_skinMeshComp.lock()->SetSortOrder(2);
+	m_limbIKComp.lock()->SetSortOrder(1);
+}
+
+
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();
@@ -120,14 +128,6 @@ void Character::BeginPlay()
 	InitCollisionLayer();
 }
 
-void Character::OnBeforeSortComponent()
-{
-	Pawn::OnBeforeSortComponent();
-
-	// 컴포넌트 우선순위 설정
-	m_skinMeshComp.lock()->SetSortOrder(2); 
-}
-
 void Character::Tick(float _dt)
 {
 	Pawn::Tick(_dt);
@@ -135,12 +135,14 @@ void Character::Tick(float _dt)
 
 void Character::LateTick(float _dt)
 {
+	/*
 	m_sinElpased += _dt;
 	m_hLeftLeg.m_targetPos.y = std::abs(std::sin(m_sinElpased));
 	m_hLeftLeg.m_targetPos.z = 1.0f;
 	MiniEngine::Debug::DrawPoint(m_hLeftLeg.m_targetPos, MiniEngine::DebugColor::RED, 0.1f, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
 
 	GetSkin().lock()->SetIKGoalWorld(m_hLeftLeg.m_binding, m_hLeftLeg.m_targetPos, m_hLeftLeg.m_alpha);
+	*/
 
 	Pawn::LateTick(_dt);
 }
