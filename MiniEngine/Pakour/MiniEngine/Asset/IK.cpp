@@ -8,15 +8,29 @@ namespace MiniEngine
 	{
 		constexpr float EPS = 1e-6f;
 
+		// IK 떨림 보정을 위한 임계값
+		constexpr float MIN_BEND_SIN = 0.05f;   // 약 2.9도
+		constexpr float REACH_SOFT_START = 0.97f;   // 이 비율부터 압축 시작
+		constexpr float REACH_SOFT_MAX = 0.995f;    // 점근 상한
+
 		inline Quaternion Identity() { return Quaternion(0.0f, 0.0f, 0.0f, 1.0f); }
 
-		float ClampReach(float _dist, float _lenU, float _lenL) 
+		float ClampReach(float _dist, float _lenU, float _lenL)
 		{
+			const float FULL = _lenU + _lenL;
 			const float LO = std::fabs(_lenU - _lenL) + EPS;
-			const float HI = _lenU + _lenL - EPS;
+			const float HI = FULL * REACH_SOFT_MAX;
 
 			if (HI <= LO)
 				return LO;
+
+			// 소프트 상한: START 이후를 지수 포화로 압축 -> HI 에 점근, C1 연속
+			const float START = FULL * REACH_SOFT_START;
+			if (_dist > START && START > LO)
+			{
+				const float T = (_dist - START) / (FULL - START);
+				_dist = START + (HI - START) * (1.0f - std::exp(-T));
+			}
 
 			return max(LO, min(HI, _dist));
 		}
@@ -71,8 +85,8 @@ namespace MiniEngine
 		const Vector3 V = _inBone.lowerPos - _inBone.upperPos;
 		const Vector3 PERP = V - axis * V.Dot(axis);
 
-		// 상대 임계값: 본 길이에 비례해 판정해야 리그 단위(cm/m)에 무관
-		if (PERP.Length() < 1e-4f * max(AXIS_LEN, V.Length()))
+		// |PERP| = |V| * sin(각) 임계값 확인
+		if (PERP.Length() < MIN_BEND_SIN * V.Length())
 			return false;
 
 		_outPole = _inBone.lowerPos;
@@ -99,9 +113,13 @@ namespace MiniEngine
 		dir /= DIST_RAW; 
 		const float DIST = ClampReach(DIST_RAW, LEN_U, LEN_L);
 
-		Vector3 bendNormal = dir.Cross(_inTarget.poleTargetPos - _inBone.upperPos);
-		if (bendNormal.Length() < EPS)
-			return false; // 폴의 방향과 dir이 평행한 경우
+		// dir 이 단위벡터이므로 |dir x v| = |v| * sin(각)
+		const Vector3 V_POLE = _inTarget.poleTargetPos - _inBone.upperPos;
+		const float POLE_LEN = V_POLE.Length();
+
+		Vector3 bendNormal = dir.Cross(V_POLE);
+		if (POLE_LEN < EPS || bendNormal.Length() < MIN_BEND_SIN * POLE_LEN)
+			return false; // 폴의 방향과 dir이 (거의) 평행한 경우
 
 		// 굽힘 평면
 		bendNormal.Normalize();

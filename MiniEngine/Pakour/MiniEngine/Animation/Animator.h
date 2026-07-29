@@ -2,6 +2,7 @@
 #include "Animation/AnimStateMachine.h"
 #include "Asset/AnimClip.h"
 #include "Asset/RootMotion.h"
+#include <array>
 #include <functional>
 
 namespace MiniEngine 
@@ -155,9 +156,17 @@ namespace MiniEngine
 				goal = IKGoal();
 			}
 		};
+		// ApplyIKGoals 의 처리 순서 정렬용 (upper 본 인덱스 오름차순)
+		struct IKOrder
+		{
+			int upperIdx;
+			const IKData* pData;
+		};
+
 		std::unordered_map<HumanoidBone, IKData> m_mapIKBinding; // ik의 경우 런타임에 매번 동적이기 보단 이미 초기화 시 정해져 있을 것
 
 		Vector3 m_ikPelvisOffset{ 0.0f, 0.0f, 0.0f };
 		bool m_bUseIK{ false };
+		bool m_bWarnedIKChainOrder{ false }; // 사지 체인 인덱스 겹침 경고 1회용
 	};
 }

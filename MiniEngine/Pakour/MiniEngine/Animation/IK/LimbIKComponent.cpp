@@ -124,7 +124,6 @@ namespace MiniEngine
 			return;
 
 		const HumanoidBoneMap& BONE_MAP = pMesh->GetHumanoidBones();
-		const std::vector<Matrix>& GLOBAL_POSE = pAnim->GetGlobalPose();
 
 		// MG_LOG_INFO("[LimbIKComp] Left Arm : {}", m_handles[(uint8_t)ELimbType::LeftArm].posAlpha);
 
@@ -146,15 +145,18 @@ namespace MiniEngine
 				// handle.rotAlpha
 			);
 
-			const int LOWER_IDX = BONE_MAP.Get(handle.binding.lower);
-			if (LOWER_IDX < 0 || LOWER_IDX >= static_cast<int>(GLOBAL_POSE.size()))
+			if (m_desc.poleDir[i].LengthSquared() < 1e-6f)
 				continue;
 
-			Vector3 localDir = owner.lock()->ConvertToLocalDir(m_desc.poleDir[i]);
-			Vector3 pos = GLOBAL_POSE[static_cast<size_t>(LOWER_IDX)].Translation();
+			Matrix upperW;
+			if (!pSkeletal->GetBoneWorldMatrix(BONE_MAP.Get(handle.binding.upper), upperW))
+				continue;
 
-			// MiniEngine::Debug::DrawLine(pos, pos + localDir, MiniEngine::DebugColor::YELLOW, 0.01f);
-			pos += localDir;
+			Vector3 worldDir = owner.lock()->ConvertToActorDir(m_desc.poleDir[i]);
+			Vector3 pos = upperW.Translation();
+
+			MiniEngine::Debug::DrawLine(pos, pos + worldDir, MiniEngine::DebugColor::YELLOW, 0.01f);
+			pos += worldDir;
 
 			pSkeletal->SetIKPoleTargetWorld(handle.binding, pos);
 		}

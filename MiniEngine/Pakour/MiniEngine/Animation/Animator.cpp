@@ -311,22 +311,52 @@ namespace MiniEngine
 			_skeleton.RecomputeGlobalPoseFrom(m_localPose, HIPS + 1, m_globalPose);
 		}
 
-		// end들 goal에 대한 연산
+		// 1패스: 유효한 goal 수집.
+		// 사지 처리 순서는 upper 본 인덱스 오름차순이어야 한다 —
+		// RecomputeGlobalPoseFrom(start) 는 start~배열 끝을 IK 이전 로컬 포즈로 되돌리므로,
+		// 인덱스가 큰 사지를 먼저 풀면 뒤에 처리하는 사지가 그 결과를 통째로 지운다.
+		// m_mapIKBinding 은 unordered_map 이라 순회 순서가 해시에 달려 있다.
+		// (std::map 으로 바꿔도 안 된다 - enum 순서는 L팔->L다리->R팔->R다리 라 인덱스 오름차순이 아니다)
+		std::array<IKOrder, static_cast<size_t>(HumanoidBone::Count)> order{};
+		size_t count = 0;
+
 		for (const std::pair<const HumanoidBone, IKData>& p : m_mapIKBinding)
 		{
 			const IKGoal& GOAL = p.second.goal;
 			if (GOAL.positionAlpha <= 0.0f && GOAL.rotationAlpha <= 0.0f)
 				continue;
 
-			const TwoBoneIKBinding& binding = p.second.binding;
-			if (!_map.Has(binding.upper) || !_map.Has(binding.lower) || !_map.Has(binding.end))
+			const TwoBoneIKBinding& BINDING = p.second.binding;
+			if (!_map.Has(BINDING.upper) || !_map.Has(BINDING.lower) || !_map.Has(BINDING.end))
 				continue;
 
-			const int UPPER_IDX = _map.Get(binding.upper);
+			order[count++] = { _map.Get(BINDING.upper), &p.second };
+		}
+
+		std::sort(order.begin(), order.begin() + count,
+			[](const IKOrder& _a, const IKOrder& _b) { return _a.upperIdx < _b.upperIdx; });
+
+		// 2패스: end들 goal에 대한 연산
+		int maxRotatedIdx = -1; // 지금까지 직접 회전시킨 본의 최대 인덱스
+		for (size_t i = 0; i < count; ++i)
+		{
+			const IKGoal& GOAL = order[i].pData->goal;
+			const TwoBoneIKBinding& binding = order[i].pData->binding;
+
+			const int UPPER_IDX = order[i].upperIdx;
 			const int LOWER_IDX = _map.Get(binding.lower);
 			const int END_IDX = _map.Get(binding.end);
 
-			if (GOAL.positionAlpha > 0.0f) 
+			// 다음 사지의 재연산 시작점(upper+1)이 앞서 회전시킨 본을 덮으면 결과가 지워진다.
+			// 리그가 사지 체인을 인덱스 상 뒤섞어 배치한 경우 - 조용히 틀리지 않도록 알린다
+			if (UPPER_IDX <= maxRotatedIdx && !m_bWarnedIKChainOrder)
+			{
+				m_bWarnedIKChainOrder = true;
+				MG_LOG_WARN("[Animator] IK chain index overlap: upper {} <= rotated {}. "
+					"Earlier limb IK will be overwritten on this rig.", UPPER_IDX, maxRotatedIdx);
+			}
+
+			if (GOAL.positionAlpha > 0.0f)
 			{
 				const Vector3 U = m_globalPose[static_cast<size_t>(UPPER_IDX)].Translation();
 				const Vector3 L = m_globalPose[static_cast<size_t>(LOWER_IDX)].Translation();
@@ -337,36 +367,45 @@ namespace MiniEngine
 				bone.lowerPos = L;
 				bone.endPos = E;
 
-				Vector3 pole;
-				bool bHasPole = false;
-
-				// pole 구하기 
-				if (GOAL.bUsePoleTarget)
-				{
-					pole = GOAL.poleTarget;
-					bHasPole = true;
-				}
-
-				// 불가 시, fallback용 pole
-				if (!bHasPole)
-					bHasPole = FallbackPole(bone, pole);
-
-				// 불가 시, pole 새로 바인딩
-				if (!bHasPole)
-					bHasPole = BindPole(_skeleton, UPPER_IDX, LOWER_IDX, END_IDX, pole);
-
 				TwoBoneIKTarget target;
 				target.targetPos = GOAL.position;
-				target.poleTargetPos = pole;
 				target.alpha = GOAL.positionAlpha;
+
+				// 폴 후보를 순서대로 "시도 -> 실패 시 다음" 으로 내려간다.
+				// 폴을 미리 고르고 한 번만 풀면, 명시 폴이 축퇴했을 때 폴백으로
+				// 내려가지 못하고 조용히 무동작이 된다.
+				// 이 형태면 판정 기준이 솔버의 실제 축(target - upper)이 된다.
+				Vector3 pole;
 				TwoBoneIKResult result;
-				if (bHasPole && SolveTwoBone(bone, target, result)) 
+				bool bSolved = false;
+
+				if (GOAL.bUsePoleTarget) // 1순위: 명시 폴
+				{
+					target.poleTargetPos = GOAL.poleTarget;
+					bSolved = SolveTwoBone(bone, target, result);
+				}
+
+				if (!bSolved && FallbackPole(bone, pole)) // 2순위: 현재 굽힘 평면 보존
+				{
+					target.poleTargetPos = pole;
+					bSolved = SolveTwoBone(bone, target, result);
+				}
+
+				if (!bSolved && BindPole(_skeleton, UPPER_IDX, LOWER_IDX, END_IDX, pole)) // 3순위: 바인드 유도
+				{
+					target.poleTargetPos = pole;
+					bSolved = SolveTwoBone(bone, target, result);
+				}
+
+				if (bSolved)
 				{
 					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(UPPER_IDX)], result.upperDelta);
 					_skeleton.RecomputeGlobalPoseFrom(m_localPose, UPPER_IDX + 1, m_globalPose);
 
 					RotateGlobalInPlace(m_globalPose[static_cast<size_t>(LOWER_IDX)], result.lowerDelta);
 					_skeleton.RecomputeGlobalPoseFrom(m_localPose, LOWER_IDX + 1, m_globalPose);
+
+					maxRotatedIdx = max(maxRotatedIdx, LOWER_IDX);
 				}
 			}
 
@@ -381,6 +420,8 @@ namespace MiniEngine
 				endGlobal = Matrix::CreateFromQuaternion(Quaternion::Slerp(CUR, GOAL.rotation, ALPHA));
 				endGlobal.Translation(POS);
 				_skeleton.RecomputeGlobalPoseFrom(m_localPose, END_IDX + 1, m_globalPose); // 자식 본들 위치 정리
+
+				maxRotatedIdx = max(maxRotatedIdx, END_IDX);
 			}
 		}
 

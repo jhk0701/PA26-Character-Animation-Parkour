@@ -81,7 +81,7 @@ namespace MiniEngine
         m_bUseLateTick = _bUseLateTick;
     }
 
-    Vector3 Actor::ConvertToLocalDir(const Vector3& _dir)
+    Vector3 Actor::ConvertToActorDir(const Vector3& _dir)
     {
         if (!GetRoot())
         {
