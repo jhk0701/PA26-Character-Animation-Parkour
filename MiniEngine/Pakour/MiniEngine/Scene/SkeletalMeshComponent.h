@@ -45,6 +45,10 @@ namespace MiniEngine
         // 회전은 애니메이션대로 처리
         void SetIKGoalWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, float _posAlpha);
 
+        // 회전을 현재 포즈에 곱할 월드 델타로 지정 (지면 법선 정렬 등)
+        void SetIKGoalWorldWithRotDelta(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, float _posAlpha,
+                                        const Quaternion& _worldRotDelta, float _rotAlpha);
+
         // 2본 ik에서 pole(중간 관절)이 향할 지점을 지정
         // 없으면 현재 애니메이션의 포즈의 굽힘 평면을 그대로 유지 -> 굳이 호출할 필요는 없음
         void SetIKPoleTargetWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPole);

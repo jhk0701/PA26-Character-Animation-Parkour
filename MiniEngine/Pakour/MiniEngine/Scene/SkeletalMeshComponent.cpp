@@ -161,6 +161,42 @@ namespace MiniEngine
         SetIKGoalWorld(_boneBinding, _worldPos, Quaternion(0.0f, 0.0f, 0.0f, 1.0f), _posAlpha, 0.0f);
     }
 
+    void SkeletalMeshComponent::SetIKGoalWorldWithRotDelta(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPos, float _posAlpha,
+                                                           const Quaternion& _worldRotDelta, float _rotAlpha)
+    {
+        Matrix world = GetWorldMatrix();
+
+        IKGoal goal;
+        goal.position = Vector3::Transform(_worldPos, world.Invert());
+        goal.positionAlpha = _posAlpha;
+        goal.rotationAlpha = _rotAlpha;
+
+        if (_rotAlpha > 0.0f)
+        {
+            Vector3 scale;
+            Vector3 trans;
+            Quaternion rotWorld;
+
+            if (world.Decompose(scale, rotWorld, trans))
+            {
+                Quaternion invRotWorld;
+                rotWorld.Inverse(invRotWorld);
+
+                // SimpleMath a * b = a 적용 후 b 적용
+                goal.rotation = rotWorld * _worldRotDelta * invRotWorld;
+                goal.rotation.Normalize();
+            }
+            else
+            {
+                goal.rotation = _worldRotDelta; // 분해 실패 시 월드 델타 그대로
+            }
+
+            goal.bRotationIsDelta = true;
+        }
+
+        m_anim->SetIKGoal(_boneBinding, goal);
+    }
+
     void SkeletalMeshComponent::SetIKPoleTargetWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPole)
     {
         const IKGoal* CUR = m_anim->GetIKGoal(_boneBinding.end);

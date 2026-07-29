@@ -53,7 +53,7 @@ void Character::Construct(const Vector3& _initPosition)
 	{
 		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
 		LimbIKDesc desc;
-		desc.footHeight = 0.0f;
+		desc.footHeight = 0.1f;
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
@@ -344,7 +344,7 @@ LimbIKComponent::TaskResult Character::IKDetectGround(uint8_t _ik)
 		result.rotation = q;
 
 	result.rotation.Normalize();
-	// result.rotAlpha = 1.0f;
+	result.rotAlpha = 1.0f;
 	return result;
 }
 

@@ -417,7 +417,12 @@ namespace MiniEngine
 				const Quaternion CUR = Quaternion::CreateFromRotationMatrix(endGlobal);
 				const float ALPHA = std::clamp(GOAL.rotationAlpha, 0.0f, 1.0f);
 
-				endGlobal = Matrix::CreateFromQuaternion(Quaternion::Slerp(CUR, GOAL.rotation, ALPHA));
+				// 델타면 현재 포즈 뒤에 이어 붙인다 (row-vector : 현재 -> 델타 순)
+				const Quaternion TARGET = GOAL.bRotationIsDelta
+					? Quaternion::Concatenate(CUR, GOAL.rotation)
+					: GOAL.rotation;
+
+				endGlobal = Matrix::CreateFromQuaternion(Quaternion::Slerp(CUR, TARGET, ALPHA));
 				endGlobal.Translation(POS);
 				_skeleton.RecomputeGlobalPoseFrom(m_localPose, END_IDX + 1, m_globalPose); // 자식 본들 위치 정리
 

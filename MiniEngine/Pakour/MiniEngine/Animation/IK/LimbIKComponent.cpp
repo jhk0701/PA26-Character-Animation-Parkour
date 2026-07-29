@@ -48,22 +48,33 @@ namespace MiniEngine
 	void LimbIKComponent::ClearPendingTask()
 	{
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
+		{
+			if (!m_pendingTask[i])
+				continue;
+
 			m_pendingTask[i] = nullptr;
+
+			// 예약이 걷혔으면 해당 사지는 페이드아웃시킨다 - alpha 가 그대로 남지 않도록
+			m_handles[i].posAlphaTarget = 0.0f;
+			m_handles[i].rotAlphaTarget = 0.0f;
+			m_handles[i].bGroundValid = false;
+		}
 	}
 
 	void LimbIKComponent::LateTick(float _dt)
 	{
 		Component::LateTick(_dt);
-		
+
 		if (m_pSkeletal.expired())
 			return;
-		
+
 		// IK 예약 작업 실행
 		ProcessPendingTask();
+		FadeAlpha(_dt);
 		PostPendingTask();
 
 		// 발 위치에 따른 골반 위치 보정
-		AdjustPelvisOffset();
+		AdjustPelvisOffset(_dt);
 
 		// IK 갱신
 		UpdateIK();
@@ -71,47 +82,92 @@ namespace MiniEngine
 
 	void LimbIKComponent::ProcessPendingTask()
 	{
+		// alpha 로 게이트하지 않는다.
+		// 예약 작업이 alpha 를 만들어내는 주체이므로, alpha 가 0 이라고 건너뛰면
+		// 작업이 영원히 실행되지 않는 교착이 된다.
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
-			if (!IsEnable(m_handles[i]))
+			if (!m_pendingTask[i])
 				continue;
 
 			IKHandle& handle = m_handles[i];
-			if (m_pendingTask[i])
-			{
-				TaskResult result = m_pendingTask[i]();
-				handle.targetPos = result.position;
-				handle.targetRot = result.rotation;
-				handle.posAlpha = result.posAlpha;
-				handle.rotAlpha = result.rotAlpha;
-			}
+			const TaskResult RESULT = m_pendingTask[i]();
+
+			handle.bGroundValid = (RESULT.posAlpha > 0.0f);
+
+			// alpha 0 인 결과는 타깃을 덮어쓰지 않는다.
+			// 조기 반환한 TaskResult 의 position/rotation 은 기본값이라,
+			// 그대로 받으면 페이드아웃 중에 발이 원점으로 끌려간다.
+			if (RESULT.posAlpha > 0.0f)
+				handle.targetPos = RESULT.position;
+
+			if (RESULT.rotAlpha > 0.0f)
+				handle.targetRot = RESULT.rotation;
+
+			handle.posAlphaTarget = RESULT.posAlpha;
+			handle.rotAlphaTarget = RESULT.rotAlpha;
+		}
+	}
+
+	void LimbIKComponent::FadeAlpha(float _dt)
+	{
+		const float STEP = m_desc.alphaFadeSpeed * _dt;
+
+		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
+		{
+			IKHandle& handle = m_handles[i];
+			handle.posAlpha += std::clamp(handle.posAlphaTarget - handle.posAlpha, -STEP, STEP);
+			handle.rotAlpha += std::clamp(handle.rotAlphaTarget - handle.rotAlpha, -STEP, STEP);
 		}
 	}
 
 	void LimbIKComponent::PostPendingTask()
 	{
-		if (m_pendingTask[(uint8_t)ELimbType::LeftLeg])
-			m_handles[(uint8_t)ELimbType::LeftLeg].targetPos.y = std::clamp(m_handles[(uint8_t)ELimbType::LeftLeg].targetPos.y, -m_desc.maxFootDrop, m_desc.maxFootRaise);
+		// 다리 후처리
+		const ELimbType LEGS[2] = { ELimbType::LeftLeg, ELimbType::RightLeg };
 
-		if (m_pendingTask[(uint8_t)ELimbType::RightLeg])
-			m_handles[(uint8_t)ELimbType::RightLeg].targetPos.y = std::clamp(m_handles[(uint8_t)ELimbType::RightLeg].targetPos.y, -m_desc.maxFootDrop, m_desc.maxFootRaise);
+		for (const ELimbType& TYPE : LEGS)
+		{
+			IKHandle& handle = m_handles[(uint8_t)TYPE];
+			if (!handle.bGroundValid)
+				continue;
+
+			// 발 본은 발목이라, 히트점에 그대로 놓으면 발이 지면에 파묻힌다
+			handle.targetPos.y += m_desc.footHeight;
+
+			const float DELTA = std::clamp(handle.targetPos.y - handle.originPosW.y,
+				-m_desc.maxFootDrop, m_desc.maxFootRaise);
+
+			handle.targetPos.y = handle.originPosW.y + DELTA;
+		}
 	}
 
-	void LimbIKComponent::AdjustPelvisOffset()
+	void LimbIKComponent::AdjustPelvisOffset(float _dt)
 	{
-		IKHandle& hLeftLeg = m_handles[(uint8_t)ELimbType::LeftLeg];
-		IKHandle& hRightLeg = m_handles[(uint8_t)ELimbType::RightLeg];
+		// 더 많이 내려가야 하는 쪽 발의 델타만큼 골반을 내리기
+		const ELimbType LEGS[2] = { ELimbType::LeftLeg, ELimbType::RightLeg };
 
-		if (!IsEnable(hLeftLeg) && !IsEnable(hRightLeg))
-			return;
+		float target = 0.0f;
+		bool bAny = false;
 
-		m_pelvisOffset = 
-			hLeftLeg.targetPos.y < hRightLeg.targetPos.y ? 
-			hLeftLeg.targetPos.y - hLeftLeg.originPosW.y : hRightLeg.targetPos.y - hRightLeg.originPosW.y;
-		m_pelvisOffset = std::clamp(m_pelvisOffset, -m_desc.maxPelvisDrop, 0.0f);
+		for (const ELimbType& TYPE : LEGS)
+		{
+			const IKHandle& HANDLE = m_handles[(uint8_t)TYPE];
+			if (!HANDLE.bGroundValid || HANDLE.posAlpha <= 1e-4f)
+				continue;
+
+			const float DELTA = (HANDLE.targetPos.y - HANDLE.originPosW.y) * HANDLE.posAlpha;
+			target = (bAny && target < DELTA) ? target : DELTA;
+			bAny = true;
+		}
+
+		target = std::clamp(target, -m_desc.maxPelvisDrop, 0.0f); // 내리기
+
+		const float STEP = m_desc.pelvisLerpSpeed * _dt;
+		m_pelvisOffset += std::clamp(target - m_pelvisOffset, -STEP, STEP);
 
 		// MG_LOG_INFO("[LimbIK] :: pelvis offset : {}", m_pelvisOffset);
-		// m_pSkeletal.lock()->SetIKPelvisOffsetWorld(Vector3(0.0f, m_pelvisOffset, 0.0f));
+		m_pSkeletal.lock()->SetIKPelvisOffsetWorld(Vector3(0.0f, m_pelvisOffset, 0.0f));
 	}
 
 	void LimbIKComponent::UpdateIK()
@@ -131,18 +187,17 @@ namespace MiniEngine
 		{
 			if (!IsEnable(m_handles[i]))
 				continue;
-			else
-				MG_LOG_INFO("[LimbIKComp] type : {} is Enable : {:.2f}", i, m_handles[i].posAlpha);
 
 			IKHandle& handle = m_handles[i];
 
 			// MiniEngine::Debug::DrawPoint(handle.targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
-			pSkeletal->SetIKGoalWorld(
+
+			pSkeletal->SetIKGoalWorldWithRotDelta(
 				handle.binding,
 				handle.targetPos,
-				// handle.targetRot,
-				handle.posAlpha// ,
-				// handle.rotAlpha
+				handle.posAlpha,
+				handle.targetRot,
+				handle.rotAlpha
 			);
 
 			if (m_desc.poleDir[i].LengthSquared() < 1e-6f)

@@ -21,11 +21,14 @@ namespace MiniEngine
 
 	struct LimbIKDesc
 	{
-		float footHeight{ 0.0f }; // 로컬 foot의 기본 높이
+		float footHeight{ 0.1f }; // 발목 본이 발바닥에서 떠 있는 높이 - 지면 히트점 보정용
 
 		float maxFootRaise{ 0.45f };
 		float maxFootDrop{ 0.45f };  // 다리 길이 절반 근처
 		float maxPelvisDrop{ 0.45f };
+
+		float pelvisLerpSpeed{ 3.0f };  // 골반 오프셋 수렴 속도 (m/s)
+		float alphaFadeSpeed{ 6.0f };   // 예약 작업이 구동하는 alpha 페이드 속도 (1/s)
 
 		float maxHandRotateDeg{ 120.0f }; // 손이 돌 수 있는 최대한의 값
 
@@ -41,6 +44,14 @@ namespace MiniEngine
 			// bool bEnable{ false };
 			float posAlpha{ 0.0f };
 			float rotAlpha{ 0.0f };
+
+			// 예약 작업이 쓸 alpha 
+			float posAlphaTarget{ 0.0f };
+			float rotAlphaTarget{ 0.0f };
+
+			// 이번 프레임에 예약 작업에서 유효한 지면 타깃을 받았는지
+			bool bGroundValid{ false };
+
 			TwoBoneIKBinding binding{};
 			Vector3 targetPos{ 0.0f, 0.0f, 0.0f };
 			Quaternion targetRot{ 0.0f, 0.0f, 0.0f, 1.0f };
@@ -64,8 +75,8 @@ namespace MiniEngine
 		void SetEnableIK(ELimbType _type, bool _bEnable) { m_handles[(uint8_t)_type].bEnable = _bEnable; }
 		void SetEnableAllIK(bool _bEnable);
 		*/
-		void SetPositionAlphaIK(ELimbType _type, float _alpha) { m_handles[(uint8_t)_type].posAlpha = _alpha; }
-		void SetRotationAlphaIK(ELimbType _type, float _alpha) { m_handles[(uint8_t)_type].rotAlpha = _alpha; }
+		void SetPositionAlphaIK(ELimbType _type, float _alpha) { m_handles[(uint8_t)_type].posAlpha = m_handles[(uint8_t)_type].posAlphaTarget = _alpha; }
+		void SetRotationAlphaIK(ELimbType _type, float _alpha) { m_handles[(uint8_t)_type].rotAlpha = m_handles[(uint8_t)_type].rotAlphaTarget = _alpha; }
 		void SetAlphaIK(ELimbType _type, float _alpha) { SetPositionAlphaIK(_type, _alpha); SetRotationAlphaIK(_type, _alpha); }
 		void SetTargetPosIK(ELimbType _type, const Vector3& _targetPos) { m_handles[(uint8_t)_type].targetPos = _targetPos; }
 		void SetTargetRotIK(ELimbType _type, const Quaternion& _targetRot) { m_handles[(uint8_t)_type].targetRot = _targetRot; }
@@ -81,8 +92,9 @@ namespace MiniEngine
 		bool IsEnable(const IKHandle& _h) { return _h.posAlpha > 1e-4f || _h.rotAlpha > 1e-4f; }
 
 		void ProcessPendingTask();
+		void FadeAlpha(float _dt);
 		void PostPendingTask();
-		void AdjustPelvisOffset();
+		void AdjustPelvisOffset(float _dt);
 		void UpdateIK();
 
 		std::weak_ptr<SkeletalMeshComponent> m_pSkeletal;
