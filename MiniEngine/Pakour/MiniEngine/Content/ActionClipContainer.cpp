@@ -513,7 +513,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreCollision->SetEnable(false);
-		pIgnoreCollision->SetTime(0.0f);
+		pIgnoreCollision->SetTime(0.01f);
 		pActionClip->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();

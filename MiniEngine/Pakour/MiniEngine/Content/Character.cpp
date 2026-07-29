@@ -135,6 +135,15 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 }
 
+void Character::Tick(float _dt)
+{
+	Pawn::Tick(_dt);
+	Vector3 pos = GetRoot()->localTransform.position;
+	Vector3 posUp = pos + Vector3(0.0f, 2.5f, 0.0f);
+	MiniEngine::Debug::DrawPoint(posUp, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
+	MiniEngine::Debug::DrawLine(pos, posUp, MiniEngine::DebugColor::GREEN, 0.1f);
+}
+
 //float sinElapsed = 0.0f;
 //void Character::LateTick(float _dt)
 //{

@@ -58,6 +58,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
 
+	void Tick(float _dt) override;
 	// void LateTick(float _dt) override;
 
 	void TryPerception();
