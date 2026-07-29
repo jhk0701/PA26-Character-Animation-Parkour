@@ -18,6 +18,7 @@ public:
 	virtual void Refresh() {};
 
 	virtual void Tick(float _dt) = 0;
+	virtual void LateTick(float _dt) = 0;
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result) = 0;
 	virtual void CheckState() {};
 
@@ -36,7 +37,8 @@ private:
 class CharacterStateMachine : public MiniEngine::Component, public std::enable_shared_from_this<CharacterStateMachine>
 {
 public:
-	virtual void Tick(float _dt) override;
+	void Tick(float _dt) override;
+	void LateTick(float _dt) override;
 
 	void RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states);
 	void Transition(uint8_t _nextID);

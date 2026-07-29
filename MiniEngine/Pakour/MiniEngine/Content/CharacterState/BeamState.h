@@ -17,6 +17,7 @@ public:
 	virtual void Refresh() override;
 	virtual void OnEnd() override;
 	virtual void Tick(float _dt) override;
+	virtual	void LateTick(float _dt) override;
 	virtual void CheckState() override;
 	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 

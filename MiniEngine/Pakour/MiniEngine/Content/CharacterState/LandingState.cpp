@@ -21,6 +21,10 @@ void LandingState::Tick(float _dt)
 	CheckState();
 }
 
+void LandingState::LateTick(float _dt)
+{
+}
+
 void LandingState::CheckState()
 {
 	CharacterState::CheckState();

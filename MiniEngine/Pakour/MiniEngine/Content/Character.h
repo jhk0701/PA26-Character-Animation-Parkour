@@ -57,9 +57,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
 
-	virtual void Tick(float _dt) override;
-	virtual void LateTick(float _dt) override;
-
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
 
@@ -136,7 +133,5 @@ private:
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
-	
-	
 };
 

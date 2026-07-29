@@ -126,7 +126,7 @@
     <ClInclude Include="Animation\AnimStateMachine.h" />
     <ClInclude Include="Animation\BlendClip.h" />
     <ClInclude Include="Animation\IAnimNotify.h" />
-    <ClInclude Include="Animation\IK\FootIKComponent.h" />
+    <ClInclude Include="Animation\IK\LimbIKComponent.h" />
     <ClInclude Include="Asset\BoneNaming.h" />
     <ClInclude Include="Asset\DataAsset.h" />
     <ClInclude Include="Asset\IK.h" />
@@ -206,7 +206,7 @@
     <ClCompile Include="Animation\AnimStateMachine.cpp" />
     <ClCompile Include="Animation\BlendClip.cpp" />
     <ClCompile Include="Animation\IAnimNotify.cpp" />
-    <ClCompile Include="Animation\IK\FootIKComponent.cpp" />
+    <ClCompile Include="Animation\IK\LimbIKComponent.cpp" />
     <ClCompile Include="Asset\BoneNaming.cpp" />
     <ClCompile Include="Asset\DataAsset.cpp" />
     <ClCompile Include="Asset\IK.cpp" />

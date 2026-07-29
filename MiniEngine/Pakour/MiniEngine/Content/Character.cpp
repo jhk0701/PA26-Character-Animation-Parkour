@@ -92,12 +92,10 @@ void Character::Construct(const Vector3& _initPosition)
 		m_limbIKComp = pLimbIK;
 	}
 
-
 	pRoot->localTransform.position = _initPosition;
 
 	PostConstruct();
 }
-
 void Character::PostConstruct()
 {
 	// 컴포넌트들 초기화 이후 호출
@@ -114,11 +112,10 @@ void Character::OnBeforeSortComponent()
 	Pawn::OnBeforeSortComponent();
 
 	// 컴포넌트 우선순위 설정
-	m_skinMeshComp.lock()->SetSortOrder(2);
-	m_limbIKComp.lock()->SetSortOrder(1);
+	m_charCont.lock()->SetSortOrder(1); // 1. 입력에 따라 움직인다.
+	m_limbIKComp.lock()->SetSortOrder(2); // 2. 움직인 후 IK를 확인한다.
+	m_skinMeshComp.lock()->SetSortOrder(3); // 3. IK Solver 호출 필요한 지점에 타켓 위치
 }
-
-
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();
@@ -126,25 +123,6 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 
 	InitCollisionLayer();
-}
-
-void Character::Tick(float _dt)
-{
-	Pawn::Tick(_dt);
-}
-
-void Character::LateTick(float _dt)
-{
-	/*
-	m_sinElpased += _dt;
-	m_hLeftLeg.m_targetPos.y = std::abs(std::sin(m_sinElpased));
-	m_hLeftLeg.m_targetPos.z = 1.0f;
-	MiniEngine::Debug::DrawPoint(m_hLeftLeg.m_targetPos, MiniEngine::DebugColor::RED, 0.1f, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
-
-	GetSkin().lock()->SetIKGoalWorld(m_hLeftLeg.m_binding, m_hLeftLeg.m_targetPos, m_hLeftLeg.m_alpha);
-	*/
-
-	Pawn::LateTick(_dt);
 }
 
 void Character::TryPerception()
@@ -161,7 +139,6 @@ void Character::TryPerception()
 
 	ProcessPerceptionResult(result);
 }
-
 void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
@@ -191,7 +168,6 @@ void Character::InitCollisionLayer()
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
 }
-
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
@@ -201,27 +177,22 @@ void Character::AddMovementInput(const Vector3& _moveDelta)
 {
 	m_charCont.lock()->AddMovementInput(_moveDelta);
 }
-
 void Character::SetPosition(const Vector3& _newPos)
 {
 	m_charCont.lock()->SetPosition(_newPos);
 }
-
 void Character::ClearMovement()
 {
 	m_charCont.lock()->ClearMovement();
 }
-
 bool Character::IsFalling() const
 {
 	return m_charCont.lock()->IsFalling();
 }
-
 bool Character::IsGrounded() const
 {
 	return  m_charCont.lock()->IsGrounded();
 }
-
 void Character::SetUseGravity(bool _bUse)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
@@ -233,7 +204,6 @@ void Character::Jump()
 {
 	m_charCont.lock()->Jump(m_jumpSpeed);
 }
-
 void Character::InputJump()
 {
 	if (m_state == EState::InAir)

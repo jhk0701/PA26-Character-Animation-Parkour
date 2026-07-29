@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Animation/IK/LimbIKComponent.h"
+#include "Scene/SkeletalMeshComponent.h"
 
 namespace MiniEngine 
 {
@@ -12,32 +13,46 @@ namespace MiniEngine
 		hLeftArm.binding.upper = HumanoidBone::LeftUpperArm;
 		hLeftArm.binding.lower = HumanoidBone::LeftLowerArm;
 		hLeftArm.binding.end = HumanoidBone::LeftHand;
-		hLeftArm.alpha = 0.0f;
 
 		IKHandle& hRightArm = m_handles[ELimbType::RigthArm];
 		hRightArm.binding.upper = HumanoidBone::RightUpperArm;
 		hRightArm.binding.lower = HumanoidBone::RightLowerArm;
 		hRightArm.binding.end = HumanoidBone::RightHand;
-		hRightArm.alpha = 0.0f;
 
 		IKHandle& hLeftLeg = m_handles[ELimbType::LeftLeg];
 		hLeftLeg.binding.upper = HumanoidBone::LeftUpperLeg;
 		hLeftLeg.binding.lower = HumanoidBone::LeftLowerLeg;
 		hLeftLeg.binding.end = HumanoidBone::LeftFoot;
-		hLeftLeg.alpha = 0.0f;
 
 		IKHandle& hRightLeg = m_handles[ELimbType::RightLeg];
 		hRightLeg.binding.upper = HumanoidBone::RightUpperLeg;
 		hRightLeg.binding.lower = HumanoidBone::RightLowerLeg;
 		hRightLeg.binding.end = HumanoidBone::RightFoot;
-		hRightLeg.alpha = 0.0f;
 	}
 
 	void LimbIKComponent::LateTick(float _dt)
 	{
 		Component::LateTick(_dt);
+		
+		if (m_pSkeletal.expired())
+			return;
 
+		std::shared_ptr<SkeletalMeshComponent> pSkeletal = m_pSkeletal.lock();
+		
+		// ik 갱신
+		for (const IKHandle& handle : m_handles)
+		{
+			if (!handle.bEnable)
+				continue;
 
+			pSkeletal->SetIKGoalWorld(
+				handle.binding,
+				handle.targetPos,
+				handle.targetRot,
+				handle.alpha,
+				handle.alpha
+			);
+		}
 	}
 
 }

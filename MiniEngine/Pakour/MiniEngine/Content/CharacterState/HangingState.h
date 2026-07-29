@@ -8,6 +8,7 @@ public:
 	void OnStart() override;
 	void OnEnd() override;
 	void Tick(float _dt) override;
+	void LateTick(float _dt) override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 	void Refresh() override;
 
