@@ -66,8 +66,8 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 
 	// Beam
 	std::shared_ptr<CheckObstacleNode> pStateBeam = std::make_shared<CheckObstacleNode>();
-	pStateBeam->SetHeightMultiplier(2.0f);
-	pStateBeam->SetStartOffset({ 0.0f, 0.0f, 1.0f });
+	pStateBeam->SetHeightMultiplier(3.0f);
+	pStateBeam->SetStartOffset({ 0.0f, 0.0f, 0.5f });
 
 	// Protrude
 	std::shared_ptr<SelectUsingInputDirNode> pStateProtrude = std::make_shared<SelectUsingInputDirNode>();
@@ -98,15 +98,15 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 				{
 					// ETagEnvDetail 순서
 					pProcessDefault,				// Default // 일반 장애물 높이 확인
-					pProcessBeam,		// Beam
-					pProcessProtrude			// Protrude 돌출부
+					pProcessBeam,					// Beam
+					pProcessProtrude				// Protrude 돌출부
 				}
 			);
 
 			// 높이를 재고 세 갈래로 나눈다. 
 			pProcessDefault->SetChildren(
 				{
-					pEmpty,			// 행동할 필요 없는 높이
+					pReturn,			// 행동할 필요 없는 높이 -> 판단은 캐릭터에서 할 것
 					pMeasureDepthSeq,	// vault, mantle 중 깊에 따라 선택될 것 -> 그러므로 깊이 확인
 					pReturn			// 벽을 넘어야하는 상황 -> 결과 리턴
 				}

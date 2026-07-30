@@ -61,7 +61,7 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
-		desc.poleDir[(uint8_t)ELimbType::RigthArm] = Vector3(1.0f, 0.0f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.0f, -1.0f);
 
 		pLimbIK->Init(skinComp, desc);
 		m_limbIKComp = pLimbIK;
@@ -172,7 +172,10 @@ void Character::TryPerception()
 	EPerceptionResult perceptResult = pPercept->Travel(); // 탐색 개시
 
 	if (perceptResult != EPerceptionResult::Succeess) // 빈 결과는 리턴
+	{
+		MG_LOG_INFO("[Character::TryPerception] Perception Travel Result is not success");
 		return;
+	}
 
 	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
 	ProcessPerceptionResult(result);
@@ -285,23 +288,6 @@ LimbIKComponent::TaskResult Character::IKDetectGround(uint8_t _ik)
 	return result;
 }
 
-void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
-{
-	// 노티파이를 통해서 호출될 것
-	// 파쿠르 중 장애물에 손, 발을 가져다 대는 용도
-	// 이미 장애물의 위치 등을 알고 있기 때문에 레이캐스트를 쏘진 않을 것
-	if (!m_curObstacleInfo.IsValid())
-		return;
-
-	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
-	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
-	targetPos += _posOffset;
-
-	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
-
-	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
-}
-
 void Character::ReserveIKDetectWall()
 {
 	if (m_limbIKComp.expired())
@@ -309,7 +295,7 @@ void Character::ReserveIKDetectWall()
 
 	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
 	pLimbIK->SetPendingTask(ELimbType::LeftArm, [this]() { return IKDetectWall((uint8_t)ELimbType::LeftArm); });
-	pLimbIK->SetPendingTask(ELimbType::RigthArm, [this]() { return IKDetectWall((uint8_t)ELimbType::RigthArm); });
+	pLimbIK->SetPendingTask(ELimbType::RightArm, [this]() { return IKDetectWall((uint8_t)ELimbType::RightArm); });
 	pLimbIK->SetPendingTask(ELimbType::LeftLeg, [this]() { return IKDetectWall((uint8_t)ELimbType::LeftLeg); });
 	pLimbIK->SetPendingTask(ELimbType::RightLeg, [this]() { return IKDetectWall((uint8_t)ELimbType::RightLeg); });
 }
@@ -383,6 +369,36 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 void Character::ClearIKReserve()
 {
 	m_limbIKComp.lock()->ClearPendingTask();
+}
+
+void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
+{
+	// 파쿠르 중 장애물에 손, 발을 가져다 대는 용도
+	// 이미 장애물의 위치 등을 알고 있기 때문에 레이캐스트를 쏘진 않을 것
+	if (!m_curObstacleInfo.IsValid())
+		return;
+
+	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
+	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
+	targetPos += _posOffset;
+
+	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
+	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
+}
+
+void Character::IKSetFixedPoint(uint8_t _ik, const Vector3& _posOffset)
+{
+	if (!m_curObstacleInfo.IsValid())
+		return;
+
+	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
+	targetPos.y = GetRoot()->localTransform.position.y + GetCapsuleHalfHeight(); // contact offset은 무시
+	targetPos += _posOffset;
+
+	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
+	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
 void Character::SetIKAlpha(uint8_t _ik, float _alpha)

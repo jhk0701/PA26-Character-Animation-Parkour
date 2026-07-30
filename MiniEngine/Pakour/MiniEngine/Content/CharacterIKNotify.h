@@ -38,22 +38,21 @@ private:
 	MiniEngine::Vector3 m_posOffset;
 };
 
-// 현재 캐릭터가 파쿠르 중이라면
-// 장애물을 인식한 지점은 vector3 포인트이므로, 벽면 등에서는 특정한 방향을 향하도록
-class CharacterIKInvokerFixedDir : public MiniEngine::AnimNotifyState 
+// 예외적 적용 상황 발생
+// 벽면의 경우 현 애니메이션이 목표 위치에 손을 닿기 어려워 - 거리가 좁혀지지 않아 그냥 뻗고만 있음
+// 그렇다고 베지어로 위치를 옮기는 게 너무 어색해짐
+// 임의로 캐릭터 바로 앞 정면에 손을 대도록 유도
+class CharacterIKInvokerFixedPoint : public MiniEngine::AnimNotifyState 
 {
 public:
-	
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 
 	void SetIKType(uint8_t _type) { m_ikType = _type; }
 	void SetPositionOffset(const MiniEngine::Vector3& _offset) { m_posOffset = _offset; }
-	void SetDir(const MiniEngine::Vector3& _dir) { m_dir = _dir; }
 
 private:
 	uint8_t m_ikType;
 	Character* m_pChar{ nullptr };
 	MiniEngine::Vector3 m_posOffset;
-	MiniEngine::Vector3 m_dir;
 };

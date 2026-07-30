@@ -41,15 +41,17 @@ void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleIn
 
 	uint8_t actTag =
 		_info.m_obstacleDepth >= CONFIG.minMantleDepth ?
-		(uint8_t)Content::Config::ETagAct::Mantle :
-		(uint8_t)Content::Config::ETagAct::Vault;
+		(uint8_t)ETagAct::Mantle : (uint8_t)ETagAct::Vault;
 
 	float diffHeight = _info.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
+	if (diffHeight < 1e-4f || diffHeight < .0f)
+		return;
+	
 	if (diffHeight > 0)
 	{
 		// 올라가야함
 		if (diffHeight >= CONFIG.thresholdWallHeight)
-			actTag = (uint8_t)Content::Config::ETagAct::Wall;
+			actTag = (uint8_t)ETagAct::Wall;
 		else if (diffHeight >= CONFIG.thresholdHighObstacle)
 			actTag += 2;
 		else if (diffHeight >= CONFIG.thresholdLowObstacle)
@@ -62,6 +64,16 @@ void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleIn
 
 void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info)
 {
+	// 확인한 대상이 Beam
+	// 높이 확인 필요
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	
+	float charY = pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight();
+	uint8_t actTag = _info.m_obstacleLedge < charY ? (uint8_t)ETagAct::BeamStand : (uint8_t)ETagAct::BeamHanging;
+
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
 }
 
 void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)

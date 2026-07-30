@@ -23,7 +23,7 @@ namespace MiniEngine
 		hLeftArm.binding.lower = HumanoidBone::LeftLowerArm;
 		hLeftArm.binding.end = HumanoidBone::LeftHand;
 
-		IKHandle& hRightArm = m_handles[(uint8_t)ELimbType::RigthArm];
+		IKHandle& hRightArm = m_handles[(uint8_t)ELimbType::RightArm];
 		hRightArm.binding.upper = HumanoidBone::RightUpperArm;
 		hRightArm.binding.lower = HumanoidBone::RightLowerArm;
 		hRightArm.binding.end = HumanoidBone::RightHand;

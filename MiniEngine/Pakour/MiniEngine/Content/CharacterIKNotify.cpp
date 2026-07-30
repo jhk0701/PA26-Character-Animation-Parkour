@@ -25,11 +25,11 @@ void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnEnd(_param);
 
-	for (const uint8_t& t : m_ikTypes)
+	/*for (const uint8_t& t : m_ikTypes)
 	{
 		m_pChar->SetIKAlpha(t, m_to);
 		MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
-	}
+	}*/
 }
 
 void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
@@ -69,7 +69,7 @@ void CharacterIKInvoker::Activate(float _dt, MiniEngine::AnimNotifyParam& _param
 	m_pChar->IKDetectObstacle(m_ikType, offset);
 }
 
-void CharacterIKInvokerFixedDir::OnStart(MiniEngine::AnimNotifyParam& _param)
+void CharacterIKInvokerFixedPoint::OnStart(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnStart(_param);
 
@@ -77,13 +77,16 @@ void CharacterIKInvokerFixedDir::OnStart(MiniEngine::AnimNotifyParam& _param)
 	assert(GetDuration() > 1e-4f);
 }
 
-void CharacterIKInvokerFixedDir::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
+void CharacterIKInvokerFixedPoint::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 {
 	if (!m_pChar)
 		return;
 
 	const Transform& TF = m_pChar->GetRoot()->localTransform;
-	Vector3 dir = m_pChar->ConvertToActorDir(m_dir);
+	Vector3 offset(0.0f);
+	offset += TF.Right() * m_posOffset.x;
+	offset += TF.Up() * m_posOffset.y;
+	offset += TF.Forward() * m_posOffset.z;
 
-	// Physics::ry
+	m_pChar->IKSetFixedPoint(m_ikType, offset);
 }

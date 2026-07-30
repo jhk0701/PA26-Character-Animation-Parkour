@@ -18,8 +18,6 @@ public:
 	virtual void OnEnd() override;
 	virtual void Tick(float _dt) override;
 	virtual	void LateTick(float _dt) override;
-	virtual void CheckState() override;
-	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
 	virtual void AlignByAxis() = 0;
@@ -57,7 +55,7 @@ class BeamHangingState : public BeamState
 {
 public:
 	void Tick(float _dt) override;
-	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)  override;
 
 protected:
 	void AlignByAxis() override;

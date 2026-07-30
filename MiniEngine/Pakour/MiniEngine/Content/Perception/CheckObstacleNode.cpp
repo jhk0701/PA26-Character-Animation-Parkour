@@ -2,10 +2,10 @@
 #include "Content/Perception/CheckObstacleNode.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
+#include "Core/Log.h"
 
 bool CheckObstacleNode::InvokeCondition(TravelContext& _context)
 {
-	// 정면으로 먼저 확인
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
 
@@ -17,5 +17,9 @@ bool CheckObstacleNode::InvokeCondition(TravelContext& _context)
 	const Vector3 POS = PerceptionNodeUtil::GetCharacterCenterPosition(_context) + offset;
 	const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
 
-	return PerceptionNodeUtil::CheckObstacle(_context, POS, TF.Forward(), DIST, m_heightMultipier, true);
+	bool bIsFound = PerceptionNodeUtil::CheckObstacle(_context, POS, TF.Forward(), DIST, m_heightMultipier, true);
+	// MG_LOG_INFO("[CheckObstacleNode] Check Obstacle :: {}", bIsFound ? "yes" : "no");
+
+	// 정면으로 먼저 확인
+	return bIsFound;
 }

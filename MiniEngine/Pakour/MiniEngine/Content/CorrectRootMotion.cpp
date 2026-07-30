@@ -115,10 +115,10 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);
 	m_midPoint.y += m_bezierY;
 
-	MG_LOG_INFO("[Bezier Correction]\nStart P ({:.2f}, {:.2f}, {:.2f})\nMid P ({:.2f}, {:.2f}, {:.2f})\nEnd P ({:.2f}, {:.2f}, {:.2f})",
-		m_startPoint.x, m_startPoint.y, m_startPoint.z,
-		m_midPoint.x, m_midPoint.y, m_midPoint.z,
-		m_endPoint.x, m_endPoint.y, m_endPoint.z);
+	//MG_LOG_INFO("[Bezier Correction]\nStart P ({:.2f}, {:.2f}, {:.2f})\nMid P ({:.2f}, {:.2f}, {:.2f})\nEnd P ({:.2f}, {:.2f}, {:.2f})",
+	//	m_startPoint.x, m_startPoint.y, m_startPoint.z,
+	//	m_midPoint.x, m_midPoint.y, m_midPoint.z,
+	//	m_endPoint.x, m_endPoint.y, m_endPoint.z);
 
 	assert(GetDuration() > 1e-4f);
 }
@@ -127,8 +127,8 @@ void BezierCorrectRootMotion::OnEnd(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnEnd(_param);
 
-	const Vector3 POS = m_pChar->GetRoot()->localTransform.position;
-	MG_LOG_INFO("[Bezier Correction] End :: charPos : ({:.2f}, {:.2f}, {:.2f})", POS.x, POS.y, POS.z);
+	/*const Vector3 POS = m_pChar->GetRoot()->localTransform.position;
+	MG_LOG_INFO("[Bezier Correction] End :: charPos : ({:.2f}, {:.2f}, {:.2f})", POS.x, POS.y, POS.z);*/
 }
 
 void BezierCorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)

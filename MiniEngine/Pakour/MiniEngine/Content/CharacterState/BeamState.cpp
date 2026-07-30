@@ -51,16 +51,8 @@ void BeamState::Tick(float _dt)
 	CheckState();
 	// CameraRotate(_dt);
 }
+void BeamState::LateTick(float _dt){}
 
-void BeamState::LateTick(float _dt)
-{
-}
-
-void BeamState::CheckState()
-{
-	CharacterState::CheckState();
-}
-void BeamState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) {}
 
 bool BeamState::ObstacleIsBeamType(Actor* _pObs)
 {
@@ -106,16 +98,10 @@ void BeamStandState::Tick(float _dt)
 
 void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
-	BeamState::ProcessPerceptionResult(_info);
-	
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t t = 0;
-	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t))
-	{
-		DefaultProcessPerceptionResult(_info);
-		return;
-	}
+	_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t);
 
 	if (t == (uint8_t)ETagEnvDetail::Default)
 	{
@@ -218,7 +204,6 @@ void BeamStandState::ProcessMovement(float _dt)
 	pChar->AddMovementInput(DELTA_SPD * inputLerp.y * TF.Forward());
 }
 
-
 bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 {
 	// 정면 바로 아래가 절벽인지 확인
@@ -252,8 +237,6 @@ void BeamHangingState::Tick(float _dt)
 
 void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
-	BeamState::ProcessPerceptionResult(_info);
-
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t t = 0;

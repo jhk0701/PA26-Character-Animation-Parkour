@@ -95,12 +95,13 @@ public:
 	// IK
 	void ReserveIKDetectGround();
 	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
-	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
-	
 	void ReserveIKDetectWall();
 	LimbIKComponent::TaskResult IKDetectWall(uint8_t _ik);
-
 	void ClearIKReserve();
+
+	// 노티파이를 통해서 호출될 것
+	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
+	void IKSetFixedPoint(uint8_t _ik, const Vector3& _posOffset);
 
 	void SetIKAlpha(uint8_t _ik, float _alpha);
 

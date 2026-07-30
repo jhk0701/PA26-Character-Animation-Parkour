@@ -12,7 +12,7 @@ namespace MiniEngine
 	enum class ELimbType : uint8_t
 	{
 		LeftArm,
-		RigthArm,
+		RightArm,
 		LeftLeg,
 		RightLeg,
 
