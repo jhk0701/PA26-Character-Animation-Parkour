@@ -19,10 +19,7 @@
 
 using namespace MiniEngine;
 
-void PerceptionQueryData::Load(const json& _data)
-{
-
-}
+void PerceptionQueryData::Load(const json& _data) {}
 
 // 콘텐츠에서 사용할 지형 인식 로직
 // 데이터 로드

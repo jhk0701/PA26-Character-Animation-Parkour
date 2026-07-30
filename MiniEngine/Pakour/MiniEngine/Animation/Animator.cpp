@@ -68,6 +68,14 @@ namespace MiniEngine
 		{
 			m_rootMotionDt.Reset();
 			ExtractClipRootMotion(*m_overrideTrack.m_pClip->GetClip(), skeleton, t0, t1, m_rootMotionDt, m_rootBoneIdx);
+
+			const ActionClip::RootMotionConfig& CLIP_RM_CONFIG = m_overrideTrack.m_pClip->GetRootMotionConfig();
+			if (!CLIP_RM_CONFIG.bApplyTranslationX)
+				m_rootMotionDt.translation.x = 0.0f;
+			if (!CLIP_RM_CONFIG.bApplyTranslationY)
+				m_rootMotionDt.translation.y = 0.0f;
+			if (!CLIP_RM_CONFIG.bApplyTranslationZ)
+				m_rootMotionDt.translation.z = 0.0f;
 		}
 
 		m_overrideTrack.m_actionElapsed = t1;

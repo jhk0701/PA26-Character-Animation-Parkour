@@ -9,6 +9,14 @@ namespace MiniEngine
 	class ActionClip
 	{
 	public:
+		struct RootMotionConfig
+		{
+			bool bApplyRootMotion{ true };
+			bool bApplyTranslationX{ true };
+			bool bApplyTranslationY{ true };
+			bool bApplyTranslationZ{ true };
+		};
+
 		ActionClip();
 		~ActionClip() { m_clip = nullptr; }
 
@@ -22,13 +30,16 @@ namespace MiniEngine
 		
 		void AddClip(AnimClip* _clip);
 		void AddNotify(std::shared_ptr<IAnimNotify> _notify);
-		
-		void SetApplyRootBone(bool _bEnable) { m_bApplyRootBone = _bEnable; }
-		bool IsApplyingRootBone() const { return m_bApplyRootBone; }
+
+		void SetApplyRootBone(bool _bApply) { m_rootMotionConfig = { _bApply, _bApply, _bApply, _bApply }; }
+		void SetApplyRootBone(RootMotionConfig _config) { m_rootMotionConfig = _config; }
+		bool IsApplyingRootBone() const { return m_rootMotionConfig.bApplyRootMotion; }
+
+		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionConfig; }
 
 	private:
 		bool m_bIsPlaying{ false };
-		bool m_bApplyRootBone{ true };
+		RootMotionConfig m_rootMotionConfig;
 
 		float m_playTime{ 0.0f };
 		float m_duration{ 0.0f };
