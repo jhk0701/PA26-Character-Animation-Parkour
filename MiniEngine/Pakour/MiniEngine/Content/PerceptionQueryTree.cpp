@@ -1,12 +1,9 @@
 #include "pch.h"
 #include "Content/PerceptionQueryTree.h"
-#include "Scene/IObstacle.h"
 #include "Scene/PerceptionComponent.h"
-#include "Physics/PhysicsWorld.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
-#include "Content/Obstacle.h"
 
 #include "Content/Perception/ReturnNode.h"
 #include "Content/Perception/SelectCharacterStateNode.h"
@@ -20,13 +17,7 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 #include "Content/Perception/TransitionCharacterFSMNode.h"
 
-
-#include "Core/Log.h"
-#include "Core/DebugMarkers.h"
-
 using namespace MiniEngine;
-using namespace MiniEngine::Physics;
-using namespace Content::Config;
 
 void PerceptionQueryTree::Init(const PerceptionConfig& _newConfig)
 {
@@ -37,7 +28,7 @@ void PerceptionQueryTree::Init(const PerceptionConfig& _newConfig)
 // TODO: 데이터 객체로 정리할 것
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 {
-	// Condition
+	// 루트 쿼리
 	std::shared_ptr<SelectCharacterStateNode> pRootQuery = std::make_shared<SelectCharacterStateNode>();
 
 	// Landing
@@ -69,7 +60,7 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 
 	// Hanging — 입력 방향으로 2.0m 프로브 1발. 넷 다 { pReturn, pEmpty } 로 모양이 같다
 	std::shared_ptr<SelectUsingInputDirNode> pStateHanging = std::make_shared<SelectUsingInputDirNode>();
-	std::shared_ptr<CheckOnHangingMoveUpNode> pOnHangingUp = std::make_shared<CheckOnHangingMoveUpNode>(); // 올라설 벽 ledge
+	std::shared_ptr<CheckOnHangingMoveUpNode> pOnHangingUp = std::make_shared<CheckOnHangingMoveUpNode>();			// 올라설 벽 ledge
 	std::shared_ptr<CheckOnHangingMoveDownNode> pOnHangingDown = std::make_shared<CheckOnHangingMoveDownNode>();	// 내려설 지면
 	std::shared_ptr<CheckOnHangingMoveSideNode> pOnHangingSide = std::make_shared<CheckOnHangingMoveSideNode>();	// 새 장애물
 
@@ -185,7 +176,6 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 		pCheckObstacleTag,
 		pEmpty
 	);
-
 
 	// 키 입력 기준 상하좌우 방향 탐색
 	pStateProtrude->SetChildren(

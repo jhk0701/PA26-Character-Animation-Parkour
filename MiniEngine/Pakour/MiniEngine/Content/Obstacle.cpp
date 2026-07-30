@@ -93,6 +93,7 @@ void Obstacle::AddLedge(
 
 float Obstacle::GetNearestLedgeHeight(const Vector3& _pos) const
 {
+	// 소형 장애물(Beam, Protrude)에서 주로 사용할 것
 	float result = FLT_MAX;
 	for (std::weak_ptr<SceneComponent> pScene : m_pLedges)
 		result = min(result, Vector3::DistanceSquared(pScene.lock()->localTransform.position, _pos));

@@ -2,6 +2,7 @@
 #include "GameCore.h"
 #include "Core/Log.h"
 #include "Manager/PathManager.h"
+#include "Manager/DataManager.h"
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
 #include "Manager/UIManager.h"
@@ -63,6 +64,7 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     PathManager::GetInstance()->Init();
     AssetManager::GetInstance()->Init(m_device.Get());
+    DataManager::GetInstance()->Init();
     SceneManager::GetInstance()->Init(m_device.Get(), m_context.Get());
 
     // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).

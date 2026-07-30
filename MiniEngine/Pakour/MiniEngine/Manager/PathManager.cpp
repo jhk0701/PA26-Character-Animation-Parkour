@@ -10,7 +10,8 @@ void PathManager::Init()
 {
     // Assets 폴더 경로 검증 // 이미 있으면 무시됨
     CreateDirectoryW((ExeDir() + L"\\Assets").c_str(), nullptr);
-    CreateDirectoryW((ExeDir() + L"\\Datas").c_str(), nullptr); 
+    CreateDirectoryW((ExeDir() + L"\\Datas").c_str(), nullptr);
+    CreateDirectoryW((ExeDir() + L"\\Shaders").c_str(), nullptr);
 }
 
 // 실행 파일 위치 기준 디렉터리(작업 디렉터리 무관).
@@ -25,6 +26,16 @@ std::wstring PathManager::ExeDir()
     return dir;
 }
 
+std::wstring PathManager::GetAssetPath()
+{
+    return ExeDir() + L"\\Assets\\";
+}
+
+std::wstring PathManager::GetDataPath()
+{
+    return ExeDir() + L"\\Datas\\";
+}
+
 // exe 기준 Shaders\<name> 절대 경로.
 std::wstring PathManager::ResolveShaderPath(const wchar_t* _fileName)
 {
@@ -37,6 +48,7 @@ std::wstring PathManager::ResolveAssetPath(const wchar_t* _fileName)
     return ExeDir() + L"\\Assets\\" + _fileName;
 }
 
+// exe 기준 Datas\<name> 절대 경로.
 std::wstring PathManager::ResolveDataPath(const wchar_t* _fileName)
 {
     return ExeDir() + L"\\Datas\\" + _fileName;

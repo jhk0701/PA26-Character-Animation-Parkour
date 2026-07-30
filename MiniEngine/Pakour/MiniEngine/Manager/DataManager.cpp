@@ -1,30 +1,68 @@
 #include "pch.h"
 #include "Manager/DataManager.h"
-#include "Manager/PathManager.h"
+
 #include <fstream>
+#include <filesystem>
 #include <nlohmann/json.hpp>
+
+#include "Manager/PathManager.h"
+#include "Asset/DataAsset.h"
 #include "Core/Log.h"
 
 #include <cstdlib>
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 namespace MiniEngine 
 {
 	DataManager::DataManager() {}
 	DataManager::~DataManager() {}
 
-	void DataManager::Test()
+	void DataManager::Init()
 	{
-		std::wstring path = PathManager::GetInstance()->ResolveDataPath(L"test.json");
-		std::ifstream f(path);
+		LoadAllDataAsset();
+	}
+
+	void DataManager::LoadAllDataAsset()
+	{
+		// 일반적으로 Datas 경로는 PathManager가 앞에서 이미 검증했을 것
+		const std::wstring DATA_PATH = PathManager::GetInstance()->GetDataPath();
+		if (!fs::exists(DATA_PATH) || !fs::is_directory(DATA_PATH))
+		{
+			MG_LOG_ERROR("[DataManager::LoadAllDataAsset] Path is not found.");
+			return;
+		}
+
+		try 
+		{
+			for (const auto& entry : fs::directory_iterator(DATA_PATH))
+			{
+				const fs::path& p = entry.path();
+				if (m_mapFormat[p.extension().wstring()] == EDataFormat::None)
+					continue;
+
+				LoadDataAsset(p.wstring(), p.filename().wstring());
+			}
+		}
+		catch (const fs::filesystem_error& e) 
+		{
+			MG_LOG_ERROR("[DataManager::LoadAllDataAsset] Error occured in reading files. {}", e.what());
+		}
+	}
+
+	void DataManager::LoadDataAsset(const std::wstring& _path, const std::wstring& _name)
+	{
+		std::ifstream f(_path);
 
 		if (f.is_open())
 		{
-			json data = json::parse(f);
+			json rawData = json::parse(f);
 
-			std::string str = data.dump();
-			MG_LOG_INFO("Json Load Test: {}", str.c_str());
 		}
+		else 
+			MG_LOG_INFO("[DataManager::LoadDataAsset] can't open file");
+
+		f.close();
 	}
 }
