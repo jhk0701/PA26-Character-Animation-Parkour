@@ -39,7 +39,6 @@ void HangingState::LateTick(float _dt)
 {
 }
 
-
 void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	if (_info.IsValid() == false)

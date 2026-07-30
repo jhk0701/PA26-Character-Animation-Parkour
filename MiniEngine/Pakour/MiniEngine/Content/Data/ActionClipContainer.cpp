@@ -593,13 +593,13 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<CharacterIKInvoker> pIKInvokerL = std::make_shared<CharacterIKInvoker>();
 		pIKInvokerL->SetTime(0.15f, 1.5f);
 		pIKInvokerL->SetIKType((uint8_t)ELimbType::LeftArm);
-		pIKInvokerL->SetPositionOffset({-0.15f, 0.0f, 0.0f});
+		pIKInvokerL->SetPositionOffset({-0.15f, 0.0f, -0.1f});
 		pActionClip->AddNotify(pIKInvokerL);
 
 		std::shared_ptr<CharacterIKInvoker> pIKInvokerR = std::make_shared<CharacterIKInvoker>();
 		pIKInvokerR->SetTime(0.15f, 1.5f);
 		pIKInvokerR->SetIKType((uint8_t)ELimbType::RightArm);
-		pIKInvokerR->SetPositionOffset({ 0.15f, 0.0f, 0.0f });
+		pIKInvokerR->SetPositionOffset({ 0.15f, 0.0f, -0.1f });
 		pActionClip->AddNotify(pIKInvokerR);
 
 		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
@@ -610,7 +610,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
 		pIKDisabler->SetTime(1.2f, 1.3f);
-		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetFromTo(1.0f, 0.5f); // hanging 상태에서도 IK를 쓸 것이기 때문에 다 내리진 않음
 		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RightArm });
 		pActionClip->AddNotify(pIKDisabler);
 
@@ -677,7 +677,6 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		mapActions[(uint8_t)ETagAct::Beam_HangingMoveRight] = pHangMoveRight;
 	}
-		
 	{
 		// Beam Hanging 올라가기
 		// Beam Hang -> Beam Stand

@@ -97,6 +97,8 @@ public:
 	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
 	void ReserveIKDetectWall();
 	LimbIKComponent::TaskResult IKDetectWall(uint8_t _ik);
+	void ReserveIKDetectBeamHanging();
+	LimbIKComponent::TaskResult IKDetectBeamHanging(uint8_t _ik);
 	void ClearIKReserve();
 
 	// 노티파이를 통해서 호출될 것

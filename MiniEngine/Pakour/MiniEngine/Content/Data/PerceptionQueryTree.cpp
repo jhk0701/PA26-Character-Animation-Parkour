@@ -28,6 +28,10 @@ void PerceptionQueryData::Load(const json& _data)
 // 데이터 로드
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 {
+	// Task (Leaf)
+	std::shared_ptr<TaskNode> pEmpty = std::make_shared<ReturnEmptyNode>(); // 빈 결과 리턴, 탐색 계속 신호
+	std::shared_ptr<TaskNode> pReturn = std::make_shared<ReturnResultNode>(); // 결과 리턴 : 이 경우 Success 결과도 리턴
+
 	// 루트 쿼리
 	std::shared_ptr<SelectCharacterStateNode> pRootQuery = std::make_shared<SelectCharacterStateNode>();
 
@@ -72,9 +76,6 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 	// Protrude
 	std::shared_ptr<SelectUsingInputDirNode> pStateProtrude = std::make_shared<SelectUsingInputDirNode>();
 
-	// Task (Leaf)
-	std::shared_ptr<TaskNode> pEmpty = std::make_shared<ReturnEmptyNode>(); // 빈 결과 리턴, 탐색 계속 신호
-	std::shared_ptr<TaskNode> pReturn = std::make_shared<ReturnResultNode>(); // 결과 리턴 : 이 경우 Success 결과도 리턴
 
 	// 루트 확인 : 평지에 있는 상황인지
 	pRootQuery->SetChildren(

@@ -366,6 +366,62 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 	return result;
 }
 
+void Character::ReserveIKDetectBeamHanging()
+{
+	if (m_limbIKComp.expired())
+		return;
+
+	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
+	pLimbIK->SetPendingTask(ELimbType::LeftArm, [this]() { return IKDetectBeamHanging((uint8_t)ELimbType::LeftArm); });
+	pLimbIK->SetPendingTask(ELimbType::RightArm, [this]() { return IKDetectBeamHanging((uint8_t)ELimbType::RightArm); });
+}
+
+LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
+{
+	LimbIKComponent::TaskResult result;
+	result.posAlpha = 0.0f;
+	result.rotAlpha = 0.0f;
+
+	std::shared_ptr<LimbIKComponent> pIKComp = m_limbIKComp.lock();
+	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	std::shared_ptr<Animator> pAnim = pSkin->GetAnim().lock();
+
+	if (pAnim->IsActionClipPlaying())
+		return result;
+
+	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((ELimbType)_ik).end);
+	if (BONE_IDX < 0)
+		return result;
+
+	Matrix endBoneW;
+	if (!pSkin->GetBoneWorldMatrix(BONE_IDX, endBoneW))
+		return result;
+
+	result.position = endBoneW.Translation();
+
+	const Transform& TF = GetRoot()->localTransform;
+
+	Physics::SpherecastParam param;
+	param.m_dir = TF.Up();
+	param.m_maxDistance = m_ikRayDistance * 2.0f;
+	param.m_startPos = result.position + param.m_dir * -m_ikRayDistance;
+	param.m_radius = 0.1f;
+
+	Physics::RaycastResult hitResult;
+	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
+	if (!pPhysics->SphereCast(param, hitResult, Physics::ToMask(Physics::Layer::ObstacleLedge)))
+		return result;
+
+	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
+	// 위치 적용
+	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
+	result.position = hitResult.m_pos;
+	result.posAlpha = 1.0f;
+	
+	return result;
+}
+
 void Character::ClearIKReserve()
 {
 	m_limbIKComp.lock()->ClearPendingTask();
@@ -405,7 +461,6 @@ void Character::SetIKAlpha(uint8_t _ik, float _alpha)
 {
 	m_limbIKComp.lock()->SetAlphaIK((ELimbType)_ik, _alpha);
 }
-
 
 void Character::AddMovementInput(const Vector3& _moveDelta)
 {

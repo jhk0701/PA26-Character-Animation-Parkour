@@ -54,6 +54,9 @@ private:
 class BeamHangingState : public BeamState
 {
 public:
+	void OnStart() override;
+	void OnEnd() override;
+
 	void Tick(float _dt) override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)  override;
 

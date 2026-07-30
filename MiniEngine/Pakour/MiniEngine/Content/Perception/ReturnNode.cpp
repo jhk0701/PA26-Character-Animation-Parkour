@@ -15,6 +15,5 @@ EPerceptionResult ReturnResultNode::InvokeTask(TravelContext& _context, TravelRe
 
 EPerceptionResult ReturnEmptyNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	_result.Reset();
 	return EPerceptionResult::Fail;
 }

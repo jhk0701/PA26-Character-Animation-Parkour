@@ -227,6 +227,22 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 	return pObs == GetCurObs();
 }
 
+void BeamHangingState::OnStart()
+{
+	BeamState::OnStart();
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->ReserveIKDetectBeamHanging();
+}
+
+void BeamHangingState::OnEnd()
+{
+	BeamState::OnEnd();
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->ClearIKReserve();
+}
+
 // Beam Hanging
 void BeamHangingState::Tick(float _dt)
 {
