@@ -12,6 +12,7 @@ namespace MiniEngine
 		struct RootMotionConfig
 		{
 			bool bApplyRootMotion{ true };
+
 			bool bApplyTranslationX{ true };
 			bool bApplyTranslationY{ true };
 			bool bApplyTranslationZ{ true };
