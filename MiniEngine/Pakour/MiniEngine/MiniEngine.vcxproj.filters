@@ -116,6 +116,9 @@
     <Filter Include="Engine\07.Object\Animation\IK">
       <UniqueIdentifier>{37b13630-9b42-450a-b4ed-f2f60de759a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\03.Object\Component\Perception">
+      <UniqueIdentifier>{3a9fc159-c6a9-4273-a768-226f3f1edad7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -355,6 +358,42 @@
     <ClInclude Include="Content\CharacterIKNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Perception\ReturnNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\PerceptionNodeUtil.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\SelectCharacterStateNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\CheckObstacleNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\SelectObstacleTagNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\SelectUsingHeightNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\MeasureDepthNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\BeamCompareHeightNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\ProtrudeExtractHeightNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\CheckObstacleOnHangingNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -566,6 +605,42 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterIKNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\ReturnNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\PerceptionNodeUtil.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\CheckObstacleNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\SelectObstacleTagNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\MeasureDepthNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\BeamCompareHeightNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\ProtrudeExtractHeightNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\CheckObstacleOnHangingNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp">
+      <Filter>Content\03.Object\Component\Perception</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

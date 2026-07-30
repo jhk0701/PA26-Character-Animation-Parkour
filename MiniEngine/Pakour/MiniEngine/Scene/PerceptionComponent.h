@@ -1,8 +1,8 @@
 #pragma once
 #include "Scene/Component.h"
 #include "Scene/IObstacle.h"
-#include <functional>
 #include "Physics/PhysicsWorld.h"
+#include <functional>
 
 namespace MiniEngine 
 {
@@ -23,7 +23,6 @@ namespace MiniEngine
 
 	struct TravelResult 
 	{
-		bool m_bIsEmpty{ true };
 		IObstacle* m_pFirstObstacle{ nullptr };
 		Vector3 m_firstObstacleHitPos;
 		Vector3 m_firstObstacleHitNrm;
@@ -34,66 +33,90 @@ namespace MiniEngine
 		void Reset();
 	};
 
-	class QueryNodeBase
+	enum class EPerceptionResult : uint8_t
 	{
-	public:
-		virtual ~QueryNodeBase() {};
-		virtual TravelResult Execute(TravelContext& _context) = 0;
+		Succeess,
+		Fail,
+		
+		END
 	};
 
-	class ConditionNode : public QueryNodeBase
+#pragma region Perception Nodes
+
+	// 최상위 부모
+	// 상속해서 활용할 것
+	class PerceptionNode
 	{
 	public:
-		void SetCondition(std::function<bool(TravelContext&)>&& _cond,
-			std::shared_ptr<QueryNodeBase> _nodeOnTrue,
-			std::shared_ptr<QueryNodeBase> _nodeOnFalse);
+		virtual ~PerceptionNode() {};
+		virtual EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) = 0;
+	};
 
-		TravelResult Execute(TravelContext& _context) override;
+	// 자식 중 1개 실행
+	class SelectorNode : public PerceptionNode
+	{
+	public:
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+		virtual uint8_t InvokeCondition(TravelContext& _context) = 0;
+
+		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
+		size_t GetChildrenCnt() const { return m_children.size(); }
 
 	private:
-		std::function<bool(TravelContext&)> m_condition;
-		std::vector<std::shared_ptr<QueryNodeBase>> m_children;
+		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
-	class SelectorNode : public QueryNodeBase 
+	// 단순 이진 조건문 노드
+	class ConditionNode : public PerceptionNode
 	{
 	public:
-		void SetCondition(std::function<uint8_t(TravelContext&)>&& _cond,
-			std::vector<std::shared_ptr<QueryNodeBase>>&& _results);
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+		virtual bool InvokeCondition(TravelContext& _context) = 0;
 
-		TravelResult Execute(TravelContext& _context) override;
+		void SetChildren(
+			std::shared_ptr<PerceptionNode> _nodeOnTrue,
+			std::shared_ptr<PerceptionNode> _nodeOnFalse);
 
 	private:
-		std::function<uint8_t(TravelContext&)> m_condition;
-		std::vector<std::shared_ptr<QueryNodeBase>> m_children;
+		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
-	class LeafNode : public QueryNodeBase
+	// 자식 연속 실행 노드
+	class SequenceNode : public PerceptionNode
 	{
 	public:
-		void SetTask(std::function<TravelResult(TravelContext&)>&& _newTask) { m_task = _newTask; }
-
-		TravelResult Execute(TravelContext& _context) override;
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
 
 	private:
-		std::function<TravelResult(TravelContext&)> m_task;
+		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
+
+	// Leaf 노드 - 최종 작업 수행
+	class TaskNode : public PerceptionNode
+	{
+	public:
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+		virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) = 0;
+	};
+
+#pragma endregion
 
 	class PerceptionComponent : public Component
 	{
 	public:
 		void OnAttach() override;
 
-		void Travel();// 탐색
-		void SetQueryTree(std::shared_ptr<QueryNodeBase>&& _newTree) { m_queryTree = _newTree; };
+		EPerceptionResult Travel();// 탐색
+		void SetQueryTree(std::shared_ptr<PerceptionNode>&& _newTree) { m_queryTree = _newTree; };
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 		const TravelResult& GetLastestTravelResult() const { return m_result; }
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
-		std::shared_ptr<QueryNodeBase> m_queryTree;
+		std::shared_ptr<PerceptionNode> m_queryTree;
 		TravelResult m_result; // 가장 마지막으로 인식한 데이터
 	};
 }

@@ -156,12 +156,12 @@ void Character::TryPerception()
 		return; // 이미 행동 중이라면 탐색하지 않도록
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	pPercept->Travel(); // 탐색 개시
+	EPerceptionResult perceptResult = pPercept->Travel(); // 탐색 개시
 
-	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
-	if (result.m_bIsEmpty) // 빈 결과는 리턴
+	if (perceptResult != EPerceptionResult::Succeess) // 빈 결과는 리턴
 		return;
 
+	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
 	ProcessPerceptionResult(result);
 }
 void Character::ProcessPerceptionResult(const TravelResult& _result)

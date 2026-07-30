@@ -9,7 +9,6 @@ namespace MiniEngine
 {
 	void TravelResult::Reset()
 	{
-		m_bIsEmpty = true;
 		m_pFirstObstacle = nullptr;
 		m_firstObstacleHitPos = Vector3(0.0f);
 		m_firstObstacleHitNrm = Vector3(0.0f);
@@ -18,55 +17,62 @@ namespace MiniEngine
 		m_obstacleDepth = 0.0f;
 	}
 
-	void ConditionNode::SetCondition(std::function<bool(TravelContext&)>&& _cond, 
-		std::shared_ptr<QueryNodeBase> _nodeOnTrue, 
-		std::shared_ptr<QueryNodeBase> _nodeOnFalse)
-	{
-		m_condition = _cond;
+#pragma region Perception Nodes
 
+	void ConditionNode::SetChildren(std::shared_ptr<PerceptionNode> _nodeOnTrue, std::shared_ptr<PerceptionNode> _nodeOnFalse)
+	{
 		m_children.resize(2);
 		m_children[0] = _nodeOnTrue;
 		m_children[1] = _nodeOnFalse;
 	}
 
-	TravelResult ConditionNode::Execute(TravelContext& _context)
+	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		if (!m_condition)
-			return TravelResult();
-
-		if (m_condition(_context))
-			return m_children[0]->Execute(_context);
+		if (InvokeCondition(_context))
+			return m_children[0]->Execute(_context, _result);
 		else
-			return m_children[1]->Execute(_context);
-	};
-
-	void SelectorNode::SetCondition(
-		std::function<uint8_t(TravelContext&)>&& _cond, 
-		std::vector<std::shared_ptr<QueryNodeBase>>&& _results
-	)
-	{
-		m_condition = _cond;
-		m_children = _results;
+			return m_children[1]->Execute(_context, _result);
 	}
 
-	TravelResult SelectorNode::Execute(TravelContext& _context)
+	void SelectorNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		if (!m_condition)
-			return TravelResult();
+		m_children = _children;
+	}
 
-		uint8_t r = m_condition(_context);
+	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		uint8_t r = InvokeCondition(_context);
 		assert(r < m_children.size());
 
-		return m_children[r]->Execute(_context);
+		return m_children[r]->Execute(_context, _result);
 	}
 
-	TravelResult LeafNode::Execute(TravelContext& _context)
+	void SequenceNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		if (!m_task)
-			return TravelResult();
-
-		return m_task(_context);
+		m_children = _children;
 	}
+
+	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		EPerceptionResult result = EPerceptionResult::Succeess;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			EPerceptionResult r = m_children[i]->Execute(_context, _result);
+
+			if (result < r)
+				result = r;
+		}
+
+		return result;
+	}
+
+	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		return InvokeTask(_context, _result);
+	}
+
+#pragma endregion
 
 	void PerceptionComponent::OnAttach()
 	{
@@ -74,20 +80,18 @@ namespace MiniEngine
 		m_physics = owner.lock()->GetScene()->GetPhysics();
 	}
 
-	void PerceptionComponent::Travel()
+	EPerceptionResult PerceptionComponent::Travel()
 	{
 		if (m_physics.expired() || IsInitialized() == false)
 		{
 			m_result.Reset();
-			return;
+			return EPerceptionResult::Fail;
 		}
 
 		TravelContext context;
 		context.m_owner = owner.lock();
 		context.m_physics = context.m_owner->GetScene()->GetPhysics().lock();
-
-		m_result = m_queryTree->Execute(context);
-		return;
+		
+		return m_queryTree->Execute(context, m_result);
 	}
-
 }

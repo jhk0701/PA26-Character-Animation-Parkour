@@ -2,7 +2,7 @@
 
 namespace MiniEngine 
 {
-	class QueryNodeBase;
+	class PerceptionNode;
 	struct TravelContext;
 }
 
@@ -23,7 +23,7 @@ struct PerceptionConfig
 	uint8_t maxHeightStep = 3;	// 3.0m 이상은 벽으로 보고 매달린다
 	float heightSearchtDist = 0.1f;	
 	
-	float depthStep = 0.5f;
+	float depthStep = 0.5f; // 확인하는 depth 깊이 단위 0.5m
 	uint8_t maxDepthStep = 2;	// 최대 1.0m 까지만 잰다
 	float depthSearchDownDist = 2.0f;
 	float depthLift = 0.05f; // 꼭대기 표면인 경우 방지를 위해 띄어두는 크기
@@ -32,7 +32,6 @@ struct PerceptionConfig
 	// 매달린 상태(Hanging)의 주변 탐색 파라미터
 	float onHangingSearchDist = 1.5f;	// 상하좌우 공통 탐지 거리
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
-
 };
 
 
@@ -41,7 +40,7 @@ struct PerceptionConfig
 class PerceptionQueryTree 
 {
 public:
-	std::shared_ptr<MiniEngine::QueryNodeBase> ConstructTree();
+	std::shared_ptr<MiniEngine::PerceptionNode> ConstructTree();
 
 	void Init(const PerceptionConfig& _newConfig);
 	const PerceptionConfig& GetConfig() const { return m_config; }
