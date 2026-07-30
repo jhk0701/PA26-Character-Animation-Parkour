@@ -33,6 +33,15 @@ namespace MiniEngine
 		float maxHandRotateDeg{ 120.0f }; // 손이 돌 수 있는 최대한의 값
 
 		std::array<Vector3, (uint8_t)ELimbType::End> poleDir;
+
+		// 관절 한계 (사지별, degree). 기본값은 무제한 = 기존 동작.
+		// 의미와 주의점은 SkeletalMeshComponent::SetIKLimits 주석 참고.
+		// ⚠ maxBendDeg 는 약 168도 아래로 내려야 효과가 있다(기존 사거리 상한이 그 근처).
+		static_assert((uint8_t)ELimbType::End == 4, "아래 한계 배열 초기화 목록을 사지 개수에 맞출 것");
+
+		std::array<float, (uint8_t)ELimbType::End> minBendDeg{ 0.0f, 0.0f, 0.0f, 0.0f };
+		std::array<float, (uint8_t)ELimbType::End> maxBendDeg{ 180.0f, 180.0f, 180.0f, 180.0f };
+		std::array<float, (uint8_t)ELimbType::End> swingConeDeg{ 180.0f, 180.0f, 180.0f, 180.0f };
 	};
 
 	// 사지를 IK로 제어하는 컴포넌트
