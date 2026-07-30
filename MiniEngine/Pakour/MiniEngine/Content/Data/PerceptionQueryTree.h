@@ -1,10 +1,24 @@
 #pragma once
 
+#include "Asset/DataAsset.h"
+
 namespace MiniEngine 
 {
 	class PerceptionNode;
 	struct TravelContext;
 }
+
+struct PerceptionNodeParam
+{
+
+};
+
+struct PerceptionNodeData
+{
+	int Index{ 0 };
+	std::string NodeName;
+	std::string NodeClass;
+};
 
 struct PerceptionConfig
 {
@@ -13,16 +27,16 @@ struct PerceptionConfig
 	float maxObstacleDetectDist = 2.5f;
 
 	// 장애물 파쿠르 기준
-	float thresholdWallHeight	= 3.0f;
+	float thresholdWallHeight = 3.0f;
 	float thresholdHighObstacle = 2.0f;
-	float thresholdLowObstacle	= 1.0f;
+	float thresholdLowObstacle = 1.0f;
 
 	// 일반 장애물 측량 파라미터
 	float heightRadius = 0.5f;	// heightStep과 함께 바꿀 것
 	float heightStep = 1.0f;	// = heightRadius * 2 여야 밴드가 틈이 없음
 	uint8_t maxHeightStep = 3;	// 3.0m 이상은 벽으로 보고 매달린다
-	float heightSearchtDist = 0.1f;	
-	
+	float heightSearchtDist = 0.1f;
+
 	float depthStep = 0.5f; // 확인하는 depth 깊이 단위 0.5m
 	uint8_t maxDepthStep = 2;	// 최대 1.0m 까지만 잰다
 	float depthSearchDownDist = 2.0f;
@@ -34,8 +48,14 @@ struct PerceptionConfig
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
 };
 
-// 콘텐츠 코드에서 사용할 것
-// 쿼리 트리 팩토리용도
+
+class PerceptionQueryData : public MiniEngine::DataAsset 
+{
+public:
+	void Load(const json& _data) override;
+};
+
+// 쿼리 트리 팩토리용도 -> 콘텐츠 코드에서 사용할 것
 class PerceptionQueryTree 
 {
 public:

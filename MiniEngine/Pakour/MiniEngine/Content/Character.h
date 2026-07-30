@@ -97,6 +97,9 @@ public:
 	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
 	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
 	
+	void ReserveIKDetectWall();
+	LimbIKComponent::TaskResult IKDetectWall(uint8_t _ik);
+
 	void ClearIKReserve();
 
 	void SetIKAlpha(uint8_t _ik, float _alpha);
@@ -154,9 +157,12 @@ private:
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 
 	// IK 튜닝 멤버 변수
-	float m_ikRayDistance = 0.5f; // 발의 아래를 체크할 높이
+	float m_ikRayDistance = 0.5f; // 발의 아래, 벽면 등 레이로 체크할 거리
 
 	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
 	float m_maxSlopeDeg = 45.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
+
+	// 매달린 상태에서 손, 발이 0.1만큼의 오차는 ik를 적용하지 않음
+	float m_thresholdWallDig = 0.05f;
 };
 

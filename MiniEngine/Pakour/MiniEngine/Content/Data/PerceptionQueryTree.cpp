@@ -19,6 +19,11 @@
 
 using namespace MiniEngine;
 
+void PerceptionQueryData::Load(const json& _data)
+{
+
+}
+
 // 콘텐츠에서 사용할 지형 인식 로직
 // 데이터 로드
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
@@ -53,7 +58,7 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 	std::shared_ptr<TransitionCharacterFSMNode> pTransitionToLanding = std::make_shared<TransitionCharacterFSMNode>();
 	pTransitionToLanding->SetTargetState((uint8_t)Character::EState::Landing);
 
-	// Hanging — 입력 방향으로 2.0m 프로브 1발. 넷 다 { pReturn, pEmpty } 로 모양이 같다
+	// Hanging — 입력 방향 검사
 	std::shared_ptr<SelectUsingInputDirNode> pStateHanging = std::make_shared<SelectUsingInputDirNode>();
 	std::shared_ptr<CheckOnHangingMoveUpNode> pOnHangingUp = std::make_shared<CheckOnHangingMoveUpNode>();			// 올라설 벽 ledge
 	std::shared_ptr<CheckOnHangingMoveDownNode> pOnHangingDown = std::make_shared<CheckOnHangingMoveDownNode>();	// 내려설 지면
@@ -184,4 +189,3 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 
 	return pRootQuery;
 }
-

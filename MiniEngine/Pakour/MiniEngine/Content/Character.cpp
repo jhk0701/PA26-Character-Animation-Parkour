@@ -144,10 +144,13 @@ void Character::BeginPlay()
 void Character::Tick(float _dt)
 {
 	Pawn::Tick(_dt);
+
+	/*
 	Vector3 pos = GetRoot()->localTransform.position;
 	Vector3 posUp = pos + Vector3(0.0f, 2.5f, 0.0f);
 	MiniEngine::Debug::DrawPoint(posUp, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
 	MiniEngine::Debug::DrawLine(pos, posUp, MiniEngine::DebugColor::GREEN, 0.1f);
+	*/
 }
 
 void Character::LoadData()
@@ -174,6 +177,7 @@ void Character::TryPerception()
 	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
 	ProcessPerceptionResult(result);
 }
+
 void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
@@ -208,6 +212,7 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 }
+
 
 void Character::ReserveIKDetectGround()
 {
@@ -297,6 +302,84 @@ void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }
 
+void Character::ReserveIKDetectWall()
+{
+	if (m_limbIKComp.expired())
+		return;
+
+	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
+	pLimbIK->SetPendingTask(ELimbType::LeftArm, [this]() { return IKDetectWall((uint8_t)ELimbType::LeftArm); });
+	pLimbIK->SetPendingTask(ELimbType::RigthArm, [this]() { return IKDetectWall((uint8_t)ELimbType::RigthArm); });
+	pLimbIK->SetPendingTask(ELimbType::LeftLeg, [this]() { return IKDetectWall((uint8_t)ELimbType::LeftLeg); });
+	pLimbIK->SetPendingTask(ELimbType::RightLeg, [this]() { return IKDetectWall((uint8_t)ELimbType::RightLeg); });
+}
+
+LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
+{
+	std::shared_ptr<LimbIKComponent> pIKComp = m_limbIKComp.lock();
+	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	std::shared_ptr<Animator> pAnim = pSkin->GetAnim().lock();
+
+	LimbIKComponent::TaskResult result;
+	result.posAlpha = 0.0f;
+	result.rotAlpha = 0.0f;
+
+	if (pAnim->IsActionClipPlaying())
+		return result;
+
+	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((ELimbType)_ik).end);
+	if (BONE_IDX < 0)
+		return result;
+
+	Matrix endBoneW;
+	if (!pSkin->GetBoneWorldMatrix(BONE_IDX, endBoneW))
+		return result;
+
+	result.position = endBoneW.Translation();
+
+	// 1. 현재 뼈의 end 위치에서 캐릭터의 후면으로 0.05 이동
+	// 2. 캐릭터의 정면으로 0.1 방향으로 레이캐스트
+	// 3. 접촉면이 손, 발의 위치
+	const Transform& TF = GetRoot()->localTransform;
+
+	Physics::RaycastParam param;
+	param.m_dir = TF.Forward();
+	param.m_maxDistance = m_ikRayDistance * 2.0f;
+	param.m_origin = result.position + param.m_dir * -m_ikRayDistance;
+
+	Physics::RaycastResult hitResult;
+	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
+	if (!pPhysics->Raycast(param, hitResult, Physics::ToMask(Physics::Layer::Obstacle)))
+		return result;
+
+	// 벽으로부터 일정 범위 이내에 있는 경우는 ik를 적용하지 않음
+	if (std::fabs(hitResult.m_distance - m_ikRayDistance) < m_thresholdWallDig)
+		return result;
+
+	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
+	// 위치 적용
+	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
+	result.position = hitResult.m_pos;
+	result.posAlpha = 1.0f;
+
+	// 회전 적용
+	hitResult.m_nrm.Normalize();
+	const Vector3 UP(0.0f, 1.0f, 0.0f);
+	const float SLOPE = std::acos(std::clamp(UP.Dot(hitResult.m_nrm), -1.0f, 1.0f)); // 경사각 라디안
+	Quaternion q = FromToRotation(UP, hitResult.m_nrm);
+
+	const float MAX_SLOPE = ToRadians(m_maxSlopeDeg);
+	if (SLOPE > MAX_SLOPE && SLOPE > 1e-4f)
+		result.rotation = Quaternion::Slerp(Quaternion(0.0f, 0.0f, 0.0f, 1.0f), q, MAX_SLOPE / SLOPE);
+	else
+		result.rotation = q;
+
+	result.rotation.Normalize();
+	result.rotAlpha = 1.0;
+	return result;
+}
+
 void Character::ClearIKReserve()
 {
 	m_limbIKComp.lock()->ClearPendingTask();
@@ -306,6 +389,7 @@ void Character::SetIKAlpha(uint8_t _ik, float _alpha)
 {
 	m_limbIKComp.lock()->SetAlphaIK((ELimbType)_ik, _alpha);
 }
+
 
 void Character::AddMovementInput(const Vector3& _moveDelta)
 {

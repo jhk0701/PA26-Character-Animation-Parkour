@@ -82,9 +82,6 @@ namespace MiniEngine
 
 	void LimbIKComponent::ProcessPendingTask()
 	{
-		// alpha 로 게이트하지 않는다.
-		// 예약 작업이 alpha 를 만들어내는 주체이므로, alpha 가 0 이라고 건너뛰면
-		// 작업이 영원히 실행되지 않는 교착이 된다.
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
 			if (!m_pendingTask[i])

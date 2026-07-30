@@ -45,9 +45,8 @@ void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param
 		m_pChar->SetIKAlpha(t, LERP);
 }
 
-// 전제 조건.
-// 캐릭터가 파쿠르 중일 것
-// 캐릭터로부터 현재 파쿠르 중인 정보를 받아와야함
+// 현재 캐릭터가 파쿠르 중이라면
+// 파구르 중인 장애물에 손이나 발을 짚는 IK 실행
 void CharacterIKInvoker::OnStart(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnStart(_param);
@@ -68,4 +67,23 @@ void CharacterIKInvoker::Activate(float _dt, MiniEngine::AnimNotifyParam& _param
 	offset += TF.Forward() * m_posOffset.z;
 
 	m_pChar->IKDetectObstacle(m_ikType, offset);
+}
+
+void CharacterIKInvokerFixedDir::OnStart(MiniEngine::AnimNotifyParam& _param)
+{
+	AnimNotifyState::OnStart(_param);
+
+	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
+	assert(GetDuration() > 1e-4f);
+}
+
+void CharacterIKInvokerFixedDir::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
+{
+	if (!m_pChar)
+		return;
+
+	const Transform& TF = m_pChar->GetRoot()->localTransform;
+	Vector3 dir = m_pChar->ConvertToActorDir(m_dir);
+
+	// Physics::ry
 }

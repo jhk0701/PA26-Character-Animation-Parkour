@@ -289,7 +289,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(16)); // 벽 매달리기 (시작)
 
 		std::shared_ptr<TransitionState> pSetHanging = std::make_shared<TransitionState>();
-		pSetHanging->SetTime(0.1f);
+		pSetHanging->SetTime(0.05f);
 		pSetHanging->SetState((uint8_t)Character::EState::Hanging);
 		pActionClip->AddNotify(pSetHanging);
 
