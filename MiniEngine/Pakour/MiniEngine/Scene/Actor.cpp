@@ -8,10 +8,10 @@ namespace MiniEngine
     {
         OnBeforeSortComponent();
 
-        // 컴포넌트 정렬
+        // 컴포넌트 정렬 (오름차순)
         std::sort(m_components.begin(), m_components.end(),
             [](const std::shared_ptr<Component> _a, const std::shared_ptr<Component> _b) 
-            { return _a->GetSortOrder() > _b->GetSortOrder(); }
+            { return _a->GetSortOrder() < _b->GetSortOrder(); }
         );
     }
 
@@ -79,6 +79,26 @@ namespace MiniEngine
         m_bUseFixedTick = _bUseFixedTick;
         m_bUseTick = _bUseTick;
         m_bUseLateTick = _bUseLateTick;
-    };
+    }
+
+    Vector3 Actor::ConvertToActorDir(const Vector3& _dir)
+    {
+        if (!GetRoot())
+        {
+            MG_LOG_ERROR("[Actor::ConvertToLocalDir] root is not set");
+            return Vector3(0.0f);
+        }
+
+        Vector3 newDir(0.0f);
+        const Transform& TF = GetRoot()->localTransform;
+
+        newDir += TF.Right() * _dir.x;
+        newDir += TF.Up() * _dir.y;
+        newDir += TF.Forward() * _dir.z;
+        newDir.Normalize();
+
+        return newDir;
+    }
+    
 
 }

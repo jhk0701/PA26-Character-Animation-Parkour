@@ -52,6 +52,10 @@ void BeamState::Tick(float _dt)
 	// CameraRotate(_dt);
 }
 
+void BeamState::LateTick(float _dt)
+{
+}
+
 void BeamState::CheckState()
 {
 	CharacterState::CheckState();

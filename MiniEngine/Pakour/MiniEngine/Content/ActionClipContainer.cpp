@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Content/ActionClipContainer.h"
 #include "Asset/SkinnedMesh.h"
+#include "Animation/IK/LimbIKComponent.h"
+
 #include "Animation/Animator.h"
 #include "Animation/BlendClip.h"
 #include "Animation/ActionClip.h"
@@ -15,6 +17,7 @@
 #include "Content/TransitionState.h"
 #include "Content/CorrectRootMotion.h"
 #include "Content/CorrectRotation.h"
+#include "Content/CharacterIKNotify.h"
 
 using namespace MiniEngine;
 using namespace Content::Config;
@@ -113,6 +116,24 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pCorrectRM->SetDeltaIntensity(2.0f);
 		pActionClip->AddNotify(pCorrectRM);
 
+		std::shared_ptr<CharacterIKInvoker> pIKInvoker = std::make_shared<CharacterIKInvoker>();
+		pIKInvoker->SetTime(0.3f, 0.7f);
+		pIKInvoker->SetIKType((uint8_t)ELimbType::LeftArm);
+		pIKInvoker->SetPositionOffset({ -0.25f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvoker);
+
+		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
+		pIKEnabler->SetTime(0.3f, 0.4f);
+		pIKEnabler->SetFromTo(0.0f, 1.0f);
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
+		pActionClip->AddNotify(pIKEnabler);
+
+		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
+		pIKDisabler->SetTime(0.6f, 0.7f);
+		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
+		pActionClip->AddNotify(pIKDisabler);
+
 		mapActions[(uint8_t)ETagAct::VaultLow] = pActionClip;
 		mapActions[(uint8_t)ETagAct::VaultMid] = pActionClip;
 	}
@@ -122,7 +143,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(13));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreObstacle = std::make_shared<EnableCollisionObstacle>();
-		pIgnoreObstacle->SetTime(0.2f);
+		pIgnoreObstacle->SetTime(0.1f);
 		pIgnoreObstacle->SetEnable(false);
 		pActionClip->AddNotify(pIgnoreObstacle);
 
@@ -133,9 +154,33 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.1f, 0.9f);
-		pCorrectRM->SetBezierY(1.0f);
-		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.4f});
+		pCorrectRM->SetBezierY(0.3f);
+		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.5f});
 		pActionClip->AddNotify(pCorrectRM);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerL = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerL->SetTime(0.1f, 0.8f);
+		pIKInvokerL->SetIKType((uint8_t)ELimbType::LeftArm);
+		pIKInvokerL->SetPositionOffset({ -0.15f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvokerL);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerR = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerR->SetTime(0.1f, 0.8f);
+		pIKInvokerR->SetIKType((uint8_t)ELimbType::RigthArm);
+		pIKInvokerR->SetPositionOffset({ 0.15f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvokerR);
+
+		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
+		pIKEnabler->SetTime(0.1f, 0.4f);
+		pIKEnabler->SetFromTo(0.0f, 1.0f);
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKEnabler);
+
+		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
+		pIKDisabler->SetTime(0.7f, 0.8f);
+		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::VaultHigh] = pActionClip;
 	}
@@ -151,15 +196,32 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pActionClip->AddNotify(pIgnoreObstacle);
 
 		std::shared_ptr<EnableCollisionObstacle> pCollideObstacle = std::make_shared<EnableCollisionObstacle>();
-		pCollideObstacle->SetTime(0.5f);
+		pCollideObstacle->SetTime(0.6f);
 		pCollideObstacle->SetEnable(true);
 		pActionClip->AddNotify(pCollideObstacle);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetBezierY(0.5f);
+		pCorrectRM->SetTime(0.0f, 0.6f);
 		pCorrectRM->SetEndOffset({0.0f, 0.0f, 0.3f});
 		pActionClip->AddNotify(pCorrectRM);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvoker = std::make_shared<CharacterIKInvoker>();
+		pIKInvoker->SetTime(0.2f, 0.5f);
+		pIKInvoker->SetIKType((uint8_t)ELimbType::LeftArm);
+		pIKInvoker->SetPositionOffset({ -0.25f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvoker);
+
+		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
+		pIKEnabler->SetTime(0.2f, 0.3f);
+		pIKEnabler->SetFromTo(0.0f, 1.0f);
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
+		pActionClip->AddNotify(pIKEnabler);
+
+		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
+		pIKDisabler->SetTime(0.4f, 0.5f);
+		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm });
+		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::MantleLow] = pActionClip;
 		mapActions[(uint8_t)ETagAct::MantleMid] = pActionClip;
@@ -182,9 +244,33 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.1f, 0.9f);
-		pCorrectRM->SetBezierY(1.0f);
+		pCorrectRM->SetBezierY(0.5f);
 		pCorrectRM->SetEndOffset({ 0.0f, 0.0f, 0.3f });
 		pActionClip->AddNotify(pCorrectRM);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerL = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerL->SetTime(0.0f, 0.8f);
+		pIKInvokerL->SetIKType((uint8_t)ELimbType::LeftArm);
+		pIKInvokerL->SetPositionOffset({ -0.15f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvokerL);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerR = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerR->SetTime(0.0f, 0.8f);
+		pIKInvokerR->SetIKType((uint8_t)ELimbType::RigthArm);
+		pIKInvokerR->SetPositionOffset({ 0.15f, 0.1f, 0.0f });
+		pActionClip->AddNotify(pIKInvokerR);
+
+		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
+		pIKEnabler->SetTime(0.1f, 0.4f);
+		pIKEnabler->SetFromTo(0.0f, 1.0f);
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKEnabler);
+
+		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
+		pIKDisabler->SetTime(0.7f, 0.8f);
+		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::MantleHigh] = pActionClip;
 	}
@@ -336,13 +422,13 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<TransitionState> pTransition = std::make_shared<TransitionState>();
 		pTransition->SetState((uint8_t)Character::EState::BeamStand);
-		pTransition->SetTime(0.6f);
+		pTransition->SetTime(0.3f);
 		pActionClip->AddNotify(pTransition);
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
-		pCorrectRM->SetTime(0.0f, 0.5f);
-		pCorrectRM->SetBezierY(1.5f);
-		pCorrectRM->SetEndOffset({ 0.0f, 0.0f, 0.3f });
+		pCorrectRM->SetTime(0.0f, 0.6f);
+		pCorrectRM->SetBezierY(1.0f);
+		pCorrectRM->SetEndOffset({ 0.0f, -.05f, 0.25f });
 		pActionClip->AddNotify(pCorrectRM);
 
 		std::shared_ptr<CorrectRotationTowardObstacle> pCorrectRot = std::make_shared<CorrectRotationTowardObstacle>();
@@ -370,7 +456,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pRotateLeft->AddClip(skinnedMesh->GetClipPtr(40));
 
 		std::shared_ptr<CorrectFixedRotation> pCorrectRotateLeft = std::make_shared<CorrectFixedRotation>();
-		pCorrectRotateLeft->SetTime(0.1, 0.7);
+		pCorrectRotateLeft->SetTime(0.1f, 0.7f);
 		pCorrectRotateLeft->SetRotateDeg({ -90.0f, 0.0f, 0.0f });
 		pRotateLeft->AddNotify(pCorrectRotateLeft);
 
@@ -381,7 +467,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		pRotateRight->AddClip(skinnedMesh->GetClipPtr(40));
 
 		std::shared_ptr<CorrectFixedRotation> pCorrectRotateRight = std::make_shared<CorrectFixedRotation>();
-		pCorrectRotateRight->SetTime(0.1, 0.7);
+		pCorrectRotateRight->SetTime(0.1f, 0.7f);
 		pCorrectRotateRight->SetRotateDeg({ 90.0f, 0.0f, 0.0f });
 		pRotateRight->AddNotify(pCorrectRotateRight);
 
@@ -427,7 +513,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreCollision->SetEnable(false);
-		pIgnoreCollision->SetTime(0.0f);
+		pIgnoreCollision->SetTime(0.01f);
 		pActionClip->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
@@ -437,12 +523,36 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<BezierCorrectRootMotion> pCorrectRM = std::make_shared<BezierCorrectRootMotion>();
 		pCorrectRM->SetTime(0.0f, 0.3f);
-		pCorrectRM->SetEndOffset({0.0f, -1.8f, 0.0f});
+		pCorrectRM->SetEndOffset({0.0f, -2.0f, 0.0f});
 		pActionClip->AddNotify(pCorrectRM);
 
 		std::shared_ptr<CorrectRotationTowardObstacle> pCorrectRot = std::make_shared<CorrectRotationTowardObstacle>();
 		pCorrectRot->SetTime(0.0f, 0.3f);
 		pActionClip->AddNotify(pCorrectRot);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerL = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerL->SetTime(0.15f, 1.5f);
+		pIKInvokerL->SetIKType((uint8_t)ELimbType::LeftArm);
+		pIKInvokerL->SetPositionOffset({-0.15f, 0.0f, 0.0f});
+		pActionClip->AddNotify(pIKInvokerL);
+
+		std::shared_ptr<CharacterIKInvoker> pIKInvokerR = std::make_shared<CharacterIKInvoker>();
+		pIKInvokerR->SetTime(0.15f, 1.5f);
+		pIKInvokerR->SetIKType((uint8_t)ELimbType::RigthArm);
+		pIKInvokerR->SetPositionOffset({ 0.15f, 0.0f, 0.0f });
+		pActionClip->AddNotify(pIKInvokerR);
+
+		std::shared_ptr<CharacterIKEnabler> pIKEnabler = std::make_shared<CharacterIKEnabler>();
+		pIKEnabler->SetTime(0.2f, 0.3f);
+		pIKEnabler->SetFromTo(0.0f, 1.0f);
+		pIKEnabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKEnabler);
+
+		std::shared_ptr<CharacterIKEnabler> pIKDisabler = std::make_shared<CharacterIKEnabler>();
+		pIKDisabler->SetTime(1.2f, 1.3f);
+		pIKDisabler->SetFromTo(1.0f, 0.0f);
+		pIKDisabler->SetIKType({ (uint8_t)ELimbType::LeftArm, (uint8_t)ELimbType::RigthArm });
+		pActionClip->AddNotify(pIKDisabler);
 
 		mapActions[(uint8_t)ETagAct::Beam_IdleToHang] = pActionClip;
 	}
@@ -474,13 +584,14 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 	}
 
 	// Beam Hanging 이동
+	// 간헐적으로 낮아짐 -> 원인 파악 필요
 	{
 		std::shared_ptr<ActionClip> pHangMoveLeft = std::make_shared<ActionClip>();
 		pHangMoveLeft->AddClip(skinnedMesh->GetClipPtr(36));
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreCollision->SetEnable(false);
-		pIgnoreCollision->SetTime(0.0f);
+		pIgnoreCollision->SetTime(0.01f);
 		pHangMoveLeft->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();
@@ -496,7 +607,7 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 
 		std::shared_ptr<EnableCollisionObstacle> pIgnoreCollision = std::make_shared<EnableCollisionObstacle>();
 		pIgnoreCollision->SetEnable(false);
-		pIgnoreCollision->SetTime(0.0f);
+		pIgnoreCollision->SetTime(0.01f);
 		pHangMoveRight->AddNotify(pIgnoreCollision);
 
 		std::shared_ptr<EnableCollisionObstacle> pEnableCollision = std::make_shared<EnableCollisionObstacle>();

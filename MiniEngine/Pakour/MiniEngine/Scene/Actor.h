@@ -16,16 +16,14 @@ namespace MiniEngine
     public:
         virtual ~Actor() = default;
 
-        
-        virtual void BeginPlay();
-        virtual void FixedTick(float _dt); // 물리 호출용 FixedTick
-        virtual void Tick(float _dt); // 소유 컴포넌트 Tick 전파
-        virtual void LateTick(float _dt);
-        virtual void Render(Graphics::RenderContext& _context);
-        virtual void EndPlay() {}
-
         // BeginPlay 제일 앞에서 호출
         virtual void OnBeforeSortComponent() {};
+        virtual void BeginPlay();
+        virtual void FixedTick(float _dt);  // 물리 호출용 FixedTick
+        virtual void Tick(float _dt);       // 게임 로직 호출용 Tick
+        virtual void LateTick(float _dt);   // 게임 로직 이후 처리용 LateTick
+        virtual void Render(Graphics::RenderContext& _context);
+        virtual void EndPlay() {}
 
         // 컴포넌트 추가
         template<typename T, typename... Args>
@@ -53,6 +51,9 @@ namespace MiniEngine
 
         // Tick 관련 설정
         void SetTickConfig(bool _bUseFixedTick, bool _bUseTick, bool _bUseLateTick);
+
+        // dir을 캐릭터 기준의 방향으로 전환
+        Vector3 ConvertToActorDir(const Vector3& _dir);
 
     private:
         Tag m_tag;

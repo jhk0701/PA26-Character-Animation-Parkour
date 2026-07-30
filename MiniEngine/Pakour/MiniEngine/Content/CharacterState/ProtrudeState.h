@@ -9,6 +9,7 @@ public:
 	void Refresh() override;
 
 	void Tick(float _dt) override;
+	void LateTick(float _dt) override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result) override;
 
 private:

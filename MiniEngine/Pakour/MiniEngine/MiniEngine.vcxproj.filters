@@ -349,8 +349,11 @@
     <ClInclude Include="Asset\IK.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\IK\FootIKComponent.h">
+    <ClInclude Include="Animation\IK\LimbIKComponent.h">
       <Filter>Engine\07.Object\Animation\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\CharacterIKNotify.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -558,8 +561,11 @@
     <ClCompile Include="Asset\IK.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\IK\FootIKComponent.cpp">
+    <ClCompile Include="Animation\IK\LimbIKComponent.cpp">
       <Filter>Engine\07.Object\Animation\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\CharacterIKNotify.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

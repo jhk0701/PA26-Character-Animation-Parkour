@@ -47,6 +47,5 @@ namespace MiniEngine
 			return;
 
 		Activate(_dt, _param);
-
 	}
 }

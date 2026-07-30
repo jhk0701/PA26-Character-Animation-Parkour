@@ -16,7 +16,6 @@
 #include "Scene/CharacterControllerComponent.h"
 #include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
-#include "Animation/IK/FootIKComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/ActionClipContainer.h"
@@ -52,6 +51,19 @@ void Character::Construct(const Vector3& _initPosition)
 
 	InitAnimation(skinComp);
 
+	{
+		std::shared_ptr<LimbIKComponent> pLimbIK = AddComponent<LimbIKComponent>();
+		LimbIKDesc desc;
+		desc.footHeight = 0.1f;
+		desc.maxFootDrop = 0.4f;
+		desc.maxFootRaise = 0.4f;
+		desc.maxPelvisDrop = 0.45f;
+		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RigthArm] = Vector3(1.0f, 0.0f, -1.0f);
+
+		pLimbIK->Init(skinComp, desc);
+		m_limbIKComp = pLimbIK;
+	}
 	{
 		// 캐릭터 컨트롤러 설정
 		std::shared_ptr<CharacterControllerComponent> pCharCont = AddComponent<CharacterControllerComponent>();
@@ -91,6 +103,7 @@ void Character::Construct(const Vector3& _initPosition)
 			});
 		m_charFSM = pCharFSM;
 	}
+	
 	pRoot->localTransform.position = _initPosition;
 
 	PostConstruct();
@@ -107,32 +120,52 @@ void Character::PostConstruct()
 	m_charFSM.lock()->Transition((uint8_t)EState::Landing);
 }
 
-void Character::BeginPlay()
-{
-	Pawn::BeginPlay();
-
-	m_charCont.lock()->SetCheckFalling(true);
-
-	InitCollisionLayer();
-}
-
 void Character::OnBeforeSortComponent()
 {
 	Pawn::OnBeforeSortComponent();
 
 	// 컴포넌트 우선순위 설정
-	m_skinMeshComp.lock()->SetSortOrder(2); 
+	// m_charFSM.lock()->SetSortOrder(0);				단순 명시용, FSM에 따라 인지 결과 처리
+	// m_charCont.lock()->SetSortOrder(0);				// 1. 게임 로직 입력에 따라 움직인다.
+	m_limbIKComp.lock()->SetSortOrder(1);				// 2. 움직인 후 IK 타겟을 설정한다.
+	m_skinMeshComp.lock()->SetSortOrder(2);				// 3. IK Solver 호출로 필요한 지점에 타켓 위치시킨다.
+
+	// 이후 Rendering될 것
+}
+void Character::BeginPlay()
+{
+	Pawn::BeginPlay();
+
+	InitCollisionLayer();
+	m_charFSM.lock()->Start();
+	m_charCont.lock()->SetCheckFalling(true);
 }
 
 void Character::Tick(float _dt)
 {
 	Pawn::Tick(_dt);
+	Vector3 pos = GetRoot()->localTransform.position;
+	Vector3 posUp = pos + Vector3(0.0f, 2.5f, 0.0f);
+	MiniEngine::Debug::DrawPoint(posUp, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
+	MiniEngine::Debug::DrawLine(pos, posUp, MiniEngine::DebugColor::GREEN, 0.1f);
 }
 
-void Character::LateTick(float _dt)
-{
-	Pawn::LateTick(_dt);
-}
+//float sinElapsed = 0.0f;
+//void Character::LateTick(float _dt)
+//{
+//	Vector3 pos = GetRoot()->localTransform.position;
+//	pos.x -= 0.5f;
+//
+//	sinElapsed += _dt;
+//	pos.y += std::sin(sinElapsed) * 0.3f + GetCapsuleHalfHeight();
+//
+//	m_limbIKComp.lock()->SetAlphaIK(ELimbType::LeftArm, 1.0f);
+//	m_limbIKComp.lock()->SetTargetPosIK(ELimbType::LeftArm, pos);
+//
+//	MiniEngine::Debug::DrawPoint(pos, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
+//
+//	Pawn::LateTick(_dt);
+//}
 
 void Character::TryPerception()
 {
@@ -148,7 +181,6 @@ void Character::TryPerception()
 
 	ProcessPerceptionResult(result);
 }
-
 void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
@@ -179,7 +211,6 @@ void Character::InitCollisionLayer()
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::ObstacleLedge, false);
 }
-
 void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
@@ -189,27 +220,22 @@ void Character::AddMovementInput(const Vector3& _moveDelta)
 {
 	m_charCont.lock()->AddMovementInput(_moveDelta);
 }
-
 void Character::SetPosition(const Vector3& _newPos)
 {
 	m_charCont.lock()->SetPosition(_newPos);
 }
-
 void Character::ClearMovement()
 {
 	m_charCont.lock()->ClearMovement();
 }
-
 bool Character::IsFalling() const
 {
 	return m_charCont.lock()->IsFalling();
 }
-
 bool Character::IsGrounded() const
 {
 	return  m_charCont.lock()->IsGrounded();
 }
-
 void Character::SetUseGravity(bool _bUse)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
@@ -221,7 +247,6 @@ void Character::Jump()
 {
 	m_charCont.lock()->Jump(m_jumpSpeed);
 }
-
 void Character::InputJump()
 {
 	if (m_state == EState::InAir)
@@ -234,7 +259,6 @@ void Character::InputJump()
 	if (std::shared_ptr<ActionClip> pJump = GetActions(tag))
 		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
 }
-
 
 std::weak_ptr<Animator> Character::GetAnim() const
 {

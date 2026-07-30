@@ -304,6 +304,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	ApplyPhysicsDebug(true);
+	// ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

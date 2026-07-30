@@ -2,6 +2,7 @@
 #include "Animation/AnimStateMachine.h"
 #include "Asset/AnimClip.h"
 #include "Asset/RootMotion.h"
+#include <array>
 #include <functional>
 
 namespace MiniEngine 
@@ -44,11 +45,15 @@ namespace MiniEngine
 	struct IKGoal 
 	{
 		Vector3 position;		// end effector 본 원점이 도달할 지점
-		Quaternion rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f); // 회전 (델타) x
+		Quaternion rotation = Quaternion(0.0f, 0.0f, 0.0f, 1.0f); // 메시 로컬 회전 - bRotationIsDelta 로 절대/델타 구분
 		Vector3 poleTarget;	// 중간 관절이 향할 지점 bUsePoleTarget으로 토글
 		float positionAlpha = 0.0f;
 		float rotationAlpha = 0.0f;
 		bool bUsePoleTarget = false;
+
+		// true 면 rotation 을 "위치 솔브 이후의 현재 포즈에 곱할 델타" 로 소비한다.
+		// 지면 법선 정렬처럼 애니메이션 자세를 유지한 채 기울이기만 할 때 쓴다.
+		bool bRotationIsDelta = false;
 	};
 
 
@@ -155,9 +160,17 @@ namespace MiniEngine
 				goal = IKGoal();
 			}
 		};
+		// ApplyIKGoals 의 처리 순서 정렬용 (upper 본 인덱스 오름차순)
+		struct IKOrder
+		{
+			int upperIdx;
+			const IKData* pData;
+		};
+
 		std::unordered_map<HumanoidBone, IKData> m_mapIKBinding; // ik의 경우 런타임에 매번 동적이기 보단 이미 초기화 시 정해져 있을 것
 
 		Vector3 m_ikPelvisOffset{ 0.0f, 0.0f, 0.0f };
 		bool m_bUseIK{ false };
+		bool m_bWarnedIKChainOrder{ false }; // 사지 체인 인덱스 겹침 경고 1회용
 	};
 }

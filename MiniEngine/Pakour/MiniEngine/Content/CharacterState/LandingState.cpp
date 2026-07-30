@@ -6,11 +6,18 @@ void LandingState::OnStart()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+	
+	// 바닥 IK 작업 예약
+	pChar->ReserveIKDetectGround();
 }
 
 void LandingState::OnEnd()
 {
-	GetMachine()->GetCharacter()->InputLerp() = Vector2(0.0f);
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->InputLerp() = Vector2(0.0f);
+	
+	// 예약한 IK 작업 정리
+	pChar->ClearIKReserve();
 }
 
 void LandingState::Tick(float _dt)
@@ -20,6 +27,8 @@ void LandingState::Tick(float _dt)
 
 	CheckState();
 }
+
+void LandingState::LateTick(float _dt) {}
 
 void LandingState::CheckState()
 {

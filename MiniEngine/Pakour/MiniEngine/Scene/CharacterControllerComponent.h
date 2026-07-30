@@ -14,7 +14,7 @@ namespace MiniEngine
 	class CharacterControllerComponent : public Component
 	{
 	public:
-        void Tick(float _dt) override;
+        void LateTick(float _dt) override;
 
 		void Init(Physics::PhysicsWorld& _world, const Physics::CapsuleControllerDesc& _desc,
 			const std::shared_ptr<SceneComponent>& _target = nullptr);

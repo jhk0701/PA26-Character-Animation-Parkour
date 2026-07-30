@@ -2,7 +2,7 @@
 #include "Scene/Pawn.h"
 #include "Scene/PerceptionComponent.h"
 #include "Content/PerceptionQueryTree.h"
-#include "Animation/Animator.h"
+#include "Animation/IK/LimbIKComponent.h"
 
 #include <unordered_map>
 
@@ -14,7 +14,7 @@ namespace MiniEngine
 	class Animator;
 	class BlendClip;
 	class ActionClip;
-	class FootIKComponent;
+	class LimbIKComponent;
 	class IObstacle;
 }
 
@@ -59,8 +59,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
 
-	virtual void Tick(float _dt) override;
-	virtual void LateTick(float _dt) override;
+	void Tick(float _dt) override;
+	// void LateTick(float _dt) override;
 
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
@@ -89,6 +89,15 @@ public:
 	bool IsActionClipPlaying() const;
 	std::shared_ptr<ActionClip> GetActions(uint8_t _act) { return m_mapActions[_act]; }
 	void PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transitionTime = 0.25f, uint8_t _priority = 0U);
+	
+	// IK
+	void ReserveIKDetectGround();
+	LimbIKComponent::TaskResult IKDetectGround(uint8_t _ik);
+	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
+	
+	void ClearIKReserve();
+
+	void SetIKAlpha(uint8_t _ik, float _alpha);
 
 	// 콜라이더 및 물리
 	void AddMovementInput(const Vector3& _moveDelta);
@@ -120,7 +129,7 @@ private:
 
 	Vector2 m_inputDir;
 	Vector2 m_lerpInputDir;
-	float m_lerpWeight{ 0.25f };
+	float m_lerpWeight{ 0.1f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
 
@@ -132,11 +141,19 @@ private:
 	EState m_state{ EState::Landing };
 	
 	std::weak_ptr<SkeletalMeshComponent> m_skinMeshComp;
+	std::weak_ptr<LimbIKComponent> m_limbIKComp;
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
 	PerceptionQueryTree m_perceptQueryTree;
+	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 	PerceptedObstacleInfo m_curObstacleInfo;
+
+	// IK 튜닝 멤버 변수
+	float m_ikRayDistance = 0.5f; // 발의 아래를 체크할 높이
+
+	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
+	float m_maxSlopeDeg = 45.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
 };
 
