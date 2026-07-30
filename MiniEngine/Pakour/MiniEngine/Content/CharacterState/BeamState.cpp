@@ -107,7 +107,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	{
 		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 		
-		// ETagAct recommanded = (ETagAct)_info.m_actTag;
 		uint8_t actTag = 0;
 		if(_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
 			actTag = (uint8_t)ETagAct::Beam_StandToIdle;

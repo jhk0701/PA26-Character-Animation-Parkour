@@ -412,13 +412,13 @@ LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
 	if (!pPhysics->SphereCast(param, hitResult, Physics::ToMask(Physics::Layer::ObstacleLedge)))
 		return result;
 
-	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
-
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
-	result.position = hitResult.m_pos;
+	result.position = hitResult.m_pos - TF.Forward() * 0.1f; // TODO : 테스트용 config로 빼기
 	result.posAlpha = 1.0f;
 	
+	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+
 	return result;
 }
 
