@@ -271,9 +271,6 @@
     <ClInclude Include="Scene\PerceptionComponent.h">
       <Filter>Engine\07.Object\Component\Perception</Filter>
     </ClInclude>
-    <ClInclude Include="Content\PerceptionQueryTree.h">
-      <Filter>Content</Filter>
-    </ClInclude>
     <ClInclude Include="Content\EnableCollisionObstacle.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
@@ -285,9 +282,6 @@
     </ClInclude>
     <ClInclude Include="Content\CorrectRootMotion.h">
       <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\ActionClipContainer.h">
-      <Filter>Content\05.Data</Filter>
     </ClInclude>
     <ClInclude Include="Asset\DataAsset.h">
       <Filter>Engine\03.Asset</Filter>
@@ -398,6 +392,12 @@
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
     <ClInclude Include="Content\Data\CharacterPerceptionConfig.h">
+      <Filter>Content\05.Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Data\ActionClipContainer.h">
+      <Filter>Content\05.Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Data\PerceptionQueryTree.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
   </ItemGroup>
@@ -528,9 +528,6 @@
     <ClCompile Include="Scene\PerceptionComponent.cpp">
       <Filter>Engine\07.Object\Component\Perception</Filter>
     </ClCompile>
-    <ClCompile Include="Content\PerceptionQueryTree.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
     <ClCompile Include="Content\EnableCollisionObstacle.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
@@ -542,9 +539,6 @@
     </ClCompile>
     <ClCompile Include="Content\CorrectRootMotion.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\ActionClipContainer.cpp">
-      <Filter>Content\05.Data</Filter>
     </ClCompile>
     <ClCompile Include="Asset\DataAsset.cpp">
       <Filter>Engine\03.Asset</Filter>
@@ -652,6 +646,12 @@
       <Filter>Engine\02.Core</Filter>
     </ClCompile>
     <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp">
+      <Filter>Content\05.Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Data\ActionClipContainer.cpp">
+      <Filter>Content\05.Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Data\PerceptionQueryTree.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
   </ItemGroup>

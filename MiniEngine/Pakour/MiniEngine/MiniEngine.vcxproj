@@ -131,7 +131,6 @@
     <ClInclude Include="Asset\DataAsset.h" />
     <ClInclude Include="Asset\IK.h" />
     <ClInclude Include="Asset\RootMotion.h" />
-    <ClInclude Include="Content\ActionClipContainer.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\CharacterController.h" />
     <ClInclude Include="Content\CharacterIKNotify.h" />
@@ -144,11 +143,12 @@
     <ClInclude Include="Content\CharacterState\LandingState.h" />
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\CorrectRotation.h" />
+    <ClInclude Include="Content\Data\ActionClipContainer.h" />
     <ClInclude Include="Content\Data\CharacterPerceptionConfig.h" />
+    <ClInclude Include="Content\Data\PerceptionQueryTree.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
     <ClInclude Include="Content\JumpTiming.h" />
     <ClInclude Include="Content\Obstacle.h" />
-    <ClInclude Include="Content\PerceptionQueryTree.h" />
     <ClInclude Include="Content\Perception\BeamCompareHeightNode.h" />
     <ClInclude Include="Content\Perception\CheckObstacleOnHangingNode.h" />
     <ClInclude Include="Content\Perception\MeasureDepthNode.h" />
@@ -226,7 +226,6 @@
     <ClCompile Include="Asset\DataAsset.cpp" />
     <ClCompile Include="Asset\IK.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
-    <ClCompile Include="Content\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\CharacterController.cpp" />
     <ClCompile Include="Content\CharacterIKNotify.cpp" />
@@ -239,11 +238,12 @@
     <ClCompile Include="Content\CharacterState\LandingState.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\CorrectRotation.cpp" />
+    <ClCompile Include="Content\Data\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp" />
+    <ClCompile Include="Content\Data\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
     <ClCompile Include="Content\JumpTiming.cpp" />
     <ClCompile Include="Content\Obstacle.cpp" />
-    <ClCompile Include="Content\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\Perception\BeamCompareHeightNode.cpp" />
     <ClCompile Include="Content\Perception\CheckObstacleOnHangingNode.cpp" />
     <ClCompile Include="Content\Perception\MeasureDepthNode.cpp" />

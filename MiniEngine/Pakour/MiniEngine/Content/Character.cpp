@@ -20,7 +20,7 @@
 
 #include "Content/ContentConfig.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
-#include "Content/ActionClipContainer.h"
+#include "Content/Data/ActionClipContainer.h"
 
 #include "Content/CharacterStateMachine.h"
 #include "Content/CharacterState/LandingState.h"
@@ -156,6 +156,7 @@ void Character::LoadData()
 	DataManager::GetInstance()->TryGetDataAsset<CharacterPerceptionConfig>(L"CharacterPerceptionConfig.json", pConfig);
 	m_pPerceptionConfig = pConfig;
 
+	// TODO : 지형 인식 트리 데이터 로드
 	m_perception.lock()->SetQueryTree(m_perceptQueryTree.ConstructTree());
 }
 

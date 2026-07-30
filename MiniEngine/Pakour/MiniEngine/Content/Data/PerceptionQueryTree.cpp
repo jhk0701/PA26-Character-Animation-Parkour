@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/PerceptionQueryTree.h"
+#include "Content/Data/PerceptionQueryTree.h"
 #include "Scene/PerceptionComponent.h"
 
 #include "Content/ContentConfig.h"
@@ -20,7 +20,7 @@
 using namespace MiniEngine;
 
 // 콘텐츠에서 사용할 지형 인식 로직
-// TODO: 데이터 객체로 정리할 것
+// 데이터 로드
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
 {
 	// 루트 쿼리

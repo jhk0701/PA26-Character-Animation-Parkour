@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene/Pawn.h"
 #include "Scene/PerceptionComponent.h"
-#include "Content/PerceptionQueryTree.h"
+#include "Content/Data/PerceptionQueryTree.h"
 #include "Animation/IK/LimbIKComponent.h"
 
 #include <unordered_map>
@@ -147,7 +147,8 @@ private:
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
 	std::weak_ptr<CharacterPerceptionConfig> m_pPerceptionConfig;
-	PerceptionQueryTree m_perceptQueryTree;
+	PerceptionQueryTree m_perceptQueryTree; // TODO : 데이터 에셋 로드할 것
+
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;

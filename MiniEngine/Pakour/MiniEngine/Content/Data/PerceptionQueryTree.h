@@ -34,7 +34,6 @@ struct PerceptionConfig
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
 };
 
-
 // 콘텐츠 코드에서 사용할 것
 // 쿼리 트리 팩토리용도
 class PerceptionQueryTree 
