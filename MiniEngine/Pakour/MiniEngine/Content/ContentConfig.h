@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/EngineConfig.h"
 
 namespace Content::Config
 {

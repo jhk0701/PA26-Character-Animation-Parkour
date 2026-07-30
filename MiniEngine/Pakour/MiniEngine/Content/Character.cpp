@@ -8,6 +8,7 @@
 #include "Physics/CollsionLayer.h"
 #include "Platform/Input.h"
 #include "Manager/AssetManager.h"
+#include "Manager/DataManager.h"
 #include "Manager/PathManager.h"
 
 #include "Scene/Scene.h"
@@ -18,6 +19,7 @@
 #include "Animation/Animator.h"
 
 #include "Content/ContentConfig.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
 #include "Content/ActionClipContainer.h"
 
 #include "Content/CharacterStateMachine.h"
@@ -81,11 +83,7 @@ void Character::Construct(const Vector3& _initPosition)
 		m_charCont = pCharCont;
 	}
 	{
-		PerceptionConfig config; // 우선 기본값 사용
-		m_perceptQueryTree.Init(config);
-
 		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
-		pPerceptComp->SetQueryTree(m_perceptQueryTree.ConstructTree());
 		m_perception = pPerceptComp;
 	}
 	{
@@ -135,7 +133,9 @@ void Character::OnBeforeSortComponent()
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();
-
+	
+	LoadData();
+	
 	InitCollisionLayer();
 	m_charFSM.lock()->Start();
 	m_charCont.lock()->SetCheckFalling(true);
@@ -148,6 +148,15 @@ void Character::Tick(float _dt)
 	Vector3 posUp = pos + Vector3(0.0f, 2.5f, 0.0f);
 	MiniEngine::Debug::DrawPoint(posUp, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
 	MiniEngine::Debug::DrawLine(pos, posUp, MiniEngine::DebugColor::GREEN, 0.1f);
+}
+
+void Character::LoadData()
+{
+	std::shared_ptr<CharacterPerceptionConfig> pConfig;
+	DataManager::GetInstance()->TryGetDataAsset<CharacterPerceptionConfig>(L"CharacterPerceptionConfig.json", pConfig);
+	m_pPerceptionConfig = pConfig;
+
+	m_perception.lock()->SetQueryTree(m_perceptQueryTree.ConstructTree());
 }
 
 void Character::TryPerception()
@@ -367,7 +376,7 @@ void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transit
 
 const PerceptionConfig& Character::GetPerceptionConfig() const
 {
-	return m_perceptQueryTree.GetConfig();
+	return m_pPerceptionConfig.lock()->Config;
 }
 
 void Character::TransitionStateMachine(uint8_t _state)

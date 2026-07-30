@@ -6,7 +6,6 @@
 #include <nlohmann/json.hpp>
 
 #include "Manager/PathManager.h"
-#include "Asset/DataAsset.h"
 #include "Core/Log.h"
 
 #include <cstdlib>
@@ -53,16 +52,30 @@ namespace MiniEngine
 
 	void DataManager::LoadDataAsset(const std::wstring& _path, const std::wstring& _name)
 	{
+		// 이미 로드된 정보가 있다면 스킵
+		if (m_loadedRawDatas[_name] != nullptr)
+			return;
+
 		std::ifstream f(_path);
 
 		if (f.is_open())
 		{
 			json rawData = json::parse(f);
-
+			m_loadedRawDatas[_name] = std::make_shared<RawData>(rawData);
 		}
 		else 
 			MG_LOG_INFO("[DataManager::LoadDataAsset] can't open file");
 
 		f.close();
 	}
+
+	bool DataManager::TryGetRawData(const std::wstring& _inName, std::shared_ptr<RawData>& _outData)
+	{
+		auto it = m_loadedRawDatas.find(_inName);
+		if (it == m_loadedRawDatas.end())
+			return false;
+
+		_outData = it->second;
+		return true;
+	};
 }

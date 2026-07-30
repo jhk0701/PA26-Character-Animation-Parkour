@@ -394,6 +394,12 @@
     <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h">
       <Filter>Content\03.Object\Component\Perception</Filter>
     </ClInclude>
+    <ClInclude Include="Core\EngineConfig.h">
+      <Filter>Engine\02.Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Data\CharacterPerceptionConfig.h">
+      <Filter>Content\05.Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -641,6 +647,12 @@
     </ClCompile>
     <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp">
       <Filter>Content\03.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\EngineConfig.cpp">
+      <Filter>Engine\02.Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp">
+      <Filter>Content\05.Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

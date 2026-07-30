@@ -144,6 +144,7 @@
     <ClInclude Include="Content\CharacterState\LandingState.h" />
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\CorrectRotation.h" />
+    <ClInclude Include="Content\Data\CharacterPerceptionConfig.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
     <ClInclude Include="Content\JumpTiming.h" />
     <ClInclude Include="Content\Obstacle.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Content\UseGravity.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\DebugMarkers.h" />
+    <ClInclude Include="Core\EngineConfig.h" />
     <ClInclude Include="Core\Graphics.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXBase.h" />
@@ -237,6 +239,7 @@
     <ClCompile Include="Content\CharacterState\LandingState.cpp" />
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\CorrectRotation.cpp" />
+    <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
     <ClCompile Include="Content\JumpTiming.cpp" />
     <ClCompile Include="Content\Obstacle.cpp" />
@@ -259,6 +262,7 @@
     <ClCompile Include="Content\UIDebugConsole.cpp" />
     <ClCompile Include="Content\UseGravity.cpp" />
     <ClCompile Include="Core\DebugMarkers.cpp" />
+    <ClCompile Include="Core\EngineConfig.cpp" />
     <ClCompile Include="Core\Graphics.cpp" />
     <ClCompile Include="Editor\DebugDraw.cpp" />
     <ClCompile Include="Manager\AssetManager.cpp" />

@@ -41,11 +41,5 @@ class PerceptionQueryTree
 {
 public:
 	std::shared_ptr<MiniEngine::PerceptionNode> ConstructTree();
-
-	void Init(const PerceptionConfig& _newConfig);
-	const PerceptionConfig& GetConfig() const { return m_config; }
-
-private:
-	PerceptionConfig m_config;
 };
 

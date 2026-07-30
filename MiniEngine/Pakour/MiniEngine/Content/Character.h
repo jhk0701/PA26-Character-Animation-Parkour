@@ -21,6 +21,7 @@ namespace MiniEngine
 using namespace MiniEngine;
 
 class CharacterStateMachine;
+class CharacterPerceptionConfig;
 class Character : public Pawn
 {
 public:
@@ -58,9 +59,10 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
-
 	void Tick(float _dt) override;
 	// void LateTick(float _dt) override;
+
+	void LoadData();
 
 	void TryPerception();
 	void ProcessPerceptionResult(const TravelResult& _result);
@@ -144,6 +146,7 @@ private:
 	std::weak_ptr<LimbIKComponent> m_limbIKComp;
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
+	std::weak_ptr<CharacterPerceptionConfig> m_pPerceptionConfig;
 	PerceptionQueryTree m_perceptQueryTree;
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;

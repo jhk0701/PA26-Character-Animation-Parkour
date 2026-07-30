@@ -19,11 +19,6 @@
 
 using namespace MiniEngine;
 
-void PerceptionQueryTree::Init(const PerceptionConfig& _newConfig)
-{
-	m_config = _newConfig;
-}
-
 // 콘텐츠에서 사용할 지형 인식 로직
 // TODO: 데이터 객체로 정리할 것
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()

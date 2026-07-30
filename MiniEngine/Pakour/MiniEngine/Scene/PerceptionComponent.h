@@ -92,7 +92,6 @@ namespace MiniEngine
 		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
-
 	// Leaf 노드 - 최종 작업 수행
 	class TaskNode : public PerceptionNode
 	{
