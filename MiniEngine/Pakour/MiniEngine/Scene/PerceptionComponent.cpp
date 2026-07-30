@@ -19,11 +19,11 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
-	void ConditionNode::SetChildren(std::shared_ptr<PerceptionNode> _nodeOnTrue, std::shared_ptr<PerceptionNode> _nodeOnFalse)
+	void ConditionNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		m_children.resize(2);
-		m_children[0] = _nodeOnTrue;
-		m_children[1] = _nodeOnFalse;
+		// true / false 두 갈래로 고정
+		assert(_children.size() == 2);
+		m_children = std::move(_children);
 	}
 
 	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
@@ -36,7 +36,7 @@ namespace MiniEngine
 
 	void SelectorNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		m_children = _children;
+		m_children = std::move(_children);
 	}
 
 	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
@@ -49,7 +49,7 @@ namespace MiniEngine
 
 	void SequenceNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		m_children = _children;
+		m_children = std::move(_children);
 	}
 
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)

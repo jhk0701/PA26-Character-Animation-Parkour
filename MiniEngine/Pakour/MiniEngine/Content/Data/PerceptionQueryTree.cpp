@@ -30,15 +30,8 @@ namespace
 
 	using NodeCreator = std::function<std::shared_ptr<PerceptionNode>(const PerceptionNodeData&)>;
 
-	// ExpectedChildren
-	//   CHILDREN_ANY  : 개수 제한 없음 (SequenceNode)
-	//   0             : 자식 없음 (TaskNode 파생)
-	//   2             : onTrue / onFalse (ConditionNode 파생)
-	//   그 외 N       : SelectorNode 파생이 반환할 수 있는 인덱스 개수
-	//
-	// SelectorNode::Execute 는 assert 만 걸려 있어 자식이 모자라면 릴리스에서 조용히 UB 가 된다.
-	// 그래서 개수를 데이터 로드 시점에 검증한다.
 	constexpr int CHILDREN_ANY = -1;
+	constexpr int CONDITION_CHILDREN = 2;
 
 	struct NodeSpec
 	{
@@ -76,10 +69,10 @@ namespace
 			{ "SelectUsingHeightNode",		{ MakePlain<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
 			{ "SelectUsingInputDirNode",	{ MakePlain<SelectUsingInputDirNode>(),		4 } },	// 상 / 하 / 좌우 / 입력없음
 
-			// Condition — onTrue / onFalse
-			{ "CheckOnHangingMoveUpNode",	{ MakePlain<CheckOnHangingMoveUpNode>(),	2 } },
-			{ "CheckOnHangingMoveDownNode",	{ MakePlain<CheckOnHangingMoveDownNode>(),	2 } },
-			{ "CheckOnHangingMoveSideNode",	{ MakePlain<CheckOnHangingMoveSideNode>(),	2 } },
+			// Condition — children[0] = true, children[1] = false
+			{ "CheckOnHangingMoveUpNode",	{ MakePlain<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
+			{ "CheckOnHangingMoveDownNode",	{ MakePlain<CheckOnHangingMoveDownNode>(),	CONDITION_CHILDREN } },
+			{ "CheckOnHangingMoveSideNode",	{ MakePlain<CheckOnHangingMoveSideNode>(),	CONDITION_CHILDREN } },
 
 			// 파라미터를 갖는 노드
 			{ "CheckObstacleNode",
@@ -91,7 +84,7 @@ namespace
 						pNode->SetStartOffset(_node.StartOffset);
 						return pNode;
 					},
-					2
+					CONDITION_CHILDREN
 				} },
 			{ "TransitionCharacterFSMNode",
 				{
@@ -127,7 +120,6 @@ void PerceptionQueryData::Load(const json& _data)
 	m_rootId.clear();
 	m_nodes.clear();
 
-	// 타입 오류('"heightMultiplier": "1.0"' 같은)까지 여기서 흡수한다.
 	try
 	{
 		m_rootId = _data.value("root", std::string());
@@ -166,10 +158,6 @@ void PerceptionQueryData::Load(const json& _data)
 					node.Children.push_back(child.get<std::string>());
 			}
 
-			node.OnTrue = element.value("onTrue", std::string());
-			node.OnFalse = element.value("onFalse", std::string());
-
-			// 노드별 파라미터 — 해당 클래스가 아니면 그대로 무시된다
 			node.HeightMultiplier = element.value("heightMultiplier", node.HeightMultiplier);
 			ReadVec3(element, "startOffset", node.StartOffset);
 
@@ -198,7 +186,6 @@ void PerceptionQueryData::Load(const json& _data)
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
-// PerceptionQueryData(평면 노드 리스트) -> 실제 노드 트리
 std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const PerceptionQueryData& _data)
 {
 	if (_data.IsValid() == false)
@@ -210,7 +197,7 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 	const std::vector<PerceptionNodeData>& NODES = _data.GetNodes();
 	const std::unordered_map<std::string, NodeSpec>& REGISTRY = NodeRegistry();
 
-	// 1패스 : 노드 실체 생성
+	// 데이터 읽고 노드 생성
 	std::unordered_map<std::string, std::shared_ptr<PerceptionNode>> created;
 	created.reserve(NODES.size());
 
@@ -233,7 +220,7 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 		created[NODE.Id] = itSpec->second.Create(NODE);
 	}
 
-	// id -> 노드. 미해결이면 에러 로그 후 nullptr
+	// 혹시 없는 노드가 데이터에 있는 경우 로깅
 	auto resolve = [&created](const std::string& _id, const std::string& _ownerId) -> std::shared_ptr<PerceptionNode>
 		{
 			auto it = created.find(_id);
@@ -246,29 +233,17 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 			return it->second;
 		};
 
-	// 2패스 : 자식 배선
-	// 같은 id 를 여러 번 참조하면 같은 노드를 공유한다(원본 하드코딩 트리와 동일한 DAG 구조).
+	// 자식 설정
 	for (const PerceptionNodeData& NODE : NODES)
 	{
 		const std::shared_ptr<PerceptionNode>& SELF = created[NODE.Id];
 		const int EXPECTED = REGISTRY.at(NODE.NodeClass).ExpectedChildren;
 
-		if (std::shared_ptr<ConditionNode> pCondition = std::dynamic_pointer_cast<ConditionNode>(SELF))
-		{
-			std::shared_ptr<PerceptionNode> pOnTrue = resolve(NODE.OnTrue, NODE.Id);
-			std::shared_ptr<PerceptionNode> pOnFalse = resolve(NODE.OnFalse, NODE.Id);
-
-			if (pOnTrue == nullptr || pOnFalse == nullptr)
-				return nullptr;
-
-			pCondition->SetChildren(pOnTrue, pOnFalse);
-			continue;
-		}
-
 		const bool bIsSelector = (std::dynamic_pointer_cast<SelectorNode>(SELF) != nullptr);
+		const bool bIsCondition = (std::dynamic_pointer_cast<ConditionNode>(SELF) != nullptr);
 		const bool bIsSequence = (std::dynamic_pointer_cast<SequenceNode>(SELF) != nullptr);
 
-		if (bIsSelector == false && bIsSequence == false)
+		if (bIsSelector == false && bIsCondition == false && bIsSequence == false)
 		{
 			// TaskNode — 자식을 가질 수 없다
 			if (NODE.Children.empty() == false)
@@ -309,6 +284,8 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 
 		if (bIsSelector)
 			std::static_pointer_cast<SelectorNode>(SELF)->SetChildren(std::move(children));
+		else if (bIsCondition)
+			std::static_pointer_cast<ConditionNode>(SELF)->SetChildren(std::move(children));
 		else
 			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
 	}

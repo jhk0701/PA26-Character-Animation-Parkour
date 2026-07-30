@@ -13,13 +13,7 @@ struct PerceptionNodeData
 {
 	std::string Id;
 	std::string NodeClass;
-
-	// SelectorNode / SequenceNode 파생
 	std::vector<std::string> Children;
-
-	// ConditionNode 파생
-	std::string OnTrue;
-	std::string OnFalse;
 
 	// CheckObstacleNode
 	float HeightMultiplier{ 1.0f };

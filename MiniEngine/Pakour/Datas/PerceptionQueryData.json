@@ -5,17 +5,17 @@
     {
       "id": "Empty",
       "class": "ReturnEmptyNode",
-      "comment": "빈 결과 리턴, 탐색 계속 신호"
+      "comment": "빈 결과 리턴, Fail 처리"
     },
     {
       "id": "Return",
       "class": "ReturnResultNode",
-      "comment": "결과 리턴 : 이 경우 Success 결과도 리턴"
+      "comment": "결과 리턴, Success 처리"
     },
     {
       "id": "RootQuery",
       "class": "SelectCharacterStateNode",
-      "comment": "루트 확인 : 배치 순서는 Character::EState 순서대로",
+      "comment": "Character::EState 순서",
       "children": [
         "StateLanding",
         "StateInAir",
@@ -31,8 +31,10 @@
       "class": "CheckObstacleNode",
       "comment": "평지상태 : 장애물 찾기",
       "heightMultiplier": 1.0,
-      "onTrue": "CheckObstacleTag",
-      "onFalse": "Empty"
+      "children": [
+        "CheckObstacleTag",
+        "Empty"
+      ]
     },
     {
       "id": "CheckObstacleTag",
@@ -48,7 +50,6 @@
     {
       "id": "ProcessDefault",
       "class": "SelectUsingHeightNode",
-      "comment": "높이를 재고 세 갈래 : 무시(캐릭터가 판단) / 깊이측정 / 벽",
       "children": [
         "Return",
         "MeasureDepthSeq",
@@ -58,7 +59,7 @@
     {
       "id": "MeasureDepthSeq",
       "class": "SequenceNode",
-      "comment": "vault, mantle 은 깊이로 갈린다 -> 깊이 측정 후 결과 리턴",
+      "comment": "vault, mantle 은 깊이 측정 후 결과 리턴",
       "children": [
         "MeasureDepth",
         "Return"
@@ -103,8 +104,10 @@
       "id": "StateInAir",
       "class": "CheckObstacleNode",
       "heightMultiplier": 2.0,
-      "onTrue": "InAirObstacleFoundSeq",
-      "onFalse": "Empty"
+      "children": [
+        "InAirObstacleFoundSeq",
+        "Empty"
+      ]
     },
     {
       "id": "InAirObstacleFoundSeq",
@@ -123,7 +126,6 @@
     {
       "id": "StateHanging",
       "class": "SelectUsingInputDirNode",
-      "comment": "Hanging - 입력 방향 검사 (상 / 하 / 좌우 / 입력없음)",
       "children": [
         "OnHangingUp",
         "OnHangingDown",
@@ -135,22 +137,28 @@
       "id": "OnHangingUp",
       "class": "CheckOnHangingMoveUpNode",
       "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
-      "onTrue": "Return",
-      "onFalse": "Empty"
+      "children": [
+        "Return",
+        "Empty"
+      ]
     },
     {
       "id": "OnHangingDown",
       "class": "CheckOnHangingMoveDownNode",
       "comment": "아래 : 내려설 지면. 지면(Ground)도 Obstacle 액터라 IObstacle 포인터가 유효하다",
-      "onTrue": "Return",
-      "onFalse": "Empty"
+      "children": [
+        "Return",
+        "Empty"
+      ]
     },
     {
       "id": "OnHangingSide",
       "class": "CheckOnHangingMoveSideNode",
       "comment": "좌우 : 옮겨갈 새 장애물 탐색. 종류 판단과 상태 전환은 HangingState 담당",
-      "onTrue": "Return",
-      "onFalse": "Empty"
+      "children": [
+        "Return",
+        "Empty"
+      ]
     },
 
     {
@@ -162,8 +170,10 @@
         0.0,
         0.5
       ],
-      "onTrue": "CheckObstacleTag",
-      "onFalse": "Empty"
+      "children": [
+        "CheckObstacleTag",
+        "Empty"
+      ]
     },
 
     {

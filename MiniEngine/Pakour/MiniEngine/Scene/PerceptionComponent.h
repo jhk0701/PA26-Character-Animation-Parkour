@@ -73,9 +73,8 @@ namespace MiniEngine
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual bool InvokeCondition(TravelContext& _context) = 0;
 
-		void SetChildren(
-			std::shared_ptr<PerceptionNode> _nodeOnTrue,
-			std::shared_ptr<PerceptionNode> _nodeOnFalse);
+		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
+		size_t GetChildrenCnt() const { return m_children.size(); }
 
 	private:
 		std::vector<std::shared_ptr<PerceptionNode>> m_children;
