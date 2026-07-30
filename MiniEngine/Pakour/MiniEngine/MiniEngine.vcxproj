@@ -144,6 +144,7 @@
     <ClInclude Include="Content\ContentConfig.h" />
     <ClInclude Include="Content\CorrectRotation.h" />
     <ClInclude Include="Content\Data\ActionClipContainer.h" />
+    <ClInclude Include="Content\Data\CharacterAnimData.h" />
     <ClInclude Include="Content\Data\CharacterPerceptionConfig.h" />
     <ClInclude Include="Content\Data\PerceptionQueryTree.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="Content\ContentConfig.cpp" />
     <ClCompile Include="Content\CorrectRotation.cpp" />
     <ClCompile Include="Content\Data\ActionClipContainer.cpp" />
+    <ClCompile Include="Content\Data\CharacterAnimData.cpp" />
     <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp" />
     <ClCompile Include="Content\Data\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
@@ -322,6 +324,18 @@
     </None>
     <None Include="..\Assets\pyramid.obj">
       <Link>Assets\pyramid.obj</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Datas\CharacterPerceptionConfig.json">
+      <Link>Datas\CharacterPerceptionConfig.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Datas\PerceptionQueryData.json">
+      <Link>Datas\PerceptionQueryData.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Datas\CharacterActionClips.json">
+      <Link>Datas\CharacterActionClips.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

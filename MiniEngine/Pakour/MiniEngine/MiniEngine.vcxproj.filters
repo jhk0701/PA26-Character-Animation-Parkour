@@ -400,6 +400,9 @@
     <ClInclude Include="Content\Data\PerceptionQueryTree.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Data\CharacterAnimData.h">
+      <Filter>Content\05.Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -654,6 +657,9 @@
     <ClCompile Include="Content\Data\PerceptionQueryTree.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Data\CharacterAnimData.cpp">
+      <Filter>Content\05.Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Mecro.hlsli">
@@ -685,6 +691,15 @@
     </None>
     <None Include="..\Assets\pyramid.obj">
       <Filter>Engine\03.Asset</Filter>
+    </None>
+    <None Include="..\Datas\CharacterPerceptionConfig.json">
+      <Filter>Content\05.Data</Filter>
+    </None>
+    <None Include="..\Datas\PerceptionQueryData.json">
+      <Filter>Content\05.Data</Filter>
+    </None>
+    <None Include="..\Datas\CharacterActionClips.json">
+      <Filter>Content\05.Data</Filter>
     </None>
   </ItemGroup>
 </Project>

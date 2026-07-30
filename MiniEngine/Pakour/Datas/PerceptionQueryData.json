@@ -1,0 +1,181 @@
+{
+  "root": "RootQuery",
+
+  "nodes": [
+    {
+      "id": "Empty",
+      "class": "ReturnEmptyNode",
+      "comment": "빈 결과 리턴, 탐색 계속 신호"
+    },
+    {
+      "id": "Return",
+      "class": "ReturnResultNode",
+      "comment": "결과 리턴 : 이 경우 Success 결과도 리턴"
+    },
+    {
+      "id": "RootQuery",
+      "class": "SelectCharacterStateNode",
+      "comment": "루트 확인 : 배치 순서는 Character::EState 순서대로",
+      "children": [
+        "StateLanding",
+        "StateInAir",
+        "StateHanging",
+        "StateBeam",
+        "StateBeam",
+        "StateProtrude"
+      ]
+    },
+
+    {
+      "id": "StateLanding",
+      "class": "CheckObstacleNode",
+      "comment": "평지상태 : 장애물 찾기",
+      "heightMultiplier": 1.0,
+      "onTrue": "CheckObstacleTag",
+      "onFalse": "Empty"
+    },
+    {
+      "id": "CheckObstacleTag",
+      "class": "SelectObstacleTagNode",
+      "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
+      "children": [
+        "ProcessDefault",
+        "ProcessBeam",
+        "ProcessProtrude"
+      ]
+    },
+
+    {
+      "id": "ProcessDefault",
+      "class": "SelectUsingHeightNode",
+      "comment": "높이를 재고 세 갈래 : 무시(캐릭터가 판단) / 깊이측정 / 벽",
+      "children": [
+        "Return",
+        "MeasureDepthSeq",
+        "Return"
+      ]
+    },
+    {
+      "id": "MeasureDepthSeq",
+      "class": "SequenceNode",
+      "comment": "vault, mantle 은 깊이로 갈린다 -> 깊이 측정 후 결과 리턴",
+      "children": [
+        "MeasureDepth",
+        "Return"
+      ]
+    },
+    {
+      "id": "MeasureDepth",
+      "class": "MeasureDepthNode",
+      "comment": "딛을 면의 깊이 측정"
+    },
+
+    {
+      "id": "ProcessBeam",
+      "class": "SequenceNode",
+      "comment": "beam 지형의 높이 측정 시퀀스",
+      "children": [
+        "BeamCompareHeight",
+        "Return"
+      ]
+    },
+    {
+      "id": "BeamCompareHeight",
+      "class": "BeamCompareHeightNode",
+      "comment": "캐릭터와 장애물의 y 위치 비교"
+    },
+
+    {
+      "id": "ProcessProtrude",
+      "class": "SequenceNode",
+      "comment": "protrude 지형 정보 추출 후 리턴 시퀀스",
+      "children": [
+        "ProtrudeExtractHeight",
+        "Return"
+      ]
+    },
+    {
+      "id": "ProtrudeExtractHeight",
+      "class": "ProtrudeExtractHeightNode"
+    },
+
+    {
+      "id": "StateInAir",
+      "class": "CheckObstacleNode",
+      "heightMultiplier": 2.0,
+      "onTrue": "InAirObstacleFoundSeq",
+      "onFalse": "Empty"
+    },
+    {
+      "id": "InAirObstacleFoundSeq",
+      "class": "SequenceNode",
+      "children": [
+        "TransitionToLanding",
+        "CheckObstacleTag"
+      ]
+    },
+    {
+      "id": "TransitionToLanding",
+      "class": "TransitionCharacterFSMNode",
+      "targetState": "Landing"
+    },
+
+    {
+      "id": "StateHanging",
+      "class": "SelectUsingInputDirNode",
+      "comment": "Hanging - 입력 방향 검사 (상 / 하 / 좌우 / 입력없음)",
+      "children": [
+        "OnHangingUp",
+        "OnHangingDown",
+        "OnHangingSide",
+        "Empty"
+      ]
+    },
+    {
+      "id": "OnHangingUp",
+      "class": "CheckOnHangingMoveUpNode",
+      "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
+      "onTrue": "Return",
+      "onFalse": "Empty"
+    },
+    {
+      "id": "OnHangingDown",
+      "class": "CheckOnHangingMoveDownNode",
+      "comment": "아래 : 내려설 지면. 지면(Ground)도 Obstacle 액터라 IObstacle 포인터가 유효하다",
+      "onTrue": "Return",
+      "onFalse": "Empty"
+    },
+    {
+      "id": "OnHangingSide",
+      "class": "CheckOnHangingMoveSideNode",
+      "comment": "좌우 : 옮겨갈 새 장애물 탐색. 종류 판단과 상태 전환은 HangingState 담당",
+      "onTrue": "Return",
+      "onFalse": "Empty"
+    },
+
+    {
+      "id": "StateBeam",
+      "class": "CheckObstacleNode",
+      "heightMultiplier": 3.0,
+      "startOffset": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "onTrue": "CheckObstacleTag",
+      "onFalse": "Empty"
+    },
+
+    {
+      "id": "StateProtrude",
+      "class": "SelectUsingInputDirNode",
+      "comment": "키 입력 기준 상하좌우 방향 탐색",
+      "children": [
+        "Empty",
+        "Empty",
+        "Empty",
+        "Empty"
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Content/Data/PerceptionQueryTree.h"
 #include "Scene/PerceptionComponent.h"
+#include "Core/Log.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
@@ -17,173 +18,310 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 #include "Content/Perception/TransitionCharacterFSMNode.h"
 
+#include <functional>
+#include <unordered_map>
+#include <unordered_set>
+
 using namespace MiniEngine;
 
-void PerceptionQueryData::Load(const json& _data) {}
+namespace
+{
+#pragma region Node Registry
+
+	using NodeCreator = std::function<std::shared_ptr<PerceptionNode>(const PerceptionNodeData&)>;
+
+	// ExpectedChildren
+	//   CHILDREN_ANY  : 개수 제한 없음 (SequenceNode)
+	//   0             : 자식 없음 (TaskNode 파생)
+	//   2             : onTrue / onFalse (ConditionNode 파생)
+	//   그 외 N       : SelectorNode 파생이 반환할 수 있는 인덱스 개수
+	//
+	// SelectorNode::Execute 는 assert 만 걸려 있어 자식이 모자라면 릴리스에서 조용히 UB 가 된다.
+	// 그래서 개수를 데이터 로드 시점에 검증한다.
+	constexpr int CHILDREN_ANY = -1;
+
+	struct NodeSpec
+	{
+		NodeCreator Create;
+		int ExpectedChildren{ 0 };
+	};
+
+	template<typename T>
+	NodeCreator MakePlain()
+	{
+		return [](const PerceptionNodeData&) -> std::shared_ptr<PerceptionNode>
+			{
+				return std::make_shared<T>();
+			};
+	}
+
+	// 새 인식 노드 클래스를 추가하면 여기에 등록해야 json 에서 쓸 수 있다.
+	const std::unordered_map<std::string, NodeSpec>& NodeRegistry()
+	{
+		static const std::unordered_map<std::string, NodeSpec> REGISTRY =
+		{
+			// 합성 노드
+			{ "SequenceNode",				{ MakePlain<SequenceNode>(),				CHILDREN_ANY } },
+
+			// Task (Leaf)
+			{ "ReturnResultNode",			{ MakePlain<ReturnResultNode>(),			0 } },
+			{ "ReturnEmptyNode",			{ MakePlain<ReturnEmptyNode>(),				0 } },
+			{ "MeasureDepthNode",			{ MakePlain<MeasureDepthNode>(),			0 } },
+			{ "BeamCompareHeightNode",		{ MakePlain<BeamCompareHeightNode>(),		0 } },
+			{ "ProtrudeExtractHeightNode",	{ MakePlain<ProtrudeExtractHeightNode>(),	0 } },
+
+			// Selector — 자식 개수가 InvokeCondition 반환 범위와 같아야 한다
+			{ "SelectCharacterStateNode",	{ MakePlain<SelectCharacterStateNode>(),	(int)Character::EState::End } },
+			{ "SelectObstacleTagNode",		{ MakePlain<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
+			{ "SelectUsingHeightNode",		{ MakePlain<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
+			{ "SelectUsingInputDirNode",	{ MakePlain<SelectUsingInputDirNode>(),		4 } },	// 상 / 하 / 좌우 / 입력없음
+
+			// Condition — onTrue / onFalse
+			{ "CheckOnHangingMoveUpNode",	{ MakePlain<CheckOnHangingMoveUpNode>(),	2 } },
+			{ "CheckOnHangingMoveDownNode",	{ MakePlain<CheckOnHangingMoveDownNode>(),	2 } },
+			{ "CheckOnHangingMoveSideNode",	{ MakePlain<CheckOnHangingMoveSideNode>(),	2 } },
+
+			// 파라미터를 갖는 노드
+			{ "CheckObstacleNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckObstacleNode> pNode = std::make_shared<CheckObstacleNode>();
+						pNode->SetHeightMultiplier(_node.HeightMultiplier);
+						pNode->SetStartOffset(_node.StartOffset);
+						return pNode;
+					},
+					2
+				} },
+			{ "TransitionCharacterFSMNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<TransitionCharacterFSMNode> pNode = std::make_shared<TransitionCharacterFSMNode>();
+						pNode->SetTargetState(_node.TargetState);
+						return pNode;
+					},
+					0
+				} },
+		};
+
+		return REGISTRY;
+	}
+
+#pragma endregion
+
+	// [x, y, z] 배열. 키가 없거나 형식이 다르면 _out 을 건드리지 않는다.
+	void ReadVec3(const json& _data, const char* _key, Vector3& _out)
+	{
+		auto it = _data.find(_key);
+		if (it == _data.end() || it->is_array() == false || it->size() != 3)
+			return;
+
+		_out = Vector3((*it)[0].get<float>(), (*it)[1].get<float>(), (*it)[2].get<float>());
+	}
+}
+
+void PerceptionQueryData::Load(const json& _data)
+{
+	m_bValid = false;
+	m_rootId.clear();
+	m_nodes.clear();
+
+	// 타입 오류('"heightMultiplier": "1.0"' 같은)까지 여기서 흡수한다.
+	try
+	{
+		m_rootId = _data.value("root", std::string());
+		if (m_rootId.empty())
+		{
+			MG_LOG_ERROR("[PerceptionQueryData] 'root' is missing.");
+			return;
+		}
+
+		auto itNodes = _data.find("nodes");
+		if (itNodes == _data.end() || itNodes->is_array() == false)
+		{
+			MG_LOG_ERROR("[PerceptionQueryData] 'nodes' array is missing.");
+			return;
+		}
+
+		m_nodes.reserve(itNodes->size());
+
+		for (const json& element : *itNodes)
+		{
+			PerceptionNodeData node;
+			node.Id = element.value("id", std::string());
+			node.NodeClass = element.value("class", std::string());
+
+			if (node.Id.empty() || node.NodeClass.empty())
+			{
+				MG_LOG_ERROR("[PerceptionQueryData] node needs both 'id' and 'class'.");
+				return;
+			}
+
+			auto itChildren = element.find("children");
+			if (itChildren != element.end() && itChildren->is_array())
+			{
+				node.Children.reserve(itChildren->size());
+				for (const json& child : *itChildren)
+					node.Children.push_back(child.get<std::string>());
+			}
+
+			node.OnTrue = element.value("onTrue", std::string());
+			node.OnFalse = element.value("onFalse", std::string());
+
+			// 노드별 파라미터 — 해당 클래스가 아니면 그대로 무시된다
+			node.HeightMultiplier = element.value("heightMultiplier", node.HeightMultiplier);
+			ReadVec3(element, "startOffset", node.StartOffset);
+
+			const std::string STATE_NAME = element.value("targetState", std::string());
+			if (STATE_NAME.empty() == false)
+			{
+				if (Character::TryParseState(STATE_NAME, node.TargetState) == false)
+				{
+					MG_LOG_ERROR("[PerceptionQueryData] node '{}' has unknown targetState '{}'.",
+						node.Id, STATE_NAME);
+					return;
+				}
+			}
+
+			m_nodes.push_back(std::move(node));
+		}
+	}
+	catch (const json::exception& e)
+	{
+		MG_LOG_ERROR("[PerceptionQueryData] parse failed : {}", e.what());
+		m_nodes.clear();
+		return;
+	}
+
+	m_bValid = true;
+}
 
 // 콘텐츠에서 사용할 지형 인식 로직
-// 데이터 로드
-std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree()
+// PerceptionQueryData(평면 노드 리스트) -> 실제 노드 트리
+std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const PerceptionQueryData& _data)
 {
-	// Task (Leaf)
-	std::shared_ptr<TaskNode> pEmpty = std::make_shared<ReturnEmptyNode>(); // 빈 결과 리턴, 탐색 계속 신호
-	std::shared_ptr<TaskNode> pReturn = std::make_shared<ReturnResultNode>(); // 결과 리턴 : 이 경우 Success 결과도 리턴
+	if (_data.IsValid() == false)
+	{
+		MG_LOG_ERROR("[PerceptionQueryTree] query data is invalid.");
+		return nullptr;
+	}
 
-	// 루트 쿼리
-	std::shared_ptr<SelectCharacterStateNode> pRootQuery = std::make_shared<SelectCharacterStateNode>();
+	const std::vector<PerceptionNodeData>& NODES = _data.GetNodes();
+	const std::unordered_map<std::string, NodeSpec>& REGISTRY = NodeRegistry();
 
-	// Landing
-	std::shared_ptr<CheckObstacleNode> pStateLanding = std::make_shared<CheckObstacleNode>(); // 평지상태 : 장애물 찾기
-	pStateLanding->SetHeightMultiplier(1.0f);
+	// 1패스 : 노드 실체 생성
+	std::unordered_map<std::string, std::shared_ptr<PerceptionNode>> created;
+	created.reserve(NODES.size());
 
-	std::shared_ptr<SelectObstacleTagNode> pCheckObstacleTag = std::make_shared<SelectObstacleTagNode>(); // 장애물 태그 확인
-	
-	// Obstacle Default
-	std::shared_ptr<SelectUsingHeightNode> pProcessDefault = std::make_shared<SelectUsingHeightNode>(); // 장애물 높이 측정 -> 무시 / 깊이측정 / 벽
-	std::shared_ptr<SequenceNode> pMeasureDepthSeq = std::make_shared<SequenceNode>(); // 깊이 측정 시퀀스
-	std::shared_ptr<MeasureDepthNode> pMeasureDepth = std::make_shared<MeasureDepthNode>(); // 딛을 면의 깊이 측정
-
-	// Obstacle Beam
-	std::shared_ptr<SequenceNode> pProcessBeam = std::make_shared<SequenceNode>();	// beam 지형의 높이 측정 시퀀스
-	std::shared_ptr<BeamCompareHeightNode> pBeamCompareHeight = std::make_shared<BeamCompareHeightNode>(); // 캐릭터와 장애물의 y 위치 비교
-
-	// Obstacle Protrude
-	std::shared_ptr<SequenceNode> pProcessProtrude = std::make_shared<SequenceNode>(); // protrude 지형 정보 추출 후 리턴 시퀀스
-	std::shared_ptr<ProtrudeExtractHeightNode> pProtrudeExtractHeight = std::make_shared<ProtrudeExtractHeightNode>();
-
-	// InAir
-	std::shared_ptr<CheckObstacleNode> pStateInAir = std::make_shared<CheckObstacleNode>();
-	pStateInAir->SetHeightMultiplier(2.0f);
-
-	std::shared_ptr<SequenceNode> pInAirObstacleFoundSeq = std::make_shared<SequenceNode>();
-	std::shared_ptr<TransitionCharacterFSMNode> pTransitionToLanding = std::make_shared<TransitionCharacterFSMNode>();
-	pTransitionToLanding->SetTargetState((uint8_t)Character::EState::Landing);
-
-	// Hanging — 입력 방향 검사
-	std::shared_ptr<SelectUsingInputDirNode> pStateHanging = std::make_shared<SelectUsingInputDirNode>();
-	std::shared_ptr<CheckOnHangingMoveUpNode> pOnHangingUp = std::make_shared<CheckOnHangingMoveUpNode>();			// 올라설 벽 ledge
-	std::shared_ptr<CheckOnHangingMoveDownNode> pOnHangingDown = std::make_shared<CheckOnHangingMoveDownNode>();	// 내려설 지면
-	std::shared_ptr<CheckOnHangingMoveSideNode> pOnHangingSide = std::make_shared<CheckOnHangingMoveSideNode>();	// 새 장애물
-
-	// Beam
-	std::shared_ptr<CheckObstacleNode> pStateBeam = std::make_shared<CheckObstacleNode>();
-	pStateBeam->SetHeightMultiplier(3.0f);
-	pStateBeam->SetStartOffset({ 0.0f, 0.0f, 0.5f });
-
-	// Protrude
-	std::shared_ptr<SelectUsingInputDirNode> pStateProtrude = std::make_shared<SelectUsingInputDirNode>();
-
-
-	// 루트 확인 : 평지에 있는 상황인지
-	pRootQuery->SetChildren(
+	for (const PerceptionNodeData& NODE : NODES)
+	{
+		auto itSpec = REGISTRY.find(NODE.NodeClass);
+		if (itSpec == REGISTRY.end())
 		{
-			// 배치 순서는 Character EState 순서대로
-			pStateLanding,
-			pStateInAir,
-			pStateHanging,
-			pStateBeam,
-			pStateBeam,
-			pStateProtrude
+			MG_LOG_ERROR("[PerceptionQueryTree] unknown node class '{}' (id '{}').",
+				NODE.NodeClass, NODE.Id);
+			return nullptr;
 		}
-	);
-		// 평지에 있는데, 장애물을 발견했는지
-		pStateLanding->SetChildren(
-			pCheckObstacleTag,	// 찾은 경우 태그 확인
-			pEmpty			// 찾지 못한 경우 empty return
-		);
 
-			pCheckObstacleTag->SetChildren(
-				{
-					// ETagEnvDetail 순서
-					pProcessDefault,				// Default // 일반 장애물 높이 확인
-					pProcessBeam,					// Beam
-					pProcessProtrude				// Protrude 돌출부
-				}
-			);
-
-			// 높이를 재고 세 갈래로 나눈다. 
-			pProcessDefault->SetChildren(
-				{
-					pReturn,			// 행동할 필요 없는 높이 -> 판단은 캐릭터에서 할 것
-					pMeasureDepthSeq,	// vault, mantle 중 깊에 따라 선택될 것 -> 그러므로 깊이 확인
-					pReturn			// 벽을 넘어야하는 상황 -> 결과 리턴
-				}
-			);
-				pMeasureDepthSeq->SetChildren(
-					{
-						pMeasureDepth,	// 0 깊이 측정 후
-						pReturn			// 1 결과 리턴
-					}
-				);
-
-			pProcessBeam->SetChildren(
-				{
-					pBeamCompareHeight,
-					pReturn
-				}
-			);
-
-			pProcessProtrude->SetChildren(
-				{
-					pProtrudeExtractHeight,
-					pReturn
-				}
-			);
-
-	// Hanging State 처리
-	pStateHanging->SetChildren(
+		if (created.find(NODE.Id) != created.end())
 		{
-			pOnHangingUp,
-			pOnHangingDown,
-			pOnHangingSide,
-			pEmpty
+			MG_LOG_ERROR("[PerceptionQueryTree] duplicated node id '{}'.", NODE.Id);
+			return nullptr;
 		}
-	);
-		// 위 방향 탐색 -> 올라설 벽 ledge 를 찾기
-		pOnHangingUp->SetChildren(
-			pReturn,
-			pEmpty
-		);
 
-		// 아래 : 내려설 지면. 좁게 볼 필요가 없어 단순 레이로 충분하다
-		// 지면(Ground)도 Obstacle 액터라 IObstacle 포인터가 유효하다
-		pOnHangingDown->SetChildren(
-			pReturn,
-			pEmpty
-		);
+		created[NODE.Id] = itSpec->second.Create(NODE);
+	}
 
-		// 좌우 : 옮겨갈 새 장애물 탐색. 종류 판단과 상태 전환은 HangingState 담당
-		pOnHangingSide->SetChildren(
-			pReturn,
-			pEmpty
-		);
-
-		pStateInAir->SetChildren(
-			pInAirObstacleFoundSeq,
-			pEmpty
-		);
-
-		pInAirObstacleFoundSeq->SetChildren(
+	// id -> 노드. 미해결이면 에러 로그 후 nullptr
+	auto resolve = [&created](const std::string& _id, const std::string& _ownerId) -> std::shared_ptr<PerceptionNode>
+		{
+			auto it = created.find(_id);
+			if (it == created.end())
 			{
-				pTransitionToLanding,
-				pCheckObstacleTag
+				MG_LOG_ERROR("[PerceptionQueryTree] node '{}' references unknown id '{}'.", _ownerId, _id);
+				return nullptr;
 			}
-		);
 
-	pStateBeam->SetChildren(
-		pCheckObstacleTag,
-		pEmpty
-	);
+			return it->second;
+		};
 
-	// 키 입력 기준 상하좌우 방향 탐색
-	pStateProtrude->SetChildren(
+	// 2패스 : 자식 배선
+	// 같은 id 를 여러 번 참조하면 같은 노드를 공유한다(원본 하드코딩 트리와 동일한 DAG 구조).
+	for (const PerceptionNodeData& NODE : NODES)
+	{
+		const std::shared_ptr<PerceptionNode>& SELF = created[NODE.Id];
+		const int EXPECTED = REGISTRY.at(NODE.NodeClass).ExpectedChildren;
+
+		if (std::shared_ptr<ConditionNode> pCondition = std::dynamic_pointer_cast<ConditionNode>(SELF))
 		{
-			pEmpty,
-			pEmpty,
-			pEmpty,
-			pEmpty
-		}
-	);
+			std::shared_ptr<PerceptionNode> pOnTrue = resolve(NODE.OnTrue, NODE.Id);
+			std::shared_ptr<PerceptionNode> pOnFalse = resolve(NODE.OnFalse, NODE.Id);
 
-	return pRootQuery;
+			if (pOnTrue == nullptr || pOnFalse == nullptr)
+				return nullptr;
+
+			pCondition->SetChildren(pOnTrue, pOnFalse);
+			continue;
+		}
+
+		const bool bIsSelector = (std::dynamic_pointer_cast<SelectorNode>(SELF) != nullptr);
+		const bool bIsSequence = (std::dynamic_pointer_cast<SequenceNode>(SELF) != nullptr);
+
+		if (bIsSelector == false && bIsSequence == false)
+		{
+			// TaskNode — 자식을 가질 수 없다
+			if (NODE.Children.empty() == false)
+			{
+				MG_LOG_ERROR("[PerceptionQueryTree] node '{}' ({}) can't have children.",
+					NODE.Id, NODE.NodeClass);
+				return nullptr;
+			}
+
+			continue;
+		}
+
+		if (EXPECTED != CHILDREN_ANY && (int)NODE.Children.size() != EXPECTED)
+		{
+			MG_LOG_ERROR("[PerceptionQueryTree] node '{}' ({}) needs {} children but has {}.",
+				NODE.Id, NODE.NodeClass, EXPECTED, NODE.Children.size());
+			return nullptr;
+		}
+
+		if (NODE.Children.empty())
+		{
+			MG_LOG_ERROR("[PerceptionQueryTree] node '{}' ({}) has no children.",
+				NODE.Id, NODE.NodeClass);
+			return nullptr;
+		}
+
+		std::vector<std::shared_ptr<PerceptionNode>> children;
+		children.reserve(NODE.Children.size());
+
+		for (const std::string& CHILD_ID : NODE.Children)
+		{
+			std::shared_ptr<PerceptionNode> pChild = resolve(CHILD_ID, NODE.Id);
+			if (pChild == nullptr)
+				return nullptr;
+
+			children.push_back(std::move(pChild));
+		}
+
+		if (bIsSelector)
+			std::static_pointer_cast<SelectorNode>(SELF)->SetChildren(std::move(children));
+		else
+			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
+	}
+
+	auto itRoot = created.find(_data.GetRootId());
+	if (itRoot == created.end())
+	{
+		MG_LOG_ERROR("[PerceptionQueryTree] root id '{}' not found.", _data.GetRootId());
+		return nullptr;
+	}
+
+	MG_LOG_INFO("[PerceptionQueryTree] constructed {} nodes. root = '{}'.",
+		created.size(), _data.GetRootId());
+
+	return itRoot->second;
 }

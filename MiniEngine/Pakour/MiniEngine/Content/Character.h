@@ -37,6 +37,9 @@ public:
 		End
 	};
 
+	static bool TryParseState(const std::string& _name, uint8_t& _outState);
+	static const char* GetStateName(uint8_t _state);
+
 	struct PerceptedObstacleInfo
 	{
 		// uint8_t m_actTag;
@@ -153,7 +156,7 @@ private:
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
 	std::weak_ptr<CharacterPerceptionConfig> m_pPerceptionConfig;
-	PerceptionQueryTree m_perceptQueryTree; // TODO : 데이터 에셋 로드할 것
+	PerceptionQueryTree m_perceptQueryTree;
 
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;

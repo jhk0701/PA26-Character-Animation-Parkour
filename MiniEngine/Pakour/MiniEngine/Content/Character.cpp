@@ -20,6 +20,7 @@
 
 #include "Content/ContentConfig.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterAnimData.h"
 #include "Content/Data/ActionClipContainer.h"
 
 #include "Content/CharacterStateMachine.h"
@@ -30,6 +31,46 @@
 #include "Content/CharacterState/ProtrudeState.h"
 
 using namespace Content::Config;
+
+namespace
+{
+	// Character::EState 이름표. 선언 순서 = enum 값 순서.
+	constexpr const char* STATE_NAMES[] =
+	{
+		"Landing",
+		"InAir",
+		"Hanging",
+		"BeamStand",
+		"BeamHanging",
+		"ProtrudeHanging",
+	};
+
+	static_assert(
+		std::size(STATE_NAMES) == static_cast<size_t>(Character::EState::End),
+		"STATE_NAMES 가 Character::EState 와 어긋났다.");
+}
+
+bool Character::TryParseState(const std::string& _name, uint8_t& _outState)
+{
+	for (size_t i = 0; i < std::size(STATE_NAMES); ++i)
+	{
+		if (_name == STATE_NAMES[i])
+		{
+			_outState = static_cast<uint8_t>(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const char* Character::GetStateName(uint8_t _state)
+{
+	if (_state >= std::size(STATE_NAMES))
+		return "<invalid>";
+
+	return STATE_NAMES[_state];
+}
 
 Character::Character()
 {
@@ -156,11 +197,28 @@ void Character::Tick(float _dt)
 void Character::LoadData()
 {
 	std::shared_ptr<CharacterPerceptionConfig> pConfig;
-	DataManager::GetInstance()->TryGetDataAsset<CharacterPerceptionConfig>(L"CharacterPerceptionConfig.json", pConfig);
+	if (DataManager::GetInstance()->TryGetDataAsset<CharacterPerceptionConfig>(L"CharacterPerceptionConfig.json", pConfig) == false)
+		MG_LOG_ERROR("[Character::LoadData] CharacterPerceptionConfig.json not found.");
+
 	m_pPerceptionConfig = pConfig;
 
-	// TODO : 지형 인식 트리 데이터 로드
-	m_perception.lock()->SetQueryTree(m_perceptQueryTree.ConstructTree());
+	// 지형 인식 트리
+	std::shared_ptr<PerceptionQueryData> pQueryData;
+	if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(L"PerceptionQueryData.json", pQueryData) == false
+		|| pQueryData->IsValid() == false)
+	{
+		MG_LOG_ERROR("[Character::LoadData] PerceptionQueryData.json load failed. perception disabled.");
+		return;
+	}
+
+	std::shared_ptr<PerceptionNode> pQueryTree = m_perceptQueryTree.ConstructTree(*pQueryData);
+	if (pQueryTree == nullptr)
+	{
+		MG_LOG_ERROR("[Character::LoadData] failed to construct query tree. perception disabled.");
+		return;
+	}
+
+	m_perception.lock()->SetQueryTree(std::move(pQueryTree));
 }
 
 void Character::TryPerception()
@@ -532,6 +590,20 @@ void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transit
 
 const PerceptionConfig& Character::GetPerceptionConfig() const
 {
+	if (m_pPerceptionConfig.expired())
+	{
+		static const PerceptionConfig FALLBACK;
+		static bool bWarned = false;
+
+		if (bWarned == false)
+		{
+			bWarned = true;
+			MG_LOG_ERROR("[Character::GetPerceptionConfig] config not loaded. using default values.");
+		}
+
+		return FALLBACK;
+	}
+
 	return m_pPerceptionConfig.lock()->Config;
 }
 
@@ -547,10 +619,15 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	std::shared_ptr<Animator> pAnim = _skinComp->GetAnim().lock();
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::End));
 
+	std::shared_ptr<CharacterAnimData> pAnimData;
+	if (DataManager::GetInstance()->TryGetDataAsset<CharacterAnimData>(L"CharacterActionClips.json", pAnimData) == false)
+		MG_LOG_ERROR("[Character::InitAnimation] CharacterActionClips.json not found.");
+
 	ActionClipLoadParam param;
 	param.pAnim = pAnim;
 	param.pSources = _skinComp->GetMesh().lock();
 	param.pMaps = &m_mapActions;
+	param.pAnimData = pAnimData.get();
 	ActionClipContainer::LoadActionClips(param);
 
 	pAnim->SetEnableRootMotion(true);

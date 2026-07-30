@@ -99,9 +99,12 @@ namespace Content::Config
 		End
 	};
 
-	enum class EActionPriority : uint8_t 
+	enum class EActionPriority : uint8_t
 	{
 		Default,
 		Override
 	};
+
+	bool TryParseTagAct(const std::string& _name, uint8_t& _outTag);
+	const char* GetTagActName(uint8_t _tag);
 }
