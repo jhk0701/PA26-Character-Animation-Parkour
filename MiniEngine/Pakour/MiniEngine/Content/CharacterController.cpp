@@ -131,33 +131,30 @@ void CharacterController::OnPossessed(Input& _input)
 		});
 
 	// 테스트용 점프
-	_input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = std::bind(
-		[this]() 
-		{ 
+	_input.GetKeyBind(DirectX::Keyboard::Keys::Space).OnReleased = 
+		[this]()
+		{
 			std::shared_ptr<Character> pChar = GetChar();
 			if (!pChar)
 				return;
 
 			pChar->InputJump();
-		}
-	);
-	_input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = std::bind(
-		[this]() 
-		{ 
+		};
+	_input.GetKeyBind(DirectX::Keyboard::Keys::LeftShift).OnPressed = 
+		[this]()
+		{
 			std::shared_ptr<Character> pChar = GetChar();
 			if (!pChar)
 				return;
 
 			pChar->TryPerception();
-		}
-	);
-	_input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed = std::bind(
-		[this]() 
+		};
+	_input.GetKeyBind(DirectX::Keyboard::Keys::F3).OnPressed =
+		[this]()
 		{
 			ResetCamRot();
-		}
-	);
-	_input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed = std::bind(
+		};
+	_input.GetKeyBind(DirectX::Keyboard::Keys::Q).OnPressed =
 		[this]()
 		{
 			std::shared_ptr<Character> pChar = GetChar();
@@ -165,8 +162,7 @@ void CharacterController::OnPossessed(Input& _input)
 				return;
 
 			pChar->SetPosition(Vector3(0.0f));
-		}
-	);
+		};
 }
 
 std::shared_ptr<Character> CharacterController::GetChar()

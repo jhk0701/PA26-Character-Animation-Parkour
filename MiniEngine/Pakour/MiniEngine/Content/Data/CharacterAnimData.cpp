@@ -275,6 +275,7 @@ void CharacterAnimData::Load(const json& _data)
 				action.RootMotion.bApplyTranslationX = itRootMotion->value("x", APPLY);
 				action.RootMotion.bApplyTranslationY = itRootMotion->value("y", APPLY);
 				action.RootMotion.bApplyTranslationZ = itRootMotion->value("z", APPLY);
+				action.RootMotion.bApplyRotationYaw = itRootMotion->value("yaw", APPLY);
 			}
 
 			auto itNotifies = element.find("notifies");

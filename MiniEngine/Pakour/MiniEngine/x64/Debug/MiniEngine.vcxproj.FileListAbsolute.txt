@@ -15,6 +15,3 @@ D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Shaders\StaticMe
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Shaders\SkinnedMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\Debug\Assets\pyramid.obj
 D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\Debug\MiniEngine.vcxproj.CopyComplete
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Datas\CharacterPerceptionConfig.json
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Datas\PerceptionQueryData.json
-D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\Debug\Datas\CharacterActionClips.json

@@ -11,11 +11,20 @@ namespace MiniEngine
 	public:
 		struct RootMotionConfig
 		{
-			bool bApplyRootMotion{ true };
+			RootMotionConfig() {}
+			RootMotionConfig(bool _b) : 
+				bApplyRootMotion(_b),
+				bApplyTranslationX(_b),
+				bApplyTranslationY(_b),
+				bApplyTranslationZ(_b),
+				bApplyRotationYaw(_b)
+			{}
 
+			bool bApplyRootMotion{ true };
 			bool bApplyTranslationX{ true };
 			bool bApplyTranslationY{ true };
 			bool bApplyTranslationZ{ true };
+			bool bApplyRotationYaw{ true };
 		};
 
 		ActionClip();
@@ -32,7 +41,7 @@ namespace MiniEngine
 		void AddClip(AnimClip* _clip);
 		void AddNotify(std::shared_ptr<IAnimNotify> _notify);
 
-		void SetApplyRootBone(bool _bApply) { m_rootMotionConfig = { _bApply, _bApply, _bApply, _bApply }; }
+		void SetApplyRootBone(bool _bApply) { m_rootMotionConfig = RootMotionConfig(_bApply); }
 		void SetApplyRootBone(RootMotionConfig _config) { m_rootMotionConfig = _config; }
 		bool IsApplyingRootBone() const { return m_rootMotionConfig.bApplyRootMotion; }
 

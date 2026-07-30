@@ -46,15 +46,16 @@ struct LocomotionData
 	std::vector<BlendSampleData> Samples;
 };
 
+// 액션 기본 데이터 구성
 struct ActionData
 {
-	std::vector<uint8_t> Tags;	// ETagAct — 여러 태그가 같은 ActionClip 을 공유한다
+	std::vector<uint8_t> Tags;	// ETagAct
 	int ClipIndex{ 0 };
 	MiniEngine::ActionClip::RootMotionConfig RootMotion;
 	std::vector<AnimNotifyData> Notifies;
 };
 
-// Datas/CharacterActionClips.json 파싱 결과.
+// Datas/CharacterActionClips.json 파싱 결과
 class CharacterAnimData : public MiniEngine::DataAsset
 {
 public:

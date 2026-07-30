@@ -40,7 +40,7 @@ namespace
 	};
 
 	template<typename T>
-	NodeCreator MakePlain()
+	NodeCreator CreateNode()
 	{
 		return [](const PerceptionNodeData&) -> std::shared_ptr<PerceptionNode>
 			{
@@ -54,25 +54,25 @@ namespace
 		static const std::unordered_map<std::string, NodeSpec> REGISTRY =
 		{
 			// 합성 노드
-			{ "SequenceNode",				{ MakePlain<SequenceNode>(),				CHILDREN_ANY } },
+			{ "SequenceNode",				{ CreateNode<SequenceNode>(),				CHILDREN_ANY } },
 
 			// Task (Leaf)
-			{ "ReturnResultNode",			{ MakePlain<ReturnResultNode>(),			0 } },
-			{ "ReturnEmptyNode",			{ MakePlain<ReturnEmptyNode>(),				0 } },
-			{ "MeasureDepthNode",			{ MakePlain<MeasureDepthNode>(),			0 } },
-			{ "BeamCompareHeightNode",		{ MakePlain<BeamCompareHeightNode>(),		0 } },
-			{ "ProtrudeExtractHeightNode",	{ MakePlain<ProtrudeExtractHeightNode>(),	0 } },
+			{ "ReturnResultNode",			{ CreateNode<ReturnResultNode>(),			0 } },
+			{ "ReturnEmptyNode",			{ CreateNode<ReturnEmptyNode>(),			0 } },
+			{ "MeasureDepthNode",			{ CreateNode<MeasureDepthNode>(),			0 } },
+			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
+			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } },
 
 			// Selector — 자식 개수가 InvokeCondition 반환 범위와 같아야 한다
-			{ "SelectCharacterStateNode",	{ MakePlain<SelectCharacterStateNode>(),	(int)Character::EState::End } },
-			{ "SelectObstacleTagNode",		{ MakePlain<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
-			{ "SelectUsingHeightNode",		{ MakePlain<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
-			{ "SelectUsingInputDirNode",	{ MakePlain<SelectUsingInputDirNode>(),		4 } },	// 상 / 하 / 좌우 / 입력없음
+			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
+			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
+			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
+			{ "SelectUsingInputDirNode",	{ CreateNode<SelectUsingInputDirNode>(),	4 } },	// 상 / 하 / 좌우 / 입력없음
 
 			// Condition — children[0] = true, children[1] = false
-			{ "CheckOnHangingMoveUpNode",	{ MakePlain<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
-			{ "CheckOnHangingMoveDownNode",	{ MakePlain<CheckOnHangingMoveDownNode>(),	CONDITION_CHILDREN } },
-			{ "CheckOnHangingMoveSideNode",	{ MakePlain<CheckOnHangingMoveSideNode>(),	CONDITION_CHILDREN } },
+			{ "CheckOnHangingMoveUpNode",	{ CreateNode<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
+			{ "CheckOnHangingMoveDownNode",	{ CreateNode<CheckOnHangingMoveDownNode>(),	CONDITION_CHILDREN } },
+			{ "CheckOnHangingMoveSideNode",	{ CreateNode<CheckOnHangingMoveSideNode>(),	CONDITION_CHILDREN } },
 
 			// 파라미터를 갖는 노드
 			{ "CheckObstacleNode",
@@ -103,7 +103,6 @@ namespace
 
 #pragma endregion
 
-	// [x, y, z] 배열. 키가 없거나 형식이 다르면 _out 을 건드리지 않는다.
 	void ReadVec3(const json& _data, const char* _key, Vector3& _out)
 	{
 		auto it = _data.find(_key);

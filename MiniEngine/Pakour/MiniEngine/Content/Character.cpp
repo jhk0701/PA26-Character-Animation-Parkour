@@ -34,7 +34,6 @@ using namespace Content::Config;
 
 namespace
 {
-	// Character::EState 이름표. 선언 순서 = enum 값 순서.
 	constexpr const char* STATE_NAMES[] =
 	{
 		"Landing",
@@ -45,31 +44,9 @@ namespace
 		"ProtrudeHanging",
 	};
 
-	static_assert(
-		std::size(STATE_NAMES) == static_cast<size_t>(Character::EState::End),
-		"STATE_NAMES 가 Character::EState 와 어긋났다.");
-}
-
-bool Character::TryParseState(const std::string& _name, uint8_t& _outState)
-{
-	for (size_t i = 0; i < std::size(STATE_NAMES); ++i)
-	{
-		if (_name == STATE_NAMES[i])
-		{
-			_outState = static_cast<uint8_t>(i);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const char* Character::GetStateName(uint8_t _state)
-{
-	if (_state >= std::size(STATE_NAMES))
-		return "<invalid>";
-
-	return STATE_NAMES[_state];
+	// 누락 체크용 매크로
+	static_assert(std::size(STATE_NAMES) == static_cast<size_t>(Character::EState::End), 
+		"STATE_NAMES 가 Character::EState 와 다름");
 }
 
 Character::Character()
@@ -204,8 +181,8 @@ void Character::LoadData()
 
 	// 지형 인식 트리
 	std::shared_ptr<PerceptionQueryData> pQueryData;
-	if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(L"PerceptionQueryData.json", pQueryData) == false
-		|| pQueryData->IsValid() == false)
+	if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(L"PerceptionQueryData.json", pQueryData) == false || 
+		pQueryData->IsValid() == false)
 	{
 		MG_LOG_ERROR("[Character::LoadData] PerceptionQueryData.json load failed. perception disabled.");
 		return;
@@ -619,6 +596,7 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	std::shared_ptr<Animator> pAnim = _skinComp->GetAnim().lock();
 	pAnim->ReserveBaseLocomotion(static_cast<uint8_t>(EState::End));
 
+	// 애니메이션 데이터 로드
 	std::shared_ptr<CharacterAnimData> pAnimData;
 	if (DataManager::GetInstance()->TryGetDataAsset<CharacterAnimData>(L"CharacterActionClips.json", pAnimData) == false)
 		MG_LOG_ERROR("[Character::InitAnimation] CharacterActionClips.json not found.");
@@ -642,4 +620,26 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	pAnim->SetRootBoneIdx(1); // hips
 
 	pAnim->Init(0);
+}
+
+bool Character::TryParseState(const std::string& _name, uint8_t& _outState)
+{
+	for (size_t i = 0; i < std::size(STATE_NAMES); ++i)
+	{
+		if (_name == STATE_NAMES[i])
+		{
+			_outState = static_cast<uint8_t>(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const char* Character::GetStateName(uint8_t _state)
+{
+	if (_state >= std::size(STATE_NAMES))
+		return "invalid";
+
+	return STATE_NAMES[_state];
 }

@@ -4,70 +4,43 @@
             "state": "Landing",
             "samples": [
                 {
-                    "coord": [
-                        0,
-                        0
-                    ],
+                    "coord": [ 0, 0 ],
                     "clip": 1,
                     "comment": "idle"
                 },
                 {
-                    "coord": [
-                        0,
-                        1
-                    ],
+                    "coord": [ 0, 1 ],
                     "clip": 5,
                     "comment": "run Fwd"
                 },
                 {
-                    "coord": [
-                        0.5,
-                        1
-                    ],
+                    "coord": [ 0.5, 1 ],
                     "clip": 5
                 },
                 {
-                    "coord": [
-                        -0.5,
-                        1
-                    ],
+                    "coord": [ -0.5, 1 ],
                     "clip": 5
                 },
                 {
-                    "coord": [
-                        0,
-                        -1
-                    ],
+                    "coord": [ 0, -1 ],
                     "clip": 8,
                     "comment": "run Bwd"
                 },
                 {
-                    "coord": [
-                        0.5,
-                        -1
-                    ],
+                    "coord": [ 0.5, -1 ],
                     "clip": 8
                 },
                 {
-                    "coord": [
-                        -0.5,
-                        -1
-                    ],
+                    "coord": [ -0.5, -1 ],
                     "clip": 8
                 },
                 {
-                    "coord": [
-                        -1,
-                        0
-                    ],
+                    "coord": [ -1, 0 ],
                     "clip": 6,
                     "comment": "left strafe"
                 },
                 {
-                    "coord": [
-                        1,
-                        0
-                    ],
+                    "coord": [ 1, 0 ],
                     "clip": 7,
                     "comment": "right strafe"
                 }
@@ -77,10 +50,7 @@
             "state": "InAir",
             "samples": [
                 {
-                    "coord": [
-                        0,
-                        0
-                    ],
+                    "coord": [ 0, 0 ],
                     "clip": 10,
                     "comment": "Falling Idle"
                 }
@@ -91,10 +61,7 @@
             "comment": "블렌드 모션이 생각보다 별로라 루트모션으로 대체",
             "samples": [
                 {
-                    "coord": [
-                        0,
-                        0
-                    ],
+                    "coord": [ 0, 0 ],
                     "clip": 18,
                     "comment": "Hanging Idle"
                 }
@@ -104,18 +71,12 @@
             "state": "BeamStand",
             "samples": [
                 {
-                    "coord": [
-                        0,
-                        0
-                    ],
+                    "coord": [ 0, 0 ],
                     "clip": 38,
                     "comment": "A_Balance_Idle"
                 },
                 {
-                    "coord": [
-                        0,
-                        1
-                    ],
+                    "coord": [ 0, 1 ],
                     "clip": 39,
                     "comment": "A_Balance_Run"
                 }
@@ -125,10 +86,7 @@
             "state": "BeamHanging",
             "samples": [
                 {
-                    "coord": [
-                        0,
-                        0
-                    ],
+                    "coord": [ 0, 0 ],
                     "clip": 32,
                     "comment": "A_Hanging_Idle"
                 }
@@ -137,11 +95,8 @@
     ],
     "actions": [
         {
-            "tags": [
-                "Jump"
-            ],
+            "tags": [ "Jump" ],
             "clip": 9,
-            "comment": "jump 는 루트모션 적용하지 않음",
             "rootMotion": {
                 "apply": false
             },
@@ -153,10 +108,7 @@
             ]
         },
         {
-            "tags": [
-                "VaultLow",
-                "VaultMid"
-            ],
+            "tags": [ "VaultLow", "VaultMid" ],
             "clip": 12,
             "notifies": [
                 {
@@ -171,62 +123,33 @@
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [
-                        0,
-                        0.2
-                    ],
-                    "comment": "적정거리 1.5 ~ 1.0",
+                    "time": [ 0, 0.2 ],
                     "properDistance": 1,
                     "lerpWeight": 0.5,
                     "deltaIntensity": 2
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.3,
-                        0.7
-                    ],
+                    "time": [ 0.3, 0.7],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.25,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ -0.25, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.3,
-                        0.4
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
-                    "limbs": [
-                        "LeftArm"
-                    ]
+                    "time": [ 0.3, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.6,
-                        0.7
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
-                    "limbs": [
-                        "LeftArm"
-                    ]
+                    "time": [ 0.6, 0.7 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm" ]
                 }
             ]
         },
         {
-            "tags": [
-                "VaultHigh"
-            ],
+            "tags": [ "VaultHigh" ],
             "clip": 13,
             "notifies": [
                 {
@@ -503,36 +426,19 @@
                 },
                 {
                     "class": "CharacterIKInvokerFixedPoint",
-                    "time": [
-                        0,
-                        1
-                    ],
+                    "time": [ 0, 1 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.2,
-                        1,
-                        -0.1
-                    ]
+                    "offset": [ -0.2, 1, -0.1 ]
                 },
                 {
                     "class": "CharacterIKInvokerFixedPoint",
-                    "time": [
-                        0,
-                        1
-                    ],
+                    "time": [ 0, 1 ],
                     "limb": "RightArm",
-                    "offset": [
-                        0.2,
-                        1,
-                        -0.1
-                    ]
+                    "offset": [ 0.2, 1, -0.1 ]
                 },
                 {
                     "class": "CharacterIKInvokerFixedPoint",
-                    "time": [
-                        0,
-                        1
-                    ],
+                    "time": [ 0, 1 ],
                     "limb": "LeftLeg",
                     "offset": [
                         -0.1,
@@ -542,27 +448,14 @@
                 },
                 {
                     "class": "CharacterIKInvokerFixedPoint",
-                    "time": [
-                        0,
-                        1
-                    ],
+                    "time": [ 0, 1 ],
                     "limb": "RightLeg",
-                    "offset": [
-                        0.1,
-                        0,
-                        -0.1
-                    ]
+                    "offset": [ 0.1, 0, -0.1 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.5,
-                        0.6
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
+                    "time": [ 0.5, 0.6 ],
+                    "fromTo": [ 0, 1 ],
                     "limbs": [
                         "LeftArm",
                         "RightArm",
@@ -572,14 +465,8 @@
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.8,
-                        1
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
+                    "time": [ 0.8, 1 ],
+                    "fromTo": [ 1, 0 ],
                     "limbs": [
                         "LeftArm",
                         "RightArm",
@@ -751,8 +638,7 @@
             "tags": [
                 "Wall_InnerRotateLeft"
             ],
-            "clip": 24,
-            "comment": "회전에 대한 디테일한 보정 필요"
+            "clip": 24
         },
         {
             "tags": [
@@ -820,10 +706,7 @@
             "notifies": [
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0,
-                        0.5
-                    ],
+                    "time": [ 0, 0.5 ],
                     "bezierY": 1.5
                 }
             ]
@@ -836,15 +719,8 @@
             "notifies": [
                 {
                     "class": "CorrectFixedRotation",
-                    "time": [
-                        0.1,
-                        0.7
-                    ],
-                    "rotateDeg": [
-                        -90,
-                        0,
-                        0
-                    ]
+                    "time": [ 0.1, 0.7 ],
+                    "rotateDeg": [ -90, 0, 0 ]
                 }
             ]
         },
@@ -856,27 +732,16 @@
             "notifies": [
                 {
                     "class": "CorrectFixedRotation",
-                    "time": [
-                        0.1,
-                        0.7
-                    ],
-                    "rotateDeg": [
-                        90,
-                        0,
-                        0
-                    ]
+                    "time": [ 0.1, 0.7 ],
+                    "rotateDeg": [ 90, 0, 0 ]
                 }
             ]
         },
         {
-            "tags": [
-                "Beam_StandMoveDown"
-            ],
+            "tags": [ "Beam_StandMoveDown" ],
             "clip": 42,
             "comment": "Beam Stand -> Beam Hanging",
-            "rootMotion": {
-                "apply": false
-            },
+            "rootMotion": { "apply": false },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -895,27 +760,15 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.3,
-                        0.7
-                    ],
-                    "endOffset": [
-                        0,
-                        -2,
-                        0
-                    ]
+                    "time": [ 0.3, 0.7 ],
+                    "endOffset": [ 0, -2, 0 ]
                 }
             ]
         },
         {
-            "tags": [
-                "Beam_IdleToHang"
-            ],
+            "tags": [ "Beam_IdleToHang" ],
             "clip": 31,
-            "rootMotion": {
-                "apply": true,
-                "z": false
-            },
+            "rootMotion": { "apply": true, "z": false },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -934,59 +787,30 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0,
-                        0.3
-                    ],
-                    "endOffset": [
-                        0,
-                        -2,
-                        0
-                    ]
+                    "time": [ 0, 0.3 ],
+                    "endOffset": [ 0, -2, 0 ]
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
-                    "time": [
-                        0,
-                        0.3
-                    ]
+                    "time": [ 0, 0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.15,
-                        1.5
-                    ],
+                    "time": [ 0.15, 1.5 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.15,
-                        0,
-                        -0.1
-                    ]
+                    "offset": [ -0.15, 0, -0.1 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.15,
-                        1.5
-                    ],
+                    "time": [ 0.15, 1.5 ],
                     "limb": "RightArm",
-                    "offset": [
-                        0.15,
-                        0,
-                        -0.1
-                    ]
+                    "offset": [ 0.15, 0, -0.1 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.2,
-                        0.3
+                    "time": [ 0.2, 0.3
                     ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
+                    "fromTo": [ 0, 1 ],
                     "limbs": [
                         "LeftArm",
                         "RightArm"
@@ -994,19 +818,12 @@
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        1.2,
-                        1.3
-                    ],
+                    "time": [ 1.2, 1.3 ],
                     "comment": "hanging 상태에서도 IK 를 쓸 것이라 다 내리진 않음",
                     "fromTo": [
-                        1,
-                        0.5
+                        1, 0.9
                     ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
@@ -1033,17 +850,12 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.8,
-                        1.3
-                    ]
+                    "time": [ 0.8, 1.3 ]
                 }
             ]
         },
         {
-            "tags": [
-                "Beam_HangingMoveLeft"
-            ],
+            "tags": [ "Beam_HangingMoveLeft" ],
             "clip": 36,
             "rootMotion": {
                 "apply": true,
@@ -1063,13 +875,11 @@
             ]
         },
         {
-            "tags": [
-                "Beam_HangingMoveRight"
-            ],
+            "tags": [ "Beam_HangingMoveRight" ],
             "clip": 37,
-            "rootMotion": {
-                "apply": true,
-                "z": false
+            "rootMotion": { 
+                "apply": true, 
+                "z": false 
             },
             "notifies": [
                 {
@@ -1085,14 +895,13 @@
             ]
         },
         {
-            "tags": [
-                "Beam_HangingMoveUp"
-            ],
+            "tags": [ "Beam_HangingMoveUp" ],
             "clip": 33,
             "comment": "Beam Hang -> Beam Stand",
             "rootMotion": {
                 "apply": true,
-                "z": false
+                "z": false,
+                "yaw": false
             },
             "notifies": [
                 {
@@ -1118,7 +927,7 @@
                     ],
                     "endOffset": [
                         0,
-                        -0.3,
+                        -0.4,
                         0.1
                     ]
                 }

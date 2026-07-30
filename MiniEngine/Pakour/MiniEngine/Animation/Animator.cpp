@@ -76,6 +76,16 @@ namespace MiniEngine
 				m_rootMotionDt.translation.y = 0.0f;
 			if (!CLIP_RM_CONFIG.bApplyTranslationZ)
 				m_rootMotionDt.translation.z = 0.0f;
+			if (!CLIP_RM_CONFIG.bApplyRotationYaw) 
+			{
+				// yaw 각도 제거
+				Vector3 euler = m_rootMotionDt.rotation.ToEuler();
+				Quaternion q = Quaternion::CreateFromYawPitchRoll(euler.x, 0.0f, 0.0f);
+				Quaternion invQ;
+				q.Inverse(invQ);
+
+				m_rootMotionDt.rotation = Quaternion::Concatenate(m_rootMotionDt.rotation, invQ);
+			}
 		}
 
 		m_overrideTrack.m_actionElapsed = t1;
