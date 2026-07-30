@@ -10,50 +10,6 @@
 
 using namespace Content::Config;
 
-void CharacterStateMachine::RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states)
-{
-	m_states = _states;
-	for (std::shared_ptr<CharacterState>& pState : m_states)
-		pState->RegisterMachine(shared_from_this());
-	
-	assert(m_states.size() > 0); // false 중단
-	Transition(0);
-}
-
-void CharacterStateMachine::Tick(float _dt)
-{
-	Component::Tick(_dt);
-	m_states[m_curState]->Tick(_dt);
-}
-
-void CharacterStateMachine::Transition(uint8_t _nextID)
-{
-	assert(_nextID < m_states.size());
-
-	if (m_curState == _nextID)
-	{
-		m_states[m_curState]->Refresh();
-		return;
-	}
-
-	m_states[m_curState]->OnEnd();
-
-	m_curState = _nextID;
-
-	m_states[m_curState]->OnStart();
-}
-
-void CharacterStateMachine::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	assert(m_curState < m_states.size());
-	m_states[m_curState]->ProcessPerceptionResult(_info);
-}
-
-std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
-{
-	return std::dynamic_pointer_cast<Character>(owner.lock());
-}
-
 void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	uint8_t type;

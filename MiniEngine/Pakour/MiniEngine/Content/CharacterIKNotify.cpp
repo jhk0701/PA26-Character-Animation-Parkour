@@ -21,6 +21,17 @@ void CharacterIKEnabler::OnStart(MiniEngine::AnimNotifyParam& _param)
 	assert(m_from != m_to);
 }
 
+void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
+{
+	AnimNotifyState::OnEnd(_param);
+
+	for (const uint8_t& t : m_ikTypes)
+	{
+		m_pChar->SetIKAlpha(t, m_to);
+		MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
+	}
+}
+
 void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)
 {
 	if (!m_pChar)
@@ -33,18 +44,6 @@ void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param
 	for (const uint8_t& t : m_ikTypes)
 		m_pChar->SetIKAlpha(t, LERP);
 }
-
-void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
-{
-	AnimNotifyState::OnEnd(_param);
-
-	for (const uint8_t& t : m_ikTypes)
-	{
-		m_pChar->SetIKAlpha(t, m_to);
-		MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
-	}
-}
-
 
 // 전제 조건.
 // 캐릭터가 파쿠르 중일 것

@@ -148,7 +148,6 @@ private:
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
-	PerceptedObstacleInfo m_curObstacleInfo;
 
 	// IK 튜닝 멤버 변수
 	float m_ikRayDistance = 0.5f; // 발의 아래를 체크할 높이
