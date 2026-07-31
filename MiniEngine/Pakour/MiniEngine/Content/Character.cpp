@@ -363,14 +363,15 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 	// 3. 접촉면이 손, 발의 위치
 	const Transform& TF = GetRoot()->localTransform;
 
-	Physics::RaycastParam param;
+	Physics::SpherecastParam param;
 	param.m_dir = TF.Forward();
 	param.m_maxDistance = m_ikRayDistance * 2.0f;
-	param.m_origin = result.position + param.m_dir * -m_ikRayDistance;
+	param.m_startPos = result.position + param.m_dir * -m_ikRayDistance;
+	param.m_radius = 0.1f;
 
 	Physics::RaycastResult hitResult;
 	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
-	if (!pPhysics->Raycast(param, hitResult, Physics::ToMask(Physics::Layer::Obstacle)))
+	if (!pPhysics->SphereCast(param, hitResult, Physics::ToMask(Physics::Layer::Obstacle)))
 		return result;
 
 	// 벽으로부터 일정 범위 이내에 있는 경우는 ik를 적용하지 않음
@@ -380,9 +381,13 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	// 위치 적용
-	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
-	result.position = hitResult.m_pos;
-	result.posAlpha = 1.0f;
+	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);		
+	result.position = hitResult.m_pos + -TF.Forward() * 0.1f;
+	result.position.y -= 0.1f;
+	// result.posAlpha = 1.0f;
+
+	if (_ik < (uint8_t)ELimbType::LeftLeg)
+		return result;
 
 	// 회전 적용
 	hitResult.m_nrm.Normalize();
@@ -449,7 +454,8 @@ LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
-	result.position = hitResult.m_pos - TF.Forward() * 0.1f; // TODO : 테스트용 config로 빼기
+	result.position = hitResult.m_pos - TF.Forward() * 0.05f;
+	result.position.y -= 0.03f;
 	result.posAlpha = 1.0f;
 	
 	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);

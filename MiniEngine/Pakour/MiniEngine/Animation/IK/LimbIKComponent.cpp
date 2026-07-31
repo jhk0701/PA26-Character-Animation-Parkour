@@ -58,6 +58,8 @@ namespace MiniEngine
 			m_handles[i].posAlphaTarget = 0.0f;
 			m_handles[i].rotAlphaTarget = 0.0f;
 			m_handles[i].bGroundValid = false;
+
+			SetAlphaIK((ELimbType)i, 0.0f);
 		}
 	}
 

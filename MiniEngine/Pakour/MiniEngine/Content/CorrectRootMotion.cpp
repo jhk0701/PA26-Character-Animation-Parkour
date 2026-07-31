@@ -62,23 +62,17 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
 	Vector3 correctMovementDt = lerped - charPos;
 
-	// 멀 때만 보간 처리
-	// 가까울 때도 처리하니, 진행방향에 역방향으로 움직여서 어색해보임
+	m_elapsedTime += _dt;
+	const float w = m_elapsedTime / GetDuration();
+	Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
+	m_pChar->SetPosition(lerpedPos);
+
+	/*
 	if (OBS_INFO.m_obstacleDistance > m_properDistance)
 		correctMovementDt *= _dt * m_deltaIntensity;
 
 	m_pChar->AddMovementInput(correctMovementDt);
-
-	{
-		return;
-		// 정석적인 방법은 아래이나
-		// 위의 처리 방식이 더 자연스러워 보여 우선 보류
-
-		m_elapsedTime += _dt;
-		float w = m_elapsedTime / GetDuration();
-		Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
-		m_pChar->SetPosition(lerpedPos);
-	}
+	*/
 }
 
 // 사용 전제

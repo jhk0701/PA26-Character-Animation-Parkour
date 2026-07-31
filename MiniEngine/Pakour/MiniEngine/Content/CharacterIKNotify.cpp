@@ -18,7 +18,7 @@ void CharacterIKEnabler::OnStart(MiniEngine::AnimNotifyParam& _param)
 	m_elapsedTime = 0.0f;
 
 	assert(GetDuration() > 1e-4f);
-	assert(m_from != m_to);
+	// assert(m_from != m_to);
 }
 
 void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
