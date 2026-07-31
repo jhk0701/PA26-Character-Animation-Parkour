@@ -207,7 +207,7 @@ namespace MiniEngine
 			Vector3 worldDir = owner.lock()->ConvertToActorDir(m_desc.poleDir[i]);
 			Vector3 pos = upperW.Translation();
 
-			MiniEngine::Debug::DrawLine(pos, pos + worldDir, MiniEngine::DebugColor::YELLOW, 0.01f);
+			// MiniEngine::Debug::DrawLine(pos, pos + worldDir, MiniEngine::DebugColor::YELLOW, 0.01f);
 			pos += worldDir;
 
 			pSkeletal->SetIKPoleTargetWorld(handle.binding, pos);

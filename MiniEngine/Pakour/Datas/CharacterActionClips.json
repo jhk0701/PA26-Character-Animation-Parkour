@@ -164,72 +164,33 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.1,
-                        0.9
-                    ],
+                    "time": [ 0.1, 0.9 ],
                     "bezierY": 0.3,
-                    "endOffset": [
-                        0,
-                        0,
-                        0.5
-                    ]
+                    "endOffset": [ 0, 0, 0.5 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.1,
-                        0.8
-                    ],
+                    "time": [ 0.1, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.15,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ -0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.1,
-                        0.8
-                    ],
+                    "time": [ 0.1, 0.8 ],
                     "limb": "RightArm",
-                    "offset": [
-                        0.15,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ 0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.1,
-                        0.4
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.1, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.7,
-                        0.8
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.7, 0.8 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
@@ -239,7 +200,6 @@
                 "MantleMid"
             ],
             "clip": 14,
-            "comment": "Mantle_A_TwoHand_L_On",
             "notifies": [
                 {
                     "class": "EnableCollisionObstacle",
@@ -253,63 +213,32 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0,
-                        0.6
-                    ],
-                    "endOffset": [
-                        0,
-                        0,
-                        0.3
-                    ]
+                    "time": [ 0, 0.6 ],
+                    "endOffset": [ 0, 0, 0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.2,
-                        0.5
-                    ],
+                    "time": [ 0.2, 0.5 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.25,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ -0.25, 0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.2,
-                        0.3
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
-                    "limbs": [
-                        "LeftArm"
-                    ]
+                    "time": [ 0.2, 0.3 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.4,
-                        0.5
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
-                    "limbs": [
-                        "LeftArm"
-                    ]
+                    "time": [ 0.4, 0.5 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm" ]
                 }
             ]
         },
         {
             "tags": [ "MantleHigh" ],
             "clip": 15,
-            "comment": "Mantle_A_Wall_Monkey_On",
             "notifies": [
                 {
                     "class": "EnableCollisionObstacle",
@@ -331,13 +260,13 @@
                     "class": "CharacterIKInvoker",
                     "time": [ 0, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.15, 0.1, 0 ]
+                    "offset": [ -0.15, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0, 0.8 ],
                     "limb": "RightArm",
-                    "offset": [ 0.15, 0.1, 0 ]
+                    "offset": [ 0.15, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
@@ -385,9 +314,7 @@
             ],
             "clip": 17,
             "comment": "Wall Hanging -> Landing Idle (Fall 내려오는 모션)",
-            "rootMotion": {
-                "apply": false
-            },
+            "rootMotion": { "apply": false },
             "notifies": [
                 {
                     "class": "EnableCollisionObstacle",
@@ -409,6 +336,7 @@
         {
             "tags": [ "Wall_HangToMantle" ],
             "clip": 28,
+            "rootMotion": { "apply": true, "y" : false },
             "comment": "Wall Hanging -> Landing Idle (Mantle 모션)",
             "notifies": [
                 {
@@ -429,7 +357,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.0, 0.6 ],
-                    "bezierY": 0.5,
+                    "bezierY": 0.0,
                     "endOffset": [ 0, 0, 0.25 ]
                 },
                 {
@@ -503,27 +431,19 @@
             ]
         },
         {
-            "tags": [
-                "Wall_InnerRotateLeft"
-            ],
+            "tags": [ "Wall_InnerRotateLeft" ],
             "clip": 24
         },
         {
-            "tags": [
-                "Wall_InnerRotateRight"
-            ],
+            "tags": [ "Wall_InnerRotateRight" ],
             "clip": 25
         },
         {
-            "tags": [
-                "Wall_OuterRotateLeft"
-            ],
+            "tags": [ "Wall_OuterRotateLeft" ],
             "clip": 26
         },
         {
-            "tags": [
-                "Wall_OuterRotateRight"
-            ],
+            "tags": [ "Wall_OuterRotateRight" ],
             "clip": 27
         },
         {
@@ -817,15 +737,8 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0,
-                        0.3
-                    ],
-                    "endOffset": [
-                        0,
-                        -1,
-                        0
-                    ]
+                    "time": [ 0, 0.3 ],
+                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         },
@@ -838,15 +751,8 @@
             "notifies": [
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.2,
-                        0.6
-                    ],
-                    "endOffset": [
-                        0,
-                        -1,
-                        0
-                    ]
+                    "time": [ 0.2, 0.6 ],
+                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         },
@@ -859,36 +765,20 @@
             "notifies": [
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.2,
-                        0.6
-                    ],
-                    "endOffset": [
-                        0,
-                        -1,
-                        0
-                    ]
+                    "time": [ 0.2, 0.6 ],
+                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         },
         {
-            "tags": [
-                "Protrude_JumpLeft"
-            ],
+            "tags": [ "Protrude_JumpLeft" ],
             "clip": 21,
             "comment": "추후 클립 교체",
             "notifies": [
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.2,
-                        0.6
-                    ],
-                    "endOffset": [
-                        0,
-                        -1,
-                        0
-                    ]
+                    "time": [ 0.2, 0.6 ],
+                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         },
@@ -901,17 +791,11 @@
             "notifies": [
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.2,
-                        0.6
-                    ],
-                    "endOffset": [
-                        0,
-                        -1,
-                        0
-                    ]
+                    "time": [ 0.2, 0.6 ],
+                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         }
+
     ]
 }
