@@ -71,7 +71,7 @@ namespace
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
 					pNotify->SetProperDistance(_data.ProperDistance);
 					pNotify->SetLerpWeight(_data.LerpWeight);
-					pNotify->SetDeltaIntensity(_data.DeltaIntensity);
+					// pNotify->SetDeltaIntensity(_data.DeltaIntensity);
 					pNotify->SetCorrectAxis((ECorrectAxis)_data.CorrectAxis);
 					return pNotify;
 				} },

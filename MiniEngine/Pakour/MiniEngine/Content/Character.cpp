@@ -80,6 +80,8 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxPelvisDrop = 0.45f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.0f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.3f, 0.0f, 1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.3f, 0.0f, 1.0f);
 
 		pLimbIK->Init(skinComp, desc);
 		m_limbIKComp = pLimbIK;

@@ -4,13 +4,13 @@
 #include "Core/Math.h"
 #include "Animation/ActionClip.h"
 
-// 노티파이 1개의 저작값.
-// 클래스마다 쓰는 필드만 유효하다(총 파라미터가 13개뿐이라 클래스별 파생 대신 합집합으로 둔다).
+// 노티파이 1개 전체 데이터
+// 우선은 한번에 다 몰아서 사용
 struct AnimNotifyData
 {
 	std::string NotifyClass;
 
-	// AnimNotify 는 TimeStart 만, AnimNotifyState 는 [TimeStart, TimeEnd] 를 쓴다
+	// AnimNotify는 TimeStart만, AnimNotifyState는 둘다 TimeStart, TimeEnd
 	float TimeStart{ 0.0f };
 	float TimeEnd{ 0.0f };
 
@@ -21,7 +21,6 @@ struct AnimNotifyData
 
 	float ProperDistance{ 1.0f };	// CorrectRootMotion
 	float LerpWeight{ 0.5f };
-	float DeltaIntensity{ 1.0f };
 	uint8_t CorrectAxis{ 0 };		// ECorrectAxis
 
 	float BezierY{ 0.0f };			// BezierCorrectRootMotion

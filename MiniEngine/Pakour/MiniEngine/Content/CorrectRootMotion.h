@@ -18,7 +18,6 @@ public:
 	void SetProperDistance(float _distance) { m_properDistance = _distance; }
 	void SetLerpWeight(float _weight) { m_lerpWeight = std::clamp(_weight, 0.0f, 1.0f); }
 	void SetCorrectAxis(ECorrectAxis _axis) { m_corrextAxis = _axis; }
-	void SetDeltaIntensity(float _intensity) { m_deltaIntensity = _intensity; }
 
 private:
 	Character* m_pChar{ nullptr };
@@ -28,7 +27,6 @@ private:
 
 	float m_properDistance{ 1.0f };
 	float m_lerpWeight{ 0.5f };
-	float m_deltaIntensity{ 1.0f };
 };
 
 class BezierCorrectRootMotion : public MiniEngine::AnimNotifyState 
@@ -42,15 +40,15 @@ public:
 	// x : 캐릭터 Right
 	// y : 캐릭터 Up
 	// z : 캐릭터 Forward
+	void SetMidOffset(const MiniEngine::Vector3& _offset) { m_midOffset = _offset; }
 	void SetEndOffset(const MiniEngine::Vector3& _offset) { m_endOffset = _offset; }
-	void SetBezierY(const float _y) { m_bezierY = _y; }
 
 private:
 	Character* m_pChar{ nullptr };
 
 	float m_elapsedTime{ 0.0f };
 
-	float m_bezierY{ 0.0f };
+	MiniEngine::Vector3 m_midOffset{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_endOffset{ 0.0f, 0.0f, 0.0f };
 
 	MiniEngine::Vector3 m_startPoint{ 0.0f, 0.0f, 0.0f };

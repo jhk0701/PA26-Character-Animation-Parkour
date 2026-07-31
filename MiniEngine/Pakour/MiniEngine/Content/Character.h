@@ -166,7 +166,7 @@ private:
 	float m_ikRayDistance = 0.5f; // 발의 아래, 벽면 등 레이로 체크할 거리
 
 	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
-	float m_maxSlopeDeg = 80.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
+	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
 
 	// 매달린 상태에서 손, 발이 0.05만큼의 오차는 ik를 적용하지 않음
 	float m_thresholdWallDig = 0.05f;

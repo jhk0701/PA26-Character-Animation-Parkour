@@ -82,13 +82,6 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	}
 
 	m_pChar->SetPosition(lerpedPos);
-
-	/*
-	if (OBS_INFO.m_obstacleDistance > m_properDistance)
-		correctMovementDt *= _dt * m_deltaIntensity;
-
-	m_pChar->AddMovementInput(correctMovementDt);
-	*/
 }
 
 // 사용 전제
@@ -123,6 +116,8 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	m_endPoint += offset;
 
 	m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);
+	
+	Vector3 midOffset = ;
 	m_midPoint.y += m_bezierY;
 
 	//MG_LOG_INFO("[Bezier Correction]\nStart P ({:.2f}, {:.2f}, {:.2f})\nMid P ({:.2f}, {:.2f}, {:.2f})\nEnd P ({:.2f}, {:.2f}, {:.2f})",

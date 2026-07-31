@@ -555,7 +555,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.5,
+                    "time": 1.0,
                     "enable": true
                 },
                 {
