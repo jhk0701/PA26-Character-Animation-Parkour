@@ -8,7 +8,6 @@ namespace MiniEngine
 {
 	namespace Physics { class PhysicsWorld; }
 	class Actor;
-
 	struct TravelContext 
 	{
 		std::shared_ptr<Actor> m_owner;
@@ -23,12 +22,12 @@ namespace MiniEngine
 
 	struct TravelResult 
 	{
-		IObstacle* m_pFirstObstacle{ nullptr };
-		Vector3 m_firstObstacleHitPos;
-		Vector3 m_firstObstacleHitNrm;
-		float m_obstacleDistance{ 0.0f };
-		float m_obstacleLedge{ 0.0f };
-		float m_obstacleDepth{ 0.0f };
+		IObstacle* m_pFirstObstacle{ nullptr };	// 장애물 객체의 포인터
+		Vector3 m_firstObstacleHitPos;			// 접촉 위치
+		Vector3 m_firstObstacleHitNrm;			// 접촉 표면 노멀 벡터
+		float m_obstacleDistance{ 0.0f };		// 캐릭터와 거리
+		float m_obstacleLedge{ 0.0f };			// 모서리 (최종 높이)
+		float m_obstacleDepth{ 0.0f };			// 깊이
 
 		void Reset();
 	};

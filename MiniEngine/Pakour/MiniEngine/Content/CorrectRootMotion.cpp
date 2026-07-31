@@ -65,6 +65,22 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	m_elapsedTime += _dt;
 	const float w = m_elapsedTime / GetDuration();
 	Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
+	switch (m_corrextAxis)
+	{
+	case ECorrectAxis::XZ:
+		lerpedPos.y = TF.position.y;
+		break;
+	case ECorrectAxis::XY:
+		lerpedPos.z = TF.position.z;
+		break;
+	case ECorrectAxis::YZ:
+		lerpedPos.x = TF.position.x;
+		break;
+	case ECorrectAxis::None: __fallthrough;
+	default:
+		break;
+	}
+
 	m_pChar->SetPosition(lerpedPos);
 
 	/*

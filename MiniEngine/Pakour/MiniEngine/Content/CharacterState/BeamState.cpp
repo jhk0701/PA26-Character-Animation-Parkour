@@ -105,14 +105,20 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 
 	if (t == (uint8_t)ETagEnvDetail::Default)
 	{
-		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
-		
+		// 결과 확인 필요
 		uint8_t actTag = 0;
-		if(_info.m_obstacleHitPos.y <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
+		if (_info.m_obstacleLedge <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
+		{
+			pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 			actTag = (uint8_t)ETagAct::Beam_StandToIdle;
-			
-		if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))
-			pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
+
+			if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))
+				pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
+		}
+		else // 더 높은 경우
+		{
+			DefaultProcessPerceptionResult(_info);
+		}
 
 		return;
 	}

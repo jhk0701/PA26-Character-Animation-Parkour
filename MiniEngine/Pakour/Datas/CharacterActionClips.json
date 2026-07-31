@@ -428,7 +428,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.6 ],
+                    "time": [ 0.0, 0.6 ],
                     "bezierY": 0.5,
                     "endOffset": [ 0, 0, 0.25 ]
                 },
@@ -568,6 +568,7 @@
         {
             "tags": [ "Beam_StandRotateLeft" ],
             "clip": 40,
+            "rootMotion": { "apply": true, "y" : false },
             "notifies": [
                 {
                     "class": "CorrectFixedRotation",
@@ -579,6 +580,7 @@
         {
             "tags": [ "Beam_StandRotateRight" ],
             "clip": 40,
+            "rootMotion": { "apply": true, "y" : false },
             "notifies": [
                 {
                     "class": "CorrectFixedRotation",

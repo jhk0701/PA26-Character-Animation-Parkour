@@ -5,7 +5,8 @@
     "thresholdWallHeight": 3.0,
     "thresholdHighObstacle": 2.0,
     "thresholdLowObstacle": 1.0,
-
+    "minMantleDepth": 1.0,
+    
     "heightRadius": 0.5,
     "heightStep": 1.0,
     "maxHeightStep": 3,
@@ -13,10 +14,8 @@
 
     "depthStep": 0.5,
     "maxDepthStep": 2,
-
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
-    "minMantleDepth": 1.0,
 
     "onHangingSearchDist": 1.5,
     "onHangingSearchRadius": 0.5
