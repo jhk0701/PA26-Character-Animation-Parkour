@@ -307,6 +307,54 @@ namespace MiniEngine
 		return true;
 	}
 
+	// 스윙 콘의 중심축 = upper 본의 rest(바인드) 방향을 "현재 부모 본이 운반한" 것.
+	// 메시 로컬 고정 축으로 두면 캐릭터가 몸을 틀 때 콘이 따라오지 않아 사지가 잠긴다.
+	bool Animator::BindSwingAxis(const Skeleton& _skeleton, int _upperBone, int _lowerBone, Vector3& _outAxis) const
+	{
+		const int COUNT = static_cast<int>(_skeleton.bones.size());
+		if (_upperBone < 0 || _lowerBone < 0 || _upperBone >= COUNT || _lowerBone >= COUNT)
+			return false;
+
+		Matrix bindU;
+		Matrix bindL;
+
+		BindGlobal(_upperBone, _skeleton, bindU);
+		BindGlobal(_lowerBone, _skeleton, bindL);
+
+		Vector3 restDir = bindL.Translation() - bindU.Translation();
+		if (restDir.LengthSquared() < 1e-12f)
+			return false; // upper 와 lower 가 겹침 -> 축 미정
+
+		restDir.Normalize();
+
+		const int PARENT = _skeleton.bones[static_cast<size_t>(_upperBone)].parentIndex;
+		if (PARENT < 0)
+		{
+			_outAxis = restDir; // 루트면 메시 로컬 그대로
+			return true;
+		}
+
+		// 바인드 부모 프레임으로 접었다가 현재 부모 프레임으로 편다.
+		// 방향이므로 TransformNormal — Transform 은 평행이동이 섞인다.
+		// (부모 인덱스 < 자기 인덱스 이고 사지를 오름차순으로 처리하므로
+		//  이 시점 m_globalPose[PARENT] 는 이미 최신이다.)
+		Matrix bindP;
+		BindGlobal(PARENT, _skeleton, bindP);
+		bindP.Translation(Vector3(0.0f, 0.0f, 0.0f));
+
+		Matrix curP = m_globalPose[static_cast<size_t>(PARENT)];
+		curP.Translation(Vector3(0.0f, 0.0f, 0.0f));
+
+		const Vector3 DIR_PARENT_LOCAL = Vector3::TransformNormal(restDir, bindP.Invert());
+		_outAxis = Vector3::TransformNormal(DIR_PARENT_LOCAL, curP);
+
+		if (_outAxis.LengthSquared() < 1e-12f)
+			return false;
+
+		_outAxis.Normalize(); // 스케일이 섞여도 단위벡터 보장
+		return true;
+	}
+
 	void Animator::RotateGlobalInPlace(Matrix& _global, const Quaternion& _delta)
 	{
 		const Vector3 pos = _global.Translation();
@@ -388,6 +436,17 @@ namespace MiniEngine
 				TwoBoneIKTarget target;
 				target.targetPos = GOAL.position;
 				target.alpha = GOAL.positionAlpha;
+
+				// 관절 한계. 각도는 goal 이 들고 오고, 콘 축만 여기서 리그 rest 로 유도한다.
+				// 한계는 폴 후보와 무관하므로 아래 3번의 시도 전부에 같은 값이 실린다.
+				target.limits.minBendDeg = GOAL.minBendDeg;
+				target.limits.maxBendDeg = GOAL.maxBendDeg;
+
+				if (GOAL.swingConeDeg < 180.0f &&
+					BindSwingAxis(_skeleton, UPPER_IDX, LOWER_IDX, target.limits.coneAxis))
+				{
+					target.limits.swingConeDeg = GOAL.swingConeDeg;
+				}
 
 				// 폴 후보를 순서대로 "시도 -> 실패 시 다음" 으로 내려간다.
 				// 폴을 미리 고르고 한 번만 풀면, 명시 폴이 축퇴했을 때 폴백으로

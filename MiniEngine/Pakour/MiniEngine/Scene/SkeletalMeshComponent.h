@@ -53,6 +53,15 @@ namespace MiniEngine
         // 없으면 현재 애니메이션의 포즈의 굽힘 평면을 그대로 유지 -> 굳이 호출할 필요는 없음
         void SetIKPoleTargetWorld(const TwoBoneIKBinding& _boneBinding, const Vector3& _worldPole);
 
+        // 관절 한계 (각도, degree). 0 / 180 / 180 이면 무제한 = 기존 동작.
+        //  _minBendDeg   : lower 관절(무릎/팔꿈치) 내각 하한 — 과도한 접힘 방지
+        //  _maxBendDeg   : 같은 내각 상한 — 과신전 방지.
+        //                  ⚠ 기존 사거리 상한이 이미 약 168도라, 그보다 낮춰야 효과가 있다.
+        //  _swingConeDeg : upper(허벅지/상완)가 rest 방향에서 벌어질 최대각.
+        //                  걸면 end 가 타깃에 의도적으로 미달한다.
+        void SetIKLimits(const TwoBoneIKBinding& _boneBinding,
+                         float _minBendDeg, float _maxBendDeg, float _swingConeDeg);
+
         void ClearIKGoal(HumanoidBone _end);
         void ClearAllIKGoal();
         const IKGoal* GetIKGoal(HumanoidBone _end) const;

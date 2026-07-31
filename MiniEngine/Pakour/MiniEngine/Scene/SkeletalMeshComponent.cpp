@@ -209,6 +209,24 @@ namespace MiniEngine
         m_anim->SetIKGoal(_boneBinding, goal);
     }
 
+    // 관절 한계는 각도 스칼라뿐이라 공간 변환이 없다(폴/타깃과 달리 월드 개념이 아니다).
+    // 콘 축은 리그 rest 에서 유도해야 하므로 Animator 가 매 프레임 채운다.
+    // ⚠ SetIKPoleTargetWorld 와 같이 "기존 goal 을 읽어 덮는" 형태다 —
+    //    SetIKGoalWorld* 계열을 먼저 호출해 goal 이 존재해야 한다.
+    void SkeletalMeshComponent::SetIKLimits(const TwoBoneIKBinding& _boneBinding,
+                                            float _minBendDeg, float _maxBendDeg, float _swingConeDeg)
+    {
+        const IKGoal* CUR = m_anim->GetIKGoal(_boneBinding.end);
+        if (!CUR)
+            return;
+
+        IKGoal goal = *CUR;
+        goal.minBendDeg = _minBendDeg;
+        goal.maxBendDeg = _maxBendDeg;
+        goal.swingConeDeg = _swingConeDeg;
+        m_anim->SetIKGoal(_boneBinding, goal);
+    }
+
     void SkeletalMeshComponent::ClearIKGoal(HumanoidBone _end) { m_anim->ClearIKGoal(_end); }
 
     void SkeletalMeshComponent::ClearAllIKGoal() { m_anim->ClearAllIKGoals(); }

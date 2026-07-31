@@ -197,6 +197,14 @@ namespace MiniEngine
 				handle.rotAlpha
 			);
 
+			// goal 을 덮는 형태라 SetIKGoalWorld* 뒤여야 한다
+			pSkeletal->SetIKLimits(
+				handle.binding,
+				m_desc.minBendDeg[i],
+				m_desc.maxBendDeg[i],
+				m_desc.swingConeDeg[i]
+			);
+
 			if (m_desc.poleDir[i].LengthSquared() < 1e-6f)
 				continue;
 

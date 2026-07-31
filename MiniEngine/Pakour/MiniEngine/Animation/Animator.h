@@ -54,6 +54,13 @@ namespace MiniEngine
 		// true 면 rotation 을 "위치 솔브 이후의 현재 포즈에 곱할 델타" 로 소비한다.
 		// 지면 법선 정렬처럼 애니메이션 자세를 유지한 채 기울이기만 할 때 쓴다.
 		bool bRotationIsDelta = false;
+
+		// 관절 한계 (기본값 = 무제한). 각도 스칼라만 들고 있는다 —
+		// TwoBoneIKLimits::coneAxis 는 리그의 rest 에서 유도해야 하므로
+		// ApplyIKGoals 가 BindSwingAxis 로 매 프레임 채운다.
+		float minBendDeg = 0.0f;
+		float maxBendDeg = 180.0f;
+		float swingConeDeg = 180.0f;
 	};
 
 
@@ -145,6 +152,9 @@ namespace MiniEngine
 		void RefreshIKAny();
 		void BindGlobal(int _boneIdx, const Skeleton& _inSkeleton, Matrix& _out) const;
 		bool BindPole(const Skeleton& _skeleton, int _upperBone, int _lowerBone, int _endBone, Vector3& _outPole) const;
+
+		// 스윙 콘의 중심축(메시 로컬) — upper 의 rest 방향을 현재 부모 프레임으로 옮긴 것
+		bool BindSwingAxis(const Skeleton& _skeleton, int _upperBone, int _lowerBone, Vector3& _outAxis) const;
 		
 		// 본 원점을 피벗으로 한 회전
 		void RotateGlobalInPlace(Matrix& _global, const Quaternion& _delta);
