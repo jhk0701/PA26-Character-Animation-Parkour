@@ -16,20 +16,18 @@ void CharacterIKEnabler::OnStart(MiniEngine::AnimNotifyParam& _param)
 		m_pChar->SetIKAlpha(t, m_from);
 	
 	m_elapsedTime = 0.0f;
-
 	assert(GetDuration() > 1e-4f);
-	// assert(m_from != m_to);
 }
 
 void CharacterIKEnabler::OnEnd(MiniEngine::AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnEnd(_param);
 
-	/*for (const uint8_t& t : m_ikTypes)
+	for (const uint8_t& t : m_ikTypes)
 	{
 		m_pChar->SetIKAlpha(t, m_to);
-		MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
-	}*/
+		// MG_LOG_INFO("[CharacterIKEnabler::OnEnd] Set Last Value {}, {:.3f}", t, m_to);
+	}
 }
 
 void CharacterIKEnabler::Activate(float _dt, MiniEngine::AnimNotifyParam& _param)

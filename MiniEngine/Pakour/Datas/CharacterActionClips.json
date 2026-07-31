@@ -323,72 +323,33 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [
-                        0.1,
-                        0.9
-                    ],
+                    "time": [ 0.1, 0.9 ],
                     "bezierY": 0.5,
-                    "endOffset": [
-                        0,
-                        0,
-                        0.3
-                    ]
+                    "endOffset": [ 0, 0, 0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0,
-                        0.8
-                    ],
+                    "time": [ 0, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.15,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ -0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0,
-                        0.8
-                    ],
+                    "time": [ 0, 0.8 ],
                     "limb": "RightArm",
-                    "offset": [
-                        0.15,
-                        0.1,
-                        0
-                    ]
+                    "offset": [ 0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.1,
-                        0.4
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.1, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.7,
-                        0.8
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.7, 0.8 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
@@ -403,49 +364,18 @@
             "tags": [ "Wall_IdleToHang" ],
             "clip": 16,
             "rootMotion": { "apply": true, "z" : false },
-            "comment": "Wall Hanging 시작",
+            "comment": "Landing Idle -> Wall Hanging",
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.05,
+                    "time": 0.1,
                     "state": "Hanging"
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [ 0, 1 ],
+                    "time": [ 0, 0.8 ],
                     "properDistance": 0.5,
                     "lerpWeight": 0.85
-                },
-                {
-                    "class": "CharacterIKInvokerFixedPoint",
-                    "time": [ 0, 1 ],
-                    "limb": "LeftArm",
-                    "offset": [ -0.2, 1, -0.1 ]
-                },
-                {
-                    "class": "CharacterIKInvokerFixedPoint",
-                    "time": [ 0, 1 ],
-                    "limb": "RightArm",
-                    "offset": [ 0.2, 1, -0.1 ]
-                },
-                {
-                    "class": "CharacterIKInvokerFixedPoint",
-                    "time": [ 0, 1 ],
-                    "limb": "LeftLeg",
-                    "offset": [ -0.1, 0, -0.1 ]
-                },
-                {
-                    "class": "CharacterIKInvokerFixedPoint",
-                    "time": [ 0, 1 ],
-                    "limb": "RightLeg",
-                    "offset": [ 0.1, 0, -0.1 ]
-                },
-                {
-                    "class": "CharacterIKEnabler",
-                    "time": [ 0.3, 0.6 ],
-                    "fromTo": [ 0, 0 ],
-                    "limbs": [ "LeftArm", "RightArm", "LeftLeg", "RightLeg" ],
-                    "comment" : "wall hanging 중엔 계속 ik를 쓸 것이라 제거하지 않음"
                 }
             ]
         },
@@ -454,7 +384,7 @@
                 "Wall_HangToIdle"
             ],
             "clip": 17,
-            "comment": "Braced Hang Drop To Idle — 벽에서 내려옴 (종료)",
+            "comment": "Wall Hanging -> Landing Idle (Fall 내려오는 모션)",
             "rootMotion": {
                 "apply": false
             },
@@ -471,7 +401,7 @@
                 },
                 {
                     "class": "TransitionState",
-                    "time": 0.5,
+                    "time": 0.1,
                     "state": "Landing"
                 }
             ]
@@ -479,7 +409,7 @@
         {
             "tags": [ "Wall_HangToMantle" ],
             "clip": 28,
-            "comment": "A_Ledge_ClimbUp_Monkey_Mantle — 벽에서 올라감",
+            "comment": "Wall Hanging -> Landing Idle (Mantle 모션)",
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -504,92 +434,66 @@
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.1,
-                        0.8
-                    ],
+                    "time": [ 0.1, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [
-                        -0.15,
-                        0,
-                        0
-                    ]
+                    "offset": [ -0.15, 0, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [
-                        0.1,
-                        0.8
-                    ],
+                    "time": [ 0.1, 0.8 ],
                     "limb": "RightArm",
-                    "offset": [
-                        0.15,
-                        0,
-                        0
-                    ]
+                    "offset": [ 0.15, 0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.1,
-                        0.4
-                    ],
-                    "fromTo": [
-                        0,
-                        1
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.1, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [
-                        0.7,
-                        0.8
-                    ],
-                    "fromTo": [
-                        1,
-                        0
-                    ],
-                    "limbs": [
-                        "LeftArm",
-                        "RightArm"
-                    ]
+                    "time": [ 0.6, 0.8 ],
+                    "fromTo": [ 1.0, 0.0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
         {
-            "tags": [
-                "Wall_HangingMoveUp"
-            ],
-            "clip": 19
+            "tags": [ "Wall_HangingMoveUp" ],
+            "clip": 19,
+            "rootMotion":  {
+                "apply": true,
+                "z" : false
+            }
         },
         {
-            "tags": [
-                "Wall_HangingMoveDown"
-            ],
-            "clip": 20
+            "tags": [ "Wall_HangingMoveDown" ],
+            "clip": 20,
+            "rootMotion":  {
+                "apply": true,
+                "z" : false
+            }
         },
         {
-            "tags": [
-                "Wall_HangingMoveLeft"
-            ],
-            "clip": 21
+            "tags": [ "Wall_HangingMoveLeft" ],
+            "clip": 21,
+            "rootMotion":  {
+                "apply": true,
+                "z" : false
+            }
         },
         {
-            "tags": [
-                "Wall_HangingMoveRight"
-            ],
-            "clip": 22
+            "tags": [ "Wall_HangingMoveRight" ],
+            "clip": 22,
+            "rootMotion":  {
+                "apply": true,
+                "z" : false
+            }
         },
         {
-            "tags": [
-                "JumpFromWall"
-            ],
+            "tags": [ "JumpFromWall" ],
             "clip": 23,
-            "comment": "A_Ledge_Jump180_L — 매달린 상태에서 점프. Jump 로 전환이므로 InAir",
+            "comment": "Wall Hang -> In Air",
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -625,7 +529,7 @@
         {
             "tags": [ "Beam_IdleToStand" ],
             "clip": 30,
-            "comment": "A_Jump_One_L",
+            "comment": "Landing Idle -> Beam Stand",
             "rootMotion": {
                 "apply": false
             },
