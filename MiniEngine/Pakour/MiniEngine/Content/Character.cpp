@@ -467,8 +467,7 @@ LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
-	result.position = hitResult.m_pos - TF.Forward() * 0.05f;
-	result.position.y -= 0.03f;
+	result.position = hitResult.m_pos;
 	result.posAlpha = 1.0f;
 	
 	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);

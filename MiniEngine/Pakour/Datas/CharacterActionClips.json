@@ -540,26 +540,26 @@
             "tags": [ "Beam_IdleToHang" ],
             "clip": 31,
             "comment": "Landing Idle -> Beam Hanging",
-            "rootMotion": { "apply": true, "z": false },
+            "rootMotion": { "apply": true, "z" : false },
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.5,
+                    "time": 0.6,
                     "state": "BeamHanging"
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.01,
+                    "time": 0.00,
                     "enable": false
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.5,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.3 ],
+                    "time": [ 0, 0.5 ],
                     "endOffset": [ 0, -2, 0 ]
                 },
                 {
@@ -568,19 +568,19 @@
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0.15, 1.5 ],
+                    "time": [ 0.2, 1.5 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.2, 0, -0.1 ]
+                    "offset": [ -0.2, 0, 0.0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0.15, 1.5 ],
+                    "time": [ 0.2, 1.5 ],
                     "limb": "RightArm",
-                    "offset": [ 0.2, 0, -0.1 ]
+                    "offset": [ 0.2, 0, 0.0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.2, 0.3 ],
+                    "time": [ 0.2, 0.4 ],
                     "fromTo": [ 0, 1 ],
                     "limbs": [ "LeftArm", "RightArm" ],
                     "comment": "beam hanging 상태에서도 IK 를 쓸 것이라 Disable시키지 않음"
@@ -657,10 +657,7 @@
             "tags": [ "Beam_HangingMoveUp" ],
             "clip": 33,
             "comment": "Beam Hang -> Beam Stand",
-            "rootMotion": {
-                "apply": true,
-                "z": false
-            },
+            "rootMotion": { "apply": true, "y" : false },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -679,8 +676,9 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.7, 1.7 ],
-                    "endOffset": [ 0, -0.3, 0.15 ]
+                    "time": [ 0.5, 1.2 ],
+                    "midOffset": [ 0, 0.0, -0.4 ],
+                    "endOffset": [ 0, -0.95, -0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
@@ -696,7 +694,7 @@
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.2, 0.3 ],
+                    "time": [ 0.0, 0.2 ],
                     "fromTo": [ 0, 1 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 },
