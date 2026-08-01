@@ -81,7 +81,7 @@ namespace
 				{
 					std::shared_ptr<BezierCorrectRootMotion> pNotify = std::make_shared<BezierCorrectRootMotion>();
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
-					pNotify->SetBezierY(_data.BezierY);
+					pNotify->SetMidOffset(_data.MidOffset); // pNotify->SetBezierY(_data.BezierY);
 					pNotify->SetEndOffset(_data.EndOffset);
 					return pNotify;
 				} },

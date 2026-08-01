@@ -109,9 +109,9 @@ namespace
 		_out.ProperDistance = _data.value("properDistance", _out.ProperDistance);
 		_out.LerpWeight = _data.value("lerpWeight", _out.LerpWeight);
 		// _out.DeltaIntensity = _data.value("deltaIntensity", _out.DeltaIntensity);
-		_out.BezierY = _data.value("bezierY", _out.BezierY);
-
+		// _out.BezierY = _data.value("bezierY", _out.BezierY);
 		ReadVec3(_data, "offset", _out.Offset);
+		ReadVec3(_data, "midOffset", _out.MidOffset);
 		ReadVec3(_data, "endOffset", _out.EndOffset);
 		ReadVec3(_data, "rotateDeg", _out.RotateDeg);
 

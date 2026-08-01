@@ -83,13 +83,9 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.3f, 0.0f, 1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.3f, 0.0f, 1.0f);
 
-		// 관절 한계 (도). 굽힘각은 lower 관절 내각 — 0 = 완전히 접힘, 180 = 완전히 펴짐.
-		//  상한 165 : 완전 신전 특이점(dA/dDIST -> 무한)에서 작동점을 떼어놓는 안전망.
-		//             기존 사거리 상한이 이미 약 168.5도 라 실질 사거리 손실은 3mm 미만이다.
-		//  하한  25 : u 와 l 이 거의 같은 다리는 기본 하한 |u-l| 이 0 에 가까워,
-		//             타깃이 고관절 근처로 오면 다리가 완전히 접힌다. 그 구간을 막는다.
-		// 스윙 콘은 기본 180(끔) — 켜면 end 가 타깃에 의도적으로 미달하므로 리그별 튜닝이 필요하다.
-		//   예: desc.swingConeDeg[(uint8_t)ELimbType::LeftLeg] = 60.0f;
+		// 관절 한계 degree 
+		// 굽힘각은 lower 관절 내각 
+		// 0 = 완전히 접힘, 180 = 완전히 펴짐
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 			desc.maxBendDeg[i] = 165.0f;
 

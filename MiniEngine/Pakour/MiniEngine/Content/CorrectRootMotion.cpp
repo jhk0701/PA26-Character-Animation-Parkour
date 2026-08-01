@@ -109,17 +109,18 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	m_endPoint = OBS_INFO.m_obstacleHitPos;
 	m_endPoint.y = OBS_INFO.m_obstacleLedge;
 
-	Vector3 offset = Vector3(0.0f);
-	offset += TF.Right() * m_endOffset.x;
-	offset += TF.Up() * m_endOffset.y;
-	offset += TF.Forward() * m_endOffset.z;
-	m_endPoint += offset;
-
+	Vector3 endOffset(0.0f);
+	endOffset += TF.Right() * m_endOffset.x;
+	endOffset += TF.Up() * m_endOffset.y;
+	endOffset += TF.Forward() * m_endOffset.z;
+	m_endPoint += endOffset;
 	m_midPoint = Vector3::Lerp(m_startPoint, m_endPoint, 0.5f);
 	
-	Vector3 midOffset = ;
-	m_midPoint.y += m_bezierY;
-
+	Vector3 midOffset(0.0f);
+	midOffset += TF.Right() * m_midOffset.x;
+	midOffset += TF.Up() * m_midOffset.y;
+	midOffset += TF.Forward() * m_midOffset.z;
+	m_midOffset += midOffset;
 	//MG_LOG_INFO("[Bezier Correction]\nStart P ({:.2f}, {:.2f}, {:.2f})\nMid P ({:.2f}, {:.2f}, {:.2f})\nEnd P ({:.2f}, {:.2f}, {:.2f})",
 	//	m_startPoint.x, m_startPoint.y, m_startPoint.z,
 	//	m_midPoint.x, m_midPoint.y, m_midPoint.z,

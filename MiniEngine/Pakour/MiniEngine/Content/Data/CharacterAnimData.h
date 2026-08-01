@@ -23,12 +23,11 @@ struct AnimNotifyData
 	float LerpWeight{ 0.5f };
 	uint8_t CorrectAxis{ 0 };		// ECorrectAxis
 
-	float BezierY{ 0.0f };			// BezierCorrectRootMotion
-
 	float AlphaFrom{ 0.0f };		// CharacterIKEnabler
 	float AlphaTo{ 1.0f };
 
 	MiniEngine::Vector3 Offset{ 0.0f, 0.0f, 0.0f };		// IK 노티파이
+	MiniEngine::Vector3 MidOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion
 	MiniEngine::Vector3 EndOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion
 	MiniEngine::Vector3 RotateDeg{ 0.0f, 0.0f, 0.0f };	// CorrectFixedRotation
 };
