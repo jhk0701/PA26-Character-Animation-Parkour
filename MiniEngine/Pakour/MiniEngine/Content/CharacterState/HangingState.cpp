@@ -56,8 +56,6 @@ void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInf
 }
 
 // 위에서 ledge 를 찾음 -> 올라간다.
-// 상태 전환은 여기서 하지 않는다 — 클립에 붙은 TransitionState 노티파이가 Landing 으로 보낸다.
-// 여기서 같이 전환하면 모션이 시작되기도 전에 쿼리 루트가 Hanging 에서 빠져나간다
 void HangingState::OnPerceiveUp(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -83,28 +81,7 @@ void HangingState::OnPerceiveDown(const Character::PerceptedObstacleInfo& _info)
 void HangingState::OnPerceiveSide(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	uint8_t detailTag = 0;
-	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, detailTag) == false)
-		detailTag = (uint8_t)ETagEnvDetail::Default;
-
-	Character::EState nextState = Character::EState::Hanging;
-	switch ((ETagEnvDetail)detailTag)
-	{
-	case ETagEnvDetail::Beam:
-		nextState = Character::EState::BeamHanging; // 매달린 채로 봉으로 옮겨감
-		break;
-	case ETagEnvDetail::Protrude:
-		nextState = Character::EState::ProtrudeHanging;
-		break;
-	default:
-		// 같은 벽 계열 -> 상태 유지. 같은 상태로 Transition 하면 Refresh 가 불려
-		// AlignToNormal 로 새 벽면에 다시 정렬된다
-		break;
-	}
-
-	MG_LOG_INFO("[Hanging] Side obstacle found -> state {}", (uint8_t)nextState);
-	pChar->TransitionStateMachine((uint8_t)nextState);
+	DefaultProcessPerceptionResult(_info);
 }
 
 void HangingState::Refresh()

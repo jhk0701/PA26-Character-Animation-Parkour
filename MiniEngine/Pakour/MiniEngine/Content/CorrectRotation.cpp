@@ -20,7 +20,6 @@ namespace
 	}
 }
 
-
 void CorrectFixedRotation::OnStart(AnimNotifyParam& _param)
 {
 	AnimNotifyState::OnStart(_param);

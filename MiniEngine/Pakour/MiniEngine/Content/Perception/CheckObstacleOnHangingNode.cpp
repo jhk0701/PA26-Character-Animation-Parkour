@@ -2,6 +2,7 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
+#include "Core/DebugMarkers.h"
 
 #include "Physics/PhysicsWorld.h"
 
@@ -49,14 +50,19 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 {
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
-	RaycastParam param;
-	param.m_origin = pChar->GetRoot()->localTransform.position;
+	SpherecastParam param;
+	param.m_startPos = TF.position + Vector3(0.0f, 1.5f, -1.0f); // offset 패러미터화
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
-	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchDist;
+	param.m_radius = CONFIG.onHangingSearchRadius;
+	param.m_maxDistance = CONFIG.onHangingSearchDist;
+
+	MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
+	MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
 
 	RaycastResult result;
-	if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
+	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 		return false;
 
 	FillFromResult(_context, result);
