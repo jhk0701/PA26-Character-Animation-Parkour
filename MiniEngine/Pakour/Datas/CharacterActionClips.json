@@ -113,7 +113,7 @@
             "notifies": [
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.15,
+                    "time": 0.1,
                     "enable": false
                 },
                 {
@@ -125,8 +125,7 @@
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.2 ],
                     "properDistance": 1,
-                    "lerpWeight": 0.5,
-                    "deltaIntensity": 2
+                    "lerpWeight": 0.5
                 },
                 {
                     "class": "CharacterIKInvoker",
@@ -512,7 +511,7 @@
             "tags": [ "Beam_StandMoveDown" ],
             "clip": 42,
             "comment": "Beam Stand -> Beam Hanging",
-            "rootMotion": { "apply": true, "y": false, "z" : false, "yaw" : false },
+            "rootMotion": { "apply": true, "z" : false },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -531,8 +530,12 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.3, 0.7 ],
-                    "endOffset": [ 0, -2.2, -0.1 ]
+                    "time": [ 0.4, 0.6 ],
+                    "endOffset": [ 0, -1.0, -0.3 ]
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0.3, 0.7 ]
                 }
             ]
         },
@@ -657,7 +660,7 @@
             "tags": [ "Beam_HangingMoveUp" ],
             "clip": 33,
             "comment": "Beam Hang -> Beam Stand",
-            "rootMotion": { "apply": true, "y" : false },
+            "rootMotion": { "apply": true },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -676,9 +679,8 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.5, 1.2 ],
-                    "midOffset": [ 0, 0.0, -0.4 ],
-                    "endOffset": [ 0, -0.95, -0.3 ]
+                    "time": [ 0.6, 0.8 ],
+                    "endOffset": [ 0, -1, -0.25 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
@@ -695,13 +697,13 @@
                 {
                     "class": "CharacterIKEnabler",
                     "time": [ 0.0, 0.2 ],
-                    "fromTo": [ 0, 1 ],
+                    "fromTo": [ 0.0, 1.0 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.5, 0.6 ],
-                    "fromTo": [ 1, 0 ],
+                    "time": [ 0.7, 0.8 ],
+                    "fromTo": [ 1.0, 0.0 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]

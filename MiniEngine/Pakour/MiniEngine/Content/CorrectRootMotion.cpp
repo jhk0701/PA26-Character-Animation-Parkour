@@ -59,9 +59,6 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 
 	Vector3 properPoint = obsPos - dir * m_properDistance;
 
-	Vector3 lerped = Vector3::Lerp(charPos, properPoint, m_lerpWeight);
-	Vector3 correctMovementDt = lerped - charPos;
-
 	m_elapsedTime += _dt;
 	const float w = m_elapsedTime / GetDuration();
 	Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
