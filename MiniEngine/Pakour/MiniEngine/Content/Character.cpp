@@ -80,16 +80,16 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxPelvisDrop = 0.45f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.0f, -1.0f);
-		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-1.0f, 1.0f, 1.0f);
-		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(1.0f, 1.0f, 1.0f);
+		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.2f, 0.5f, 1.0f);
 
 		// 관절 한계 degree 
 		// 굽힘각은 lower 관절 내각 
 		// 0 = 완전히 접힘, 180 = 완전히 펴짐
-		desc.maxBendDeg[(uint8_t)ELimbType::LeftArm] = 170.0f;
-		desc.maxBendDeg[(uint8_t)ELimbType::RightArm] = 170.0f;
-		desc.maxBendDeg[(uint8_t)ELimbType::LeftLeg] = 160.0f;
-		desc.maxBendDeg[(uint8_t)ELimbType::RightLeg] = 160.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::LeftArm] = 165.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::RightArm] = 165.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::LeftLeg] = 165.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::RightLeg] = 165.0f;
 
 		desc.minBendDeg[(uint8_t)ELimbType::LeftArm] = 20.0f;
 		desc.minBendDeg[(uint8_t)ELimbType::RightArm] = 20.0f;

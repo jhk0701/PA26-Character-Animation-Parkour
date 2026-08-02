@@ -91,6 +91,16 @@
                     "comment": "A_Hanging_Idle"
                 }
             ]
+        },
+        {
+            "state": "ProtrudeHanging",
+            "samples": [
+                {
+                    "coord": [ 0, 0 ],
+                    "clip": 18,
+                    "comment": "A_Hanging_Idle"
+                }
+            ]
         }
     ],
     "actions": [
@@ -761,13 +771,13 @@
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.3,
+                    "time": 0.1,
                     "state": "ProtrudeHanging"
                 },
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0, 0.3 ],
-                    "endOffset": [ 0, -1, 0 ]
+                    "endOffset": [ 0, 0, 0 ]
                 }
             ]
         },

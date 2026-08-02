@@ -157,6 +157,8 @@ void PerceptionQueryData::Load(const json& _data)
 					node.Children.push_back(child.get<std::string>());
 			}
 
+			// TODO : 매개변수들은 따로 처리할 방법이 필요
+			// 현재는 우선 node에 멤버변수로 계속 포함시킴
 			node.HeightMultiplier = element.value("heightMultiplier", node.HeightMultiplier);
 			ReadVec3(element, "startOffset", node.StartOffset);
 

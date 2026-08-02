@@ -30,10 +30,7 @@ void ProtrudeState::Refresh()
 }
 
 void ProtrudeState::Tick(float _dt){}
-
-void ProtrudeState::LateTick(float _dt)
-{
-}
+void ProtrudeState::LateTick(float _dt){}
 
 void ProtrudeState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result)
 {

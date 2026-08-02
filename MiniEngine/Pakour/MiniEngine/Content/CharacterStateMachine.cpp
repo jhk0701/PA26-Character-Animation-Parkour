@@ -59,7 +59,7 @@ void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleIn
 	}
 
 	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info)
@@ -67,17 +67,20 @@ void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo&
 	// 확인한 대상이 Beam
 	// 높이 확인 필요
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 	
 	float charY = pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight();
 	uint8_t actTag = _info.m_obstacleLedge < charY ? (uint8_t)ETagAct::BeamStand : (uint8_t)ETagAct::BeamHanging;
 
 	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)
 {
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Protrude_IdleToHang))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void CharacterState::ProcessMovement(float _dt)

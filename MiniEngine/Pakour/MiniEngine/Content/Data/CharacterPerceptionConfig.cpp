@@ -21,6 +21,7 @@ void CharacterPerceptionConfig::Load(const json& _data)
 	Config.depthLift				= _data["depthLift"];
 	Config.minMantleDepth			= _data["minMantleDepth"];
 
-	Config.onHangingSearchDist		= _data["onHangingSearchDist"];
+	Config.onHangingSearchVDist		= _data["onHangingSearchVDist"];
+	Config.onHangingSearchHDist		= _data["onHangingSearchHDist"];
 	Config.onHangingSearchRadius	= _data["onHangingSearchRadius"];
 }

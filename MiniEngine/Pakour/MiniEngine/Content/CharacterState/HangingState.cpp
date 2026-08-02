@@ -76,7 +76,6 @@ void HangingState::OnPerceiveDown(const Character::PerceptedObstacleInfo& _info)
 // 좌우에서 새 장애물을 찾음 -> 종류에 맞는 상태로 전환
 void HangingState::OnPerceiveSide(const Character::PerceptedObstacleInfo& _info)
 {
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	DefaultProcessPerceptionResult(_info);
 }
 
@@ -119,7 +118,8 @@ void HangingState::ProcessMovement(float _dt)
 	else if (INPUT_DIR.x < 0)
 		eAct = ETagAct::Wall_HangingMoveLeft;
 
-	if (eAct != ETagAct::End && CheckEnableToMove(eAct) == false)
+	if (eAct != ETagAct::End && 
+		CheckEnableToMove(eAct) == false)
 		return;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
@@ -133,26 +133,29 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const float CHECK_DIST = pChar->GetPerceptionConfig().onHangingSearchDist;
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	RaycastParam param;
-	param.m_maxDistance = CHECK_DIST;
 	param.m_dir = TF.Forward();
 	param.m_origin = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
 
 	switch (_tag)
 	{
 	case Content::Config::ETagAct::Wall_HangingMoveUp:
-		param.m_origin += TF.Up() * CHECK_DIST;
+		param.m_maxDistance = CONFIG.onHangingSearchVDist;
+		param.m_origin += TF.Up();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveDown:
-		param.m_origin += TF.Up() * -CHECK_DIST;
+		param.m_maxDistance = CONFIG.onHangingSearchVDist;
+		param.m_origin += -TF.Up();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveLeft:
-		param.m_origin += TF.Right() * -CHECK_DIST;
+		param.m_maxDistance = CONFIG.onHangingSearchHDist;
+		param.m_origin += -TF.Right();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveRight:
-		param.m_origin += TF.Right() * CHECK_DIST;
+		param.m_maxDistance = CONFIG.onHangingSearchHDist;
+		param.m_origin += TF.Right();
 		break;
 	}
 

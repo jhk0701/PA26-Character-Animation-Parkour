@@ -109,7 +109,6 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 		uint8_t actTag = 0;
 		if (_info.m_obstacleLedge <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
 		{
-			pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 			actTag = (uint8_t)ETagAct::Beam_StandToIdle;
 
 			if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))
@@ -120,6 +119,7 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 			DefaultProcessPerceptionResult(_info);
 		}
 
+		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 		return;
 	}
 
@@ -261,23 +261,16 @@ void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacl
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t t = 0;
-	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t))
+	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t) || 
+		t != (uint8_t)ETagEnvDetail::Default)
 	{
 		DefaultProcessPerceptionResult(_info);
 		return;
 	}
 
-	if (t == (uint8_t)ETagEnvDetail::Default)
-	{
-		// BeamHanging -> Landing
-		if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_HangToIdle))
-			pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
-
-		return;
-	}
-
-	// BeamHanging -> BeamHanging
-	DefaultProcessPerceptionResult(_info);
+	// BeamHanging -> Landing
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_HangToIdle))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
 }
 
 void BeamHangingState::AlignByAxis()
