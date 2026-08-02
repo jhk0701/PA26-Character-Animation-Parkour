@@ -138,6 +138,26 @@
       "class": "CheckOnHangingMoveUpNode",
       "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
       "children": [
+        "OnHangingUp_AnotherObstacleLedge",
+        "OnHangingUp_CurrentObstacleLedge"
+      ]
+    },
+    {
+      "id": "OnHangingUp_AnotherObstacleLedge",
+      "class": "CheckOnHangingUpwardLedgeNode",
+      "startOffset": [ 0.0, 0.0, -0.5 ],
+      "comment": "위를 가로막은 장애물의 Ledge 찾기",
+      "children": [
+        "Return",
+        "Empty"
+      ]
+    },
+    {
+      "id": "OnHangingUp_CurrentObstacleLedge",
+      "class": "CheckOnHangingUpwardLedgeNode",
+      "startOffset": [ 0.0, 0.0, 0.3 ],
+      "comment": "현재 벽면의 Ledge 찾기",
+      "children": [
         "Return",
         "Empty"
       ]
@@ -145,7 +165,6 @@
     {
       "id": "OnHangingDown",
       "class": "CheckOnHangingMoveDownNode",
-      "comment": "아래 : 내려설 지면. 지면(Ground)도 Obstacle 액터라 IObstacle 포인터가 유효하다",
       "children": [
         "Return",
         "Empty"
@@ -154,7 +173,6 @@
     {
       "id": "OnHangingSide",
       "class": "CheckOnHangingMoveSideNode",
-      "comment": "좌우 : 옮겨갈 새 장애물 탐색. 종류 판단과 상태 전환은 HangingState 담당",
       "children": [
         "Return",
         "Empty"

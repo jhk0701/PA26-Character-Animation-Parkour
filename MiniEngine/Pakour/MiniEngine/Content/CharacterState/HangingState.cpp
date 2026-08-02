@@ -133,28 +133,24 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	RaycastParam param;
+	param.m_maxDistance = pChar->GetCapsuleRadius() * 2.0f;
 	param.m_dir = TF.Forward();
 	param.m_origin = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
 
 	switch (_tag)
 	{
 	case Content::Config::ETagAct::Wall_HangingMoveUp:
-		param.m_maxDistance = CONFIG.onHangingSearchVDist;
 		param.m_origin += TF.Up();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveDown:
-		param.m_maxDistance = CONFIG.onHangingSearchVDist;
 		param.m_origin += -TF.Up();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveLeft:
-		param.m_maxDistance = CONFIG.onHangingSearchHDist;
 		param.m_origin += -TF.Right();
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveRight:
-		param.m_maxDistance = CONFIG.onHangingSearchHDist;
 		param.m_origin += TF.Right();
 		break;
 	}

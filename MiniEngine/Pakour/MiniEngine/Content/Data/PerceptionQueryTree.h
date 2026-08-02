@@ -52,7 +52,6 @@ struct PerceptionConfig
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
 };
 
-
 class PerceptionQueryData : public MiniEngine::DataAsset
 {
 public:

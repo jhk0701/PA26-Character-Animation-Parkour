@@ -86,6 +86,16 @@ namespace
 					},
 					CONDITION_CHILDREN
 				} },
+			{ "CheckOnHangingUpwardLedgeNode",	
+				{ 
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckOnHangingUpwardLedgeNode> pNode = std::make_shared<CheckOnHangingUpwardLedgeNode>();
+						pNode->SetStartOffset(_node.StartOffset);
+						return pNode;
+					}, 
+					CONDITION_CHILDREN 
+				} },
 			{ "TransitionCharacterFSMNode",
 				{
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
