@@ -562,7 +562,7 @@
             "tags": [ "Beam_IdleToHang" ],
             "clip": 31,
             "comment": "Landing Idle -> Beam Hanging",
-            "rootMotion": { "apply": true, "z" : false },
+            "rootMotion": { "apply": true, "y" : false },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -581,8 +581,13 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.0, 0.66 ],
-                    "endOffset": [ 0, -2.0, 0 ] 
+                    "time": [ 0.0, 0.3 ],
+                    "endOffset": [ 0, -2.1, 0.3 ] 
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.6, 0.7 ],
+                    "endOffset": [ 0, -2.1, 0.3 ] 
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
@@ -592,13 +597,13 @@
                     "class": "CharacterIKInvoker",
                     "time": [ 0.2, 1.5 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.2, 0, -0.2 ]
+                    "offset": [ -0.2, 0, -0.0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0.2, 1.5 ],
                     "limb": "RightArm",
-                    "offset": [ 0.2, 0, -0.2 ]
+                    "offset": [ 0.2, 0, -0.0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",

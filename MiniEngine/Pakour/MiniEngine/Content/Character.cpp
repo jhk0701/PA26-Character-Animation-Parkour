@@ -80,19 +80,21 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxPelvisDrop = 0.45f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.0f, -1.0f);
-		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.3f, 0.0f, 1.0f);
-		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.3f, 0.0f, 1.0f);
+		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-1.0f, 1.0f, 1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(1.0f, 1.0f, 1.0f);
 
 		// 관절 한계 degree 
 		// 굽힘각은 lower 관절 내각 
 		// 0 = 완전히 접힘, 180 = 완전히 펴짐
-		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
-			desc.maxBendDeg[i] = 165.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::LeftArm] = 170.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::RightArm] = 170.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::LeftLeg] = 160.0f;
+		desc.maxBendDeg[(uint8_t)ELimbType::RightLeg] = 160.0f;
 
-		desc.minBendDeg[(uint8_t)ELimbType::LeftLeg] = 25.0f;
-		desc.minBendDeg[(uint8_t)ELimbType::RightLeg] = 25.0f;
 		desc.minBendDeg[(uint8_t)ELimbType::LeftArm] = 20.0f;
 		desc.minBendDeg[(uint8_t)ELimbType::RightArm] = 20.0f;
+		desc.minBendDeg[(uint8_t)ELimbType::LeftLeg] = 25.0f;
+		desc.minBendDeg[(uint8_t)ELimbType::RightLeg] = 25.0f;
 
 		pLimbIK->Init(skinComp, desc);
 		m_limbIKComp = pLimbIK;
@@ -395,9 +397,8 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);		
-	result.position = hitResult.m_pos + -TF.Forward() * 0.1f;
-	result.position.y -= 0.1f;
-	// result.posAlpha = 1.0f;
+	result.position = hitResult.m_pos;
+	result.posAlpha = 1.0f;
 
 	if (_ik < (uint8_t)ELimbType::LeftLeg)
 		return result;
