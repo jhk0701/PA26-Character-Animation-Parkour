@@ -16,10 +16,13 @@ bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	SpherecastParam param;
-	param.m_startPos = GetCharacterCenterPosition(_context);
+	param.m_startPos = GetCharacterCenterPosition(_context) + pChar->GetRoot()->localTransform.Forward() * 0.3f;
 	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
 	param.m_radius = CONFIG.onHangingSearchRadius;
 	param.m_maxDistance = CONFIG.onHangingSearchDist;
+
+	MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
+	MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)) == false)

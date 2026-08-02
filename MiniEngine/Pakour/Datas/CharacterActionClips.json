@@ -511,7 +511,7 @@
             "tags": [ "Beam_StandMoveDown" ],
             "clip": 42,
             "comment": "Beam Stand -> Beam Hanging",
-            "rootMotion": { "apply": true, "z" : false },
+            "rootMotion": { "apply": true },
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -525,17 +525,36 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 1.2,
+                    "time": 2.3,
                     "enable": true
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.4, 0.6 ],
-                    "endOffset": [ 0, -1.0, -0.25 ]
+                    "time": [ 0.3, 0.6 ],
+                    "endOffset": [ 0, -1.0, -0.85 ]
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
-                    "time": [ 0.3, 0.7 ]
+                    "time": [ 0.4, 0.6 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.5, 2.3 ],
+                    "limb": "LeftArm",
+                    "offset": [ -0.15, 0, 0 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.5, 2.3 ],
+                    "limb": "RightArm",
+                    "offset": [ 0.15, 0, 0 ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.6, 0.7 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ],
+                    "comment": "Hanging 상태이므로 ik는 유지"
                 }
             ]
         },
@@ -557,13 +576,13 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.8,
+                    "time": 1.0,
                     "enable": true
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.5 ],
-                    "endOffset": [ 0, -2, 0 ]
+                    "time": [ 0.0, 0.66 ],
+                    "endOffset": [ 0, -2.0, 0 ] 
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
@@ -573,13 +592,13 @@
                     "class": "CharacterIKInvoker",
                     "time": [ 0.2, 1.5 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.2, 0, 0.0 ]
+                    "offset": [ -0.2, 0, -0.2 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0.2, 1.5 ],
                     "limb": "RightArm",
-                    "offset": [ 0.2, 0, 0.0 ]
+                    "offset": [ 0.2, 0, -0.2 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
@@ -680,19 +699,25 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.6, 0.8 ],
-                    "endOffset": [ 0, -1, -0.25 ]
+                    "endOffset": [ 0, -1, -0.2 ]
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 1.2, 1.7 ],
+                    "midOffset": [ 0, 1.2, 0.0 ],
+                    "endOffset": [ 0, -0.2, 0.0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0.15, 1.5 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.2, 0, -0.1 ]
+                    "offset": [ -0.2, 0, 0.0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0.15, 1.5 ],
                     "limb": "RightArm",
-                    "offset": [ 0.2, 0, -0.1 ]
+                    "offset": [ 0.2, 0, 0.0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
