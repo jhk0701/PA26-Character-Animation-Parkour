@@ -123,8 +123,8 @@ namespace PerceptionNodeUtil
 
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			
-			// MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
-			// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)

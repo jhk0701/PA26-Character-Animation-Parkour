@@ -38,10 +38,12 @@ void LandingState::CheckState()
 	if (pChar->IsFalling() == false)
 		return;
 
+	MG_LOG_INFO("[CharacterState::CheckState] 낙하 처리");
+
 	// 떨어지는 중
 	pChar->SetState(Character::EState::InAir);
 	const uint8_t STATE = (uint8_t)pChar->GetState();
-	
+
 	// 각각의 State에서 OnStart 시, 실행해 줄 것
 	// pChar->TranstionBaseTrack(STATE, 0.25f);
 	GetMachine()->Transition(STATE);

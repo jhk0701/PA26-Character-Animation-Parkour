@@ -1,8 +1,5 @@
 #pragma once
 
-// spdlog 래퍼. Debug/Editor에서만 활성, Release(MG_RELEASE)에서는 완전 no-op.
-// 사용: MG_LOG_INFO("dt = {:.3f} ms", dtMs);  등 spdlog 포맷({}) 그대로.
-
 #if !defined(MG_RELEASE)
 
 #include <memory>
