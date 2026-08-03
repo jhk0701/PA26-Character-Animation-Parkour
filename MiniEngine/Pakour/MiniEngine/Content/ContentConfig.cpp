@@ -23,14 +23,17 @@ namespace Content::Config
 			{ "Vault",						ETagAct::Vault },
 			{ "VaultMid",					ETagAct::VaultMid },
 			{ "VaultHigh",					ETagAct::VaultHigh },
+			{ "VaultAirToAttach",			ETagAct::VaultAirToAttach },
 
 			{ "MantleLow",					ETagAct::MantleLow },
 			{ "Mantle",						ETagAct::Mantle },
 			{ "MantleMid",					ETagAct::MantleMid },
 			{ "MantleHigh",					ETagAct::MantleHigh },
+			{ "MantleAirToAttach",			ETagAct::MantleAirToAttach },
 
 			{ "Wall_IdleToHang",			ETagAct::Wall_IdleToHang },
 			{ "Wall",						ETagAct::Wall },
+			{ "Wall_AirToHang",				ETagAct::Wall_AirToHang },
 			{ "Wall_HangToIdle",			ETagAct::Wall_HangToIdle },
 			{ "Wall_HangToMantle",			ETagAct::Wall_HangToMantle },
 			{ "Wall_HangToJump",			ETagAct::Wall_HangToJump },

@@ -10,4 +10,7 @@ public:
 	void LateTick(float _dt) override;
 	void CheckState() override;
 	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
+
+private:
+	void ProcessAirToDefault(const Character::PerceptedObstacleInfo& _info);
 };

@@ -136,6 +136,7 @@ void Character::Construct(const Vector3& _initPosition)
 	}
 	
 	pRoot->localTransform.position = _initPosition;
+	MG_LOG_INFO("[Character::Construct] Init Pos : ({:.2f}, {:.2f}, {:.2f})", _initPosition.x, _initPosition.y, _initPosition.z);
 
 	PostConstruct();
 }

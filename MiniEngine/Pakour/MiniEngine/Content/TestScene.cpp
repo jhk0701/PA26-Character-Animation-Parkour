@@ -70,7 +70,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pos = Vector3(-8.0f, 1.75f, 3.0f);
 		desc.scale = Vector3(3.5f);
 		ObstacleFactory::Create(pScene, desc);
-
 		desc.pos = Vector3(-13.0f, 2.5f, 3.0f);
 		desc.scale = Vector3(5.0f);
 		ObstacleFactory::Create(pScene, desc);
@@ -91,24 +90,32 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		// celing 
-		desc.pos = Vector3(-7.5f, 0.5f, -5.0f);
+		desc.pos = Vector3(-5.0f, 0.5f, -5.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = Vector3(-7.5f, 4.0f, -6.25f);
+		desc.pos = Vector3(-5.0f, 4.0f, -6.25f);
+		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-10.0f, 0.5f, -5.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(-10.0f, 3.0f, -6.25f);
 		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
 		ObstacleFactory::Create(pScene, desc);
 
 		// 좁은 창틀형
-		desc.pos = Vector3(-15.0f, 0.5f, -5.0f);
+		desc.pos = Vector3(-15.0f, 0.5f, -10.0f);
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = Vector3(-16.5f, 1.8f, -5.0f);
+		desc.pos = Vector3(-16.5f, 1.8f, -10.0f);
 		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 		
-		desc.pos = Vector3(-14.0f, 1.8f, -5.0f);
+		desc.pos = Vector3(-14.0f, 1.8f, -10.0f);
 		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
@@ -282,7 +289,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
-		pChar->Construct(Vector3(0.0f, 1.0f, 0.0f));
+		pChar->Construct(Vector3(0.0f, 2.0f, 0.0f));
 
 		std::shared_ptr<CharacterController> pCont = SpawnActor<CharacterController>();
 		pCont->SetName("CharacterController");

@@ -202,12 +202,59 @@
                     "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
+        },{
+            "tags": [ "VaultAirToAttach" ],
+            "clip": 13,
+            "notifies":  [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Landing"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.01,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 1,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.1, 0.9 ],
+                    "midOffset" : [ 0, 0.3, 0 ],
+                    "endOffset": [ 0, 0, 0.5 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 0.8 ],
+                    "limb": "LeftArm",
+                    "offset": [ -0.15, 0.1, 0 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 0.8 ],
+                    "limb": "RightArm",
+                    "offset": [ 0.15, 0.1, 0 ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.1, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.7, 0.8 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
+                }
+            ]
         },
         {
-            "tags": [
-                "MantleLow",
-                "MantleMid"
-            ],
+            "tags": [ "MantleLow", "MantleMid" ],
             "clip": 14,
             "notifies": [
                 {
@@ -292,6 +339,50 @@
             ]
         },
         {
+            "tags": [ "MantleAirToAttach" ],
+            "clip": 14,
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Landing"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.6,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0, 0.6 ],
+                    "endOffset": [ 0, 0, 0.3 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.2, 0.5 ],
+                    "limb": "LeftArm",
+                    "offset": [ -0.25, 0, 0 ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.2, 0.3 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm" ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.4, 0.5 ],
+                    "fromTo": [ 1, 0 ],
+                    "limbs": [ "LeftArm" ]
+                }
+            ]
+        },
+        {
             "tags": [
                 "FallingToLand"
             ],
@@ -318,9 +409,26 @@
             ]
         },
         {
-            "tags": [
-                "Wall_HangToIdle"
-            ],
+            "tags": [ "Wall_AirToHang" ],
+            "clip": 43,
+            "rootMotion": { "apply": true, "z" : false },
+            "comment": "In Air -> Wall Hanging",
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Hanging"
+                },
+                {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.8 ],
+                    "properDistance": 0.5,
+                    "lerpWeight": 0.85
+                }
+            ]
+        },
+        {
+            "tags": [ "Wall_HangToIdle" ],
             "clip": 17,
             "comment": "Wall Hanging -> Landing Idle (Fall 내려오는 모션)",
             "rootMotion": { "apply": false },

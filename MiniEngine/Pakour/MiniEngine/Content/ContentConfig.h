@@ -44,15 +44,18 @@ namespace Content::Config
 		VaultLow = Vault, // 뛰어 넘기
 		VaultMid,
 		VaultHigh,
+		VaultAirToAttach, // 공중에서 잡는 경우
 
 		Mantle, // 높은 장애물, 기어 올라가야하는 경우
 		MantleLow = Mantle, // 오르기
 		MantleMid,
 		MantleHigh,
+		MantleAirToAttach, // 공중에서 잡는 경우
 
 		// Wall		벽면 매달리기
 		Wall,
 		Wall_IdleToHang = Wall,		// 매달리기 시작
+		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우
 		Wall_HangToIdle,		// 매달리기에서 내려옴
 		Wall_HangToMantle,	// 매달린 상태에서 꼭대기에 오름
 		Wall_HangToJump,		// 매달린 상태에서 점프
