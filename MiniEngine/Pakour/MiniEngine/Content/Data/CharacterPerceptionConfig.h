@@ -28,6 +28,9 @@ struct PerceptionConfig
 	float onHangingSearchVDist = 1.5f;	// 상하좌우 공통 탐지 거리
 	float onHangingSearchHDist = 1.5f;	// 상하좌우 공통 탐지 거리
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
+
+	// Landing 상태에서 실제로 떨어지는지 최종 확인용
+	float onLandingFallingCheckDist = 0.2f;
 };
 
 class CharacterPerceptionConfig : public MiniEngine::DataAsset

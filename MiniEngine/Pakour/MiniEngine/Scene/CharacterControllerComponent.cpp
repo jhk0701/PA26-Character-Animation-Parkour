@@ -15,6 +15,14 @@ namespace MiniEngine
 			MG_LOG_WARN("[CharacterControllerComponent] target에 부모가 있음");
 	}
 
+	void CharacterControllerComponent::FixedTick(float _dt)
+	{
+		Component::FixedTick(_dt);
+
+		// 물리엔진 업데이트 시, 떨어지는 확인
+		CheckFalling(_dt);
+	}
+
 	void CharacterControllerComponent::LateTick(float _dt)
 	{
 		Component::LateTick(_dt);
@@ -22,9 +30,6 @@ namespace MiniEngine
 		// Tick에서 루트모션 연산이 끝나고 호출할 수 있도록 LateUpdated에서 적용
 		Move(_dt);
 		SyncTransform();
-
-		// 움직이고 나서 떨어지는 확인
-		CheckFalling(_dt);
 	}
 
 	void CharacterControllerComponent::Init(Physics::PhysicsWorld& _world,
@@ -134,7 +139,6 @@ namespace MiniEngine
 			physx::PxVec3(disp.x, disp.y, disp.z), 0.001f, _dt, filters);
 
 		m_grounded = flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
-		
 		if (m_grounded && m_verticalVelocity < 0.0f)
 			m_verticalVelocity = 0.0f; // 착지한 경우, vertical velocity 초기화
 

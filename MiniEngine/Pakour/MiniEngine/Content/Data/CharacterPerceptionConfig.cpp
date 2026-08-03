@@ -24,4 +24,6 @@ void CharacterPerceptionConfig::Load(const json& _data)
 	Config.onHangingSearchVDist		= _data["onHangingSearchVDist"];
 	Config.onHangingSearchHDist		= _data["onHangingSearchHDist"];
 	Config.onHangingSearchRadius	= _data["onHangingSearchRadius"];
+
+	Config.onLandingFallingCheckDist = _data["onLandingFallingCheckDist"];
 }

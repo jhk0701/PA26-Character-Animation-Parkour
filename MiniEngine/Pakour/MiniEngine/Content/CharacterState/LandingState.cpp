@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Content/CharacterState/LandingState.h"
+#include "Scene/Scene.h"
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
 
 void LandingState::OnStart() 
 {
@@ -38,6 +40,10 @@ void LandingState::CheckState()
 	if (pChar->IsFalling() == false)
 		return;
 
+	// 떨어지기 전 최종으로 아래에 장애물은 없는지 확인
+	if (IsOnFloor())
+		return;
+
 	MG_LOG_INFO("[CharacterState::CheckState] 낙하 처리");
 
 	// 떨어지는 중
@@ -52,4 +58,18 @@ void LandingState::CheckState()
 void LandingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
 {
 	DefaultProcessPerceptionResult(_info);
+}
+
+bool LandingState::IsOnFloor()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	std::shared_ptr<MiniEngine::Physics::PhysicsWorld> pPhysic = pChar->GetScene()->GetPhysics().lock();
+	
+	MiniEngine::Physics::RaycastParam param;
+	param.m_origin = pChar->GetRoot()->localTransform.position;
+	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+	param.m_maxDistance = pChar->GetPerceptionConfig().onLandingFallingCheckDist;
+
+	MiniEngine::Physics::RaycastResult result;
+	return pPhysic->Raycast(param, result, MiniEngine::Physics::Layer::Ground | MiniEngine::Physics::Layer::Obstacle);
 }

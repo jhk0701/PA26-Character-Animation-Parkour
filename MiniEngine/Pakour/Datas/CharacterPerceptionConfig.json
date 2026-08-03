@@ -3,7 +3,7 @@
     "maxObstacleDetectDist": 2.5,
 
     "thresholdWallHeight": 3.0,
-    "thresholdHighObstacle": 1.75,
+    "thresholdHighObstacle": 1.5,
     "thresholdLowObstacle": 1.0,
     "minMantleDepth": 1.0,
     
@@ -19,5 +19,7 @@
 
     "onHangingSearchVDist": 1.5,
     "onHangingSearchHDist": 1.0,
-    "onHangingSearchRadius": 0.2
+    "onHangingSearchRadius": 0.2,
+
+    "onLandingFallingCheckDist": 0.2
 }
