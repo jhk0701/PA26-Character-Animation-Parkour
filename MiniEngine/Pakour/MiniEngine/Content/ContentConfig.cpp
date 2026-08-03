@@ -36,6 +36,7 @@ namespace Content::Config
 			{ "Wall_AirToHang",				ETagAct::Wall_AirToHang },
 			{ "Wall_HangToIdle",			ETagAct::Wall_HangToIdle },
 			{ "Wall_HangToMantle",			ETagAct::Wall_HangToMantle },
+			{ "Wall_HangToMantleOnObs",		ETagAct::Wall_HangToMantleOnObs },
 			{ "Wall_HangToJump",			ETagAct::Wall_HangToJump },
 
 			{ "Wall_HangingMoveUp",			ETagAct::Wall_HangingMoveUp },

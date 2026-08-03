@@ -55,10 +55,23 @@ void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInf
 void HangingState::OnPerceiveUp(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	const Transform& TF = pChar->GetRoot()->localTransform;
 
-	MG_LOG_INFO("[Hanging] Ledge found above -> mantle (ledge : {})", _info.m_obstacleLedge);
+	Vector3 point = _info.m_obstacleHitPos;
+	point.y = 0.0f;
+	Vector3 charPos = TF.position;
+	charPos.y = 0.0f;
 
-	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Wall_HangToMantle))
+	Vector3 dir = point - charPos;
+	dir.Normalize();
+	Vector3 charFwd = TF.Forward();
+	
+	const float DOT = dir.Dot(charFwd);
+	uint8_t act = (uint8_t)(DOT > 0.0f ? ETagAct::Wall_HangToMantle : ETagAct::Wall_HangToMantleOnObs);
+	
+	MG_LOG_INFO("[HangingState::OnPerceiveUp] Dot : {:.2f}, Act : {}", DOT, act == (uint8_t)ETagAct::Wall_HangToMantle ? "Hang To Mantle" : "Hang To Mantle Obs");
+
+	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions(act))
 		pChar->PlayActionClip(pAct, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
@@ -67,8 +80,7 @@ void HangingState::OnPerceiveDown(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
-	MG_LOG_INFO("[Hanging] Ground found below -> drop (ledge : {})", _info.m_obstacleLedge);
-
+	// MG_LOG_INFO("[Hanging] Ground found below -> drop (ledge : {})", _info.m_obstacleLedge);
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Wall_HangToIdle))
 		pChar->PlayActionClip(pAct, 0.2f, (uint8_t)EActionPriority::Override);
 }
@@ -82,7 +94,6 @@ void HangingState::OnPerceiveSide(const Character::PerceptedObstacleInfo& _info)
 void HangingState::Refresh()
 {
 	CharacterState::Refresh();
-
 	AlignToNormal();
 }
 

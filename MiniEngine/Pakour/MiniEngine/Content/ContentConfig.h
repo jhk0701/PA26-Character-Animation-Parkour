@@ -57,7 +57,8 @@ namespace Content::Config
 		Wall_IdleToHang = Wall,		// 매달리기 시작
 		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우
 		Wall_HangToIdle,		// 매달리기에서 내려옴
-		Wall_HangToMantle,	// 매달린 상태에서 꼭대기에 오름
+		Wall_HangToMantle,		// 매달린 상태에서 꼭대기에 오름
+		Wall_HangToMantleOnObs, // 매달린 상태에서 중간에 있는 장애물에 오름
 		Wall_HangToJump,		// 매달린 상태에서 점프
 
 		Wall_HangingMoveUp,

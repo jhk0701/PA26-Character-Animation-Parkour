@@ -78,6 +78,6 @@ void InAirState::ProcessAirToDefault(const Character::PerceptedObstacleInfo& _in
 			act = (uint8_t)(_info.m_obstacleDepth >= CONFIG.minMantleDepth ? ETagAct::MantleAirToAttach : ETagAct::VaultAirToAttach);
 
 		if(std::shared_ptr<ActionClip> pAction = pChar->GetActions(act))
-			pChar->PlayActionClip(pAction, 0.2, (uint8_t)EActionPriority::Override);
+			pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 	}
 }
