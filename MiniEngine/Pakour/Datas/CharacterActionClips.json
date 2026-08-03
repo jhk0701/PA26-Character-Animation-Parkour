@@ -91,16 +91,6 @@
                     "comment": "A_Hanging_Idle"
                 }
             ]
-        },
-        {
-            "state": "ProtrudeHanging",
-            "samples": [
-                {
-                    "coord": [ 0, 0 ],
-                    "clip": 18,
-                    "comment": "A_Hanging_Idle"
-                }
-            ]
         }
     ],
     "actions": [
@@ -920,79 +910,6 @@
                     "class": "TransitionState",
                     "time": 0.2,
                     "state": "InAir"
-                }
-            ]
-        },
-        {
-            "tags": [
-                "Protrude_IdleToHang"
-            ],
-            "clip": 16,
-            "comment": "추후 클립 교체",
-            "notifies": [
-                {
-                    "class": "TransitionState",
-                    "time": 0.1,
-                    "state": "ProtrudeHanging"
-                },
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.3 ],
-                    "endOffset": [ 0, 0, 0 ]
-                }
-            ]
-        },
-        {
-            "tags": [
-                "Protrude_JumpUp"
-            ],
-            "clip": 19,
-            "comment": "추후 클립 교체",
-            "notifies": [
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.6 ],
-                    "endOffset": [ 0, -1, 0 ]
-                }
-            ]
-        },
-        {
-            "tags": [
-                "Protrude_JumpDown"
-            ],
-            "clip": 20,
-            "comment": "추후 클립 교체",
-            "notifies": [
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.6 ],
-                    "endOffset": [ 0, -1, 0 ]
-                }
-            ]
-        },
-        {
-            "tags": [ "Protrude_JumpLeft" ],
-            "clip": 21,
-            "comment": "추후 클립 교체",
-            "notifies": [
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.6 ],
-                    "endOffset": [ 0, -1, 0 ]
-                }
-            ]
-        },
-        {
-            "tags": [
-                "Protrude_JumpRight"
-            ],
-            "clip": 22,
-            "comment": "추후 클립 교체",
-            "notifies": [
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.6 ],
-                    "endOffset": [ 0, -1, 0 ]
                 }
             ]
         }

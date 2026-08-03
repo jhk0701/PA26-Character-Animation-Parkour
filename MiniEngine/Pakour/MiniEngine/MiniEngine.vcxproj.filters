@@ -337,9 +337,6 @@
     <ClInclude Include="Content\CorrectRotation.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\CharacterState\ProtrudeState.h">
-      <Filter>Content\03.Object\Component\CharacterState</Filter>
-    </ClInclude>
     <ClInclude Include="Core\DebugMarkers.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
@@ -593,9 +590,6 @@
     </ClCompile>
     <ClCompile Include="Content\CorrectRotation.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\CharacterState\ProtrudeState.cpp">
-      <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
     <ClCompile Include="Core\DebugMarkers.cpp">
       <Filter>Engine\02.Core</Filter>

@@ -27,7 +27,6 @@
 #include "Content/CharacterState/InAirState.h"
 #include "Content/CharacterState/HangingState.h"
 #include "Content/CharacterState/BeamState.h"
-#include "Content/CharacterState/ProtrudeState.h"
 
 using namespace Content::Config;
 
@@ -40,7 +39,6 @@ namespace
 		"Hanging",
 		"BeamStand",
 		"BeamHanging",
-		"ProtrudeHanging",
 	};
 
 	// 누락 체크용 매크로
@@ -128,8 +126,7 @@ void Character::Construct(const Vector3& _initPosition)
 				std::make_shared<InAirState>(),
 				std::make_shared<HangingState>(),
 				std::make_shared<BeamStandState>(),
-				std::make_shared<BeamHangingState>(),
-				std::make_shared<ProtrudeState>()
+				std::make_shared<BeamHangingState>()
 			});
 		m_charFSM = pCharFSM;
 	}

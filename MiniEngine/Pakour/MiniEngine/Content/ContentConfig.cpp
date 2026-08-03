@@ -49,17 +49,6 @@ namespace Content::Config
 			{ "Wall_OuterRotateRight",		ETagAct::Wall_OuterRotateRight },
 			{ "Wall_OuterRotateLeft",		ETagAct::Wall_OuterRotateLeft },
 
-			{ "Protrude_IdleToHang",		ETagAct::Protrude_IdleToHang },
-			{ "Protrude",					ETagAct::Protrude },
-			{ "Protrude_HangToIdle",		ETagAct::Protrude_HangToIdle },
-			{ "Protrude_HangToMantle",		ETagAct::Protrude_HangToMantle },
-			{ "Protrude_HangToJump",		ETagAct::Protrude_HangToJump },
-
-			{ "Protrude_JumpUp",			ETagAct::Protrude_JumpUp },
-			{ "Protrude_JumpDown",			ETagAct::Protrude_JumpDown },
-			{ "Protrude_JumpLeft",			ETagAct::Protrude_JumpLeft },
-			{ "Protrude_JumpRight",			ETagAct::Protrude_JumpRight },
-
 			{ "Beam_IdleToStand",			ETagAct::Beam_IdleToStand },
 			{ "BeamStand",					ETagAct::BeamStand },
 			{ "Beam_StandToIdle",			ETagAct::Beam_StandToIdle },

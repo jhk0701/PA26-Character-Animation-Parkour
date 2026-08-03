@@ -101,9 +101,10 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t t = 0;
-	_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t);
 
-	if (t == (uint8_t)ETagEnvDetail::Default)
+	// Beam -> Default 처리
+	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t) == false || 
+		t == (uint8_t)ETagEnvDetail::Default)
 	{
 		// 결과 확인 필요
 		uint8_t actTag = 0;
@@ -115,9 +116,7 @@ void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleI
 				pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
 		}
 		else // 더 높은 경우
-		{
 			DefaultProcessPerceptionResult(_info);
-		}
 
 		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
 		return;

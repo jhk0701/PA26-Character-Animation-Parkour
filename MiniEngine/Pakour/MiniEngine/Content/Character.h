@@ -31,7 +31,6 @@ public:
 		Hanging,
 		BeamStand,
 		BeamHanging,
-		ProtrudeHanging,
 
 		End
 	};

@@ -71,18 +71,6 @@ namespace Content::Config
 		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
 		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
 
-		// 다른 지형으로 뛰어다닐 것
-		Protrude,
-		Protrude_IdleToHang = Protrude,
-		Protrude_HangToIdle,
-		Protrude_HangToMantle,	// 매달린 상태에서 꼭대기에 오름
-		Protrude_HangToJump,	// 매달린 상태에서 점프 (탈출)
-		
-		Protrude_JumpUp,
-		Protrude_JumpDown,
-		Protrude_JumpLeft,
-		Protrude_JumpRight,
-
 		BeamStand,
 		Beam_IdleToStand = BeamStand,
 		Beam_StandToIdle,

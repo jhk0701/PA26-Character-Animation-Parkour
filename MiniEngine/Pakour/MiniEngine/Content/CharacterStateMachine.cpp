@@ -40,23 +40,19 @@ void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleIn
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	uint8_t actTag =
-		_info.m_obstacleDepth >= CONFIG.minMantleDepth ?
-		(uint8_t)ETagAct::Mantle : (uint8_t)ETagAct::Vault;
+		(uint8_t)(_info.m_obstacleDepth >= CONFIG.minMantleDepth ? ETagAct::Mantle : ETagAct::Vault);
 
-	float diffHeight = _info.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
-	if (diffHeight < 1e-4f || diffHeight < .0f)
+	const float DIFF_HEIGHT = _info.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
+	if (DIFF_HEIGHT < .0f)
 		return;
-	
-	if (diffHeight > 0)
-	{
-		// 올라가야함
-		if (diffHeight >= CONFIG.thresholdWallHeight)
-			actTag = (uint8_t)ETagAct::Wall;
-		else if (diffHeight >= CONFIG.thresholdHighObstacle)
-			actTag += 2;
-		else if (diffHeight >= CONFIG.thresholdLowObstacle)
-			actTag += 1;
-	}
+
+	// 올라가야함
+	if (DIFF_HEIGHT >= CONFIG.thresholdWallHeight)
+		actTag = (uint8_t)ETagAct::Wall;
+	else if (DIFF_HEIGHT >= CONFIG.thresholdHighObstacle)
+		actTag += 2;
+	else if (DIFF_HEIGHT >= CONFIG.thresholdLowObstacle)
+		actTag += 1;
 
 	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
 		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
@@ -77,10 +73,6 @@ void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo&
 
 void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)
 {
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	
-	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Protrude_IdleToHang))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void CharacterState::ProcessMovement(float _dt)

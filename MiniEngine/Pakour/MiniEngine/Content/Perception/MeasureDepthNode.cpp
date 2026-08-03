@@ -9,8 +9,7 @@ EPerceptionResult MeasureDepthNode::InvokeTask(TravelContext& _context, TravelRe
 {
 	const Vector3& FWD = PerceptionNodeUtil::ToChar(_context.m_owner)->GetRoot()->localTransform.Forward();
 	PerceptionNodeUtil::MeasureObstacleDepth(_context, FWD);
-
-	MG_LOG_INFO("[QueryTree] ledge : {}, depth : {}", _context.m_ledge, _context.m_depth);
+	// MG_LOG_INFO("[QueryTree] ledge : {}, depth : {}", _context.m_ledge, _context.m_depth);
 
 	return EPerceptionResult::Succeess;
 }
