@@ -28,5 +28,8 @@ class CheckOnHangingMoveSideNode : public ConditionNode
 {
 public:
 	bool InvokeCondition(TravelContext& _context) override;
+	void SetStartOffset(const Vector3& _offset) { m_startOffset = _offset; }
+private:
+	Vector3 m_startOffset{ 0.0f, 0.0f, 0.0f };
 };
 ;

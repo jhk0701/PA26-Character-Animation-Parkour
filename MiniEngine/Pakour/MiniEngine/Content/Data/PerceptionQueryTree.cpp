@@ -72,7 +72,6 @@ namespace
 			// Condition — children[0] = true, children[1] = false
 			{ "CheckOnHangingMoveUpNode",	{ CreateNode<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
 			{ "CheckOnHangingMoveDownNode",	{ CreateNode<CheckOnHangingMoveDownNode>(),	CONDITION_CHILDREN } },
-			{ "CheckOnHangingMoveSideNode",	{ CreateNode<CheckOnHangingMoveSideNode>(),	CONDITION_CHILDREN } },
 
 			// 파라미터를 갖는 노드
 			{ "CheckObstacleNode",
@@ -85,7 +84,8 @@ namespace
 						return pNode;
 					},
 					CONDITION_CHILDREN
-				} },
+				} 
+			},
 			{ "CheckOnHangingUpwardLedgeNode",	
 				{ 
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
@@ -95,7 +95,19 @@ namespace
 						return pNode;
 					}, 
 					CONDITION_CHILDREN 
-				} },
+				} 
+			},
+			{ "CheckOnHangingMoveSideNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckOnHangingMoveSideNode> pNode = std::make_shared<CheckOnHangingMoveSideNode>();
+						pNode->SetStartOffset(_node.StartOffset);
+						return pNode;
+					},
+					CONDITION_CHILDREN
+				}
+			},
 			{ "TransitionCharacterFSMNode",
 				{
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
@@ -105,7 +117,8 @@ namespace
 						return pNode;
 					},
 					0
-				} },
+				} 
+			},
 		};
 
 		return REGISTRY;

@@ -84,8 +84,13 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	const Transform& TF = pChar->GetRoot()->localTransform;
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
+	Vector3 startOffset(0.0f);
+	startOffset += TF.Right() * m_startOffset.x;
+	startOffset += TF.Up() * m_startOffset.y;
+	startOffset += TF.Forward() * m_startOffset.z; // 0.3f이 적정
+
 	SpherecastParam param;
-	param.m_startPos = TF.position + Vector3(0.0f, 1.5f, -1.0f); // offset 패러미터화
+	param.m_startPos = TF.position + startOffset;
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
 	param.m_radius = CONFIG.onHangingSearchRadius;
 	param.m_maxDistance = CONFIG.onHangingSearchHDist;
