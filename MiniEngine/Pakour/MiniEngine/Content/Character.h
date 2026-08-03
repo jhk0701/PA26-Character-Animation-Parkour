@@ -1,7 +1,8 @@
 #pragma once
 #include "Scene/Pawn.h"
-#include "Scene/PerceptionComponent.h"
 #include "Content/Data/PerceptionQueryTree.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Scene/PerceptionComponent.h"
 #include "Animation/IK/LimbIKComponent.h"
 
 #include <unordered_map>
@@ -14,14 +15,12 @@ namespace MiniEngine
 	class Animator;
 	class BlendClip;
 	class ActionClip;
-	class LimbIKComponent;
 	class IObstacle;
 }
 
 using namespace MiniEngine;
 
 class CharacterStateMachine;
-class CharacterPerceptionConfig;
 class Character : public Pawn
 {
 public:

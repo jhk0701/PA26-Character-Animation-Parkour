@@ -189,7 +189,6 @@
         "Empty"
       ]
     },
-
     {
       "id": "StateProtrude",
       "class": "SelectUsingInputDirNode",

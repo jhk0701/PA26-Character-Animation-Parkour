@@ -92,8 +92,8 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	SpherecastParam param;
 	param.m_startPos = TF.position + startOffset;
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
-	param.m_radius = CONFIG.onHangingSearchRadius;
 	param.m_maxDistance = CONFIG.onHangingSearchHDist;
+	param.m_radius = CONFIG.onHangingSearchRadius;
 
 	MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
 	MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);

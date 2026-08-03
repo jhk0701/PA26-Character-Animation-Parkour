@@ -15,7 +15,6 @@
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/SkeletalMeshComponent.h"
 #include "Scene/CharacterControllerComponent.h"
-#include "Scene/PerceptionComponent.h"
 #include "Animation/Animator.h"
 
 #include "Content/ContentConfig.h"
