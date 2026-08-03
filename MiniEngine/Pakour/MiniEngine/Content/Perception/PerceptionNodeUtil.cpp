@@ -59,6 +59,11 @@ namespace PerceptionNodeUtil
 		if (_context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
 
+		// 현재 처리 중엔 장애물 확인
+		void* pOverlappedObstacle = nullptr;
+		if (pChar->GetCurObstacleInfo().IsValid())  
+			pOverlappedObstacle = reinterpret_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
+
 		// 지금 장애물 위에 있는지 확인
 		void* pGroundActor = nullptr;
 		if (_bExcludeGroundActor)
@@ -76,8 +81,9 @@ namespace PerceptionNodeUtil
 
 		for (const HitResult& r : hits.m_hitResults)
 		{
-			if (pGroundActor != nullptr && r.GetActor() == pGroundActor)
-				continue; // 이미 올라온 장애물 -> 다음 후보로
+			if (pGroundActor != nullptr && r.GetActor() == pGroundActor || 
+				pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle)
+				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 
 			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
 			return true;

@@ -66,7 +66,6 @@ void HangingState::OnPerceiveUp(const Character::PerceptedObstacleInfo& _info)
 	
 	const float DOT = dir.Dot(charFwd);
 	uint8_t act = (uint8_t)(DOT > 0.0f ? ETagAct::Wall_HangToMantle : ETagAct::Wall_HangToMantleOnObs);
-	
 	// MG_LOG_INFO("[HangingState::OnPerceiveUp] Dot : {:.2f}, Act : {}", DOT, act == (uint8_t)ETagAct::Wall_HangToMantle ? "Hang To Mantle" : "Hang To Mantle Obs");
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions(act))

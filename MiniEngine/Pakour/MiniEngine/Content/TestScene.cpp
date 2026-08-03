@@ -158,6 +158,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.detailTags = { (uint8_t)Content::Config::ETagEnvDetail::Protrude };
 		desc.color += Vector3(0.3f, -0.2f, 0.0f);
 		desc.scale = Vector3(0.2f);
+		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		desc.pos = Vector3(13.0f, 3.0f, 4.5f);
 		ObstacleFactory::Create(pScene, desc);
@@ -206,7 +207,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			(uint8_t)Content::Config::ETagAxis::X,
 		};
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::All;
+		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		// Foot Hold // 밟는 용도
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
@@ -296,12 +297,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pCont->Construct();
 
 		pCont->Possess(pChar);
-
-		/*
-		* // 디버그용
-		auto ui = UIManager::GetInstance()->CreateUI<UIDebugConsole>();
-		ui.lock()->SetCharacter(pChar);
-		*/
 	}
 }
 

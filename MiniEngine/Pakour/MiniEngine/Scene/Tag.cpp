@@ -3,10 +3,7 @@
 
 namespace MiniEngine 
 {
-	Tag::Tag()
-	{
-		m_tags.reserve(MAX_LAYER_CNT);
-	}
+	Tag::Tag() { m_tags.reserve(MAX_LAYER_CNT); }
 
 	bool Tag::Has(const uint8_t _tag) const
 	{

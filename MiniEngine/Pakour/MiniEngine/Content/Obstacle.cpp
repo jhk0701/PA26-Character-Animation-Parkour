@@ -14,7 +14,8 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 {
 	if (_desc.pMesh == nullptr)
 		return;
-	
+
+	SetTickConfig(true, true, false);
 	SetName("Obstacle");
 
 	Tag& tag = GetTag();
@@ -35,28 +36,28 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
 	pRB->SetQueryLayer(_desc.layer);
 
-	if (_desc.ledgeOpt == ELedgeOption::None)
-		return;
+	AddLedge(_desc);
+}
 
+void Obstacle::AddLedge(const ObstacleDesc& _desc)
+{
+	const Vector3 halfExtent = _desc.scale * 0.5f;
 	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.02f, 0.02f);
 	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.02f, 0.02f);
 
-	m_pLedges.reserve(_desc.ledgeOpt == ELedgeOption::All ? 4 : 2);
-	
-	if (_desc.ledgeOpt == ELedgeOption::All || _desc.ledgeOpt == ELedgeOption::Horizontal)
+	switch (_desc.ledgeOpt)
 	{
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
+	case Single:
+	{
+		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, 0.0f), 
+			Vector3(halfExtent.x, 0.02f, halfExtent.z), 
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
 		);
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
-		);
+		break;
 	}
-
-	if (_desc.ledgeOpt == ELedgeOption::All || _desc.ledgeOpt == ELedgeOption::Vertical)
+	case Vertical:
 	{
+		m_pLedges.reserve(2);
 		AddLedge(_desc.pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
 			commonLedgeExtentY,
 			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
@@ -65,9 +66,45 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 			commonLedgeExtentY,
 			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
 		);
+		break;
 	}
-
-	SetTickConfig(true, true, false);
+	case Horizontal:
+	{
+		m_pLedges.reserve(2);
+		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
+		);
+		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
+		);
+		break;
+	}
+	case All:
+	{
+		m_pLedges.reserve(4);
+		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
+		);
+		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
+			commonLedgeExtentX,
+			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
+		);
+		AddLedge(_desc.pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
+			commonLedgeExtentY,
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
+		);
+		AddLedge(_desc.pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
+			commonLedgeExtentY,
+			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
+		);
+		break;
+	}
+	case None: __fallthrough;
+	default: return;
+	}
 }
 
 void Obstacle::AddLedge(
@@ -94,9 +131,19 @@ void Obstacle::AddLedge(
 float Obstacle::GetNearestLedgeHeight(const Vector3& _pos) const
 {
 	// 소형 장애물(Beam, Protrude)에서 주로 사용할 것
-	float result = FLT_MAX;
-	for (std::weak_ptr<SceneComponent> pScene : m_pLedges)
-		result = min(result, Vector3::DistanceSquared(pScene.lock()->localTransform.position, _pos));
+	float minDist = FLT_MAX;
+	float result = GetRoot()->localTransform.position.y;
+	for (int i = 0; i < m_pLedges.size(); ++i)
+	{
+		std::shared_ptr<SceneComponent> pScene = m_pLedges[i].lock();
+		float d = Vector3::DistanceSquared(pScene->localTransform.position, _pos);
+
+		if (minDist > d)
+		{
+			result = pScene->localTransform.position.y;
+			minDist = d;
+		}
+	}
 
 	return result;
 }

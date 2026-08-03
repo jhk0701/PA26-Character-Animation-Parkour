@@ -15,6 +15,7 @@ public:
 	enum ELedgeOption 
 	{
 		None,
+		Single,
 		Vertical,
 		Horizontal,
 		All
@@ -36,6 +37,7 @@ public:
 	void Construct(const ObstacleDesc& _desc);
 
 private:
+	void AddLedge(const ObstacleDesc& _desc);
 	void AddLedge(
 		const MiniEngine::Vector3& _localPos,
 		const MiniEngine::Vector3& _halfExtent,
@@ -49,7 +51,6 @@ public:
 	virtual bool TryGetTag(uint8_t _idx, uint8_t& _outTag) override;
 	virtual const MiniEngine::Transform& GetTransform() const override;
 	virtual const std::string& DebugName() override;
-
 };
 
 class ObstacleFactory 

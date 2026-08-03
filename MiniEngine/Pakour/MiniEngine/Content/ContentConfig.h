@@ -52,7 +52,7 @@ namespace Content::Config
 		MantleHigh,
 		MantleAirToAttach, // 공중에서 잡는 경우
 
-		// Wall		벽면 매달리기
+		// Wall 벽면 매달리기
 		Wall,
 		Wall_IdleToHang = Wall,		// 매달리기 시작
 		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우

@@ -25,158 +25,158 @@
       ]
     },
 
-    {
-      "id": "StateLanding",
-      "class": "CheckObstacleNode",
-      "comment": "평지상태 : 장애물 찾기",
-      "heightMultiplier": 1.0,
-      "children": [
-        "CheckObstacleTag",
-        "Empty"
-      ]
-    },
-    {
-      "id": "CheckObstacleTag",
-      "class": "SelectObstacleTagNode",
-      "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
-      "children": [
-        "ProcessDefault",
-        "ProcessBeam",
-        "ProcessProtrude"
-      ]
-    },
+      {
+        "id": "StateLanding",
+        "class": "CheckObstacleNode",
+        "comment": "평지상태 : 장애물 찾기",
+        "heightMultiplier": 1.0,
+        "children": [
+          "CheckObstacleTag",
+          "Empty"
+        ]
+      },
+        {
+          "id": "CheckObstacleTag",
+          "class": "SelectObstacleTagNode",
+          "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
+          "children": [
+            "ProcessDefault",
+            "ProcessBeam",
+            "ProcessProtrude"
+          ]
+        },
 
-    {
-      "id": "ProcessDefault",
-      "class": "SelectUsingHeightNode",
-      "children": [
-        "Return",
-        "MeasureDepthSeq",
-        "Return"
-      ]
-    },
-    {
-      "id": "MeasureDepthSeq",
-      "class": "SequenceNode",
-      "comment": "vault, mantle 은 깊이 측정 후 결과 리턴",
-      "children": [
-        "MeasureDepth",
-        "Return"
-      ]
-    },
-    {
-      "id": "MeasureDepth",
-      "class": "MeasureDepthNode",
-      "comment": "딛을 면의 깊이 측정"
-    },
+          {
+            "id": "ProcessDefault",
+            "class": "SelectUsingHeightNode",
+            "children": [
+              "Return",
+              "MeasureDepthSeq",
+              "Return"
+            ]
+          },
+            {
+              "id": "MeasureDepthSeq",
+              "class": "SequenceNode",
+              "comment": "vault, mantle 은 깊이 측정 후 결과 리턴",
+              "children": [
+                "MeasureDepth",
+                "Return"
+              ]
+            },
+              {
+                "id": "MeasureDepth",
+                "class": "MeasureDepthNode",
+                "comment": "딛을 면의 깊이 측정"
+              },
 
-    {
-      "id": "ProcessBeam",
-      "class": "SequenceNode",
-      "comment": "beam 지형의 높이 측정 시퀀스",
-      "children": [
-        "BeamCompareHeight",
-        "Return"
-      ]
-    },
-    {
-      "id": "BeamCompareHeight",
-      "class": "BeamCompareHeightNode",
-      "comment": "캐릭터와 장애물의 y 위치 비교"
-    },
+      {
+        "id": "ProcessBeam",
+        "class": "SequenceNode",
+        "comment": "beam 지형의 높이 측정 시퀀스",
+        "children": [
+          "BeamCompareHeight",
+          "Return"
+        ]
+      },
+        {
+          "id": "BeamCompareHeight",
+          "class": "BeamCompareHeightNode",
+          "comment": "캐릭터와 장애물의 y 위치 비교"
+        },
 
-    {
-      "id": "ProcessProtrude",
-      "class": "SequenceNode",
-      "comment": "protrude 지형 정보 추출 후 리턴 시퀀스",
-      "children": [
-        "ProtrudeExtractHeight",
-        "Return"
-      ]
-    },
-    {
-      "id": "ProtrudeExtractHeight",
-      "class": "ProtrudeExtractHeightNode"
-    },
+      {
+        "id": "ProcessProtrude",
+        "class": "SequenceNode",
+        "comment": "protrude 지형 정보 추출 후 리턴 시퀀스",
+        "children": [
+          "ProtrudeExtractHeight",
+          "Return"
+        ]
+      },
+        {
+          "id": "ProtrudeExtractHeight",
+          "class": "ProtrudeExtractHeightNode"
+        },
 
-    {
-      "id": "StateInAir",
-      "class": "CheckObstacleNode",
-      "heightMultiplier": 2.0,
-      "children": [
-        "InAirObstacleFoundSeq",
-        "Empty"
-      ]
-    },
-    {
-      "id": "InAirObstacleFoundSeq",
-      "class": "SequenceNode",
-      "children": [
-        "CheckObstacleTag"
-      ]
-    },
-    {
-      "id": "TransitionToLanding",
-      "class": "TransitionCharacterFSMNode",
-      "targetState": "Landing"
-    },
+      {
+        "id": "StateInAir",
+        "class": "CheckObstacleNode",
+        "heightMultiplier": 2.0,
+        "children": [
+          "InAirObstacleFoundSeq",
+          "Empty"
+        ]
+      },
+        {
+          "id": "InAirObstacleFoundSeq",
+          "class": "SequenceNode",
+          "children": [
+            "CheckObstacleTag"
+          ]
+        },
+          {
+            "id": "TransitionToLanding",
+            "class": "TransitionCharacterFSMNode",
+            "targetState": "Landing"
+          },
 
-    {
-      "id": "StateHanging",
-      "class": "SelectUsingInputDirNode",
-      "children": [
-        "OnHangingUp",
-        "OnHangingDown",
-        "OnHangingSide",
-        "Empty"
-      ]
-    },
-    {
-      "id": "OnHangingUp",
-      "class": "CheckOnHangingMoveUpNode",
-      "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
-      "children": [
-        "OnHangingUp_AnotherObstacleLedge",
-        "OnHangingUp_CurrentObstacleLedge"
-      ]
-    },
-    {
-      "id": "OnHangingUp_AnotherObstacleLedge",
-      "class": "CheckOnHangingUpwardLedgeNode",
-      "startOffset": [ 0.0, 0.0, -0.5 ],
-      "comment": "위를 가로막은 장애물의 Ledge 찾기",
-      "children": [
-        "Return",
-        "Empty"
-      ]
-    },
-    {
-      "id": "OnHangingUp_CurrentObstacleLedge",
-      "class": "CheckOnHangingUpwardLedgeNode",
-      "startOffset": [ 0.0, 0.0, 0.3 ],
-      "comment": "현재 벽면의 Ledge 찾기",
-      "children": [
-        "Return",
-        "Empty"
-      ]
-    },
-    {
-      "id": "OnHangingDown",
-      "class": "CheckOnHangingMoveDownNode",
-      "children": [
-        "Return",
-        "Empty"
-      ]
-    },
-    {
-      "id": "OnHangingSide",
-      "class": "CheckOnHangingMoveSideNode",
-      "startOffset" : [0.0, 1.5, -0.5],
-      "children": [
-        "Return",
-        "Empty"
-      ]
-    },
+      {
+        "id": "StateHanging",
+        "class": "SelectUsingInputDirNode",
+        "children": [
+          "OnHangingUp",
+          "OnHangingDown",
+          "OnHangingSide",
+          "Empty"
+        ]
+      },
+        {
+          "id": "OnHangingUp",
+          "class": "CheckOnHangingMoveUpNode",
+          "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
+          "children": [
+            "OnHangingUp_AnotherObstacleLedge",
+            "OnHangingUp_CurrentObstacleLedge"
+          ]
+        },
+          {
+            "id": "OnHangingUp_AnotherObstacleLedge",
+            "class": "CheckOnHangingUpwardLedgeNode",
+            "startOffset": [ 0.0, 0.0, -0.5 ],
+            "comment": "위를 가로막은 장애물의 Ledge 찾기",
+            "children": [
+              "Return",
+              "Empty"
+            ]
+          },
+          {
+            "id": "OnHangingUp_CurrentObstacleLedge",
+            "class": "CheckOnHangingUpwardLedgeNode",
+            "startOffset": [ 0.0, 0.0, 0.3 ],
+            "comment": "현재 벽면의 Ledge 찾기",
+            "children": [
+              "Return",
+              "Empty"
+            ]
+          },
+      {
+        "id": "OnHangingDown",
+        "class": "CheckOnHangingMoveDownNode",
+        "children": [
+          "Return",
+          "Empty"
+        ]
+      },
+      {
+        "id": "OnHangingSide",
+        "class": "CheckOnHangingMoveSideNode",
+        "startOffset" : [0.0, 1.5, -0.5],
+        "children": [
+          "Return",
+          "Empty"
+        ]
+      },
 
     {
       "id": "StateBeam",

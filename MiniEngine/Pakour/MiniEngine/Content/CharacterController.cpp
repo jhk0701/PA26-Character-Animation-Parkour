@@ -161,7 +161,7 @@ void CharacterController::OnPossessed(Input& _input)
 			if (!pChar)
 				return;
 
-			pChar->SetPosition(Vector3(0.0f));
+			pChar->SetPosition(Vector3(0.0f, 30.0f, 0.0f));
 		};
 }
 
