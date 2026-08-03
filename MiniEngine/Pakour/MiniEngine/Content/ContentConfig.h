@@ -37,6 +37,7 @@ namespace Content::Config
 	{
 		Landing, // 착지
 		Jump,
+		JumpFront,
 		JumpFromWall, // 점프에서 탈출
 		FallingToLand,
 

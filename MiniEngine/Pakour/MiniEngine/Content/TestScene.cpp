@@ -186,7 +186,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		desc.pos = Vector3(5.0f, 7.5f, 29.0f);
-		desc.scale = Vector3(0.5f, 8.0f, 20.0f);
+		desc.scale = Vector3(0.5f, 16.0f, 16.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = Vector3(3.5f, 7.5f, 35.0f);
+		desc.scale = Vector3(3.0f, 0.25f, 5.0f);
 		ObstacleFactory::Create(pScene, desc);
 
 		// 경사로
@@ -282,6 +286,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(5.0f, 1.0f, 0.05f);
 		ObstacleFactory::Create(pScene, desc);
 
+	}
+	{
+		const Vector3 OFFSET(10.0f, 0.0f, 10.0f);
+
+		Obstacle::ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.detailTags = { 0U };
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::All;
+
+		desc.pos = OFFSET + Vector3(0.0f);
+		desc.scale = Vector3();
+		// ObstacleFactory::Create(pScene, desc);
 	}
 	{
 		// 캐릭터 생성

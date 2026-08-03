@@ -535,18 +535,22 @@ void Character::SetUseGravity(bool _bUse)
 
 void Character::Jump()
 {
-	m_charCont.lock()->Jump(m_jumpSpeed);
+	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
+	pCharCont->Jump(m_jumpSpeed);
 }
+
 void Character::InputJump()
 {
 	if (m_state == EState::InAir)
 		return;
 	
-	uint8_t tag = m_state == EState::Landing ? 
-		(uint8_t)Content::Config::ETagAct::Jump :
-		(uint8_t)Content::Config::ETagAct::JumpFromWall;
+	uint8_t act = 0;
+	if (m_state != EState::Landing)
+		act = (uint8_t)ETagAct::JumpFromWall;
+	else  
+		act = (uint8_t)(GetInputDir().y > 0 ? ETagAct::JumpFront : ETagAct::Jump);
 
-	if (std::shared_ptr<ActionClip> pJump = GetActions(tag))
+	if (std::shared_ptr<ActionClip> pJump = GetActions(act))
 		GetAnim().lock()->PlayActionClip(pJump, 0.2f);
 }
 

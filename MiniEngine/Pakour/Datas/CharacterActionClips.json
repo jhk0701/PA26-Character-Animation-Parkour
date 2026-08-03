@@ -108,6 +108,17 @@
             ]
         },
         {
+            "tags": [ "JumpFront" ],
+            "clip": 44,
+            "rootMotion": { "apply": true },
+            "notifies": [
+                {
+                    "class": "JumpTiming",
+                    "time": 0.6
+                }
+            ]
+        },
+        {
             "tags": [ "VaultLow", "VaultMid" ],
             "clip": 12,
             "notifies": [
@@ -583,7 +594,7 @@
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.2, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
-                    "endOffset": [ 0, -1.85, -0.4 ]
+                    "endOffset": [ 0, -1.85, -0.3 ]
                 }
             ]
         },

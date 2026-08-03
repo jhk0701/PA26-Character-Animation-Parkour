@@ -103,7 +103,16 @@ void HangingState::OnPerceiveDown(const Character::PerceptedObstacleInfo& _info)
 // 좌우에서 새 장애물을 찾음 -> 종류에 맞는 상태로 전환
 void HangingState::OnPerceiveSide(const Character::PerceptedObstacleInfo& _info)
 {
+	// 
+	uint8_t tag = 0;
+	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, tag) == false)
+	{
+		DefaultProcessPerceptionResult(_info);
+		return;
+	}
+
 	DefaultProcessPerceptionResult(_info);
+	return;
 }
 
 void HangingState::Refresh()

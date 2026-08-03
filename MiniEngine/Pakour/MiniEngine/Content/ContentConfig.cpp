@@ -16,6 +16,7 @@ namespace Content::Config
 		{
 			{ "Landing",					ETagAct::Landing },
 			{ "Jump",						ETagAct::Jump },
+			{ "JumpFront",					ETagAct::JumpFront },
 			{ "JumpFromWall",				ETagAct::JumpFromWall },
 			{ "FallingToLand",				ETagAct::FallingToLand },
 
