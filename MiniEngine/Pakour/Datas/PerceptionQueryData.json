@@ -136,24 +136,34 @@
           "class": "CheckOnHangingMoveUpNode",
           "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
           "children": [
-            "OnHangingUp_AnotherObstacleLedge",
+            "CheckObstacleTag_OnHanging",
             "OnHangingUp_CurrentObstacleLedge"
           ]
         },
           {
-            "id": "OnHangingUp_AnotherObstacleLedge",
-            "class": "CheckOnHangingUpwardLedgeNode",
-            "startOffset": [ 0.0, 0.0, -0.5 ],
-            "comment": "위를 가로막은 장애물의 Ledge 찾기",
+            "id": "CheckObstacleTag_OnHanging",
+            "class": "SelectObstacleTagNode",
+            "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
             "children": [
-              "Return",
-              "Empty"
+              "OnHangingUp_AnotherObstacleLedge",
+              "ProcessBeam",
+              "ProcessProtrude"
             ]
           },
+            {
+              "id": "OnHangingUp_AnotherObstacleLedge",
+              "class": "CheckOnHangingUpwardLedgeNode",
+              "startOffset": [ 0.0, 0.0, -0.5 ],
+              "comment": "위를 가로막은 장애물의 Ledge 찾기",
+              "children": [
+                "Return",
+                "Empty"
+              ]
+            },
           {
             "id": "OnHangingUp_CurrentObstacleLedge",
             "class": "CheckOnHangingUpwardLedgeNode",
-            "startOffset": [ 0.0, 0.0, 0.3 ],
+            "startOffset": [ 0.0, 0.0, 0.2 ],
             "comment": "현재 벽면의 Ledge 찾기",
             "children": [
               "Return",
@@ -171,7 +181,7 @@
       {
         "id": "OnHangingSide",
         "class": "CheckOnHangingMoveSideNode",
-        "startOffset" : [0.0, 1.5, -0.5],
+        "startOffset" : [0.0, 0.0, -0.5],
         "children": [
           "Return",
           "Empty"
@@ -182,7 +192,7 @@
       "id": "StateBeam",
       "class": "CheckObstacleNode",
       "heightMultiplier": 3.0,
-      "startOffset": [ 0.0, 0.0, 1 ],
+      "startOffset": [ 0.0, 0.0, 0.75 ],
       "children": [
         "CheckObstacleTag",
         "Empty"

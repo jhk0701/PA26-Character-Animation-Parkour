@@ -113,8 +113,8 @@ public:
 	void SetPosition(const Vector3& _newPos);
 	void ClearMovement();
 	float GetCapsuleRadius() const { return m_capsuleRadius; }
-	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f; }
-	float GetCharacterHalfHeight() const { return (m_capsuleHeight + m_capsuleRadius) * 0.5f; }
+	float GetCapsuleHalfHeight() const { return m_capsuleHeight * 0.5f + m_capsuleContactOffset; }
+	float GetCharacterHalfHeight() const { return (m_capsuleHeight + m_capsuleRadius) * 0.5f + m_capsuleContactOffset; }
 
 	void SetEnableCollisionObstacle(bool _bEnable);
 	bool IsFalling() const;

@@ -14,6 +14,8 @@ uint8_t SelectUsingInputDirNode::InvokeCondition(TravelContext& _context)
 		return 1;
 	else if (std::fabs(INPUT_DIR.x) > 1e-4f)
 		return 2;
+	else if (INPUT_DIR.y < 1e-4f && INPUT_DIR.x < 1e-4f) // 방향 입력이 없을 경우 0번으로 강제
+		return 0;
 
 	return 3;
 }

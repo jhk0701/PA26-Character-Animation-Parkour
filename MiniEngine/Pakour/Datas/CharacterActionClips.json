@@ -373,9 +373,7 @@
             ]
         },
         {
-            "tags": [
-                "FallingToLand"
-            ],
+            "tags": [ "FallingToLand" ],
             "clip": 11,
             "rootMotion": { "apply": false }
         },
@@ -411,7 +409,7 @@
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [ 0, 0.8 ],
+                    "time": [ 0, 0.4 ],
                     "properDistance": 0.5,
                     "lerpWeight": 0.85
                 }
@@ -548,34 +546,46 @@
         {
             "tags": [ "Wall_HangingMoveUp" ],
             "clip": 19,
-            "rootMotion":  {
-                "apply": true,
-                "z" : false
-            }
+            "rootMotion":  { "apply": true, "z" : false }
         },
         {
             "tags": [ "Wall_HangingMoveDown" ],
             "clip": 20,
-            "rootMotion":  {
-                "apply": true,
-                "z" : false
-            }
+            "rootMotion":  { "apply": true, "z" : false }
         },
         {
             "tags": [ "Wall_HangingMoveLeft" ],
             "clip": 21,
-            "rootMotion":  {
-                "apply": true,
-                "z" : false
-            }
+            "rootMotion":  { "apply": true, "z" : false }
         },
         {
             "tags": [ "Wall_HangingMoveRight" ],
             "clip": 22,
-            "rootMotion":  {
-                "apply": true,
-                "z" : false
-            }
+            "rootMotion":  { "apply": true, "z" : false }
+        },
+        {
+            "tags": [ "Wall_ProtrudeMoveUp" ],
+            "clip": 19,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.01,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.4 ]
+                }
+            ]
         },
         {
             "tags": [ "JumpFromWall" ],

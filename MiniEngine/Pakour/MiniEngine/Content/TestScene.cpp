@@ -151,7 +151,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 		// 5-2. 벽 - 지붕
 		desc.pos = Vector3(20.0f, 5.0f, 6.0f);
-		desc.scale = Vector3(4.0f, 0.05f, 1.0f);
+		desc.scale = Vector3(6.0f, 0.05f, 1.0f);
 		ObstacleFactory::Create(pScene, desc);
 
 		// 벽면 돌출물 설치
@@ -159,9 +159,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.color += Vector3(0.3f, -0.2f, 0.0f);
 		desc.scale = Vector3(0.2f);
 		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
-
-		desc.pos = Vector3(13.0f, 3.0f, 4.5f);
-		ObstacleFactory::Create(pScene, desc);
 
 		desc.pos = Vector3(14.0f, 4.0f, 4.5f);
 		ObstacleFactory::Create(pScene, desc);
@@ -306,6 +303,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	// ApplyPhysicsDebug(true);
+	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

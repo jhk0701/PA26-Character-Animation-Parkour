@@ -44,6 +44,8 @@ namespace Content::Config
 			{ "Wall_HangingMoveLeft",		ETagAct::Wall_HangingMoveLeft },
 			{ "Wall_HangingMoveRight",		ETagAct::Wall_HangingMoveRight },
 
+			{ "Wall_ProtrudeMoveUp",		ETagAct::Wall_ProtrudeMoveUp },
+
 			{ "Wall_InnerRotateRight",		ETagAct::Wall_InnerRotateRight },
 			{ "Wall_InnerRotateLeft",		ETagAct::Wall_InnerRotateLeft },
 			{ "Wall_OuterRotateRight",		ETagAct::Wall_OuterRotateRight },

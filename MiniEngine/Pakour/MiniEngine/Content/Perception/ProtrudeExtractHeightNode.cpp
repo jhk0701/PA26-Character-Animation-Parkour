@@ -12,5 +12,7 @@ EPerceptionResult ProtrudeExtractHeightNode::InvokeTask(TravelContext& _context,
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
 	_context.m_ledge = _context.m_pFirstObstacle->GetNearestLedgeHeight(_context.m_firstObstacleHitPos);
 
+	MG_LOG_INFO("[ProtrudeExtractHeightNode::InvokeTask] Check Protrude Height");
+
     return EPerceptionResult::Succeess;
 }

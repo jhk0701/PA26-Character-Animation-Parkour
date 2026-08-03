@@ -73,6 +73,14 @@ void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo&
 
 void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)
 {
+	MG_LOG_INFO("[CharacterState::ProcessProstrudeObstacle] Process Protrude" );
+
+	// 벽면 돌출부 protrude
+	// 해당 위치로 매달리기
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	if(std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Wall_AirToHang))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void CharacterState::ProcessMovement(float _dt)

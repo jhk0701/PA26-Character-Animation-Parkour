@@ -37,6 +37,7 @@ namespace PerceptionNodeUtil
 
 		return dynamic_cast<IObstacle*>(pActor);
 	}
+
 	bool CheckObstacle(TravelContext& _context, 
 		const Vector3& _pos, 
 		const Vector3& _dir, 
@@ -81,8 +82,8 @@ namespace PerceptionNodeUtil
 
 		for (const HitResult& r : hits.m_hitResults)
 		{
-			if (pGroundActor != nullptr && r.GetActor() == pGroundActor || 
-				pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle)
+			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) || 
+				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 
 			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
@@ -131,12 +132,12 @@ namespace PerceptionNodeUtil
 
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			
-			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			// MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 			{
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 				
 				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 				if (bFirstTouched) 
@@ -147,7 +148,7 @@ namespace PerceptionNodeUtil
 				if (!bFirstTouched)
 					bFirstTouched = true;
 
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 			}
 		}
 

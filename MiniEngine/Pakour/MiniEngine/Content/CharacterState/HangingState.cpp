@@ -47,12 +47,30 @@ void HangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInf
 		OnPerceiveDown(_info);
 	else if (INPUT_DIR.x != 0)
 		OnPerceiveSide(_info);
+	else if (INPUT_DIR.x < 1e-4f && INPUT_DIR.y < 1e-4f)
+		OnPerceiveUp(_info);
 }
 
 // 위에서 ledge 를 찾음 -> 올라간다.
 void HangingState::OnPerceiveUp(const Character::PerceptedObstacleInfo& _info)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	uint8_t tag = 0;
+	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, tag) == false || 
+		tag == (uint8_t)ETagEnvDetail::Beam)
+	{
+		DefaultProcessPerceptionResult(_info);
+		return;
+	}
+	else if (tag == (uint8_t)ETagEnvDetail::Protrude) 
+	{
+		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Wall_ProtrudeMoveUp))
+			pChar->PlayActionClip(pAct, 0.2f, (uint8_t)EActionPriority::Override);
+
+		return;
+	}
+
 	const Transform& TF = pChar->GetRoot()->localTransform;
 
 	Vector3 point = _info.m_obstacleHitPos;

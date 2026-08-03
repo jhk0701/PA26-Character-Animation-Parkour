@@ -3,8 +3,10 @@
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 #include "Core/DebugMarkers.h"
+#include "Core/Log.h"
 
 #include "Physics/PhysicsWorld.h"
+
 
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
@@ -18,8 +20,8 @@ bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 	SpherecastParam param;
 	param.m_startPos = GetCharacterCenterPosition(_context);
 	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-	param.m_radius = CONFIG.onHangingSearchRadius;
 	param.m_maxDistance = CONFIG.onHangingSearchVDist;
+	param.m_radius = CONFIG.onHangingSearchRadius;
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
@@ -90,7 +92,7 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	startOffset += TF.Forward() * m_startOffset.z; // 0.3f이 적정
 
 	SpherecastParam param;
-	param.m_startPos = TF.position + startOffset;
+	param.m_startPos = GetCharacterCenterPosition(_context) + startOffset;
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
 	param.m_maxDistance = CONFIG.onHangingSearchHDist;
 	param.m_radius = CONFIG.onHangingSearchRadius;

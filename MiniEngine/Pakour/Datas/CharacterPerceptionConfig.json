@@ -19,7 +19,7 @@
 
     "onHangingSearchVDist": 1.5,
     "onHangingSearchHDist": 1.0,
-    "onHangingSearchRadius": 0.2,
+    "onHangingSearchRadius": 0.4,
 
     "onLandingFallingCheckDist": 0.2
 }
