@@ -156,6 +156,23 @@ void BeamStandState::AlignByAxis()
 		charTF.rotation = rot;
 }
 
+bool BeamStandState::IsAlignToAxis()
+{
+	// 캐릭터의 정면이 봉의 축과 일치하는지 확인
+	Vector3 obsDir; // Beam 지형의 주 방향 (긴쪽 방향)
+	GetDirectionByAxis(obsDir);
+	obsDir.y = 0.0f;
+	obsDir.Normalize();
+	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x };
+
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Transform& charTF = pChar->GetRoot()->localTransform;
+
+	const float DOT_DIR = obsDir.Dot(charTF.Forward());
+
+	return fabs(DOT_DIR) >= 0.95f;
+}
+
 void BeamStandState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -178,6 +195,9 @@ void BeamStandState::ProcessMovement(float _dt)
 	}
 	else if (INPUT_DIR.y < 0) 
 	{
+		if (IsAlignToAxis())
+			return;
+
 		// Beam 위에서 움직였다면 그만큼 위치를 변경
 		AdjustPositionToObstacleInfo();
 

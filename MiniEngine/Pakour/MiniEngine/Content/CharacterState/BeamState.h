@@ -43,6 +43,7 @@ public:
 
 protected:
 	void AlignByAxis() override;
+	bool IsAlignToAxis();
 
 private:
 	void ProcessMovement(float _dt);

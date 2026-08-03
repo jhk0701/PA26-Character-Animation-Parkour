@@ -189,8 +189,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(0.5f, 16.0f, 16.0f);
 		ObstacleFactory::Create(pScene, desc);
 
+		// 중간 지붕 형태
 		desc.pos = Vector3(3.5f, 7.5f, 35.0f);
 		desc.scale = Vector3(3.0f, 0.25f, 5.0f);
+		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		ObstacleFactory::Create(pScene, desc);
 
 		// 경사로
