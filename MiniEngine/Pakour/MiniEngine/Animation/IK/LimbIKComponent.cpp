@@ -8,6 +8,13 @@
 
 namespace MiniEngine 
 {
+	namespace 
+	{
+		float Lerp(const float _start, const float _end, const float _w) 
+		{
+			return  _start + (_end - _start) * _w;
+		};
+	}
 
 	void LimbIKComponent::Init(const std::shared_ptr<SkeletalMeshComponent>& _pSkeletal, const LimbIKDesc& _desc)
 	{
@@ -113,8 +120,11 @@ namespace MiniEngine
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{
 			IKHandle& handle = m_handles[i];
-			handle.posAlpha += std::clamp(handle.posAlphaTarget - handle.posAlpha, -STEP, STEP);
-			handle.rotAlpha += std::clamp(handle.rotAlphaTarget - handle.rotAlpha, -STEP, STEP);
+			handle.posAlpha = Lerp(handle.posAlpha, handle.posAlphaTarget, STEP);
+			handle.rotAlpha = Lerp(handle.rotAlpha, handle.rotAlphaTarget, STEP);
+
+			// handle.posAlpha += std::clamp(handle.posAlphaTarget - handle.posAlpha, -STEP, STEP);
+			// handle.rotAlpha += std::clamp(handle.rotAlphaTarget - handle.rotAlpha, -STEP, STEP);
 		}
 	}
 
