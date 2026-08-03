@@ -110,6 +110,8 @@ namespace PerceptionNodeUtil
 		const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
 
 		uint8_t band = 0;
+		bool bFirstTouched = false;
+
 		for (; band < CONFIG.maxHeightStep; ++band)
 		{
 			SpherecastParam param;
@@ -124,11 +126,23 @@ namespace PerceptionNodeUtil
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			
 			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
-			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
-
+			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
-				break; // 닿지 않음
+			{
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				
+				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
+				if (bFirstTouched) 
+					break; // 닿지 않음
+			}
+			else
+			{
+				if (!bFirstTouched)
+					bFirstTouched = true;
+
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+			}
 		}
 
 		_context.m_ledge = FOOT_Y + band * CONFIG.heightStep;
