@@ -58,15 +58,15 @@ namespace Content::Config
 		Wall_IdleToHang = Wall,		// 매달리기 시작
 		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우
 		Wall_HangToIdle,		// 매달리기에서 내려옴
-		Wall_HangToMantle,		// 매달린 상태에서 꼭대기에 오름
-		Wall_HangToMantleOnObs, // 매달린 상태에서 중간에 있는 장애물에 오름
-		Wall_HangToJump,		// 매달린 상태에서 점프
+		Wall_HangToMantle,			// 매달린 상태에서 꼭대기에 오름
+		Wall_HangToMantleOnObs,		// 매달린 상태에서 중간에 있는 장애물에 오름
+		Wall_HangToMantleOnSide,	// 매달린 상태에서 측면 장애물로 이동
+		Wall_HangToJump,			// 매달린 상태에서 점프
 
 		Wall_HangingMoveUp,
 		Wall_HangingMoveDown,
 		Wall_HangingMoveLeft,
 		Wall_HangingMoveRight,
-
 		Wall_ProtrudeMoveUp,	// 매달린 상태로 돌출부로 올라감
 
 		Wall_InnerRotateRight,  // 270도 단일 벽의 모서리 돌기 오른쪽

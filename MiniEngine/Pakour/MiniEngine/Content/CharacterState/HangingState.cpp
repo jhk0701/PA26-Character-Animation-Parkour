@@ -105,14 +105,17 @@ void HangingState::OnPerceiveSide(const Character::PerceptedObstacleInfo& _info)
 {
 	// 
 	uint8_t tag = 0;
-	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, tag) == false)
+	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, tag) == false || 
+		tag == (uint8_t)ETagEnvDetail::Beam ||
+		tag == (uint8_t)ETagEnvDetail::Protrude)
 	{
 		DefaultProcessPerceptionResult(_info);
 		return;
 	}
 
-	DefaultProcessPerceptionResult(_info);
-	return;
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Wall_HangToMantleOnSide))
+		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void HangingState::Refresh()

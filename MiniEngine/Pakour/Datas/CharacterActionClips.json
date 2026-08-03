@@ -553,6 +553,62 @@
                     "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
+        },{
+            "tags": [ "Wall_HangToMantleOnSide" ],
+            "clip": 28,
+            "rootMotion": { "apply": true, "y" : false },
+            "comment": "Wall Hanging -> Landing Idle (중간 장애물에 오를 때)",
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Landing"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.01,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.7,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.0, 0.6 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, 0, 0.25 ]
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 0.8 ],
+                    "limb": "LeftArm",
+                    "offset": [ -0.15, 0, 0 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 0.8 ],
+                    "limb": "RightArm",
+                    "offset": [ 0.15, 0, 0 ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.1, 0.4 ],
+                    "fromTo": [ 0, 1 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.6, 0.8 ],
+                    "fromTo": [ 1.0, 0.0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
+                }
+            ]
         },
         {
             "tags": [ "Wall_HangingMoveUp" ],
