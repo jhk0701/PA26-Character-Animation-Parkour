@@ -21,8 +21,7 @@
         "StateInAir",
         "StateHanging",
         "StateBeam",
-        "StateBeam",
-        "StateProtrude"
+        "StateBeam"
       ]
     },
 
@@ -186,17 +185,6 @@
       "startOffset": [ 0.0, 0.0, 1 ],
       "children": [
         "CheckObstacleTag",
-        "Empty"
-      ]
-    },
-    {
-      "id": "StateProtrude",
-      "class": "SelectUsingInputDirNode",
-      "comment": "키 입력 기준 상하좌우 방향 탐색",
-      "children": [
-        "Empty",
-        "Empty",
-        "Empty",
         "Empty"
       ]
     }

@@ -46,12 +46,8 @@ namespace
 		"STATE_NAMES 가 Character::EState 와 다름");
 }
 
-Character::Character()
-{
-}
-Character::~Character()
-{
-}
+Character::Character() { }
+Character::~Character() { }
 
 void Character::Construct(const Vector3& _initPosition)
 {
@@ -132,8 +128,6 @@ void Character::Construct(const Vector3& _initPosition)
 	}
 	
 	pRoot->localTransform.position = _initPosition;
-	MG_LOG_INFO("[Character::Construct] Init Pos : ({:.2f}, {:.2f}, {:.2f})", _initPosition.x, _initPosition.y, _initPosition.z);
-
 	PostConstruct();
 }
 
@@ -232,14 +226,12 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
 	{
-		// m_curObstacleInfo.m_actTag = _result.m_actTag;
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
 		m_curObstacleInfo.m_obstacleDistance = _result.m_obstacleDistance;
 		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
 		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
-		// MG_LOG_INFO("[Character] Check Ledge : {}", m_curObstacleLedge);
 	}
 	else
 	{
@@ -251,6 +243,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		return;
 
 	// 세부 처리는 각 상태일때 달리 처리
+	// TODO: 이 부분 데이터화 가능할지 확인
 	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
 }
 
