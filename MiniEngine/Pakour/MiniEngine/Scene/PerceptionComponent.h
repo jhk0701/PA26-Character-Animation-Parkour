@@ -8,6 +8,7 @@ namespace MiniEngine
 {
 	namespace Physics { class PhysicsWorld; }
 	class Actor;
+
 	struct TravelContext 
 	{
 		std::shared_ptr<Actor> m_owner;
@@ -40,7 +41,7 @@ namespace MiniEngine
 		END
 	};
 
-#pragma region Perception Nodes
+#pragma region Perception Nodes 인지 처리 노드
 
 	// 최상위 부모
 	// 상속해서 활용할 것
@@ -100,20 +101,42 @@ namespace MiniEngine
 
 #pragma endregion
 
+#pragma region Process 인지 결과를 처리하기
+
+	struct ProcessContext
+	{
+		Actor* pOwner;
+	};
+
+	// 조건들의 최상위 부모
+	class ProcessCondition
+	{
+	public:
+		virtual ~ProcessCondition() {};
+		virtual bool Evaluate(const TravelResult& _result, const ProcessContext& _context) = 0;
+	};
+
+	// 조건 모음
+
+#pragma endregion
+
 	class PerceptionComponent : public Component
 	{
 	public:
 		void OnAttach() override;
 
-		EPerceptionResult Travel();// 탐색
+		EPerceptionResult Travel(); // 탐색
 		void SetQueryTree(std::shared_ptr<PerceptionNode>&& _newTree) { m_queryTree = _newTree; };
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 		const TravelResult& GetLastestTravelResult() const { return m_result; }
+		const uint8_t ProcessResult(const ProcessContext& _context) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
 
 	private:
 		std::weak_ptr<Physics::PhysicsWorld> m_physics;
 		std::shared_ptr<PerceptionNode> m_queryTree;
+		std::vector<std::shared_ptr<ProcessCondition>> m_processCondition;
+
 		TravelResult m_result; // 가장 마지막으로 인식한 데이터
 	};
 }

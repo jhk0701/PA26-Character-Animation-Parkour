@@ -94,4 +94,10 @@ namespace MiniEngine
 		
 		return m_queryTree->Execute(context, m_result);
 	}
+
+	const uint8_t PerceptionComponent::ProcessResult(const ProcessContext& _context) const
+	{
+		return uint8_t();
+	}
+
 }
