@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Scene/ProcessorComponent.h"
+#include "Core/Log.h"
 
 namespace MiniEngine 
 {
@@ -41,7 +42,10 @@ namespace MiniEngine
 	bool ProcessData::TryQuery(const TravelResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const
 	{
 		if (!m_pCondition)
+		{
+			MG_LOG_INFO("[ProcessData::TryQuery] condition is not assigned.");
 			return false;
+		}
 
 		bool bResult = m_pCondition->Process(_inResult, _inContext);
 

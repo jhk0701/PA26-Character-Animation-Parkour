@@ -211,7 +211,13 @@ void Character::LoadData()
 	m_perception.lock()->SetQueryTree(std::move(pQueryTree));
 	
 	std::vector<std::shared_ptr<ProcessData>> processDatas;
-	std::shared_ptr<ProcessConditionData> pProcessCondition = std::make_shared<ProcessConditionData>(); // TODO : 데이터 로딩해서 불러올 것
+	std::shared_ptr<ProcessConditionData> pProcessCondition;
+	if (DataManager::GetInstance()->TryGetDataAsset<ProcessConditionData>(L"ProcessConditionData.json", pProcessCondition) == false ||
+		pProcessCondition->IsValid() == false) 
+	{
+		MG_LOG_ERROR("[Character::LoadData] ProcessConditionData.json load failed. perception disabled.");
+		return;
+	}
 	pProcessCondition->ConstructData(processDatas);
 	m_processor.lock()->SetProcessData(std::move(processDatas));
 }

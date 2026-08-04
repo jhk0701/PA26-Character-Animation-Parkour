@@ -1,20 +1,93 @@
 {
-    "condition":
-    {
-        "comment" : "조건들은 재사용 가능, 매개변수 가능",
-        "id": "인스턴스의 고유 이름",
-        "class": "사용할 클래스",
-        "children" : "Composite Condition 유형들은 자식 포함 [ 자식1_ID, 자식2_ID, ... ]",
-        "param" : "사용할 매개변수"
-    },
     "conditions" : [
+        {
+            "id": "IsDefault",
+            "class": "ObstacleTypeCondition",
+            "targetType" : "Default"
+        },
+        {
+            "id": "HeightCheck_Wall",
+            "class": "ObstacleHeightCondition",
+            "value" : 3.0
+        },
+        {
+            "id": "HeightCheck_High",
+            "class": "ObstacleHeightCondition",
+            "value" : 1.5
+        },
+        {
+            "id": "HeightCheck_Low",
+            "class": "ObstacleHeightCondition",
+            "value" : 1.0
+        },
+        {
+            "id": "IsDeeper",
+            "class": "ObstacleDepthCondition",
+            "value" : 1.0
+        },
+        {
+            "id": "IsNotDeeper",
+            "class": "ObstacleDepthCondition",
+            "isInverted" : true,
+            "value" : 1.0
+        },
+
+        {
+            "id": "Landing_Wall_IdleToHang",
+            "comment" : "Landing -> Wall_Hanging (Idle To Hang)",
+            "class": "ConditionAnd",
+            "children" : [ "IsDefault", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "Landing_VaultHigh",
+            "class": "ConditionAnd",
+            "children" : [ "IsDefault", "HeightCheck_High", "IsNotDeeper" ]
+        },
+        {
+            "id": "Landing_VaultLowMid",
+            "class": "ConditionAnd",
+            "children" : [ "IsDefault", "HeightCheck_Low", "IsNotDeeper" ]
+        },
+        {
+            "id": "Landing_MantleHigh",
+            "class": "ConditionAnd",
+            "children" : [ "IsDefault", "HeightCheck_High", "IsDeeper" ]
+        },
+        {
+            "id": "Landing_MantleLowMid",
+            "class": "ConditionAnd",
+            "children" : [ "IsDefault", "HeightCheck_Low", "IsDeeper" ]
+        }
     ],
     
-    "processData":
-    {
-        "comment" : "특정 액터 행동과 실행할 조건 1:1 대응",
-        "act" : "조건이 만족하면 실행할 액션 (ETagAct)",
-        "conditionId" : "사용할 조건문"
-    },
-    "processDatas" : []
+    "processDatas" : [
+        {
+            "tagAct" : "Wall_IdleToHang",
+            "conditionId" : "Landing_Wall_IdleToHang"
+        },
+        {
+            "tagAct" : "VaultHigh",
+            "conditionId" : "Landing_VaultHigh"
+        },
+        {
+            "tagAct" : "VaultMid",
+            "conditionId" : "Landing_VaultLowMid"
+        },
+        {
+            "tagAct" : "VaultLow",
+            "conditionId" : "Landing_VaultLowMid"
+        },
+        {
+            "tagAct" : "MantleHigh",
+            "conditionId" : "Landing_MantleHigh"
+        },
+        {
+            "tagAct" : "MantleMid",
+            "conditionId" : "Landing_MantleLowMid"
+        },
+        {
+            "tagAct" : "MantleLow",
+            "conditionId" : "Landing_MantleLowMid"
+        }
+    ]
 }
