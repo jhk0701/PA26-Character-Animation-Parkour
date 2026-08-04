@@ -51,15 +51,14 @@ namespace MiniEngine
 	// 자식 조건들이 모두 만족해야 true
 	class ConditionAnd : public CompositeCondition
 	{
-	public:
+	protected:
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	};
 
-	// 자식 조건 중 1개만 만족하면 true
-	// 이후 조건은 return
+	// 자식 조건 중 1개만 만족하면 true. 이후 조건은 return
 	class ConditionOr : public CompositeCondition
 	{
-	public:
+	protected:
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	};
 
@@ -74,6 +73,7 @@ namespace MiniEngine
 		uint8_t m_result;
 		std::shared_ptr<ProcessCondition> m_pCondition;
 	};
+
 #pragma endregion
 
 	class ProcessorComponent : public Component

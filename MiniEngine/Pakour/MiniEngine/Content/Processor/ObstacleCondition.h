@@ -16,8 +16,10 @@ private:
 class ObstacleTypeCondition : public ProcessCondition
 {
 public:
-	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	void SetType(uint8_t _type) { m_targetType = _type; }
+
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 
 private:
 	uint8_t m_targetType;
@@ -25,12 +27,12 @@ private:
 
 class ObstacleHeightCondition : public CompareRealNumberCondition
 {
-public:
+protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
 
 class ObstacleDepthCondition : public CompareRealNumberCondition
 {
-public:
+protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };

@@ -251,12 +251,15 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
 	}
 
+	// 세부 처리는 각 상태일때 달리 처리
+	// 데이터화 가능할지 확인
+	/*
+	
 	if (m_charFSM.expired())
 		return;
 
-	// 세부 처리는 각 상태일때 달리 처리
-	// -> 데이터화 가능할지 확인
-	// m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
+	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
+	*/
 	
 	uint8_t processResult = 0;
 	if (m_processor.lock()->ProcessResult(_result, processResult) == false)
@@ -264,8 +267,6 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		MG_LOG_WARN("[Character::ProcessPerceptionResult] Result try to process, but no matched result exists");
 		return;
 	}
-
-	// return; // 임시
 
 	// 액션 수행
 	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))

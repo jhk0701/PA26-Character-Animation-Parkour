@@ -28,19 +28,19 @@ namespace
 {
 #pragma region Node Registry
 
-	using NodeCreator = std::function<std::shared_ptr<PerceptionNode>(const PerceptionNodeData&)>;
+	using FuncCreateNode = std::function<std::shared_ptr<PerceptionNode>(const PerceptionNodeData&)>;
 
 	constexpr int CHILDREN_ANY = -1;
 	constexpr int CONDITION_CHILDREN = 2;
 
 	struct NodeSpec
 	{
-		NodeCreator Create;
+		FuncCreateNode Create;
 		int ExpectedChildren{ 0 };
 	};
 
 	template<typename T>
-	NodeCreator CreateNode()
+	FuncCreateNode CreateNode()
 	{
 		return [](const PerceptionNodeData&) -> std::shared_ptr<PerceptionNode>
 			{
@@ -48,9 +48,10 @@ namespace
 			};
 	}
 
-	// 새 인식 노드 클래스를 추가하면 여기에 등록해야 json 에서 쓸 수 있다.
+	// 새 인식 노드 클래스는 아래에 추가
 	const std::unordered_map<std::string, NodeSpec>& NodeRegistry()
 	{
+		// 1번만 호출하도록 static으로 선언
 		static const std::unordered_map<std::string, NodeSpec> REGISTRY =
 		{
 			// 합성 노드

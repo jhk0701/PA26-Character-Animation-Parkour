@@ -102,4 +102,7 @@ namespace Content::Config
 
 	bool TryParseTagAct(const std::string& _name, uint8_t& _outTag);
 	const char* GetTagActName(uint8_t _tag);
+
+	bool TryParseTagEnvDetail(const std::string& _name, uint8_t& _outTag);
+	const char* GetTagEnvDetailName(uint8_t _tag);
 }

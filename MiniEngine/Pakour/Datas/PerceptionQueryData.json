@@ -3,200 +3,201 @@
 
   "nodes": [
     {
-      "id": "Empty",
-      "class": "ReturnEmptyNode",
-      "comment": "빈 결과 리턴, Fail 처리"
+        "id": "Empty",
+        "class": "ReturnEmptyNode",
+        "comment": "빈 결과 리턴, Fail 처리"
     },
     {
-      "id": "Return",
-      "class": "ReturnResultNode",
-      "comment": "결과 리턴, Success 처리"
+        "id": "Return",
+        "class": "ReturnResultNode",
+        "comment": "결과 리턴, Success 처리"
     },
+    
     {
-      "id": "RootQuery",
-      "class": "SelectCharacterStateNode",
-      "comment": "Character::EState 순서",
-      "children": [
-        "StateLanding",
-        "StateInAir",
-        "StateHanging",
-        "StateBeam",
-        "StateBeam"
-      ]
+        "id": "RootQuery",
+        "class": "SelectCharacterStateNode",
+        "comment": "Character::EState 순서",
+        "children": [
+            "StateLanding",
+            "StateInAir",
+            "StateHanging",
+            "StateBeam",
+            "StateBeam"
+        ]
     },
 
-      {
-        "id": "StateLanding",
-        "class": "CheckObstacleNode",
-        "comment": "평지상태 : 장애물 찾기",
-        "heightMultiplier": 1.0,
-        "children": [
-          "CheckObstacleTag",
-          "Empty"
-        ]
-      },
         {
-          "id": "CheckObstacleTag",
-          "class": "SelectObstacleTagNode",
-          "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
-          "children": [
-            "ProcessDefault",
-            "ProcessBeam",
-            "ProcessProtrude"
-          ]
-        },
-
-          {
-            "id": "ProcessDefault",
-            "class": "SelectUsingHeightNode",
+            "id": "StateLanding",
+            "class": "CheckObstacleNode",
+            "comment": "평지상태 : 장애물 찾기",
+            "heightMultiplier": 1.0,
             "children": [
-              "Return",
-              "MeasureDepthSeq",
-              "Return"
-            ]
-          },
-            {
-              "id": "MeasureDepthSeq",
-              "class": "SequenceNode",
-              "comment": "vault, mantle 은 깊이 측정 후 결과 리턴",
-              "children": [
-                "MeasureDepth",
-                "Return"
-              ]
-            },
-              {
-                "id": "MeasureDepth",
-                "class": "MeasureDepthNode",
-                "comment": "딛을 면의 깊이 측정"
-              },
-
-      {
-        "id": "ProcessBeam",
-        "class": "SequenceNode",
-        "comment": "beam 지형의 높이 측정 시퀀스",
-        "children": [
-          "BeamCompareHeight",
-          "Return"
-        ]
-      },
-        {
-          "id": "BeamCompareHeight",
-          "class": "BeamCompareHeightNode",
-          "comment": "캐릭터와 장애물의 y 위치 비교"
-        },
-
-      {
-        "id": "ProcessProtrude",
-        "class": "SequenceNode",
-        "comment": "protrude 지형 정보 추출 후 리턴 시퀀스",
-        "children": [
-          "ProtrudeExtractHeight",
-          "Return"
-        ]
-      },
-        {
-          "id": "ProtrudeExtractHeight",
-          "class": "ProtrudeExtractHeightNode"
-        },
-
-      {
-        "id": "StateInAir",
-        "class": "CheckObstacleNode",
-        "heightMultiplier": 2.0,
-        "children": [
-          "InAirObstacleFoundSeq",
-          "Empty"
-        ]
-      },
-        {
-          "id": "InAirObstacleFoundSeq",
-          "class": "SequenceNode",
-          "children": [
-            "CheckObstacleTag"
-          ]
-        },
-          {
-            "id": "TransitionToLanding",
-            "class": "TransitionCharacterFSMNode",
-            "targetState": "Landing"
-          },
-
-      {
-        "id": "StateHanging",
-        "class": "SelectUsingInputDirNode",
-        "children": [
-          "OnHangingUp",
-          "OnHangingDown",
-          "OnHangingSide",
-          "Empty"
-        ]
-      },
-        {
-          "id": "OnHangingUp",
-          "class": "CheckOnHangingMoveUpNode",
-          "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
-          "children": [
-            "CheckObstacleTag_OnHanging",
-            "OnHangingUp_CurrentObstacleLedge"
-          ]
-        },
-          {
-            "id": "CheckObstacleTag_OnHanging",
-            "class": "SelectObstacleTagNode",
-            "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
-            "children": [
-              "OnHangingUp_AnotherObstacleLedge",
-              "ProcessBeam",
-              "ProcessProtrude"
-            ]
-          },
-            {
-              "id": "OnHangingUp_AnotherObstacleLedge",
-              "class": "CheckOnHangingUpwardLedgeNode",
-              "startOffset": [ 0.0, 0.0, -0.5 ],
-              "comment": "위를 가로막은 장애물의 Ledge 찾기",
-              "children": [
-                "Return",
+                "CheckObstacleTag",
                 "Empty"
-              ]
-            },
-          {
-            "id": "OnHangingUp_CurrentObstacleLedge",
-            "class": "CheckOnHangingUpwardLedgeNode",
-            "startOffset": [ 0.0, 0.0, 0.2 ],
-            "comment": "현재 벽면의 Ledge 찾기",
-            "children": [
-              "Return",
-              "Empty"
             ]
-          },
-      {
-        "id": "OnHangingDown",
-        "class": "CheckOnHangingMoveDownNode",
-        "children": [
-          "Return",
-          "Empty"
-        ]
-      },
-      {
-        "id": "OnHangingSide",
-        "class": "CheckOnHangingMoveSideNode",
-        "startOffset" : [0.0, 0.0, -0.0],
-        "children": [
-          "Return",
-          "Empty"
-        ]
-      },
+        },
+            {
+                "id": "CheckObstacleTag",
+                "class": "SelectObstacleTagNode",
+                "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
+                "children": [
+                    "ProcessDefault",
+                    "ProcessBeam",
+                    "ProcessProtrude"
+                ]
+            },
 
-    {
-      "id": "StateBeam",
-      "class": "CheckObstacleNode",
-      "heightMultiplier": 3.0,
-      "startOffset": [ 0.0, 0.0, 0.75 ],
-      "children": [
-        "CheckObstacleTag",
-        "Empty"
-      ]
-    }
+            {
+                "id": "ProcessDefault",
+                "class": "SelectUsingHeightNode",
+                "children": [
+                    "Return",
+                    "MeasureDepthSeq",
+                    "Return"
+                ]
+            },
+                {
+                    "id": "MeasureDepthSeq",
+                    "class": "SequenceNode",
+                    "comment": "vault, mantle 은 깊이 측정 후 결과 리턴",
+                    "children": [
+                        "MeasureDepth",
+                        "Return"
+                    ]
+                },
+                    {
+                        "id": "MeasureDepth",
+                        "class": "MeasureDepthNode",
+                        "comment": "딛을 면의 깊이 측정"
+                    },
+
+            {
+                "id": "ProcessBeam",
+                "class": "SequenceNode",
+                "comment": "beam 지형의 높이 측정 시퀀스",
+                "children": [
+                    "BeamCompareHeight",
+                    "Return"
+                ]
+            },
+                {
+                    "id": "BeamCompareHeight",
+                    "class": "BeamCompareHeightNode",
+                    "comment": "캐릭터와 장애물의 y 위치 비교"
+                },
+
+            {
+                "id": "ProcessProtrude",
+                "class": "SequenceNode",
+                "comment": "protrude 지형 정보 추출 후 리턴 시퀀스",
+                "children": [
+                    "ProtrudeExtractHeight",
+                    "Return"
+                ]
+            },
+                {
+                    "id": "ProtrudeExtractHeight",
+                    "class": "ProtrudeExtractHeightNode"
+                },
+
+        {
+            "id": "StateInAir",
+            "class": "CheckObstacleNode",
+            "heightMultiplier": 2.0,
+            "children": [
+                "InAirObstacleFoundSeq",
+                "Empty"
+            ]
+        },
+            {
+                "id": "InAirObstacleFoundSeq",
+                "class": "SequenceNode",
+                "children": [
+                    "CheckObstacleTag"
+                ]
+            },
+            {
+                "id": "TransitionToLanding",
+                "class": "TransitionCharacterFSMNode",
+                "targetState": "Landing"
+            },
+
+        {
+            "id": "StateHanging",
+            "class": "SelectUsingInputDirNode",
+            "children": [
+                "OnHangingUp",
+                "OnHangingDown",
+                "OnHangingSide",
+                "Empty"
+            ]
+        },
+            {
+                "id": "OnHangingUp",
+                "class": "CheckOnHangingMoveUpNode",
+                "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
+                "children": [
+                    "CheckObstacleTag_OnHanging",
+                    "OnHangingUp_CurrentObstacleLedge"
+                ]
+            },
+                {
+                    "id": "CheckObstacleTag_OnHanging",
+                    "class": "SelectObstacleTagNode",
+                    "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
+                    "children": [
+                        "OnHangingUp_AnotherObstacleLedge",
+                        "ProcessBeam",
+                        "ProcessProtrude"
+                    ]
+                },
+                    {
+                        "id": "OnHangingUp_AnotherObstacleLedge",
+                        "class": "CheckOnHangingUpwardLedgeNode",
+                        "startOffset": [ 0.0, 0.0, -0.5 ],
+                        "comment": "위를 가로막은 장애물의 Ledge 찾기",
+                        "children": [
+                            "Return",
+                            "Empty"
+                        ]
+                    },
+                {
+                    "id": "OnHangingUp_CurrentObstacleLedge",
+                    "class": "CheckOnHangingUpwardLedgeNode",
+                    "startOffset": [ 0.0, 0.0, 0.2 ],
+                    "comment": "현재 벽면의 Ledge 찾기",
+                    "children": [
+                        "Return",
+                        "Empty"
+                    ]
+                },
+            {
+                "id": "OnHangingDown",
+                "class": "CheckOnHangingMoveDownNode",
+                "children": [
+                    "Return",
+                    "Empty"
+                ]
+            },
+            {
+                "id": "OnHangingSide",
+                "class": "CheckOnHangingMoveSideNode",
+                "startOffset" : [0.0, 0.0, -0.0],
+                "children": [
+                    "Return",
+                    "Empty"
+                ]
+            },
+
+        {
+            "id": "StateBeam",
+            "class": "CheckObstacleNode",
+            "heightMultiplier": 3.0,
+            "startOffset": [ 0.0, 0.0, 0.75 ],
+            "children": [
+                "CheckObstacleTag",
+                "Empty"
+            ]
+        }
   ]
 }
