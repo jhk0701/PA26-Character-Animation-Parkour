@@ -24,6 +24,8 @@ using namespace MiniEngine;
 
 class CharacterStateMachine;
 class CharacterPerceptionConfig;
+struct PerceptionConfig;
+
 class Character : public Pawn
 {
 public:

@@ -2,6 +2,7 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
 #include "Core/DebugMarkers.h"
 #include "Core/Log.h"
 

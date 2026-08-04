@@ -4,6 +4,7 @@
 
 #include "Scene/IObstacle.h"
 #include "Content/Character.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
 
 #include "Content/ContentConfig.h"
 

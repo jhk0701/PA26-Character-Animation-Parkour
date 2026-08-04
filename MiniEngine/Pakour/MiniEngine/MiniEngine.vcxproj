@@ -146,6 +146,7 @@
     <ClInclude Include="Content\Data\CharacterAnimData.h" />
     <ClInclude Include="Content\Data\CharacterPerceptionConfig.h" />
     <ClInclude Include="Content\Data\PerceptionQueryTree.h" />
+    <ClInclude Include="Content\Data\ProcessConditionData.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
     <ClInclude Include="Content\JumpTiming.h" />
     <ClInclude Include="Content\Obstacle.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Content\Perception\SelectUsingHeightNode.h" />
     <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h" />
     <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h" />
+    <ClInclude Include="Content\Processor\ObstacleCondition.h" />
     <ClInclude Include="Content\TransitionState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="Scene\IObstacle.h" />
     <ClInclude Include="Scene\Pawn.h" />
     <ClInclude Include="Scene\PerceptionComponent.h" />
+    <ClInclude Include="Scene\ProcessorComponent.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="Scene\Tag.h" />
     <ClInclude Include="targetver.h" />
@@ -241,6 +244,7 @@
     <ClCompile Include="Content\Data\CharacterAnimData.cpp" />
     <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp" />
     <ClCompile Include="Content\Data\PerceptionQueryTree.cpp" />
+    <ClCompile Include="Content\Data\ProcessConditionData.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
     <ClCompile Include="Content\JumpTiming.cpp" />
     <ClCompile Include="Content\Obstacle.cpp" />
@@ -256,6 +260,7 @@
     <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp" />
     <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp" />
     <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp" />
+    <ClCompile Include="Content\Processor\ObstacleCondition.cpp" />
     <ClCompile Include="Content\TransitionState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
@@ -285,6 +290,7 @@
     <ClCompile Include="Scene\Controller.cpp" />
     <ClCompile Include="Scene\Pawn.cpp" />
     <ClCompile Include="Scene\PerceptionComponent.cpp" />
+    <ClCompile Include="Scene\ProcessorComponent.cpp" />
     <ClCompile Include="Scene\RigidBodyComponent.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\Actor.cpp" />

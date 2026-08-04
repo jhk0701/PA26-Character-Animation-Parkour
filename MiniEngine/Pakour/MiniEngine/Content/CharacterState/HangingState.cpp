@@ -6,6 +6,8 @@
 #include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
 
+#include "Scene/IObstacle.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
 #include "Core/Log.h"
 
 using namespace Content::Config;
