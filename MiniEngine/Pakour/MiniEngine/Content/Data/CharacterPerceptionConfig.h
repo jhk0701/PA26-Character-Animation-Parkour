@@ -3,7 +3,7 @@
 
 struct PerceptionConfig
 {
-	// ----------행위 구분에 사용
+	// ----------행위 구분에 사용 -> 인지용 환경 설정과는 무관하지 않나
 	// 장애물 파쿠르 기준
 	float thresholdWallHeight = 3.0f;
 	float thresholdHighObstacle = 2.0f;
