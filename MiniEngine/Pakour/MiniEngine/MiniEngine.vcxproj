@@ -163,6 +163,7 @@
     <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h" />
     <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h" />
     <ClInclude Include="Content\Processor\ObstacleCondition.h" />
+    <ClInclude Include="Content\Processor\ProcessorConditionUtil.h" />
     <ClInclude Include="Content\TransitionState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp" />
     <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp" />
     <ClCompile Include="Content\Processor\ObstacleCondition.cpp" />
+    <ClCompile Include="Content\Processor\ProcessorConditionUtil.cpp" />
     <ClCompile Include="Content\TransitionState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />

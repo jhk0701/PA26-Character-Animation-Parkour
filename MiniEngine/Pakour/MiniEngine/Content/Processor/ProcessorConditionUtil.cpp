@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Content/Processor/ProcessorConditionUtil.h"
 #include "Content/ContentConfig.h"
+#include "Content/Character.h"
 
 using namespace MiniEngine;
 using namespace Content::Config;

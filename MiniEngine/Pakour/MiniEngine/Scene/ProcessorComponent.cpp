@@ -14,7 +14,7 @@ namespace MiniEngine
 	{
 		for (const std::shared_ptr<ProcessCondition>& pCond : m_children)
 		{
-			if (pCond->Evaluate(_result, _context) == false)
+			if (pCond->Process(_result, _context) == false)
 				return false;
 		}
 
@@ -25,7 +25,7 @@ namespace MiniEngine
 	{
 		for (const std::shared_ptr<ProcessCondition>& pCond : m_children)
 		{
-			if (pCond->Evaluate(_result, _context) == true)
+			if (pCond->Process(_result, _context) == true)
 				return true;
 		}
 
@@ -43,7 +43,7 @@ namespace MiniEngine
 		if (!m_pCondition)
 			return false;
 
-		bool bResult = m_pCondition->Evaluate(_inResult, _inContext);
+		bool bResult = m_pCondition->Process(_inResult, _inContext);
 
 		if (bResult)
 			_outResult = m_result;

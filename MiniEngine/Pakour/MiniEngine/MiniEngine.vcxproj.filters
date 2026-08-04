@@ -412,6 +412,9 @@
     <ClInclude Include="Content\Processor\ObstacleCondition.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Processor\ProcessorConditionUtil.h">
+      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -673,6 +676,9 @@
       <Filter>Content\05.Data</Filter>
     </ClCompile>
     <ClCompile Include="Content\Processor\ObstacleCondition.cpp">
+      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Processor\ProcessorConditionUtil.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClCompile>
   </ItemGroup>
