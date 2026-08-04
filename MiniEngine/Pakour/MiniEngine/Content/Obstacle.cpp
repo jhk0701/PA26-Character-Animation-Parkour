@@ -21,7 +21,7 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 	Tag& tag = GetTag();
 
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
-	tag += 0U; // 우선 순위
+	tag += _desc.priority; // 우선 순위
 	for (const uint8_t t : _desc.detailTags)
 		tag += t;
 	

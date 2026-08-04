@@ -29,6 +29,7 @@ public:
 		MiniEngine::Vector3 scale;
 		MiniEngine::Quaternion rot = MiniEngine::Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		std::vector<uint8_t> detailTags;
+		uint8_t priority{0};
 		MiniEngine::Physics::Layer layer = MiniEngine::Physics::Layer::Obstacle;
 		ELedgeOption ledgeOpt = ELedgeOption::All;
 	};
