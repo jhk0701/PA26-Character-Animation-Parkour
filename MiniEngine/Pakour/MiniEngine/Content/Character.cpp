@@ -256,7 +256,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 
 	// 세부 처리는 각 상태일때 달리 처리
 	// -> 데이터화 가능할지 확인
-	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
+	// m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
 	
 	uint8_t processResult = 0;
 	if (m_processor.lock()->ProcessResult(_result, processResult) == false)
@@ -265,7 +265,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		return;
 	}
 
-	return; // 임시
+	// return; // 임시
 
 	// 액션 수행
 	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))
