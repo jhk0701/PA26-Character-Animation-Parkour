@@ -6,8 +6,8 @@
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
-
 #include "Content/Processor/ProcessorConditionUtil.h"
+
 #include "Core/Log.h"
 
 

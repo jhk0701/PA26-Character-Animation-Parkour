@@ -3,9 +3,10 @@
 
 namespace Content::Config
 {
-	inline constexpr uint8_t TAG_ENV		= 0;
-	inline constexpr uint8_t TAG_ENV_DETAIL	= 1;
-	inline constexpr uint8_t TAG_SUB_INFO	= 2;
+	inline constexpr uint8_t TAG_ENV			= 0;
+	inline constexpr uint8_t TAG_ENV_PRIORITY	= 1;
+	inline constexpr uint8_t TAG_ENV_DETAIL		= 2;
+	inline constexpr uint8_t TAG_SUB_INFO		= 3;
 
 	enum class ETagEnv : uint8_t
 	{
