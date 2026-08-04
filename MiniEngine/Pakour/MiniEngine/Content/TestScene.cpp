@@ -20,12 +20,8 @@
 
 using namespace MiniEngine;
 
-TestScene::TestScene()
-{
-}
-TestScene::~TestScene()
-{
-}
+TestScene::TestScene() {}
+TestScene::~TestScene() {}
 
 void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 {

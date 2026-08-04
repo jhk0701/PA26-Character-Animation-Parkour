@@ -18,15 +18,7 @@ namespace MiniEngine
 	{
 	public:
 		virtual ~ProcessCondition() {};
-		bool Process(const TravelResult& _result, const ProcessContext& _context)
-		{ 
-			bool bResult = Evaluate(_result, _context);
-
-			if (m_bIsInvert)
-				bResult = !bResult;
-
-			return bResult;
-		};
+		bool Process(const TravelResult& _result, const ProcessContext& _context);
 
 		// 결과 반전 처리 -> 조건문에서 ! 와 동일
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }

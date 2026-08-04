@@ -219,6 +219,9 @@ void Character::LoadData()
 		return;
 	}
 	pProcessCondition->ConstructData(processDatas);
+
+	MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
+
 	m_processor.lock()->SetProcessData(std::move(processDatas));
 }
 

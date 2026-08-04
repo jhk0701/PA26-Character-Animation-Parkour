@@ -6,6 +6,16 @@ namespace MiniEngine
 {
 #pragma region Process Nodes 인지 결과 처리용
 
+	bool ProcessCondition::Process(const TravelResult& _result, const ProcessContext& _context)
+	{
+		bool bResult = Evaluate(_result, _context);
+
+		if (m_bIsInvert)
+			bResult = !bResult;
+
+		return bResult;
+	};
+
 	void CompositeCondition::SetChildren(std::vector<std::shared_ptr<ProcessCondition>>&& _children)
 	{
 		m_children = std::move(_children);
@@ -70,5 +80,6 @@ namespace MiniEngine
 
 		return false;
 	}
+
 
 }

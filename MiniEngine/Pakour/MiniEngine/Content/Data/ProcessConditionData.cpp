@@ -43,6 +43,7 @@ namespace
 					[](const ConditionSchema& _data) 
 					{
 						std::shared_ptr<ObstacleTypeCondition> pCond = std::make_shared<ObstacleTypeCondition>();
+						pCond->Invert(_data.IsInverted);
 						pCond->SetType(_data.TargetType);
 						return pCond;
 					}
@@ -53,6 +54,7 @@ namespace
 					[](const ConditionSchema& _data) 
 					{
 						std::shared_ptr<ObstacleHeightCondition> pCond = std::make_shared<ObstacleHeightCondition>();
+						pCond->Invert(_data.IsInverted);
 						pCond->SetValue(_data.Value);
 						return pCond;
 					}
@@ -63,6 +65,7 @@ namespace
 					[](const ConditionSchema& _data) 
 					{
 						std::shared_ptr<ObstacleDepthCondition> pCond = std::make_shared<ObstacleDepthCondition>();
+						pCond->Invert(_data.IsInverted);
 						pCond->SetValue(_data.Value);
 						return pCond;
 					}
@@ -194,10 +197,10 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 
 	_out.clear();
 	_out.reserve(m_processDatas.size());
-	const std::unordered_map<std::string, ConditionSpec>& REGISTRY = ConditionRegistry();
+	const std::unordered_map<std::string, ConditionSpec>& REGISTRY = ConditionRegistry(); // Class - CreateFunc
 
 	// condition 생성
-	std::unordered_map<std::string, std::shared_ptr<ProcessCondition>> mapCondition;
+	std::unordered_map<std::string, std::shared_ptr<ProcessCondition>> mapCondition; // Id - Instance
 	mapCondition.reserve(m_condDatas.size());
 	for (const std::pair<std::string, const ConditionSchema>& pair : m_condDatas)
 	{
@@ -209,6 +212,24 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 		}
 
 		mapCondition.insert( { pair.first, it->second.CreateFunc(pair.second) } );
+	}
+
+	// 자식 할당
+	for (const std::pair<std::string, const ConditionSchema>& pair : m_condDatas)
+	{
+		if (pair.second.Children.empty())
+			continue;
+
+		std::shared_ptr<CompositeCondition> pComp = std::dynamic_pointer_cast<CompositeCondition>(mapCondition[pair.first]);
+		if (!pComp)
+			continue;
+		
+		std::vector<std::shared_ptr<ProcessCondition>> children;
+		children.reserve(pair.second.Children.size());
+		for (const std::string& child : pair.second.Children)
+			children.push_back(mapCondition[child]);
+
+		pComp->SetChildren(std::move(children));
 	}
 
 	// process 생성 후 Condtion 할당
