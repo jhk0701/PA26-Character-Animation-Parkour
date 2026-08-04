@@ -21,15 +21,18 @@ bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessC
 	if (_result.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, type) == false)
 		return false;
 
-	return type == m_target;
+	return type == m_targetType;
 }
-
-// 자주 쓰는 타입은 사용하기 편하게 미리 선언
-IsDefault::IsDefault() { SetTarget((uint8_t)ETagEnvDetail::Default); }
-IsBeam::IsBeam() { SetTarget((uint8_t)ETagEnvDetail::Beam); }
 
 bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
+	// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
 	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-	return m_height <= _result.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
+	return GetValue() + pChar->GetRoot()->localTransform.position.y <= _result.m_obstacleLedge;
+}
+
+bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	// 측정한 깊이가 기준 깊이보다 깊음
+	return GetValue() <= _result.m_obstacleDepth;
 }

@@ -3,35 +3,34 @@
 
 using namespace MiniEngine;
 
+class CompareRealNumberCondition : public ProcessCondition 
+{
+public:
+	void SetValue(float _val) { m_value = _val; }
+	float GetValue() const { return m_value; }
+
+private:
+	float m_value;
+};
+
 class ObstacleTypeCondition : public ProcessCondition
 {
 public:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
-	void SetTarget(uint8_t _target) { m_target = _target; }
+	void SetType(uint8_t _type) { m_targetType = _type; }
 
 private:
-	uint8_t m_target;
+	uint8_t m_targetType;
 };
 
-class IsDefault : public ObstacleTypeCondition 
-{
-public:
-	IsDefault();
-};
-
-class IsBeam : public ObstacleTypeCondition
-{
-public:
-	IsBeam();
-};
-
-
-class ObstacleHeightCondition : public ProcessCondition 
+class ObstacleHeightCondition : public CompareRealNumberCondition
 {
 public:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
-	void SetHeight(float _height) { m_height = _height; }
+};
 
-private:
-	float m_height;
+class ObstacleDepthCondition : public CompareRealNumberCondition
+{
+public:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
