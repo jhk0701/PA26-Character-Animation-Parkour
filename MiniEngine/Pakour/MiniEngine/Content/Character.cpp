@@ -16,11 +16,15 @@
 #include "Scene/SkeletalMeshComponent.h"
 #include "Scene/CharacterControllerComponent.h"
 #include "Animation/Animator.h"
+#include "Scene/PerceptionComponent.h"
+#include "Scene/ProcessorComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
 #include "Content/Data/CharacterAnimData.h"
 #include "Content/Data/ActionClipContainer.h"
+#include "Content/Data/PerceptionQueryTree.h"
+#include "Content/Data/ProcessConditionData.h"
 
 #include "Content/CharacterStateMachine.h"
 #include "Content/CharacterState/LandingState.h"
@@ -28,6 +32,7 @@
 #include "Content/CharacterState/HangingState.h"
 #include "Content/CharacterState/BeamState.h"
 
+using namespace MiniEngine;
 using namespace Content::Config;
 
 namespace
@@ -109,8 +114,9 @@ void Character::Construct(const Vector3& _initPosition)
 		m_charCont = pCharCont;
 	}
 	{
-		std::shared_ptr<PerceptionComponent> pPerceptComp = AddComponent<PerceptionComponent>();
-		m_perception = pPerceptComp;
+		// 지형 인식 및 처리용 
+		m_perception = AddComponent<PerceptionComponent>();
+		m_processor = AddComponent<ProcessorComponent>();
 	}
 	{
 		// 캐릭터 로직 처리용 FSM 추가
@@ -194,7 +200,8 @@ void Character::LoadData()
 		return;
 	}
 
-	std::shared_ptr<PerceptionNode> pQueryTree = m_perceptQueryTree.ConstructTree(*pQueryData);
+	PerceptionQueryTree perceptQueryTree;
+	std::shared_ptr<PerceptionNode> pQueryTree = perceptQueryTree.ConstructTree(*pQueryData);
 	if (pQueryTree == nullptr)
 	{
 		MG_LOG_ERROR("[Character::LoadData] failed to construct query tree. perception disabled.");
@@ -202,6 +209,11 @@ void Character::LoadData()
 	}
 
 	m_perception.lock()->SetQueryTree(std::move(pQueryTree));
+	
+	std::vector<std::shared_ptr<ProcessData>> processDatas;
+	std::shared_ptr<ProcessConditionData> pProcessCondition = std::make_shared<ProcessConditionData>(); // TODO : 데이터 로딩해서 불러올 것
+	pProcessCondition->ConstructData(processDatas);
+	m_processor.lock()->SetProcessData(std::move(processDatas));
 }
 
 void Character::TryPerception()
@@ -243,8 +255,21 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		return;
 
 	// 세부 처리는 각 상태일때 달리 처리
-	// TODO: 이 부분 데이터화 가능할지 확인
+	// -> 데이터화 가능할지 확인
 	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
+	
+	uint8_t processResult = 0;
+	if (m_processor.lock()->ProcessResult(_result, processResult) == false)
+	{
+		MG_LOG_WARN("[Character::ProcessPerceptionResult] Result try to process, but no matched result exists");
+		return;
+	}
+
+	return; // 임시
+
+	// 액션 수행
+	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))
+		PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 }
 
 void Character::InitCollisionLayer()

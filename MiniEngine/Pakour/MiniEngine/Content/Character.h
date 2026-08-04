@@ -1,8 +1,5 @@
 #pragma once
 #include "Scene/Pawn.h"
-#include "Content/Data/PerceptionQueryTree.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
-#include "Scene/PerceptionComponent.h"
 #include "Animation/IK/LimbIKComponent.h"
 
 #include <unordered_map>
@@ -16,11 +13,17 @@ namespace MiniEngine
 	class BlendClip;
 	class ActionClip;
 	class IObstacle;
+
+	class PerceptionComponent;
+	struct TravelResult;
+
+	class ProcessorComponent;
 }
 
 using namespace MiniEngine;
 
 class CharacterStateMachine;
+class CharacterPerceptionConfig;
 class Character : public Pawn
 {
 public:
@@ -75,7 +78,7 @@ public:
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 
-	// getter setter
+	// State
 	void SetState(EState _state) { m_state = _state; }
 	EState GetState() const { return m_state; }
 
@@ -154,10 +157,10 @@ private:
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
 	std::weak_ptr<CharacterPerceptionConfig> m_pPerceptionConfig;
-	PerceptionQueryTree m_perceptQueryTree;
 
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
+	std::weak_ptr<ProcessorComponent> m_processor;
 	std::weak_ptr<CharacterStateMachine> m_charFSM;
 
 	// IK 튜닝 멤버 변수
