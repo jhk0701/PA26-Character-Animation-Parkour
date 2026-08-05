@@ -3,6 +3,7 @@
 
 namespace MiniEngine 
 {
+    class ProcessCondition;
 	class ProcessData;
 }
 
@@ -58,7 +59,9 @@ class ProcessConditionData : public MiniEngine::DataAsset
 {
 public:
 	void Load(const json& _data) override;
-	void ConstructData(std::vector<std::shared_ptr<MiniEngine::ProcessData>>& _out);
+	void ConstructData(
+        std::vector<std::shared_ptr<MiniEngine::ProcessCondition>>& _outConditions, 
+        std::vector<std::shared_ptr<MiniEngine::ProcessData>>& _outProcessData);
 
     bool IsValid() const { return m_bIsValid; }
 
@@ -66,4 +69,5 @@ private:
     bool m_bIsValid{ false };
     std::unordered_map<std::string, ConditionSchema> m_condDatas;
     std::vector<ProcessDataSchema> m_processDatas;
+
 };

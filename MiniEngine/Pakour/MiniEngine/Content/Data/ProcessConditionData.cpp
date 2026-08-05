@@ -19,16 +19,21 @@ namespace
 		FuncCreateCond CreateFunc;
 	};
 
-	template<typename T>
-	FuncCreateCond CreateCond()
+	void AddCommonVariable(std::shared_ptr<ProcessCondition> _pCond, const ConditionSchema& _data) 
 	{
-		return [](const ConditionSchema& _data) -> std::shared_ptr<ProcessCondition>
-		{
-			std::shared_ptr<T> pCond = std::make_shared<T>();
-			pCond->Invert(_data.IsInverted);
-			return pCond;
-		};
+		_pCond->Invert(_data.IsInverted);
 	}
+
+	template<typename T>
+	std::shared_ptr<T> Create(const ConditionSchema& _data)
+	{
+		std::shared_ptr<T> pCond = std::make_shared<T>();
+		AddCommonVariable(pCond, _data);
+		return pCond;
+	}
+
+	template<typename T>
+	FuncCreateCond CreateCond() { return Create<T>; }
 
 	// 클래스 등록
 	const std::unordered_map<std::string, ConditionSpec>& ConditionRegistry()
@@ -42,8 +47,7 @@ namespace
 				{ 
 					[](const ConditionSchema& _data) 
 					{
-						std::shared_ptr<ObstacleTypeCondition> pCond = std::make_shared<ObstacleTypeCondition>();
-						pCond->Invert(_data.IsInverted);
+						std::shared_ptr<ObstacleTypeCondition> pCond = Create<ObstacleTypeCondition>(_data);
 						pCond->SetType(_data.TargetType);
 						return pCond;
 					}
@@ -53,8 +57,7 @@ namespace
 				{ 
 					[](const ConditionSchema& _data) 
 					{
-						std::shared_ptr<ObstacleHeightCondition> pCond = std::make_shared<ObstacleHeightCondition>();
-						pCond->Invert(_data.IsInverted);
+						std::shared_ptr<ObstacleHeightCondition> pCond = Create<ObstacleHeightCondition>(_data);
 						pCond->SetValue(_data.Value);
 						return pCond;
 					}
@@ -64,8 +67,7 @@ namespace
 				{ 
 					[](const ConditionSchema& _data) 
 					{
-						std::shared_ptr<ObstacleDepthCondition> pCond = std::make_shared<ObstacleDepthCondition>();
-						pCond->Invert(_data.IsInverted);
+						std::shared_ptr<ObstacleDepthCondition> pCond = Create<ObstacleDepthCondition>(_data);
 						pCond->SetValue(_data.Value);
 						return pCond;
 					}
@@ -187,7 +189,10 @@ void ProcessConditionData::Load(const json& _data)
 	m_bIsValid = true;
 }
 
-void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine::ProcessData>>& _out)
+void ProcessConditionData::ConstructData(
+	std::vector<std::shared_ptr<ProcessCondition>>& _outConditions, 
+	std::vector<std::shared_ptr<ProcessData>>& _outProcessData
+)
 {
 	if (IsValid() == false)
 	{
@@ -195,13 +200,14 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 		return;
 	}
 
-	_out.clear();
-	_out.reserve(m_processDatas.size());
 	const std::unordered_map<std::string, ConditionSpec>& REGISTRY = ConditionRegistry(); // Class - CreateFunc
 
 	// condition 생성
 	std::unordered_map<std::string, std::shared_ptr<ProcessCondition>> mapCondition; // Id - Instance
 	mapCondition.reserve(m_condDatas.size());
+	_outConditions.clear();
+	_outConditions.reserve(m_condDatas.size());
+
 	for (const std::pair<std::string, const ConditionSchema>& pair : m_condDatas)
 	{
 		auto it = REGISTRY.find(pair.second.CondClass);
@@ -211,7 +217,10 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 			return;
 		}
 
-		mapCondition.insert( { pair.first, it->second.CreateFunc(pair.second) } );
+		std::shared_ptr<ProcessCondition> pCond = it->second.CreateFunc(pair.second);
+
+		mapCondition.insert( { pair.first, pCond } );
+		_outConditions.push_back(pCond);
 	}
 
 	// 자식 할당
@@ -224,7 +233,7 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 		if (!pComp)
 			continue;
 		
-		std::vector<std::shared_ptr<ProcessCondition>> children;
+		std::vector<std::weak_ptr<ProcessCondition>> children;
 		children.reserve(pair.second.Children.size());
 		for (const std::string& child : pair.second.Children)
 			children.push_back(mapCondition[child]);
@@ -233,11 +242,13 @@ void ProcessConditionData::ConstructData(std::vector<std::shared_ptr<MiniEngine:
 	}
 
 	// process 생성 후 Condtion 할당
+	_outProcessData.clear();
+	_outProcessData.reserve(m_processDatas.size());
 	for (const ProcessDataSchema& p : m_processDatas)
 	{
 		std::shared_ptr<ProcessData> pProcessData = std::make_shared<ProcessData>();
 		pProcessData->Init(p.TagAct, mapCondition[p.ConditionId]);
 
-		_out.push_back(pProcessData);
+		_outProcessData.push_back(pProcessData);
 	}
 }

@@ -34,10 +34,10 @@ namespace MiniEngine
 	class CompositeCondition : public ProcessCondition
 	{
 	public:
-		void SetChildren(std::vector<std::shared_ptr<ProcessCondition>>&& _children);
+		void SetChildren(std::vector<std::weak_ptr<ProcessCondition>>&& _children);
 
 	protected:
-		std::vector<std::shared_ptr<ProcessCondition>> m_children;
+		std::vector<std::weak_ptr<ProcessCondition>> m_children;
 	};
 
 	// 자식 조건들이 모두 만족해야 true
@@ -63,7 +63,7 @@ namespace MiniEngine
 
 	private:
 		uint8_t m_result;
-		std::shared_ptr<ProcessCondition> m_pCondition;
+		std::weak_ptr<ProcessCondition> m_pCondition;
 	};
 
 #pragma endregion
@@ -72,12 +72,15 @@ namespace MiniEngine
 	{
 	public:
 		bool ProcessResult(const TravelResult& _inTravelResult, uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
-		void SetProcessData(std::vector<std::shared_ptr<ProcessData>>&& _datas) 
+		void Init(std::vector<std::shared_ptr<ProcessCondition>>&& _conds, std::vector<std::shared_ptr<ProcessData>>&& _datas)
 		{
+			m_conditions = std::move(_conds);
 			m_processDatas = std::move(_datas);
 		};
 
 	private:
+		// 각 객체의 소유권은 컴포넌트에서 관리
+		std::vector<std::shared_ptr<ProcessCondition>> m_conditions;
 		std::vector<std::shared_ptr<ProcessData>> m_processDatas;
 	};
 }

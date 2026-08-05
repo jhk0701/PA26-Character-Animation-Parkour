@@ -174,13 +174,6 @@ void Character::BeginPlay()
 void Character::Tick(float _dt)
 {
 	Pawn::Tick(_dt);
-
-	/*
-	Vector3 pos = GetRoot()->localTransform.position;
-	Vector3 posUp = pos + Vector3(0.0f, 2.5f, 0.0f);
-	MiniEngine::Debug::DrawPoint(posUp, MiniEngine::DebugColor::GREEN, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, 0.1f);
-	MiniEngine::Debug::DrawLine(pos, posUp, MiniEngine::DebugColor::GREEN, 0.1f);
-	*/
 }
 
 void Character::LoadData()
@@ -209,7 +202,8 @@ void Character::LoadData()
 	}
 
 	m_perception.lock()->SetQueryTree(std::move(pQueryTree));
-	
+
+	std::vector<std::shared_ptr<ProcessCondition>> conditions;
 	std::vector<std::shared_ptr<ProcessData>> processDatas;
 	std::shared_ptr<ProcessConditionData> pProcessCondition;
 	if (DataManager::GetInstance()->TryGetDataAsset<ProcessConditionData>(L"ProcessConditionData.json", pProcessCondition) == false ||
@@ -218,11 +212,11 @@ void Character::LoadData()
 		MG_LOG_ERROR("[Character::LoadData] ProcessConditionData.json load failed. perception disabled.");
 		return;
 	}
-	pProcessCondition->ConstructData(processDatas);
+	pProcessCondition->ConstructData(conditions, processDatas);
 
 	MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
 
-	m_processor.lock()->SetProcessData(std::move(processDatas));
+	m_processor.lock()->Init(std::move(conditions), std::move(processDatas));
 }
 
 void Character::TryPerception()
@@ -260,16 +254,6 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
 	}
 
-	// 세부 처리는 각 상태일때 달리 처리
-	// 데이터화 가능할지 확인
-	/*
-	
-	if (m_charFSM.expired())
-		return;
-
-	m_charFSM.lock()->ProcessPerceptionResult(m_curObstacleInfo);
-	*/
-	
 	uint8_t processResult = 0;
 	if (m_processor.lock()->ProcessResult(_result, processResult) == false)
 	{
@@ -338,8 +322,8 @@ LimbIKComponent::TaskResult Character::IKDetectGround(uint8_t _ik)
 	std::shared_ptr<Physics::PhysicsWorld> pPhysics = GetScene()->GetPhysics().lock();
 	if (!pPhysics->Raycast(param, hitResult, Physics::Layer::Ground | Physics::Layer::Obstacle))
 		return result;
-
-	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	
+	// MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);
@@ -517,7 +501,7 @@ void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
 	targetPos += _posOffset;
 
-	MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	// MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	m_limbIKComp.lock()->SetTargetPosIK((ELimbType)_ik, targetPos);
 }

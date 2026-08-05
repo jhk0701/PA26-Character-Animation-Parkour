@@ -16,16 +16,16 @@ namespace MiniEngine
 		return bResult;
 	};
 
-	void CompositeCondition::SetChildren(std::vector<std::shared_ptr<ProcessCondition>>&& _children)
+	void CompositeCondition::SetChildren(std::vector<std::weak_ptr<ProcessCondition>>&& _children)
 	{
 		m_children = std::move(_children);
 	}
 
 	bool ConditionAnd::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		for (const std::shared_ptr<ProcessCondition>& pCond : m_children)
+		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
-			if (pCond->Process(_result, _context) == false)
+			if (pCond.lock()->Process(_result, _context) == false)
 				return false;
 		}
 
@@ -34,9 +34,9 @@ namespace MiniEngine
 
 	bool ConditionOr::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		for (const std::shared_ptr<ProcessCondition>& pCond : m_children)
+		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
-			if (pCond->Process(_result, _context) == true)
+			if (pCond.lock()->Process(_result, _context) == true)
 				return true;
 		}
 
@@ -51,13 +51,13 @@ namespace MiniEngine
 
 	bool ProcessData::TryQuery(const TravelResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const
 	{
-		if (!m_pCondition)
+		if (m_pCondition.expired())
 		{
-			MG_LOG_INFO("[ProcessData::TryQuery] condition is not assigned.");
+			MG_LOG_INFO("[ProcessData::TryQuery] condition is not valid.");
 			return false;
 		}
 
-		bool bResult = m_pCondition->Process(_inResult, _inContext);
+		bool bResult = m_pCondition.lock()->Process(_inResult, _inContext);
 
 		if (bResult)
 			_outResult = m_result;
