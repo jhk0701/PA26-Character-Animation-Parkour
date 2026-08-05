@@ -28,3 +28,10 @@ class ObstacleIsFrontCondition : public ProcessCondition
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
+
+// 장애물이 변경되었는지 확인
+class ObstacleIsChangedCondition : public ProcessCondition
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};

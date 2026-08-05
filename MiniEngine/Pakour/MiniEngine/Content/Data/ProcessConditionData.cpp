@@ -95,7 +95,8 @@ namespace
 					}
 				}
 			},
-			{ "ObstacleIsFrontCondition", {{ CreateCond<ObstacleIsFrontCondition>() }} },
+			{ "ObstacleIsFrontCondition",		{ CreateCond<ObstacleIsFrontCondition>() }},
+			{ "ObstacleIsChangedCondition",		{ CreateCond<ObstacleIsChangedCondition>() }},
 			{
 				"InputVerticalCondition",
 				{
@@ -107,8 +108,7 @@ namespace
 					}
 				}
 			},
-			{
-				"InputHorizontalCondition",
+			{ "InputHorizontalCondition",
 				{
 					[](const ConditionSchema& _data)
 					{

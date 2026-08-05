@@ -58,3 +58,9 @@ bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const Proce
 
 	return dir.Dot(charFwd) > 0.0f;
 }
+
+bool ObstacleIsChangedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+	return pChar->GetCurObstacleInfo().m_bIsNewObstacle;
+}
