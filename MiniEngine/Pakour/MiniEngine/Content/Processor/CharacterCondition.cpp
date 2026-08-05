@@ -16,7 +16,6 @@ bool CharacterStateCondition::Evaluate(const TravelResult& _result, const Proces
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
     MG_LOG_INFO("[CharacterStateCondition] Target {}, Character {}", GetValue(), (uint8_t)pChar->GetState());
-
     return (uint8_t)pChar->GetState() == GetValue();
 }
 
@@ -24,6 +23,6 @@ bool CharacterHeightCondition::Evaluate(const TravelResult& _result, const Proce
 {
     // 인식한 지형의 모서리 높이가 캐릭터의 현재 높이 + 지정한 값만큼의 높이보다 낮은지 확인
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-    // MG_LOG_INFO("[CharacterHeightCondition] Ledge {:.2f}, Comparer {:.2f} + {:.2f}", _result.m_obstacleLedge, pChar->GetRoot()->localTransform.position.y, GetValue());
+    MG_LOG_INFO("[CharacterHeightCondition] Ledge {:.2f}, Comparer {:.2f} + {:.2f}", _result.m_obstacleLedge, pChar->GetRoot()->localTransform.position.y, GetValue());
     return _result.m_obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
 }

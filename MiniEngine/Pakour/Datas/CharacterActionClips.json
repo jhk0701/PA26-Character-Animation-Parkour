@@ -715,6 +715,11 @@
             },
             "notifies": [
                 {
+                    "class": "TransitionState",
+                    "time": 0.4,
+                    "state": "Landing"
+                },
+                {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0, 0.5 ],
                     "midOffset" : [ 0.0, 1.5, 0.0 ]

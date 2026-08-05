@@ -250,6 +250,10 @@ void ProcessConditionData::ConstructData(
 
 		std::shared_ptr<ProcessCondition> pCond = it->second.CreateFunc(pair.second);
 
+
+#ifdef MG_DEBUG
+		pCond->SetName(pair.first);
+#endif
 		mapCondition.insert( { pair.first, pCond } );
 		_outConditions.push_back(pCond);
 	}

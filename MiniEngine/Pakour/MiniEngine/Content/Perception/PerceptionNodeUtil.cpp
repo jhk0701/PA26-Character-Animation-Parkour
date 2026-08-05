@@ -138,7 +138,7 @@ namespace PerceptionNodeUtil
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 			{
-				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 				
 				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 				if (bFirstTouched) 
@@ -149,11 +149,14 @@ namespace PerceptionNodeUtil
 				if (!bFirstTouched)
 					bFirstTouched = true;
 
-				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 			}
 		}
 
-		_context.m_ledge = FOOT_Y + band * CONFIG.heightStep;
+		if (bFirstTouched)
+			_context.m_ledge = FOOT_Y + band * CONFIG.heightStep;
+		else
+			_context.m_ledge = FOOT_Y;
 
 		if (band > 0)
 		{

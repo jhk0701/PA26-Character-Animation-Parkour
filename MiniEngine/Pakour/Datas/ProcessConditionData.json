@@ -111,15 +111,35 @@
             "id": "ToBeamHanging",
             "class": "ConditionAnd",
             "children" : [ "IsBeam", "IsNotLowerThan_CharacterMid" ]
+        },
+
+        {
+            "id": "BeamStand_ToHanging",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamStand", "IsDefault", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "BeamStand_ToLanding",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamStand", "IsDefault", "IsLowerThan_CharacterMid" ]
         }
     ],
     
+    "comment_processDatas" : "순서대로 순회하면 조건을 탐색 -> 맨 앞에 조건이 많은 사항을 둘 것",
     "processDatas" : [
+        {
+            "tagAct" : "Beam_StandToIdle",
+            "conditionId" : "BeamStand_ToLanding"
+        },
+        {
+            "tagAct" : "Wall_IdleToHang",
+            "conditionId" : "BeamStand_ToHanging"
+        },
+
         {
             "tagAct" : "Wall_IdleToHang",
             "conditionId" : "Landing_Wall_IdleToHang"
         },
-
         {
             "tagAct" : "VaultHigh",
             "conditionId" : "Landing_VaultHigh"
@@ -132,7 +152,6 @@
             "tagAct" : "VaultLow",
             "conditionId" : "Landing_VaultLowMid"
         },
-
         {
             "tagAct" : "MantleHigh",
             "conditionId" : "Landing_MantleHigh"

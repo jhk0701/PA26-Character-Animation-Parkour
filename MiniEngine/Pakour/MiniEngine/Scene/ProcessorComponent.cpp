@@ -25,6 +25,9 @@ namespace MiniEngine
 	{
 		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
+#ifdef MG_DEBUG
+			MG_LOG_INFO("[ConditionAnd] Process {}", pCond.lock()->GetName());
+#endif // MG_DEBUG
 			if (pCond.lock()->Process(_result, _context) == false)
 				return false;
 		}
@@ -36,6 +39,9 @@ namespace MiniEngine
 	{
 		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
+#ifdef MG_DEBUG
+			MG_LOG_INFO("[ConditionOr] Process {}", pCond.lock()->GetName());
+#endif // MG_DEBUG
 			if (pCond.lock()->Process(_result, _context) == true)
 				return true;
 		}
@@ -72,8 +78,15 @@ namespace MiniEngine
 		ProcessContext context;
 		context.pOwner = owner.lock();
 
+#ifdef MG_DEBUG
+		int i = 0;
+#endif // MG_DEBUG
+
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
 		{
+#ifdef MG_DEBUG
+			MG_LOG_INFO("[ProcessorComponent::ProcessResult] Loop Process Data {}", i++);
+#endif // DEBUG
 			if (pProcess->TryQuery(_inTravelResult, context, _outResult))
 				return true; // true 인 것이 있다면 바로 반환
 		}
