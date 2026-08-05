@@ -95,8 +95,7 @@ namespace
 					}
 				}
 			},
-			{ "ObstacleIsFrontCondition", {{ CreateCond<ObstacleIsFrontCondition>() }}
-			},
+			{ "ObstacleIsFrontCondition", {{ CreateCond<ObstacleIsFrontCondition>() }} },
 			{
 				"InputVerticalCondition",
 				{

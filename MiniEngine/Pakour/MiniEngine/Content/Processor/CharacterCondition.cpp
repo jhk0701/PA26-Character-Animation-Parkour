@@ -30,11 +30,28 @@ bool CharacterHeightCondition::Evaluate(const TravelResult& _result, const Proce
 bool InputVerticalCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+    MG_LOG_INFO("[InputVerticalCondition] Value : {:.2f}, Input Y : {:.2f}", GetValue(), pChar->GetInputDir().y);
+
+    // 기준 값이 음수
+    // 아래를 향하는지 확인
+    if (GetValue() < 0)
+        return GetValue() > pChar->GetInputDir().y;
+    // 기준 값이 양수
+    // 위를 향하는지 확인
     return GetValue() < pChar->GetInputDir().y;
 }
 
 bool InputHorizontalCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+    MG_LOG_INFO("[InputHorizontalCondition] Value : {:.2f}, Input X : {:.2f}", GetValue(), pChar->GetInputDir().x);
+
+    // 기준 값이 음수
+    // 왼쪽을 향하는지 확인
+    if(GetValue() < 0) 
+        return GetValue() > pChar->GetInputDir().x;
+
+    // 기준 값이 양수
+    // 오른쪽을 향하는지 확인
     return GetValue() < pChar->GetInputDir().x;
 }
