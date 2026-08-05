@@ -12,7 +12,7 @@
 #include "Content/Perception/SelectUsingHeightNode.h"
 #include "Content/Perception/SelectUsingInputDirNode.h"
 #include "Content/Perception/CheckObstacleNode.h"
-#include "Content/Perception/MeasureDepthNode.h"
+#include "Content/Perception/MeasureNode.h"
 #include "Content/Perception/BeamCompareHeightNode.h"
 #include "Content/Perception/ProtrudeExtractHeightNode.h"
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
@@ -54,7 +54,7 @@ namespace
 		// 1번만 호출하도록 static으로 선언
 		static const std::unordered_map<std::string, NodeSpec> REGISTRY =
 		{
-			// 합성 노드
+			// SequenceNode : 자식 연속 호출 Fail이 나오면 중단, 실패 처리
 			{ "SequenceNode",				{ CreateNode<SequenceNode>(),				CHILDREN_ANY } },
 
 			// Task (Leaf)
@@ -64,7 +64,7 @@ namespace
 			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
 			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } },
 
-			// Selector — 자식 개수가 InvokeCondition 반환 범위와 같아야 한다
+			// Selector : 자식 중 Success 나올 때까지 연속 호출
 			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
 			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
 			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
@@ -87,6 +87,18 @@ namespace
 					CONDITION_CHILDREN
 				} 
 			},
+			{ "CheckObstacleTowardInputDirNode", 
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckObstacleTowardInputDirNode> pNode = std::make_shared<CheckObstacleTowardInputDirNode>();
+						pNode->SetHeightMultiplier(_node.HeightMultiplier);
+						pNode->SetStartOffset(_node.StartOffset);
+						return pNode;
+					},
+					CONDITION_CHILDREN
+				}
+			},
 			{ "CheckOnHangingUpwardLedgeNode",	
 				{ 
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
@@ -103,6 +115,17 @@ namespace
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
 					{
 						std::shared_ptr<CheckOnHangingMoveSideNode> pNode = std::make_shared<CheckOnHangingMoveSideNode>();
+						pNode->SetStartOffset(_node.StartOffset);
+						return pNode;
+					},
+					CONDITION_CHILDREN
+				}
+			},
+			{ "CheckOnHangingMoveToInputDirNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckOnHangingMoveToInputDirNode> pNode = std::make_shared<CheckOnHangingMoveToInputDirNode>();
 						pNode->SetStartOffset(_node.StartOffset);
 						return pNode;
 					},

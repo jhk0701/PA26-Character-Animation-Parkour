@@ -121,6 +121,40 @@
                 "class": "TransitionCharacterFSMNode",
                 "targetState": "Landing"
             },
+        {
+            "id": "StateHanging2",
+            "class": "CheckObstacleTowardInputDirNode",
+            "children": [
+                "CheckOnHanging_ObstacleTag",
+                "CheckOnHanging_EnableToMove"
+            ]
+        },
+            {
+                "id": "CheckOnHanging_ObstacleTag",
+                "class": "SelectObstacleTagNode",
+                "children": [
+                    "CheckOnHanging_MeasureObsSeq",
+                    "ProcessBeam",
+                    "ProcessProtrude"
+                ]
+            },
+                {
+                    "id": "CheckOnHanging_MeasureObsSeq",
+                    "class": "SequenceNode",
+                    "children":
+                    [
+                        "",
+                        "Return"
+                    ]
+                },
+            {
+                "id": "CheckOnHanging_EnableToMove",
+                "class": "CheckObstacleTowardInputDirNode",
+                "children": [
+                    "Return",
+                    "Empty"
+                ]   
+            },
 
         {
             "id": "StateHanging",

@@ -108,15 +108,51 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 
 	// 접촉 확인
 	// 높이 측정
-	const uint8_t BAND = PerceptionNodeUtil::MeasureObstacleHeight(_context, param.m_dir);
+	const uint8_t BAND = MeasureObstacleHeight(_context, param.m_dir);
 	// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Height");
 	
 	// 매달리는 상황은 아닌 경우
 	if (BAND < CONFIG.maxHeightStep)
 	{
-		PerceptionNodeUtil::MeasureObstacleDepth(_context, param.m_dir); // 깊이 측정
+		MeasureObstacleDepth(_context, param.m_dir); // 깊이 측정
 		// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Depth");
 	}
 
 	return true;
+}
+
+bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
+{
+	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+	const Transform& TF = pChar->GetRoot()->localTransform;
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const Vector2 INPUT_DIR = pChar->GetInputDir();
+
+	Vector3 startPos = GetCharacterCenterPosition(_context);
+	Vector3 startOffset(0.0f);
+	startOffset += TF.Right() * m_startOffset.x;
+	startOffset += TF.Up() * m_startOffset.y;
+	startOffset += TF.Forward() * m_startOffset.z; 
+	startPos += startOffset;
+
+	// 입력 방향으로 이동
+	Vector3 dir(0.0f);
+	dir += TF.Right() * INPUT_DIR.x;
+	dir += TF.Up() * INPUT_DIR.y;
+	dir.Normalize();
+
+	startPos += (dir * CONFIG.onHangingSearchDist);
+
+	RaycastParam param;
+	param.m_origin = startPos;
+	param.m_maxDistance = CONFIG.onHangingSearchFwdDist;
+	param.m_dir = TF.Forward();
+
+	RaycastResult result;
+	bool bIsHit = _context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle));
+
+	if (bIsHit)
+		FillFromResult(_context, result);
+
+	return bIsHit;
 }

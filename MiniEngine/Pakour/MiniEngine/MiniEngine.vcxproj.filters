@@ -370,7 +370,7 @@
     <ClInclude Include="Content\Perception\SelectUsingHeightNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Perception\MeasureDepthNode.h">
+    <ClInclude Include="Content\Perception\MeasureNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
     <ClInclude Include="Content\Perception\BeamCompareHeightNode.h">
@@ -642,7 +642,7 @@
     <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Perception\MeasureDepthNode.cpp">
+    <ClCompile Include="Content\Perception\MeasureNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
     <ClCompile Include="Content\Perception\BeamCompareHeightNode.cpp">

@@ -49,6 +49,7 @@ public:
 		float m_obstacleDepth{ 0.0f };
 		Vector3 m_obstacleHitPos{ 0.0f };
 		Vector3 m_obstacleHitNrm{ 0.0f };
+		bool m_bIsNewObstacle{ true };
 
 		bool IsValid() const { return m_pObstacle != nullptr; }
 	};

@@ -21,7 +21,7 @@ namespace Content::Config
 		Default,	// 기본적인 일반지형
 		Beam,		// 발판, 봉과 같이 변의 한쪽이 좁고 긴 경우
 		Protrude,	// 벽면 등의 돌출부
-
+		
 		End
 	};
 
