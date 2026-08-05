@@ -96,37 +96,6 @@ void BeamStandState::Tick(float _dt)
 	ProcessMovement(_dt);
 }
 
-void BeamStandState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	uint8_t t = 0;
-
-	// Beam -> Default 처리
-	if (_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t) == false || 
-		t == (uint8_t)ETagEnvDetail::Default)
-	{
-		// 결과 확인 필요
-		uint8_t actTag = 0;
-		if (_info.m_obstacleLedge <= pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight())
-		{
-			actTag = (uint8_t)ETagAct::Beam_StandToIdle;
-
-			if (std::shared_ptr<ActionClip> pActionClip = pChar->GetActions(actTag))
-				pChar->PlayActionClip(pActionClip, 0.2f, (uint8_t)EActionPriority::Override);
-		}
-		else // 더 높은 경우
-			DefaultProcessPerceptionResult(_info);
-
-		pChar->TransitionStateMachine((uint8_t)Character::EState::Landing); // Beam Stand -> Landing
-		return;
-	}
-
-	// Beam Stand -> Beam Hanging
-	// Beam Stand -> Beam Stand
-	DefaultProcessPerceptionResult(_info);
-}
-
 void BeamStandState::AlignByAxis()
 {
 	// 좁은 발판에 선 상황
@@ -273,23 +242,6 @@ void BeamHangingState::Tick(float _dt)
 	BeamState::Tick(_dt);
 
 	ProcessMovement(_dt);
-}
-
-void BeamHangingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	uint8_t t = 0;
-	if (!_info.m_pObstacle->TryGetTag(TAG_ENV_DETAIL, t) || 
-		t != (uint8_t)ETagEnvDetail::Default)
-	{
-		DefaultProcessPerceptionResult(_info);
-		return;
-	}
-
-	// BeamHanging -> Landing
-	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Beam_HangToIdle))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)Content::Config::EActionPriority::Override);
 }
 
 void BeamHangingState::AlignByAxis()

@@ -39,7 +39,6 @@ class BeamStandState : public BeamState
 {
 public:
 	void Tick(float _dt) override;
-	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info) override;
 
 protected:
 	void AlignByAxis() override;
@@ -59,7 +58,6 @@ public:
 	void OnEnd() override;
 
 	void Tick(float _dt) override;
-	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)  override;
 
 protected:
 	void AlignByAxis() override;

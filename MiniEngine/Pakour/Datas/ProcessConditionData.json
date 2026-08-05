@@ -1,4 +1,5 @@
 {
+    "comment_conditions" : "조건 객체 데이터 모음집",
     "conditions" : [
         {
             "id": "IsDefault",
@@ -132,6 +133,22 @@
         },
 
         {
+            "id": "InAir_ToHanging",
+            "class": "ConditionAnd",
+            "children" : [ "IsInAirState", "IsDefault", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "InAir_ToMantleAttach",
+            "class": "ConditionAnd",
+            "children" : [ "IsInAirState", "IsDefault", "IsDeeper" ]
+        },
+        {
+            "id": "InAir_ToVaultAttach",
+            "class": "ConditionAnd",
+            "children" : [ "IsInAirState", "IsDefault", "IsNotDeeper" ]
+        },
+
+        {
             "id": "Hanging_Mantle_Top",
             "class": "ConditionAnd",
             "children" : [ "IsHangingState", "IsInputUp", "IsFront" ]
@@ -198,8 +215,21 @@
         }
     ],
     
-    "comment_processDatas" : "순서대로 순회하면 조건을 탐색 -> 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
+    "comment_processDatas" : "순서대로 순회하면 조건을 탐색하므로 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
     "processDatas" : [
+        {
+            "tagAct" : "Wall_AirToHang",
+            "conditionId" : "InAir_ToHanging"
+        },
+        {
+            "tagAct" : "MantleAirToAttach",
+            "conditionId" : "InAir_ToMantleAttach"
+        },
+        {
+            "tagAct" : "VaultAirToAttach",
+            "conditionId" : "InAir_ToVaultAttach"
+        },
+
         {
             "tagAct" : "Wall_HangToMantle",
             "conditionId" : "Hanging_Mantle_Top"

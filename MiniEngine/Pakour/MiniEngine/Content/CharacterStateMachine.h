@@ -19,7 +19,6 @@ public:
 
 	virtual void Tick(float _dt) = 0;
 	virtual void LateTick(float _dt) = 0;
-	virtual void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _result) = 0;
 	virtual void CheckState() {};
 
 protected:
@@ -27,11 +26,6 @@ protected:
 
 	void ProcessMovement(float _dt);
 	void SyncControllerRotate();
-	void DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info);
-	void ProcessDefaultObstacle(const Character::PerceptedObstacleInfo& _info);
-	void ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info);
-	void ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info);
-
 
 private:
 	std::weak_ptr<CharacterStateMachine> m_machine;
@@ -47,7 +41,6 @@ public:
 	void Start(uint8_t _startID = 0);
 	void RegisterStates(std::vector<std::shared_ptr<CharacterState>>&& _states);
 	void Transition(uint8_t _nextID);
-	void ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info);
 
 	std::shared_ptr<Character> GetCharacter();
 

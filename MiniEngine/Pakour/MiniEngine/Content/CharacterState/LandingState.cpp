@@ -57,11 +57,6 @@ void LandingState::CheckState()
 	GetMachine()->Transition(STATE);
 }
 
-void LandingState::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	DefaultProcessPerceptionResult(_info);
-}
-
 bool LandingState::IsOnFloor()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();

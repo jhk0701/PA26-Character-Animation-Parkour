@@ -13,81 +13,6 @@
 
 using namespace Content::Config;
 
-void CharacterState::DefaultProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	uint8_t type;
-	if (_info.m_pObstacle->TryGetTag(Content::Config::TAG_ENV_DETAIL, type) == false)
-	{
-		ProcessDefaultObstacle(_info);
-		return;
-	}
-
-	switch ((ETagEnvDetail)type)
-	{
-	case ETagEnvDetail::Beam:
-		ProcessBeamObstacle(_info);
-		break;
-	case ETagEnvDetail::Protrude:
-		ProcessProstrudeObstacle(_info);
-		break;
-	case ETagEnvDetail::Default: __fallthrough;
-	default:
-		ProcessDefaultObstacle(_info);
-		break;
-	}
-}
-
-void CharacterState::ProcessDefaultObstacle(const Character::PerceptedObstacleInfo& _info)
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
-
-	uint8_t actTag =
-		(uint8_t)(_info.m_obstacleDepth >= CONFIG.minMantleDepth ? ETagAct::Mantle : ETagAct::Vault);
-
-	const float DIFF_HEIGHT = _info.m_obstacleLedge - pChar->GetRoot()->localTransform.position.y;
-	if (DIFF_HEIGHT < .0f)
-		return;
-
-	// 올라가야함
-	if (DIFF_HEIGHT >= CONFIG.thresholdWallHeight)
-		actTag = (uint8_t)ETagAct::Wall;
-	else if (DIFF_HEIGHT >= CONFIG.thresholdHighObstacle)
-		actTag += 2;
-	else if (DIFF_HEIGHT >= CONFIG.thresholdLowObstacle)
-		actTag += 1;
-
-	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
-}
-
-void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo& _info)
-{
-	// 확인한 대상이 Beam
-	// 높이 확인 필요
-	// Ledge의 위치가 캐릭터의 절반 높이 확인
-
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	
-	float charY = pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight();
-	uint8_t actTag = _info.m_obstacleLedge < charY ? (uint8_t)ETagAct::BeamStand : (uint8_t)ETagAct::BeamHanging;
-
-	if (std::shared_ptr<ActionClip> pAction = pChar->GetActions(actTag))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
-}
-
-void CharacterState::ProcessProstrudeObstacle(const Character::PerceptedObstacleInfo& _info)
-{
-	MG_LOG_INFO("[CharacterState::ProcessProstrudeObstacle] Process Protrude" );
-
-	// 벽면 돌출부 protrude
-	// 해당 위치로 매달리기
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
-	if(std::shared_ptr<ActionClip> pAction = pChar->GetActions((uint8_t)ETagAct::Wall_AirToHang))
-		pChar->PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
-}
-
 void CharacterState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
@@ -172,12 +97,6 @@ void CharacterStateMachine::Transition(uint8_t _nextID)
 	m_curState = _nextID;
 
 	m_states[m_curState]->OnStart();
-}
-
-void CharacterStateMachine::ProcessPerceptionResult(const Character::PerceptedObstacleInfo& _info)
-{
-	assert(m_curState < m_states.size());
-	m_states[m_curState]->ProcessPerceptionResult(_info);
 }
 
 std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
