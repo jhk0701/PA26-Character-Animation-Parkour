@@ -68,7 +68,6 @@ namespace Content::Config
 		Wall_HangingMoveDown,
 		Wall_HangingMoveLeft,
 		Wall_HangingMoveRight,
-		Wall_ProtrudeMoveUp,	// 매달린 상태로 돌출부로 올라감
 
 		Wall_InnerRotateRight,  // 270도 단일 벽의 모서리 돌기 오른쪽
 		Wall_InnerRotateLeft,	// 270도 단일 벽의 모서리 돌기 왼쪽
@@ -93,6 +92,8 @@ namespace Content::Config
 		Beam_HangingMoveDown,
 		Beam_HangingMoveLeft,
 		Beam_HangingMoveRight,
+
+		Protrude_MoveToPoint,
 
 		Test,
 		End

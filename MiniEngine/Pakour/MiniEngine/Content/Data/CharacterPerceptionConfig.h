@@ -19,8 +19,7 @@ struct PerceptionConfig
 	float depthLift = 0.05f; // 꼭대기 표면인 경우 방지를 위해 띄어두는 크기
 	
 	// 매달린 상태(Hanging)의 주변 탐색 파라미터
-	float onHangingSearchVDist = 1.5f;	// 상하좌우 공통 탐지 거리
-	float onHangingSearchHDist = 1.5f;	// 상하좌우 공통 탐지 거리
+	float onHangingSearchDist = 1.5f;	// 상하좌우 공통 탐지 거리
 	float onHangingSearchFwdDist = 0.5f;	// 벽에 매달렸을 때, 벽이 이어지는 정면을 향해 쏘는 거리 (깊이 확인)
 	float onHangingSearchRadius = 0.5f;	// 상/좌/우 스피어 프로브 반지름 (하방은 단순 레이)
 

@@ -50,6 +50,29 @@ namespace
 		"STATE_NAMES 가 Character::EState 와 다름");
 }
 
+bool Character::TryParseState(const std::string& _name, uint8_t& _outState)
+{
+	for (size_t i = 0; i < std::size(STATE_NAMES); ++i)
+	{
+		if (_name == STATE_NAMES[i])
+		{
+			_outState = static_cast<uint8_t>(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const char* Character::GetStateName(uint8_t _state)
+{
+	if (_state >= std::size(STATE_NAMES))
+		return "invalid";
+
+	return STATE_NAMES[_state];
+}
+
+
 Character::Character() { }
 Character::~Character() { }
 
@@ -652,24 +675,3 @@ void Character::InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp)
 	pAnim->Init(0);
 }
 
-bool Character::TryParseState(const std::string& _name, uint8_t& _outState)
-{
-	for (size_t i = 0; i < std::size(STATE_NAMES); ++i)
-	{
-		if (_name == STATE_NAMES[i])
-		{
-			_outState = static_cast<uint8_t>(i);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const char* Character::GetStateName(uint8_t _state)
-{
-	if (_state >= std::size(STATE_NAMES))
-		return "invalid";
-
-	return STATE_NAMES[_state];
-}

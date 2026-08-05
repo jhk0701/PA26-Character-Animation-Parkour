@@ -20,7 +20,7 @@ bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 	SpherecastParam param;
 	param.m_startPos = GetCharacterCenterPosition(_context);
 	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-	param.m_maxDistance = CONFIG.onHangingSearchVDist;
+	param.m_maxDistance = CONFIG.onHangingSearchDist;
 	param.m_radius = CONFIG.onHangingSearchRadius;
 
 	RaycastResult result;
@@ -49,7 +49,7 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	param.m_startPos = GetCharacterCenterPosition(_context) + startOffset; 
 	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
 	param.m_radius = CONFIG.onHangingSearchRadius;
-	param.m_maxDistance = CONFIG.onHangingSearchVDist;
+	param.m_maxDistance = CONFIG.onHangingSearchDist;
 
 	// MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
 	// MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
@@ -70,7 +70,7 @@ bool CheckOnHangingMoveDownNode::InvokeCondition(TravelContext& _context)
 	RaycastParam param;
 	param.m_origin = pChar->GetRoot()->localTransform.position;
 	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchVDist;
+	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchDist;
 
 	RaycastResult result;
 	if (_context.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground) == false)
@@ -94,7 +94,7 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	SpherecastParam param;
 	param.m_startPos = GetCharacterCenterPosition(_context) + startOffset;
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
-	param.m_maxDistance = CONFIG.onHangingSearchHDist;
+	param.m_maxDistance = CONFIG.onHangingSearchDist;
 	param.m_radius = CONFIG.onHangingSearchRadius;
 
 	// MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);

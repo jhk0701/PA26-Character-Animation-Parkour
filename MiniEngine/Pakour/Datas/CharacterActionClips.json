@@ -668,7 +668,7 @@
             "rootMotion":  { "apply": true, "z" : false }
         },
         {
-            "tags": [ "Wall_ProtrudeMoveUp" ],
+            "tags": [ "Protrude_MoveToPoint" ],
             "clip": 19,
             "rootMotion":  { "apply": false },
             "notifies":

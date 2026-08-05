@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "Content/CharacterState/HangingState.h"
-#include "Content/Character.h"
 #include "Platform/Input.h"
-
-#include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
-
+#include "Scene/Scene.h"
 #include "Scene/IObstacle.h"
+#include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
+
 #include "Core/Log.h"
+#include "Core/DebugMarkers.h"
 
 using namespace Content::Config;
 using namespace MiniEngine::Physics;
@@ -30,7 +30,19 @@ void HangingState::OnEnd()
 
 void HangingState::Tick(float _dt)
 {
-	ProcessMovement(_dt);
+	// ProcessMovement(_dt);
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	Vector3 startPos = TF.position + Vector3(0.0f, pChar->GetCharacterHalfHeight(), 0.0f);
+	Vector3 dir(0.0f);
+	dir += TF.Right() * pChar->GetInputDir().x;
+	dir += TF.Up() * pChar->GetInputDir().y;
+	dir.Normalize();
+
+	MiniEngine::Debug::DrawPoint(startPos, MiniEngine::DebugColor::YELLOW, 0.1f, MiniEngine::Debug::EMarkerShape::Cross, _dt);
+	MiniEngine::Debug::DrawLine(startPos, startPos + dir, MiniEngine::DebugColor::YELLOW, _dt);
+	MiniEngine::Debug::DrawPoint(startPos + dir, MiniEngine::DebugColor::YELLOW, 0.1f, MiniEngine::Debug::EMarkerShape::Sphere, _dt);
 }
 
 void HangingState::LateTick(float _dt){ }
@@ -87,25 +99,26 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	std::shared_ptr<Physics::PhysicsWorld> physics = pChar->GetScene()->GetPhysics().lock();
 	const Transform& TF = pChar->GetRoot()->localTransform;
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	RaycastParam param;
-	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchFwdDist;
+	param.m_maxDistance = CONFIG.onHangingSearchFwdDist;
 	param.m_dir = TF.Forward();
 	param.m_origin = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
 
 	switch (_tag)
 	{
 	case Content::Config::ETagAct::Wall_HangingMoveUp:
-		param.m_origin += TF.Up();
+		param.m_origin += TF.Up() * CONFIG.onHangingSearchDist;
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveDown:
-		param.m_origin += -TF.Up();
-		break;
-	case Content::Config::ETagAct::Wall_HangingMoveLeft:
-		param.m_origin += -TF.Right();
+		param.m_origin += -TF.Up() * CONFIG.onHangingSearchDist;
 		break;
 	case Content::Config::ETagAct::Wall_HangingMoveRight:
-		param.m_origin += TF.Right();
+		param.m_origin += TF.Right() * CONFIG.onHangingSearchDist;
+		break;
+	case Content::Config::ETagAct::Wall_HangingMoveLeft:
+		param.m_origin += -TF.Right() * CONFIG.onHangingSearchDist;
 		break;
 	}
 

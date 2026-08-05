@@ -11,6 +11,11 @@
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Beam"
         },
+        {
+            "id": "IsProtrude",
+            "class": "ObstacleTypeCondition",
+            "targetObstacleType" : "Protrude"
+        },
 
         {
             "id": "IsLandingState",
@@ -227,11 +232,23 @@
             "id": "BeamHanging_ToLanding",
             "class": "ConditionAnd",
             "children" : [ "IsBeamHangingState", "IsDefault", "IsLowerThan_CharacterMid" ]
+        },
+
+        {
+            "id" : "Protrude_Move",
+            "comment" : "벽면에 돌출된 (유리한) 위치로 이동하는 경우",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHangingState", "IsProtrude" ]
         }
     ],
     
     "comment_processDatas" : "순서대로 순회하면 조건을 탐색하므로 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
     "processDatas" : [
+        {
+            "tagAct" : "Protrude_MoveToPoint",
+            "conditionId" : "Protrude_Move"
+        },
+
         {
             "tagAct" : "Wall_AirToHang",
             "conditionId" : "InAir_ToHanging"
@@ -285,6 +302,15 @@
         },
 
         {
+            "tagAct" : "Beam_IdleToStand",
+            "conditionId" : "ToBeamStand"
+        },
+        {
+            "tagAct" : "Beam_IdleToHang",
+            "conditionId" : "ToBeamHanging"
+        },
+
+        {
             "tagAct" : "Wall_IdleToHang",
             "conditionId" : "Landing_Wall_IdleToHang"
         },
@@ -311,15 +337,6 @@
         {
             "tagAct" : "MantleLow",
             "conditionId" : "Landing_MantleLowMid"
-        },
-
-        {
-            "tagAct" : "BeamStand",
-            "conditionId" : "ToBeamStand"
-        },
-        {
-            "tagAct" : "BeamHanging",
-            "conditionId" : "ToBeamHanging"
         }
     ]
 }
