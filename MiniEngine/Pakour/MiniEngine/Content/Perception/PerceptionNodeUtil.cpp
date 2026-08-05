@@ -132,14 +132,16 @@ namespace PerceptionNodeUtil
 			param.m_dir = _dir;
 			param.m_maxDistance = CONFIG.heightSearchtDist;
 
+			/*
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 			MG_LOG_INFO("[PerceptionNodeUtil::MeasureObstacleHeight] Start Pos : ({:.2f}, {:.2f}, {:.2f})", param.m_startPos.x, param.m_startPos.y, param.m_startPos.z);
+			*/
 			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 			{
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 				
 				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 				if (bFirstTouched) 
@@ -147,10 +149,10 @@ namespace PerceptionNodeUtil
 			}
 			else
 			{
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+
 				if (!bFirstTouched)
 					bFirstTouched = true;
-
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 			}
 		}
 

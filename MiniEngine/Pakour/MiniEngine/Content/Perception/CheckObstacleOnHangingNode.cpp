@@ -109,13 +109,13 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	// 접촉 확인
 	// 높이 측정
 	const uint8_t BAND = PerceptionNodeUtil::MeasureObstacleHeight(_context, param.m_dir);
-	MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Height");
+	// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Height");
 	
 	// 매달리는 상황은 아닌 경우
 	if (BAND < CONFIG.maxHeightStep)
 	{
 		PerceptionNodeUtil::MeasureObstacleDepth(_context, param.m_dir); // 깊이 측정
-		MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Depth");
+		// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Depth");
 	}
 
 	return true;

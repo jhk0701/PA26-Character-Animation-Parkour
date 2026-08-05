@@ -16,9 +16,9 @@ void CharacterPerceptionConfig::Load(const json& _data)
 	Config.depthSearchDownDist		= _data["depthSearchDownDist"];
 	Config.depthLift				= _data["depthLift"];
 
-	Config.onHangingSearchVDist		= _data["onHangingSearchVDist"];
-	Config.onHangingSearchHDist		= _data["onHangingSearchHDist"];
-	Config.onHangingSearchRadius	= _data["onHangingSearchRadius"];
-
-	Config.onLandingFallingCheckDist = _data["onLandingFallingCheckDist"];
+	Config.onHangingSearchVDist		= _data["onHanging_SearchVDist"];
+	Config.onHangingSearchHDist		= _data["onHanging_SearchHDist"];
+	Config.onHangingSearchFwdDist	= _data["onHanging_SearchFwdDist"];
+	Config.onHangingSearchRadius	= _data["onHanging_SearchRadius"];
+	Config.onLandingFallingCheckDist = _data["onLanding_FallingCheckDist"];
 }

@@ -12,9 +12,10 @@
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
 
-    "onHangingSearchVDist": 1.5,
-    "onHangingSearchHDist": 1.0,
-    "onHangingSearchRadius": 0.4,
+    "onHanging_SearchVDist": 1.5,
+    "onHanging_SearchHDist": 1.0,
+    "onHanging_SearchFwdDist" : 0.5,
+    "onHanging_SearchRadius": 0.4,
 
-    "onLandingFallingCheckDist": 0.2
+    "onLanding_FallingCheckDist": 0.2
 }

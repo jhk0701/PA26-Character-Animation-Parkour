@@ -280,14 +280,6 @@
             "conditionId" : "BeamStand_ToLanding"
         },
         {
-            "tagAct" : "Beam_StandToVault",
-            "conditionId" : "BeamStand_ToVault"
-        },
-        {
-            "tagAct" : "Beam_StandToMantle",
-            "conditionId" : "BeamStand_ToMantle"
-        },
-        {
             "tagAct" : "Beam_HangToIdle",
             "conditionId" : "BeamHanging_ToLanding"
         },

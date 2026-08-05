@@ -73,8 +73,7 @@ void HangingState::ProcessMovement(float _dt)
 	else if (INPUT_DIR.x < 0)
 		eAct = ETagAct::Wall_HangingMoveLeft;
 
-	if (eAct != ETagAct::End && 
-		CheckEnableToMove(eAct) == false)
+	if (eAct != ETagAct::End && CheckEnableToMove(eAct) == false)
 		return;
 
 	if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)eAct))
@@ -90,7 +89,7 @@ bool HangingState::CheckEnableToMove(ETagAct _tag)
 	const Transform& TF = pChar->GetRoot()->localTransform;
 
 	RaycastParam param;
-	param.m_maxDistance = pChar->GetCapsuleRadius() * 2.0f;
+	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchFwdDist;
 	param.m_dir = TF.Forward();
 	param.m_origin = TF.position + Vector3(0.0f, pChar->GetCapsuleHalfHeight(), 0.0f);
 
