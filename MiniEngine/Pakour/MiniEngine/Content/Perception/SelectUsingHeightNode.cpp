@@ -13,12 +13,12 @@ uint8_t SelectUsingHeightNode::InvokeCondition(TravelContext& _context)
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
 	const Vector3& FWD = pChar->GetRoot()->localTransform.Forward();
 	const uint8_t BAND = PerceptionNodeUtil::MeasureObstacleHeight(_context, FWD);
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 	if (BAND == 0)
 		return (uint8_t)0; // 꼭대기가 발보다 낮다 -> CCT stepOffset 이 처리할 턱
 
-	if (BAND >= pChar->GetPerceptionConfig().maxHeightStep)
-		return (uint8_t)2; // 3.0m 이상 -> 벽 판정
-
-	return (uint8_t)1; // 넘거나 오를 수 있는 높이 -> 깊이 측정으로
+	return BAND >= CONFIG.maxHeightStep ?  
+		2 : // 최대 높이까지 측정완료
+		1;  // 그 중간 사이 높이
 }

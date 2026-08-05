@@ -171,10 +171,25 @@
             "children" : [ "IsInputRight", "IsInputLeft" ]
         },
         {
-            "id": "Hanging_Mantle_OnSide",
+            "id": "Hanging_ObstacleOnSide",
             "comment": "벽면 중간에 좌 또는 우 방향에 오를 수 있는 장애물을 발견한 경우",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputHoriziontal" ]
+            "children" : [ "IsHangingState", "IsDefault", "IsInputHoriziontal" ]
+        },
+        {
+            "id": "Hanging_Hang_OnSide",
+            "class": "ConditionAnd",
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "Hanging_Mantle_OnSide",
+            "class": "ConditionAnd",
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsDeeper" ]
+        },
+        {
+            "id": "Hanging_Vault_OnSide",
+            "class": "ConditionAnd",
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsNotDeeper" ]
         },
 
         {
@@ -243,8 +258,17 @@
             "conditionId" : "Hanging_DownToGround"
         },
         {
+            "tagAct" : "Wall_AirToHang",
+            "conditionId" : "Hanging_Hang_OnSide"
+        },
+        {
             "tagAct" : "Wall_HangToMantleOnSide",
             "conditionId" : "Hanging_Mantle_OnSide"
+        },
+        {
+            "tagAct" : "Wall_HangToMantleOnSide",
+            "comment" : "적절한 애니메이션 찾고 교체 필요",
+            "conditionId" : "Hanging_Vault_OnSide"
         },
 
         {

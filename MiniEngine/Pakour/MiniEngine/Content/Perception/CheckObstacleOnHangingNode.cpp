@@ -8,7 +8,6 @@
 
 #include "Physics/PhysicsWorld.h"
 
-
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
 using namespace PerceptionNodeUtil;
@@ -98,18 +97,26 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	param.m_maxDistance = CONFIG.onHangingSearchHDist;
 	param.m_radius = CONFIG.onHangingSearchRadius;
 
-	MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
-	MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
+	// MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
+	// MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 		return false;
 
-	// 접촉 확인
-	// 바로 끝단 찾기
-	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
-		_context.m_ledge = result.m_pos.y;
-
 	FillFromResult(_context, result);
+
+	// 접촉 확인
+	// 높이 측정
+	const uint8_t BAND = PerceptionNodeUtil::MeasureObstacleHeight(_context, param.m_dir);
+	MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Height");
+	
+	// 매달리는 상황은 아닌 경우
+	if (BAND < CONFIG.maxHeightStep)
+	{
+		PerceptionNodeUtil::MeasureObstacleDepth(_context, param.m_dir); // 깊이 측정
+		MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Depth");
+	}
+
 	return true;
 }

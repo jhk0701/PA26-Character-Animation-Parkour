@@ -1,11 +1,6 @@
 {
     "minObstacleDetectDist": 1.0,
     "maxObstacleDetectDist": 2.5,
-
-    "thresholdWallHeight": 3.0,
-    "thresholdHighObstacle": 1.5,
-    "thresholdLowObstacle": 1.0,
-    "minMantleDepth": 1.0,
     
     "heightRadius": 0.25,
     "heightStep": 0.5,

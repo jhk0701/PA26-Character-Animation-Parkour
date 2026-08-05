@@ -13,13 +13,13 @@ uint8_t SelectObstacleTagNode::InvokeCondition(TravelContext& _context)
 	switch ((Content::Config::ETagEnvDetail)detailTag)
 	{
 	case Content::Config::ETagEnvDetail::Default:
-		MG_LOG_INFO("[SelectObstacleTagNode] :: is Default tag");
+		MG_LOG_INFO("[SelectObstacleTagNode] is Default tag");
 		break;
 	case Content::Config::ETagEnvDetail::Beam:
-		MG_LOG_INFO("[SelectObstacleTagNode] :: is Beam tag");
+		MG_LOG_INFO("[SelectObstacleTagNode] is Beam tag");
 		break;
 	case Content::Config::ETagEnvDetail::Protrude:
-		MG_LOG_INFO("[SelectObstacleTagNode] :: is Protrude tag");
+		MG_LOG_INFO("[SelectObstacleTagNode] is Protrude tag");
 		break;
 	}
 

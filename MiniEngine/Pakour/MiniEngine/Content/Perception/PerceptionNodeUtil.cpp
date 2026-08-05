@@ -8,6 +8,7 @@
 #include "Content/Data/CharacterPerceptionConfig.h"
 #include "Content/Obstacle.h"
 #include "Core/DebugMarkers.h"
+#include "Core/Log.h"
 
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
@@ -132,8 +133,8 @@ namespace PerceptionNodeUtil
 			param.m_maxDistance = CONFIG.heightSearchtDist;
 
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
-			
-			// MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			MG_LOG_INFO("[PerceptionNodeUtil::MeasureObstacleHeight] Start Pos : ({:.2f}, {:.2f}, {:.2f})", param.m_startPos.x, param.m_startPos.y, param.m_startPos.z);
 			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
@@ -192,8 +193,6 @@ namespace PerceptionNodeUtil
 			if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
 				break; // 구멍 -> 여기서부터는 딛을 수 없다
 
-			// 마스크가 Obstacle-only 라 지면은 안 맞지만 뒤에 있는 다른 장애물은 맞는다.
-			// 그걸 깊이로 세면 얇은 난간이 Mantle 로 새므로 액터 동일성으로 막는다
 			if (ToIObstacle(result.GetActor()) != _context.m_pFirstObstacle)
 				break;
 

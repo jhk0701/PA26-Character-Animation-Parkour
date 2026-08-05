@@ -456,6 +456,10 @@
                     "time": [ 0, 0.4 ],
                     "properDistance": 0.5,
                     "lerpWeight": 0.85
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
                 }
             ]
         },
@@ -698,22 +702,6 @@
                     "state": "InAir"
                 }
             ]
-        },
-        {
-            "tags": [ "Wall_InnerRotateLeft" ],
-            "clip": 24
-        },
-        {
-            "tags": [ "Wall_InnerRotateRight" ],
-            "clip": 25
-        },
-        {
-            "tags": [ "Wall_OuterRotateLeft" ],
-            "clip": 26
-        },
-        {
-            "tags": [ "Wall_OuterRotateRight" ],
-            "clip": 27
         },
         {
             "tags": [ "Beam_IdleToStand" ],
