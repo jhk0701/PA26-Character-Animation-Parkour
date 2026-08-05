@@ -19,3 +19,16 @@ uint8_t SelectUsingInputDirNode::InvokeCondition(TravelContext& _context)
 
 	return 3;
 }
+
+uint8_t SelectUsingInputVerticalNode::InvokeCondition(TravelContext& _context)
+{
+	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
+	const Vector2 INPUT_DIR = pChar->GetInputDir();
+
+	if (INPUT_DIR.y > 0)
+		return 0;
+	else if (INPUT_DIR.y < 0)
+		return 2;
+	else
+		return 1;
+}

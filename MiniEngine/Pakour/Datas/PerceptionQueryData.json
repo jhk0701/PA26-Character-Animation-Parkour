@@ -143,7 +143,8 @@
                     "class": "SequenceNode",
                     "children":
                     [
-                        "",
+                        "MeasureHeight_SideNode",
+                        "MeasureDepth_SideNode",
                         "Return"
                     ]
                 },

@@ -9,3 +9,8 @@ public:
 	uint8_t InvokeCondition(TravelContext& _context) override;
 };
 
+class SelectUsingInputVerticalNode : public SelectorNode
+{
+public:
+	uint8_t InvokeCondition(TravelContext& _context) override;
+};

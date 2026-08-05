@@ -25,9 +25,24 @@ EPerceptionResult MeasureHeightNode::InvokeTask(TravelContext& _context, TravelR
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult MeasureHeightTowardInputDirNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult MeasureDepth_SideNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
+	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
+	const Transform& TF = pChar->GetRoot()->localTransform;
 
+	Vector3 dir = pChar->GetInputDir().x > 0 ? TF.Right() : -TF.Right();
+	PerceptionNodeUtil::MeasureObstacleDepth(_context, dir);
+
+	return EPerceptionResult::Succeess;
+}
+
+EPerceptionResult MeasureHeight_SideNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+{
+	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
+	const Transform& TF = pChar->GetRoot()->localTransform;
+	
+	Vector3 dir = pChar->GetInputDir().x > 0 ? TF.Right() : -TF.Right();
+	PerceptionNodeUtil::MeasureObstacleHeight(_context, dir);
 
 	return EPerceptionResult::Succeess;
 }

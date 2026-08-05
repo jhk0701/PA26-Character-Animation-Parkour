@@ -61,6 +61,9 @@ namespace
 			{ "ReturnResultNode",			{ CreateNode<ReturnResultNode>(),			0 } },
 			{ "ReturnEmptyNode",			{ CreateNode<ReturnEmptyNode>(),			0 } },
 			{ "MeasureDepthNode",			{ CreateNode<MeasureDepthNode>(),			0 } },
+			{ "MeasureHeightNode",			{ CreateNode<MeasureHeightNode>(),			0 } },
+			{ "MeasureDepth_SideNode",		{ CreateNode<MeasureDepth_SideNode>(),		0 } },
+			{ "MeasureHeight_SideNode",		{ CreateNode<MeasureHeight_SideNode>(),		0 } },
 			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
 			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } },
 
@@ -68,7 +71,8 @@ namespace
 			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
 			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
 			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
-			{ "SelectUsingInputDirNode",	{ CreateNode<SelectUsingInputDirNode>(),	4 } },	// 상 / 하 / 좌우 / 입력없음
+			{ "SelectUsingInputDirNode",	{ CreateNode<SelectUsingInputDirNode>(),	4 } },	// 상 / 하 / 좌우 / 입력없음 // 
+			{ "SelectUsingInputVerticalNode",	{ CreateNode<SelectUsingInputVerticalNode>(),	3 } },
 
 			// Condition — children[0] = true, children[1] = false
 			{ "CheckOnHangingMoveUpNode",	{ CreateNode<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
