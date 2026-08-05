@@ -54,17 +54,13 @@ namespace MiniEngine
 
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		EPerceptionResult result = EPerceptionResult::Succeess;
-
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			EPerceptionResult r = m_children[i]->Execute(_context, _result);
-
-			if (result < r)
-				result = r;
+			if (m_children[i]->Execute(_context, _result) == EPerceptionResult::Fail)
+				return  EPerceptionResult::Fail;
 		}
 
-		return result;
+		return EPerceptionResult::Succeess;
 	}
 
 	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
