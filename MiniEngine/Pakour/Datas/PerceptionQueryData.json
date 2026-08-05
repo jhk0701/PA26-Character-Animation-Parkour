@@ -133,21 +133,30 @@
                 "id": "CheckOnHanging_ObstacleTag",
                 "class": "SelectObstacleTagNode",
                 "children": [
-                    "CheckOnHanging_MeasureObsSeq",
+                    "SelectUsingInputVerticalNode",
                     "ProcessBeam",
                     "ProcessProtrude"
                 ]
             },
                 {
-                    "id": "CheckOnHanging_MeasureObsSeq",
-                    "class": "SequenceNode",
-                    "children":
-                    [
-                        "MeasureHeight_SideNode",
-                        "MeasureDepth_SideNode",
-                        "Return"
+                    "id": "CheckOnHanging_SelectByInputY",
+                    "class": "SelectUsingInputVerticalNode",
+                    "children": [
+                        "OnHangingUp",
+                        "CheckOnHanging_MeasureObsSeq",
+                        "OnHangingDown"
                     ]
                 },
+                    {
+                        "id": "CheckOnHanging_MeasureObsSeq",
+                        "class": "SequenceNode",
+                        "children":
+                        [
+                            "MeasureHeight_SideNode",
+                            "MeasureDepth_SideNode",
+                            "Return"
+                        ]
+                    },
             {
                 "id": "CheckOnHanging_EnableToMove",
                 "class": "CheckObstacleTowardInputDirNode",
@@ -217,7 +226,6 @@
             {
                 "id": "OnHangingSide",
                 "class": "CheckOnHangingMoveSideNode",
-                "startOffset" : [0.0, 0.0, 0.0],
                 "children": [
                     "Return",
                     "Empty"
