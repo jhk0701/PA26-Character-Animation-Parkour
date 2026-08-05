@@ -94,6 +94,30 @@ namespace
 						return pCond;
 					}
 				}
+			},
+			{ "ObstacleIsFrontCondition", {{ CreateCond<ObstacleIsFrontCondition>() }}
+			},
+			{
+				"InputVerticalCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<InputVerticalCondition> pCond = Create<InputVerticalCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
+			{
+				"InputHorizontalCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<InputHorizontalCondition> pCond = Create<InputHorizontalCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
 			}
 		};
 

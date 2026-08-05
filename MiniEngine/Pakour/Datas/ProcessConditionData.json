@@ -22,17 +22,17 @@
             "targetCharStateType" : "InAir"
         },
         {
-            "id": "IsHanging",
+            "id": "IsHangingState",
             "class": "CharacterStateCondition",
             "targetCharStateType" : "Hanging"
         },
         {
-            "id": "IsBeamStand",
+            "id": "IsBeamStandState",
             "class": "CharacterStateCondition",
             "targetCharStateType" : "BeamStand"
         },
         {
-            "id": "IsBeamHanging",
+            "id": "IsBeamHangingState",
             "class": "CharacterStateCondition",
             "targetCharStateType" : "BeamHanging"
         },
@@ -74,6 +74,33 @@
             "isInverted" : true,
             "value" : 1.0
         },
+        {
+            "id": "IsInputUp",
+            "class": "InputVerticalCondition"
+        },
+        {
+            "id": "IsInputDown",
+            "class": "InputVerticalCondition",
+            "isInverted" : true
+        },
+        {
+            "id": "IsInputRight",
+            "class": "InputHorizontalCondition"
+        },
+        {
+            "id": "IsInputLeft",
+            "class": "InputHorizontalCondition",
+            "isInverted" : true
+        },
+        {
+            "id": "IsFront",
+            "class": "ObstacleIsFrontCondition"
+        },
+        {
+            "id": "IsBehind",
+            "class": "ObstacleIsFrontCondition",
+            "isInverted" : true
+        },
 
         {
             "id": "Landing_Wall_IdleToHang",
@@ -103,6 +130,18 @@
         },
 
         {
+            "id": "Hanging_Mantle_Top",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputUp", "IsFront" ]
+        },
+        {
+            "id": "Hanging_Mantle_OnMiddleObs",
+            "comment": "벽면 중간에 있는 장애물에 올라간 경우. 이런 장애물의 경우 잡을 것이 뒤에 있으므로 IsBehind 조건 추가",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputUp", "IsBehind" ]
+        },
+
+        {
             "id": "ToBeamStand",
             "class": "ConditionAnd",
             "children" : [ "IsBeam", "IsLowerThan_CharacterMid" ]
@@ -116,24 +155,52 @@
         {
             "id": "BeamStand_ToHanging",
             "class": "ConditionAnd",
-            "children" : [ "IsBeamStand", "IsDefault", "HeightCheck_Wall" ]
+            "children" : [ "IsBeamStandState", "IsDefault", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "BeamHanging_ToHanging",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamHangingState", "IsDefault", "HeightCheck_Wall" ]
+        },
+        {
+            "id": "Beam_ToHanging",
+            "class": "ConditionOr",
+            "children" : [ "BeamStand_ToHanging", "BeamHanging_ToHanging" ]
         },
         {
             "id": "BeamStand_ToLanding",
             "class": "ConditionAnd",
-            "children" : [ "IsBeamStand", "IsDefault", "IsLowerThan_CharacterMid" ]
+            "children" : [ "IsBeamStandState", "IsDefault", "IsLowerThan_CharacterMid" ]
+        },
+        {
+            "id": "BeamHanging_ToLanding",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamHangingState", "IsDefault", "IsLowerThan_CharacterMid" ]
         }
     ],
     
-    "comment_processDatas" : "순서대로 순회하면 조건을 탐색 -> 맨 앞에 조건이 많은 사항을 둘 것",
+    "comment_processDatas" : "순서대로 순회하면 조건을 탐색 -> 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
     "processDatas" : [
+        {
+            "tagAct" : "Wall_HangToMantle",
+            "conditionId" : "Hanging_Mantle_Top"
+        },
+        {
+            "tagAct" : "Wall_HangToMantleOnObs",
+            "conditionId" : "Hanging_Mantle_OnMiddleObs"
+        },
+
+        {
+            "tagAct" : "Wall_IdleToHang",
+            "conditionId" : "Beam_ToHanging"
+        },
         {
             "tagAct" : "Beam_StandToIdle",
             "conditionId" : "BeamStand_ToLanding"
         },
         {
-            "tagAct" : "Wall_IdleToHang",
-            "conditionId" : "BeamStand_ToHanging"
+            "tagAct" : "Beam_HangToIdle",
+            "conditionId" : "BeamHanging_ToLanding"
         },
 
         {

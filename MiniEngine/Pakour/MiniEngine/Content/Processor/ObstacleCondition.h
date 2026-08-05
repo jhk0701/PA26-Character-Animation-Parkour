@@ -21,3 +21,10 @@ class ObstacleDepthCondition : public CompareWithValueCondition<float>
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
+
+// 장애물의 위치가 캐릭터의 위상에서 앞에 있는지 확인
+class ObstacleIsFrontCondition : public ProcessCondition
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};

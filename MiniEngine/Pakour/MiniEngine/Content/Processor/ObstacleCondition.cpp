@@ -41,3 +41,20 @@ bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const Process
 	// 측정한 깊이가 기준 깊이보다 깊음
 	return GetValue() <= _result.m_obstacleDepth;
 }
+
+bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	Vector3 point = _result.m_firstObstacleHitPos;
+	point.y = 0.0f;
+	Vector3 charPos = TF.position;
+	charPos.y = 0.0f;
+
+	Vector3 dir = point - charPos;
+	dir.Normalize();
+	Vector3 charFwd = TF.Forward();
+
+	return dir.Dot(charFwd) > 0.0f;
+}

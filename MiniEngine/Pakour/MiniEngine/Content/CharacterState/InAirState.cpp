@@ -24,9 +24,7 @@ void InAirState::Tick(float _dt)
 	CheckState();
 }
 
-void InAirState::LateTick(float _dt)
-{
-}
+void InAirState::LateTick(float _dt) {}
 
 void InAirState::CheckState()
 {
