@@ -154,6 +154,27 @@
         },
 
         {
+            "id": "Hanging_MoveUp",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputUp" ]
+        },
+        {
+            "id": "Hanging_MoveDown",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputDown" ]
+        },
+        {
+            "id": "Hanging_MoveLeft",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputLeft" ]
+        },
+        {
+            "id": "Hanging_MoveRight",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputRight" ]
+        },
+
+        {
             "id": "Hanging_Mantle_Top",
             "class": "ConditionAnd",
             "children" : [ "IsHangingState", "IsInputUp", "IsFront" ]

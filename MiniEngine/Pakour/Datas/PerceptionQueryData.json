@@ -20,7 +20,7 @@
         "children": [
             "StateLanding",
             "StateInAir",
-            "StateHanging",
+            "StateHanging2",
             "StateBeam",
             "StateBeam"
         ]
@@ -159,7 +159,7 @@
                     },
             {
                 "id": "CheckOnHanging_EnableToMove",
-                "class": "CheckObstacleTowardInputDirNode",
+                "class": "CheckOnHangingMoveToInputDirNode",
                 "children": [
                     "Return",
                     "Empty"
