@@ -59,6 +59,8 @@ namespace Content::Config
 			{ "Beam_StandRotateLeft",		ETagAct::Beam_StandRotateLeft },
 			{ "Beam_StandRotateRight",		ETagAct::Beam_StandRotateRight },
 			{ "Beam_StandMoveDown",			ETagAct::Beam_StandMoveDown },
+			{ "Beam_StandToVault",			ETagAct::Beam_StandToVault },
+			{ "Beam_StandToMantle",			ETagAct::Beam_StandToMantle },
 
 			{ "Beam_IdleToHang",			ETagAct::Beam_IdleToHang },
 			{ "BeamHanging",				ETagAct::BeamHanging },

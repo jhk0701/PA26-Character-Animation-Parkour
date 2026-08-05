@@ -77,6 +77,9 @@ namespace Content::Config
 
 		BeamStand,
 		Beam_IdleToStand = BeamStand,
+		Beam_StandToVault,
+		Beam_StandToMantle,
+
 		Beam_StandToIdle,
 		Beam_StandRotateLeft,
 		Beam_StandRotateRight,

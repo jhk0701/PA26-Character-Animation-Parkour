@@ -46,7 +46,7 @@ void LandingState::CheckState()
 	if (IsOnFloor())
 		return;
 
-	MG_LOG_INFO("[CharacterState::CheckState] 낙하 처리");
+	// MG_LOG_INFO("[CharacterState::CheckState] 낙하 처리");
 
 	// 떨어지는 중
 	pChar->SetState(Character::EState::InAir);

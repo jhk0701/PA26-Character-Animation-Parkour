@@ -26,6 +26,7 @@ struct AnimNotifyData
 	float AlphaFrom{ 0.0f };		// CharacterIKEnabler
 	float AlphaTo{ 1.0f };
 
+	MiniEngine::Vector3 Vector{ 0.0f, 0.0f, 0.0f };		// 방향 + 포지션 표현용도
 	MiniEngine::Vector3 Offset{ 0.0f, 0.0f, 0.0f };		// IK 노티파이
 	MiniEngine::Vector3 MidOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion
 	MiniEngine::Vector3 EndOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion

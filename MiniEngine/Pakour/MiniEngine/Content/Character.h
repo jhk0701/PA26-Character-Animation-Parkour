@@ -62,7 +62,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
-	void Tick(float _dt) override;
+	// void Tick(float _dt) override;
 	// void LateTick(float _dt) override;
 
 	void LoadData();
@@ -142,7 +142,7 @@ private:
 	Vector2 m_lerpInputDir;
 	float m_lerpWeight{ 0.1f };
 	float m_moveSpeed{ 6.0f };
-	float m_jumpSpeed{ 10.0f };
+	float m_jumpSpeed{ 6.0f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.6f };

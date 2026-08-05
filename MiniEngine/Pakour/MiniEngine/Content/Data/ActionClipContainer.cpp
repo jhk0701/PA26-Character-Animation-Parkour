@@ -21,6 +21,7 @@
 #include "Content/CorrectRootMotion.h"
 #include "Content/CorrectRotation.h"
 #include "Content/CharacterIKNotify.h"
+#include "Content/AddMovementNotifyState.h"
 
 #include <functional>
 
@@ -44,8 +45,8 @@ namespace
 					std::shared_ptr<JumpTiming> pNotify = std::make_shared<JumpTiming>();
 					pNotify->SetTime(_data.TimeStart);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "EnableCollisionObstacle",
 				[](const AnimNotifyData& _data)
 				{
@@ -53,8 +54,8 @@ namespace
 					pNotify->SetTime(_data.TimeStart);
 					pNotify->SetEnable(_data.bEnable);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "TransitionState",
 				[](const AnimNotifyData& _data)
 				{
@@ -62,8 +63,8 @@ namespace
 					pNotify->SetTime(_data.TimeStart);
 					pNotify->SetState(_data.TargetState);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CorrectRootMotion",
 				[](const AnimNotifyData& _data)
 				{
@@ -74,8 +75,8 @@ namespace
 					// pNotify->SetDeltaIntensity(_data.DeltaIntensity);
 					pNotify->SetCorrectAxis((ECorrectAxis)_data.CorrectAxis);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "BezierCorrectRootMotion",
 				[](const AnimNotifyData& _data)
 				{
@@ -84,8 +85,8 @@ namespace
 					pNotify->SetMidOffset(_data.MidOffset); // pNotify->SetBezierY(_data.BezierY);
 					pNotify->SetEndOffset(_data.EndOffset);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CorrectFixedRotation",
 				[](const AnimNotifyData& _data)
 				{
@@ -93,16 +94,16 @@ namespace
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
 					pNotify->SetRotateDeg(_data.RotateDeg);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CorrectRotationTowardObstacle",
 				[](const AnimNotifyData& _data)
 				{
 					std::shared_ptr<CorrectRotationTowardObstacle> pNotify = std::make_shared<CorrectRotationTowardObstacle>();
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CharacterIKEnabler",
 				[](const AnimNotifyData& _data)
 				{
@@ -111,8 +112,8 @@ namespace
 					pNotify->SetFromTo(_data.AlphaFrom, _data.AlphaTo);
 					pNotify->SetIKType(std::vector<uint8_t>(_data.Limbs));
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CharacterIKInvoker",
 				[](const AnimNotifyData& _data)
 				{
@@ -121,8 +122,8 @@ namespace
 					pNotify->SetIKType(_data.Limb);
 					pNotify->SetPositionOffset(_data.Offset);
 					return pNotify;
-				} },
-
+				} 
+			},
 			{ "CharacterIKInvokerFixedPoint",
 				[](const AnimNotifyData& _data)
 				{
@@ -131,7 +132,18 @@ namespace
 					pNotify->SetIKType(_data.Limb);
 					pNotify->SetPositionOffset(_data.Offset);
 					return pNotify;
-				} },
+				} 
+			},
+			{
+				"AddMovementNotifyState",
+				[](const AnimNotifyData& _data)
+				{
+					std::shared_ptr<AddMovementNotifyState> pNotify = std::make_shared<AddMovementNotifyState>();
+					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
+					pNotify->SetDirection(_data.Vector);
+					return pNotify;
+				}
+			}
 		};
 
 		return REGISTRY;

@@ -418,6 +418,9 @@
     <ClInclude Include="Content\Processor\CharacterCondition.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClInclude>
+    <ClInclude Include="Content\AddMovementNotifyState.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -686,6 +689,9 @@
     </ClCompile>
     <ClCompile Include="Content\Processor\CharacterCondition.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AddMovementNotifyState.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

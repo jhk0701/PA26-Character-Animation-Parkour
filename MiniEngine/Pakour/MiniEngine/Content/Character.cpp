@@ -170,10 +170,10 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 }
 
-void Character::Tick(float _dt)
-{
-	Pawn::Tick(_dt);
-}
+//void Character::Tick(float _dt)
+//{
+//	Pawn::Tick(_dt);
+//}
 
 void Character::LoadData()
 {
@@ -553,8 +553,7 @@ void Character::SetUseGravity(bool _bUse)
 
 void Character::Jump()
 {
-	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
-	pCharCont->Jump(m_jumpSpeed);
+	m_charCont.lock()->Jump(m_jumpSpeed);
 }
 
 void Character::InputJump()
