@@ -111,6 +111,16 @@
         },
 
         {
+            "id": "IsChanged",
+            "class": "ObstacleIsChangedCondition"
+        },
+        {
+            "id": "IsNotChanged",
+            "class": "ObstacleIsChangedCondition",
+            "isInverted" : true
+        },
+
+        {
             "id": "Landing_Wall_IdleToHang",
             "comment" : "Landing -> Wall_Hanging (Idle To Hang)",
             "class": "ConditionAnd",
@@ -156,22 +166,22 @@
         {
             "id": "Hanging_MoveUp",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputUp" ]
+            "children" : [ "IsHangingState", "IsDefault", "IsInputUp", "IsNotChanged" ]
         },
         {
             "id": "Hanging_MoveDown",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputDown" ]
+            "children" : [ "IsHangingState", "IsDefault", "IsInputDown", "IsNotChanged" ]
         },
         {
             "id": "Hanging_MoveLeft",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputLeft" ]
+            "children" : [ "IsHangingState", "IsDefault", "IsInputLeft", "IsNotChanged" ]
         },
         {
             "id": "Hanging_MoveRight",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputRight" ]
+            "children" : [ "IsHangingState", "IsDefault", "IsInputRight", "IsNotChanged" ]
         },
 
         {
@@ -307,6 +317,22 @@
             "tagAct" : "Wall_HangToMantleOnSide",
             "comment" : "적절한 애니메이션 찾고 교체 필요",
             "conditionId" : "Hanging_Vault_OnSide"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveUp",
+            "conditionId" : "Hanging_MoveUp"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveDown",
+            "conditionId" : "Hanging_MoveDown"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveLeft",
+            "conditionId" : "Hanging_MoveLeft"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveRight",
+            "conditionId" : "Hanging_MoveRight"
         },
 
         {
