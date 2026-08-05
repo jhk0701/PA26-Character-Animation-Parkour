@@ -415,6 +415,9 @@
     <ClInclude Include="Content\Processor\ProcessorConditionUtil.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Processor\CharacterCondition.h">
+      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -679,6 +682,9 @@
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClCompile>
     <ClCompile Include="Content\Processor\ProcessorConditionUtil.cpp">
+      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Processor\CharacterCondition.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClCompile>
   </ItemGroup>

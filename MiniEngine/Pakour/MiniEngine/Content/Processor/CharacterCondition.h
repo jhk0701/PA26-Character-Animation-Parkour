@@ -4,19 +4,13 @@
 
 using namespace MiniEngine;
 
-class ObstacleTypeCondition : public CompareWithValueCondition<uint8_t>
+class CharacterStateCondition : public CompareWithValueCondition<uint8_t>
 {
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
 
-class ObstacleHeightCondition : public CompareWithValueCondition<float>
-{
-protected:
-	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
-};
-
-class ObstacleDepthCondition : public CompareWithValueCondition<float>
+class CharacterHeightCondition : public CompareWithValueCondition<float>
 {
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;

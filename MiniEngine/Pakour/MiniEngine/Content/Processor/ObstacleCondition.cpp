@@ -6,10 +6,8 @@
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
-#include "Content/Processor/ProcessorConditionUtil.h"
 
 #include "Core/Log.h"
-
 
 using namespace Content::Config;
 using namespace ProcessorConditionUtil;
@@ -25,7 +23,7 @@ bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessC
 
 	// MG_LOG_INFO("[ObstacleTypeCondition] Result : {}", type == m_targetType ? "true" : "false");
 
-	return type == m_targetType;
+	return type == GetValue();
 }
 
 bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

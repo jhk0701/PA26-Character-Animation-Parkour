@@ -1,0 +1,29 @@
+#include "pch.h"
+#include "CharacterCondition.h"
+
+#include "Scene/PerceptionComponent.h"
+#include "Scene/IObstacle.h"
+
+#include "Content/ContentConfig.h"
+#include "Content/Character.h"
+#include "Content/Data/CharacterPerceptionConfig.h"
+
+#include "Core/Log.h"
+
+using namespace ProcessorConditionUtil;
+
+bool CharacterStateCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+    std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+    MG_LOG_INFO("[CharacterStateCondition] Target {}, Character {}", GetValue(), (uint8_t)pChar->GetState());
+
+    return (uint8_t)pChar->GetState() == GetValue();
+}
+
+bool CharacterHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+    // 인식한 지형의 모서리 높이가 캐릭터의 현재 높이 + 지정한 값만큼의 높이보다 낮은지 확인
+    std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+    // MG_LOG_INFO("[CharacterHeightCondition] Ledge {:.2f}, Comparer {:.2f} + {:.2f}", _result.m_obstacleLedge, pChar->GetRoot()->localTransform.position.y, GetValue());
+    return _result.m_obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
+}

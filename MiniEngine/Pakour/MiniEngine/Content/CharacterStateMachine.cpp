@@ -65,6 +65,8 @@ void CharacterState::ProcessBeamObstacle(const Character::PerceptedObstacleInfo&
 {
 	// 확인한 대상이 Beam
 	// 높이 확인 필요
+	// Ledge의 위치가 캐릭터의 절반 높이 확인
+
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	
 	float charY = pChar->GetRoot()->localTransform.position.y + pChar->GetCharacterHalfHeight();

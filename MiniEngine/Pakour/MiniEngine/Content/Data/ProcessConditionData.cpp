@@ -2,7 +2,9 @@
 #include "Content/Data/ProcessConditionData.h"
 #include "Scene/ProcessorComponent.h"
 #include "Content/ContentConfig.h"
+#include "Content/Character.h"
 #include "Content/Processor/ObstacleCondition.h"
+#include "Content/Processor/CharacterCondition.h"
 #include "Core/Log.h"
 
 #include <functional>
@@ -43,12 +45,32 @@ namespace
 		{
 			{ "ConditionAnd",	{ CreateCond<ConditionAnd>() } },
 			{ "ConditionOr",	{ CreateCond<ConditionOr>() } },
+			{ "CharacterStateCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<CharacterStateCondition> pCond = Create<CharacterStateCondition>(_data);
+						pCond->SetValue(_data.TargetCharStateType);
+						return pCond;
+					}
+				}
+			},
+			{ "CharacterHeightCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<CharacterHeightCondition> pCond = Create<CharacterHeightCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
 			{ "ObstacleTypeCondition", 
 				{ 
 					[](const ConditionSchema& _data) 
 					{
 						std::shared_ptr<ObstacleTypeCondition> pCond = Create<ObstacleTypeCondition>(_data);
-						pCond->SetType(_data.TargetType);
+						pCond->SetValue(_data.TargetObstacleType);
 						return pCond;
 					}
 				}
@@ -72,7 +94,7 @@ namespace
 						return pCond;
 					}
 				}
-			},
+			}
 		};
 
 		return CONDITION_REGISTRY;
@@ -123,13 +145,22 @@ void ProcessConditionData::Load(const json& _data)
 			cond.IsInverted = el.value("isInverted", cond.IsInverted);
 			cond.Value = el.value("value", cond.Value);
 			
-			const std::string TYPE_NAME = el.value("targetType", std::string());
-			if (TYPE_NAME.empty() == false)
+			const std::string OBS_TYPE_NAME = el.value("targetObstacleType", std::string());
+			if (OBS_TYPE_NAME.empty() == false)
 			{
-				if (TryParseTagEnvDetail(TYPE_NAME, cond.TargetType) == false)
+				if (TryParseTagEnvDetail(OBS_TYPE_NAME, cond.TargetObstacleType) == false)
 				{
-					MG_LOG_ERROR("[ProcessConditionData] condition '{}' has unknown targetState '{}'.",
-						cond.Id, TYPE_NAME);
+					MG_LOG_ERROR("[ProcessConditionData] condition '{}' has unknown targetState '{}'.", cond.Id, OBS_TYPE_NAME);
+					return;
+				}
+			}
+
+			const std::string CHAR_STATE_NAME = el.value("targetCharStateType", std::string());
+			if (CHAR_STATE_NAME.empty() == false) 
+			{
+				if (Character::TryParseState(CHAR_STATE_NAME, cond.TargetCharStateType) == false) 
+				{
+					MG_LOG_ERROR("[ProcessConditionData] condition '{}' has unknown targetState '{}'.", cond.Id, CHAR_STATE_NAME);
 					return;
 				}
 			}

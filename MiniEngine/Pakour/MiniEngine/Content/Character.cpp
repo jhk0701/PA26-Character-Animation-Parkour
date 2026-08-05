@@ -32,7 +32,6 @@
 #include "Content/CharacterState/HangingState.h"
 #include "Content/CharacterState/BeamState.h"
 
-using namespace MiniEngine;
 using namespace Content::Config;
 
 namespace
@@ -214,7 +213,7 @@ void Character::LoadData()
 	}
 	pProcessCondition->ConstructData(conditions, processDatas);
 
-	MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
+	// MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
 
 	m_processor.lock()->Init(std::move(conditions), std::move(processDatas));
 }

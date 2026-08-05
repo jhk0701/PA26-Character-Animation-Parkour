@@ -3,8 +3,40 @@
         {
             "id": "IsDefault",
             "class": "ObstacleTypeCondition",
-            "targetType" : "Default"
+            "targetObstacleType" : "Default"
         },
+        {
+            "id": "IsBeam",
+            "class": "ObstacleTypeCondition",
+            "targetObstacleType" : "Beam"
+        },
+
+        {
+            "id": "IsLandingState",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "Landing"
+        },
+        {
+            "id": "IsInAirState",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "InAir"
+        },
+        {
+            "id": "IsHanging",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "Hanging"
+        },
+        {
+            "id": "IsBeamStand",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "BeamStand"
+        },
+        {
+            "id": "IsBeamHanging",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "BeamHanging"
+        },
+
         {
             "id": "HeightCheck_Wall",
             "class": "ObstacleHeightCondition",
@@ -31,12 +63,23 @@
             "isInverted" : true,
             "value" : 1.0
         },
+        {
+            "id": "IsLowerThan_CharacterMid",
+            "class": "CharacterHeightCondition",
+            "value" : 1.0
+        },
+        {
+            "id": "IsNotLowerThan_CharacterMid",
+            "class": "CharacterHeightCondition",
+            "isInverted" : true,
+            "value" : 1.0
+        },
 
         {
             "id": "Landing_Wall_IdleToHang",
             "comment" : "Landing -> Wall_Hanging (Idle To Hang)",
             "class": "ConditionAnd",
-            "children" : [ "IsDefault", "HeightCheck_Wall" ]
+            "children" : [ "IsLandingState", "IsDefault", "HeightCheck_Wall" ]
         },
         {
             "id": "Landing_VaultHigh",
@@ -57,6 +100,17 @@
             "id": "Landing_MantleLowMid",
             "class": "ConditionAnd",
             "children" : [ "IsDefault", "HeightCheck_Low", "IsDeeper" ]
+        },
+
+        {
+            "id": "ToBeamStand",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeam", "IsLowerThan_CharacterMid" ]
+        },
+        {
+            "id": "ToBeamHanging",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeam", "IsNotLowerThan_CharacterMid" ]
         }
     ],
     
@@ -65,6 +119,7 @@
             "tagAct" : "Wall_IdleToHang",
             "conditionId" : "Landing_Wall_IdleToHang"
         },
+
         {
             "tagAct" : "VaultHigh",
             "conditionId" : "Landing_VaultHigh"
@@ -77,6 +132,7 @@
             "tagAct" : "VaultLow",
             "conditionId" : "Landing_VaultLowMid"
         },
+
         {
             "tagAct" : "MantleHigh",
             "conditionId" : "Landing_MantleHigh"
@@ -88,6 +144,15 @@
         {
             "tagAct" : "MantleLow",
             "conditionId" : "Landing_MantleLowMid"
+        },
+
+        {
+            "tagAct" : "BeamStand",
+            "conditionId" : "ToBeamStand"
+        },
+        {
+            "tagAct" : "BeamHanging",
+            "conditionId" : "ToBeamHanging"
         }
     ]
 }

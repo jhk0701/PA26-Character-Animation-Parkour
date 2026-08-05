@@ -42,11 +42,13 @@ struct ConditionSchema
     // 사용 매개변수
     // 공통 사항
     bool IsInverted{ false };
-    // ObstacleHeightCondition, ObstacleDepthCondition
-    float Value{ 0.0f };
+    
+    // CharacterStateCondition
+    uint8_t TargetCharStateType{ 0U };
     // ObstacleTypeCondition
-    uint8_t TargetType{ 0U }; // -> ETagEnvDetail
-
+    uint8_t TargetObstacleType{ 0U }; // -> ETagEnvDetail
+    // ObstacleHeightCondition, ObstacleDepthCondition, CharacterHeightCondition
+    float Value{ 0.0f };
 };
 
 struct ProcessDataSchema
