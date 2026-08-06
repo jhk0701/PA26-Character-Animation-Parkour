@@ -46,6 +46,7 @@ protected:
 private:
 	void ProcessMovement(float _dt);
 	bool CheckEnableToMove(std::shared_ptr<Character>& _pChar);
+	void AdjustRotationToObstacleInfo();
 };
 
 // Beam 지형에 올라탄 상태

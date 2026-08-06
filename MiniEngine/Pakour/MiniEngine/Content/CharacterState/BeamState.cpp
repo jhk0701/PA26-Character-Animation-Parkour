@@ -91,6 +91,7 @@ void BeamState::AdjustPositionToObstacleInfo()
 	obsInfo.m_obstacleHitPos.z = POS.z;
 }
 
+
 // Beam Stand
 void BeamStandState::Tick(float _dt)
 {
@@ -172,6 +173,7 @@ void BeamStandState::ProcessMovement(float _dt)
 
 		// Beam 위에서 움직였다면 그만큼 위치를 변경
 		AdjustPositionToObstacleInfo();
+		AdjustRotationToObstacleInfo();
 
 		if (std::shared_ptr<ActionClip> pAct = pChar->GetActions((uint8_t)ETagAct::Beam_StandMoveDown))
 			pChar->PlayActionClip(pAct, 0.2f);
@@ -221,6 +223,19 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 	IObstacle* pObs = dynamic_cast<IObstacle*>(pActor);
 
 	return pObs == GetCurObs();
+}
+
+void BeamStandState::AdjustRotationToObstacleInfo()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	Character::PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
+
+	Vector3 fwd = pChar->GetRoot()->localTransform.Forward();
+	float d = fwd.Dot(obsInfo.m_obstacleHitNrm);
+	if (d > 0.0f && std::fabs(d) > 0.95f)
+	{
+		obsInfo.m_obstacleHitNrm *= -1.0f;
+	}
 }
 
 void BeamHangingState::OnStart()
