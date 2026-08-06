@@ -160,10 +160,12 @@ const Transform& Obstacle::GetTransform() const
 	return GetRoot()->localTransform;
 }
 
+#ifdef MG_DEBUG_LOG
 const std::string& Obstacle::DebugName()
 {
 	return GetName();
 }
+#endif
 
 std::shared_ptr<Actor> ObstacleFactory::Create(
 	std::shared_ptr<Scene> _pScene, const Obstacle::ObstacleDesc& _desc)

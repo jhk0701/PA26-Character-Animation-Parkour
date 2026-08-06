@@ -77,7 +77,7 @@ namespace PerceptionNodeUtil
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())  
-			pOverlappedObstacle = reinterpret_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
+			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
 
 		// 지금 장애물 위에 있는지 확인
 		void* pGroundActor = nullptr;
@@ -136,7 +136,7 @@ namespace PerceptionNodeUtil
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())
-			pOverlappedObstacle = reinterpret_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
+			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
 
 		// 지금 장애물 위에 있는지 확인
 		void* pGroundActor = nullptr;
@@ -158,7 +158,7 @@ namespace PerceptionNodeUtil
 			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
 			{
-				MG_LOG_INFO("[CheckObstacleSphere] is overlapped");
+				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip");
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 			}
 

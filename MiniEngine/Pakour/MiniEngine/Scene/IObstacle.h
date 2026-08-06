@@ -12,7 +12,9 @@ namespace MiniEngine
 		virtual bool TryGetTag(uint8_t _idx, uint8_t& _outTag) = 0;
 		virtual const Transform& GetTransform() const = 0;
 
-		// 디버깅용
+#ifdef MG_DEBUG_LOG
 		virtual const std::string& DebugName() = 0;
+#endif // MG_DEBUG_LOG
+
 	};
 }

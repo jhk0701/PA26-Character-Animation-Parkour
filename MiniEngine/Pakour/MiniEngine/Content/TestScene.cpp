@@ -412,19 +412,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 구간 1
 			desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("P1");
 
 			desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("P2");
 
 			desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("P3");
 
 			desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("P4");
 
 
 			// 구간 3

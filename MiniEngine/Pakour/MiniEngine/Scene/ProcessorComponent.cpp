@@ -35,7 +35,7 @@ namespace MiniEngine
 			bool bResult = pCond.lock()->Process(_result, _context);
 
 #ifdef MG_DEBUG_LOG
-			MG_LOG_INFO("[ConditionAnd] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
+			// MG_LOG_INFO("[ConditionAnd] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
 #endif // MG_DEBUG
 
 			if (bResult == false)
@@ -52,7 +52,7 @@ namespace MiniEngine
 			bool bResult = pCond.lock()->Process(_result, _context);
 
 #ifdef MG_DEBUG_LOG
-			MG_LOG_INFO("[ConditionOr] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
+			// MG_LOG_INFO("[ConditionOr] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
 #endif // MG_DEBUG
 
 			if (bResult == true)
@@ -94,12 +94,15 @@ namespace MiniEngine
 		ProcessContext context;
 		context.pOwner = owner.lock();
 
+#ifdef MG_DEBUG_LOG
 		// MG_LOG_INFO("[ProcessorComponent::ProcessResult] Start Process Result ========================== ");
+#endif // 
+
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
 		{
 #ifdef MG_DEBUG_LOG
-			MG_LOG_INFO("[ProcessorComponent::ProcessResult] Loop :: TryQuery Process Data : {}", pProcess->GetName());
-#endif // DEBUG
+			// MG_LOG_INFO("[ProcessorComponent::ProcessResult] Loop :: TryQuery Process Data : {}", pProcess->GetName());
+#endif // 
 			if (pProcess->TryQuery(_inTravelResult, context, _outResult))
 				return true; // true 인 것이 있다면 바로 반환
 		}

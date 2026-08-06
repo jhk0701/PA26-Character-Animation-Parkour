@@ -51,7 +51,10 @@ public:
 	virtual float GetNearestLedgeHeight(const MiniEngine::Vector3& _pos) const override;
 	virtual bool TryGetTag(uint8_t _idx, uint8_t& _outTag) override;
 	virtual const MiniEngine::Transform& GetTransform() const override;
+
+#ifdef MG_DEBUG_LOG
 	virtual const std::string& DebugName() override;
+#endif
 };
 
 class ObstacleFactory 

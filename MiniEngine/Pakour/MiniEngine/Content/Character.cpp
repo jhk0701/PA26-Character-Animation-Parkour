@@ -267,6 +267,13 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		// 현재 장애물과 다른 장애물 인식
 		m_curObstacleInfo.m_bIsNewObstacle = m_curObstacleInfo.m_pObstacle != _result.m_pFirstObstacle;
 
+		if (m_curObstacleInfo.m_bIsNewObstacle)
+			MG_LOG_INFO("[Character::ProcessPerceptionResult] Is New Obs : {}", m_curObstacleInfo.m_bIsNewObstacle ? "Yes" : "No");
+
+#ifdef MG_DEBUG_LOG
+		MG_LOG_INFO("[Character::ProcessPerceptionResult] ObsName : {}", _result.m_pFirstObstacle->DebugName());
+#endif // MG_LOG_INFO
+
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
