@@ -76,13 +76,13 @@ const char* Character::GetStateName(uint8_t _state)
 Character::Character() { }
 Character::~Character() { }
 
-void Character::Construct(const Vector3& _initPosition)
+void Character::Construct(const Vector3& _initPosition, const std::wstring& _charPath)
 {
 	std::shared_ptr<SceneComponent> pRoot = AddComponent<SceneComponent>();
 	m_skinMeshComp = AddComponent<SkeletalMeshComponent>();
 	PathManager* pathMgr = PathManager::GetInstance();
 
-	std::wstring miniPath = pathMgr->ResolveAssetPath(L"Character.mini");
+	std::wstring miniPath = pathMgr->ResolveAssetPath(_charPath.c_str());
 	std::shared_ptr<SkinnedMesh> skinnedMesh = AssetManager::GetInstance()->LoadSkinnedMesh(miniPath);
 
 	std::shared_ptr<SkeletalMeshComponent> skinComp = GetSkin().lock();
@@ -98,8 +98,8 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
-		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.5f, -1.0f);
-		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.5f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, -0.75f, -0.75f);
+		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, -0.75f, -0.75f);
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.2f, 0.5f, 1.0f);
 
@@ -430,7 +430,7 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);		
-	result.position = hitResult.m_pos - TF.Forward() * 0.1f;
+	result.position = hitResult.m_pos - TF.Forward() * m_ikHandZOffset;
 	result.posAlpha = 1.0f;
 
 	// hitResult.m_nrm.Normalize();

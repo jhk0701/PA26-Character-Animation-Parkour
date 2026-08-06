@@ -13,6 +13,5 @@ namespace ProcessorConditionUtil
 		return std::dynamic_pointer_cast<Character>(_actor);
 	}
 
-
 }
 

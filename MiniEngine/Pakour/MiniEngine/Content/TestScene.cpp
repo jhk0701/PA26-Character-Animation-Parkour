@@ -427,7 +427,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 캐릭터 생성
 		std::shared_ptr<Character> pChar = SpawnActor<Character>();
 		pChar->SetName("Character");
-		pChar->Construct(Vector3(0.0f, 2.0f, 0.0f));
+		pChar->Construct(Vector3(0.0f, 2.0f, 0.0f), L"Character.mini");
 
 		std::shared_ptr<CharacterController> pCont = SpawnActor<CharacterController>();
 		pCont->SetName("CharacterController");

@@ -58,7 +58,7 @@ public:
 	Character();
 	virtual ~Character();
 
-	void Construct(const Vector3& _initPosition);
+	void Construct(const Vector3& _initPosition, const std::wstring& _charPath);
 	void PostConstruct();
 	void InitAnimation(std::shared_ptr<SkeletalMeshComponent>& _skinComp);
 
@@ -174,6 +174,6 @@ private:
 
 	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
 	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
-	float m_thresholdWallDig = 0.3f;
+	float m_ikHandZOffset = 0.05f;
 };
 

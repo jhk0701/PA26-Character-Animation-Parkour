@@ -91,5 +91,4 @@ namespace MiniEngine
 		
 		return m_queryTree->Execute(context, m_result);
 	}
-
 }

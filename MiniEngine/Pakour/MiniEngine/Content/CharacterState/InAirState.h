@@ -12,4 +12,5 @@ public:
 
 private:
 	void ProcessContiniousMovement(float _dt);
+	bool CheckDown(uint8_t& _outTag);
 };
