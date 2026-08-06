@@ -16,11 +16,14 @@ void InAirState::OnStart()
 
 void InAirState::OnEnd() 
 {
-	// 강제로 떨어지는 경우?
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetForce(Vector3(0.0f));
 }
 
 void InAirState::Tick(float _dt)
 {
+	ProcessContiniousMovement(_dt);
+
 	CheckState();
 }
 
@@ -46,4 +49,13 @@ void InAirState::CheckState()
 	// 각각의 State에서 OnStart 시, 실행해 줄 것
 	// pChar->TranstionBaseTrack(STATE, 0.25f);
 	GetMachine()->Transition(STATE);
+}
+
+void InAirState::ProcessContiniousMovement(float _dt)
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	Vector3 decayMovement = Vector3::Lerp(pChar->GetPrevForce(), Vector3(0.0f), 0.75f * _dt);
+	pChar->SetForce(decayMovement);
+	pChar->AddMovementInput(decayMovement * _dt);
 }

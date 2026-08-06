@@ -89,6 +89,8 @@ public:
 	float GetMoveSpeed() const { return m_moveSpeed; }
 	float GetInputLerpWeight() const { return std::clamp(m_lerpWeight, 0.0f, 1.0f); }
 	Vector2& InputLerp() { return m_lerpInputDir; }
+	void SetForce(const Vector3& _force) { m_prevForce = _force; }
+	const Vector3& GetPrevForce() const { return m_prevForce; }
 
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);
@@ -146,6 +148,8 @@ private:
 	float m_lerpWeight{ 0.1f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 6.0f };
+
+	Vector3 m_prevForce;
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.6f };

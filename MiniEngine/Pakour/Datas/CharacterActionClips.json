@@ -117,16 +117,16 @@
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.6,
+                    "time": 0.1,
                     "state": "InAir"
                 },
                 {
                     "class": "JumpTiming",
-                    "time": 0.6
+                    "time": 0.1
                 },
                 {
-                    "class": "AddMovementNotifyState",
-                    "time": [ 0.2, 1.0 ],
+                    "class": "AddMovementNotify",
+                    "time": 0.1,
                     "vector" : [ 0.0, 0.0, 1.0 ]
                 }
             ]
@@ -435,7 +435,7 @@
         {
             "tags": [ "FallingToLand" ],
             "clip": 11,
-            "rootMotion": { "apply": false }
+            "rootMotion": { "apply": true, "y" : false }
         },
         {
             "tags": [ "Wall_IdleToHang" ],

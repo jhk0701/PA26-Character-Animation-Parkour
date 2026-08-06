@@ -9,4 +9,7 @@ public:
 	void Tick(float _dt) override;
 	void LateTick(float _dt) override;
 	void CheckState() override;
+
+private:
+	void ProcessContiniousMovement(float _dt);
 };

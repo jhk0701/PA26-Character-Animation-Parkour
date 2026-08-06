@@ -418,7 +418,7 @@
     <ClInclude Include="Content\Processor\CharacterCondition.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClInclude>
-    <ClInclude Include="Content\AddMovementNotifyState.h">
+    <ClInclude Include="Content\AddMovementNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
   </ItemGroup>
@@ -690,7 +690,7 @@
     <ClCompile Include="Content\Processor\CharacterCondition.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClCompile>
-    <ClCompile Include="Content\AddMovementNotifyState.cpp">
+    <ClCompile Include="Content\AddMovementNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>

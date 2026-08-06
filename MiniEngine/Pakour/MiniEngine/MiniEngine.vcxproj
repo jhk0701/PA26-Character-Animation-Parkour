@@ -131,7 +131,7 @@
     <ClInclude Include="Asset\DataAsset.h" />
     <ClInclude Include="Asset\IK.h" />
     <ClInclude Include="Asset\RootMotion.h" />
-    <ClInclude Include="Content\AddMovementNotifyState.h" />
+    <ClInclude Include="Content\AddMovementNotify.h" />
     <ClInclude Include="Content\Character.h" />
     <ClInclude Include="Content\CharacterController.h" />
     <ClInclude Include="Content\CharacterIKNotify.h" />
@@ -232,7 +232,7 @@
     <ClCompile Include="Asset\DataAsset.cpp" />
     <ClCompile Include="Asset\IK.cpp" />
     <ClCompile Include="Asset\RootMotion.cpp" />
-    <ClCompile Include="Content\AddMovementNotifyState.cpp" />
+    <ClCompile Include="Content\AddMovementNotify.cpp" />
     <ClCompile Include="Content\Character.cpp" />
     <ClCompile Include="Content\CharacterController.cpp" />
     <ClCompile Include="Content\CharacterIKNotify.cpp" />

@@ -1,6 +1,23 @@
 #include "pch.h"
-#include "Content/AddMovementNotifyState.h"
+#include "Content/AddMovementNotify.h"
 #include "Content/Character.h"
+
+void AddMovementNotify::Activate(AnimNotifyParam& _param)
+{
+	Character* pChar = dynamic_cast<Character*>(_param.m_pActor);
+	if (!pChar)
+		return;
+
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	Vector3 relativeDir(0.0f);
+	relativeDir += TF.Right() * m_dir.x;
+	relativeDir += TF.Up() * m_dir.y;
+	relativeDir += TF.Forward() * m_dir.z;
+	relativeDir.Normalize();
+
+	pChar->SetForce(pChar->GetMoveSpeed() * relativeDir);
+}
 
 void AddMovementNotifyState::OnStart(AnimNotifyParam& _param)
 {

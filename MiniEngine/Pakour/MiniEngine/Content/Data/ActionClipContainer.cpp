@@ -21,7 +21,7 @@
 #include "Content/CorrectRootMotion.h"
 #include "Content/CorrectRotation.h"
 #include "Content/CharacterIKNotify.h"
-#include "Content/AddMovementNotifyState.h"
+#include "Content/AddMovementNotify.h"
 
 #include <functional>
 
@@ -133,6 +133,16 @@ namespace
 					pNotify->SetPositionOffset(_data.Offset);
 					return pNotify;
 				} 
+			},
+			{
+				"AddMovementNotify",
+				[](const AnimNotifyData& _data)
+				{
+					std::shared_ptr<AddMovementNotify> pNotify = std::make_shared<AddMovementNotify>();
+					pNotify->SetTime(_data.TimeStart);
+					pNotify->SetDirection(_data.Vector);
+					return pNotify;
+				}
 			},
 			{
 				"AddMovementNotifyState",
