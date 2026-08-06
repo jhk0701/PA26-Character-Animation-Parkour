@@ -123,69 +123,77 @@
             },
         {
             "id": "StateHanging",
-            "class": "SelectUsingInputDirNode",
+            "class": "CheckObstacleTowardInputDirNode",
             "children": [
-                "OnHangingUp",
-                "OnHangingDown",
-                "OnHangingSide",
-                "Empty"
+                "Empty",
+                "OnHanging_NotDetected"
             ]
         },
             {
-                "id": "OnHangingUp",
-                "class": "CheckOnHangingMoveUpNode",
-                "comment": "위 방향 탐색 -> 올라설 벽 ledge 를 찾기",
-                "children": [
-                    "CheckObstacleTag_OnHanging",
-                    "OnHangingUp_CurrentObstacleLedge"
+                "id": "OnHanging_Detected",
+                "class": "CheckOnHangingMoveToInputDirNode",
+                "children":
+                [
+                    "Return",
+                    "Empty"
+                ]
+            },
+            {
+                "id": "OnHanging_NotDetected",
+                "class": "SelectUsingInputVerticalNode",
+                "children":
+                [
+                    "OnHanging_NotDetected_CheckUp",
+                    "OnHanging_NotDetected_CheckSide",
+                    "OnHanging_NotDetected_CheckDown"
                 ]
             },
                 {
-                    "id": "CheckObstacleTag_OnHanging",
-                    "class": "SelectObstacleTagNode",
-                    "comment": "장애물 태그 확인 : ETagEnvDetail 순서",
-                    "children": [
-                        "OnHangingUp_AnotherObstacleLedge",
-                        "ProcessBeam",
-                        "ProcessProtrude"
+                    "id": "OnHanging_NotDetected_CheckUp",
+                    "class": "CheckOnHangingMoveToInputDirNode",
+                    "children":
+                    [
+                        "Return",
+                        "OnHanging_NotDetected_CheckUp_CheckLedge"
                     ]
                 },
                     {
-                        "id": "OnHangingUp_AnotherObstacleLedge",
+                        "id": "OnHanging_NotDetected_CheckUp_CheckLedge",
                         "class": "CheckOnHangingUpwardLedgeNode",
-                        "startOffset": [ 0.0, 0.0, -0.5 ],
-                        "comment": "위를 가로막은 장애물의 Ledge 찾기",
-                        "children": [
+                        "startOffset": [ 0.0, 0.0, 0.2 ],
+                        "children":
+                        [
                             "Return",
                             "Empty"
                         ]
                     },
                 {
-                    "id": "OnHangingUp_CurrentObstacleLedge",
-                    "class": "CheckOnHangingUpwardLedgeNode",
-                    "startOffset": [ 0.0, 0.0, 0.2 ],
-                    "comment": "현재 벽면의 Ledge 찾기",
-                    "children": [
+                    "id": "OnHanging_NotDetected_CheckSide",
+                    "class": "CheckOnHangingMoveToInputDirNode",
+                    "children":
+                    [
                         "Return",
-                        "Return"
+                        "Empty"
                     ]
                 },
-            {
-                "id": "OnHangingDown",
-                "class": "CheckOnHangingMoveDownNode",
-                "children": [
-                    "Return",
-                    "Empty"
-                ]
-            },
-            {
-                "id": "OnHangingSide",
-                "class": "CheckOnHangingMoveSideNode",
-                "children": [
-                    "Return",
-                    "Empty"
-                ]
-            },
+                {
+                    "id": "OnHanging_NotDetected_CheckDown",
+                    "class": "CheckOnHangingMoveDownNode",
+                    "children":
+                    [
+                        "Return",
+                        "OnHanging_NotDetected_CheckDown_Movable"
+                    ]
+                },
+                    {
+                        "id": "OnHanging_NotDetected_CheckDown_Movable",
+                        "class": "CheckOnHangingMoveToInputDirNode",
+                        "children":
+                        [
+                            "Return",
+                            "Empty"
+                        ]
+                    },
 
         {
             "id": "StateBeam",

@@ -9,6 +9,7 @@ EPerceptionResult ReturnResultNode::InvokeTask(TravelContext& _context, TravelRe
 	_result.m_obstacleDistance = _context.m_distance;
 	_result.m_obstacleDepth = _context.m_depth;
 	_result.m_obstacleLedge = _context.m_ledge;
+	_result.m_bDetectLedge = _context.m_bDetectLedge;
 
 	return EPerceptionResult::Succeess;
 }

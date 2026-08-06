@@ -35,7 +35,7 @@ uint8_t SelectUsingInputVerticalNode::InvokeCondition(TravelContext& _context)
 	else
 		r = 1;
 
-	MG_LOG_INFO("[SelectUsingInputVerticalNode::InvokeCondition] result : {}", r);
+	// MG_LOG_INFO("[SelectUsingInputVerticalNode::InvokeCondition] result : {}", r);
 
 	return r;
 }

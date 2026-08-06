@@ -72,6 +72,7 @@ bool ObstacleIsChangedCondition::Evaluate(const TravelResult& _result, const Pro
 
 bool DetectLedgeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
+	MG_LOG_INFO("[DetectLedgeCondition] Check : {}", _result.m_bDetectLedge);
 	return _result.m_bDetectLedge;
 }
 

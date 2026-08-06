@@ -36,6 +36,8 @@ bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 // 윗면에 장애물이 없는 상황 -> Ledge 찾기
 bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 {
+	MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] Check Upper Ledge");
+
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
@@ -47,9 +49,13 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	
 	RaycastResult result;
 	if (CheckLedge(_context, GetCharacterCenterPosition(_context) + startOffset, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, result) == false)
+	{
+		MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] No Ledge");
 		return false;
+	}
 
 	FillFromResult(_context, result);
+	MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] Detected Ledge");
 	return true;
 }
 
@@ -114,7 +120,7 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 
 bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 {
-	MG_LOG_INFO("[CheckObstacleTowardInputDirNode::InvokeCondition] Check Obstacle Toward Input Dir");
+	// MG_LOG_INFO("[CheckObstacleTowardInputDirNode::InvokeCondition] Check Obstacle Toward Input Dir");
 
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
@@ -143,7 +149,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 {
-	MG_LOG_INFO("[CheckOnHangingMoveToInputDirNode::InvokeCondition] Check Movable");
+	// MG_LOG_INFO("[CheckOnHangingMoveToInputDirNode::InvokeCondition] Check Movable");
 
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;

@@ -180,10 +180,22 @@
         },
 
         {
+            "id": "Hanging_Mantle_Top",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputUp", "IsFront", "IsLedgeDetected" ]
+        },
+        {
+            "id": "Hanging_Mantle_OnMiddleObs",
+            "comment": "벽면 중간에 있는 장애물에 올라간 경우. 이런 장애물의 경우 잡을 것이 뒤에 있으므로 IsBehind 조건 추가",
+            "class": "ConditionAnd",
+            "children" : [ "IsHangingState", "IsInputUp", "IsBehind", "IsLedgeDetected" ]
+        },
+        {
             "id": "Hanging_MoveUp",
             "class": "ConditionAnd",
             "children" : [ "IsHangingState", "IsDefault", "IsInputUp", "IsNotChanged" ]
         },
+        
         {
             "id": "Hanging_MoveDown",
             "class": "ConditionAnd",
@@ -199,18 +211,7 @@
             "class": "ConditionAnd",
             "children" : [ "IsHangingState", "IsDefault", "IsInputRight", "IsNotChanged" ]
         },
-
-        {
-            "id": "Hanging_Mantle_Top",
-            "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputUp", "IsFront", "IsLedgeDetected" ]
-        },
-        {
-            "id": "Hanging_Mantle_OnMiddleObs",
-            "comment": "벽면 중간에 있는 장애물에 올라간 경우. 이런 장애물의 경우 잡을 것이 뒤에 있으므로 IsBehind 조건 추가",
-            "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputUp", "IsBehind", "IsLedgeDetected" ]
-        },
+       
         {
             "id": "Hanging_DownToGround",
             "class": "ConditionAnd",
