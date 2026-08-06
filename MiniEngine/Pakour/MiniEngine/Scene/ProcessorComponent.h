@@ -23,14 +23,13 @@ namespace MiniEngine
 		// 결과 반전 처리 -> 조건문에서 ! 와 동일
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
 		
-		// 디버그용
 #ifdef MG_DEBUG
-		void SetName(const std::string& _name) 
-		{ 
-			m_name = _name;
-		}; 
-
+		// 디버그용
+	public:
+		void SetName(const std::string& _name)  { m_name = _name; }; 
 		const std::string& GetName() const { return m_name; }
+	private:
+		std::string m_name;
 #endif // MG_DEBUG
 
 	protected:
@@ -39,10 +38,6 @@ namespace MiniEngine
 
 	private:
 		bool m_bIsInvert{ false };
-
-#ifdef MG_DEBUG
-		std::string m_name;
-#endif // MG_DEBUG
 	};
 
 	class CompositeCondition : public ProcessCondition
@@ -78,6 +73,15 @@ namespace MiniEngine
 	private:
 		uint8_t m_result;
 		std::weak_ptr<ProcessCondition> m_pCondition;
+
+#ifdef MG_DEBUG
+		// 디버그용
+	public:
+		void SetName(const std::string& _name) { m_name = _name; };
+		const std::string& GetName() const { return m_name; }
+	private:
+		std::string m_name;
+#endif // MG_DEBUG
 	};
 
 #pragma endregion

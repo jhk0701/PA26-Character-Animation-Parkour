@@ -318,6 +318,10 @@ void ProcessConditionData::ConstructData(
 		std::shared_ptr<ProcessData> pProcessData = std::make_shared<ProcessData>();
 		pProcessData->Init(p.TagAct, mapCondition[p.ConditionId]);
 
+#ifdef MG_DEBUG
+		pProcessData->SetName(p.ConditionId);
+#endif
+
 		_outProcessData.push_back(pProcessData);
 	}
 }

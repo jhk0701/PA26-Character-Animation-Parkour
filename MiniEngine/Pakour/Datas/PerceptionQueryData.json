@@ -125,19 +125,59 @@
             "id": "StateHanging",
             "class": "CheckObstacleTowardInputDirNode",
             "children": [
-                "Empty",
+                "OnHanging_Detected",
                 "OnHanging_NotDetected"
             ]
         },
             {
                 "id": "OnHanging_Detected",
-                "class": "CheckOnHangingMoveToInputDirNode",
+                "class": "SelectObstacleTagNode",
                 "children":
                 [
-                    "Return",
-                    "Empty"
+                    "OnHanging_Detected_Default",
+                    "ProcessBeam",
+                    "ProcessProtrude"
                 ]
             },
+                {
+                    "id" : "OnHanging_Detected_Default",
+                    "class" : "SelectUsingInputVerticalNode",
+                    "comment" : "Default의 경우, 입력 y 값에 따라 처리 세분화. 아래 쪽에 장애물은 착지 시도",
+                    "children" :
+                    [
+                        "OnHanging_Detected_Default_ProcessUp",
+                        "OnHanging_Detected_Default_ProcessSide",
+                        "Return"
+                    ]
+                },
+                    {
+                        "id" : "OnHanging_Detected_Default_ProcessUp",
+                        "class" : "CheckOnHangingUpwardLedgeNode",
+                        "startOffset" : [ 0.0, 0.0, -0.5 ],
+                        "comment" : "위에 있는 장애물의 Ledge 찾기 - 바로 위는 막히므로, 살짝 뒤에 있는 위치 찾기",
+                        "children" : [
+                            "Return",
+                            "Empty"
+                        ]
+                    },
+                    {
+                        "id" : "OnHanging_Detected_Default_ProcessSide",
+                        "class" : "SequenceNode",
+                        "comment" : "양 사이드에 장애물 처리 -> 높이, 깊이 측정",
+                        "children" : [
+                            "OnHanging_Detected_Default_ProcessSide_MeasureHeight",
+                            "OnHanging_Detected_Default_ProcessSide_MeasureDepth",
+                            "Return"
+                        ]
+                    },
+                        {
+                            "id" : "OnHanging_Detected_Default_ProcessSide_MeasureHeight",
+                            "class" : "MeasureHeight_SideNode"
+                        },
+                        {
+                            "id" : "OnHanging_Detected_Default_ProcessSide_MeasureDepth",
+                            "class" : "MeasureDepth_SideNode"
+                        },
             {
                 "id": "OnHanging_NotDetected",
                 "class": "SelectUsingInputVerticalNode",
