@@ -30,6 +30,15 @@ namespace PerceptionNodeUtil
 		return pChar->GetRoot()->localTransform.position + Vector3(0.0f, pChar->GetCharacterHalfHeight(), 0.0f);
 	}
 
+	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context)
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		if (!pChar)
+			return Vector3(0.0f);
+		
+		return pChar->GetRoot()->localTransform.position + Vector3(0.0f, pChar->GetCharacterHeight(), 0.0f);
+	}
+
 	IObstacle* ToIObstacle(void* _p) 
 	{
 		Actor* pActor = reinterpret_cast<Actor*>(_p);

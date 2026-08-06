@@ -196,6 +196,12 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.1 ],
+                    "properDistance": 1.0,
+                    "lerpWeight": 0.5
+                },
+                {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.1, 0.9 ],
                     "midOffset" : [ 0, 0.3, 0 ],
@@ -341,6 +347,12 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.1 ],
+                    "properDistance": 1.0,
+                    "lerpWeight": 0.5
+                },
+                {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.1, 0.9 ],
                     "midOffset" : [ 0, 0.5, 0 ],
@@ -350,13 +362,13 @@
                     "class": "CharacterIKInvoker",
                     "time": [ 0, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.15, 0.0, 0 ]
+                    "offset": [ -0.2, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
                     "time": [ 0, 0.8 ],
                     "limb": "RightArm",
-                    "offset": [ 0.15, 0.0, 0 ]
+                    "offset": [ 0.2, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",

@@ -284,7 +284,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	}
 	{
 		// 복합 지형 2.
-		const Vector3 OFFSET(10.0f, 0.0f, 20.0f);
+		const Vector3 OFFSET(15.0f, 0.0f, 20.0f);
 
 		Obstacle::ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
@@ -305,6 +305,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.pos = OFFSET + Vector3(8.5f, 5.0f, 5.0f);
 			desc.scale = Vector3(17.0f, 10.0f, 5.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(-1.5f, 7.0f, -4.5f);
+			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 
@@ -362,11 +366,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 			desc.pos = OFFSET + Vector3(5.0f, 5.0f, -2.0f);
-			desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(5.0f, 7.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.5f, 0.5f);
+			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 		{
@@ -416,6 +420,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	// ApplyPhysicsDebug(true);
+	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

@@ -8,6 +8,7 @@ namespace PerceptionNodeUtil
 {
 	std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor);
 	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);
+	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context);
 	MiniEngine::IObstacle* ToIObstacle(void* _p);
 
 	template<typename THit>

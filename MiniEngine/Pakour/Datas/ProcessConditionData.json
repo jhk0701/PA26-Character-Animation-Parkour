@@ -61,7 +61,7 @@
         {
             "id": "HeightCheck_Low",
             "class": "ObstacleHeightCondition",
-            "value" : 1.0
+            "value" : 0.4
         },
         {
             "id": "IsDeeper",
@@ -137,6 +137,12 @@
         },
 
         {
+            "id": "CanActiveDefaultPakour",
+            "class": "ConditionOr",
+            "children" : [ "IsLandingState", "IsBeamStandState" ]
+        },
+
+        {
             "id": "Landing_Wall_IdleToHang",
             "comment" : "Landing -> Wall_Hanging (Idle To Hang)",
             "class": "ConditionAnd",
@@ -145,22 +151,22 @@
         {
             "id": "Landing_VaultHigh",
             "class": "ConditionAnd",
-            "children" : [ "IsDefault", "HeightCheck_High", "IsNotDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsNotDeeper" ]
         },
         {
             "id": "Landing_VaultLowMid",
             "class": "ConditionAnd",
-            "children" : [ "IsDefault", "HeightCheck_Low", "IsNotDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsNotDeeper" ]
         },
         {
             "id": "Landing_MantleHigh",
             "class": "ConditionAnd",
-            "children" : [ "IsDefault", "HeightCheck_High", "IsDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsDeeper" ]
         },
         {
             "id": "Landing_MantleLowMid",
             "class": "ConditionAnd",
-            "children" : [ "IsDefault", "HeightCheck_Low", "IsDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsDeeper" ]
         },
 
         {
@@ -180,24 +186,30 @@
         },
 
         {
+            "id" : "Hanging_MoveCommonCondition",
+            "class": "ConditionAnd",
+            "children" : ["IsHangingState", "IsDefault", "IsNotChanged"]
+        },
+
+        {
             "id": "Hanging_MoveUp",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsInputUp", "IsNotChanged" ]
+            "children" : [ "Hanging_MoveCommonCondition", "IsInputUp" ]
         },
         {
             "id": "Hanging_MoveDown",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsInputDown", "IsNotChanged" ]
+            "children" : [ "Hanging_MoveCommonCondition", "IsInputDown" ]
         },
         {
             "id": "Hanging_MoveLeft",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsInputLeft", "IsNotChanged" ]
+            "children" : [ "Hanging_MoveCommonCondition", "IsInputLeft" ]
         },
         {
             "id": "Hanging_MoveRight",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsInputRight", "IsNotChanged" ]
+            "children" : [ "Hanging_MoveCommonCondition", "IsInputRight" ]
         },
 
         {
@@ -234,14 +246,24 @@
             "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Wall" ]
         },
         {
-            "id": "Hanging_Mantle_OnSide",
+            "id": "Hanging_MantleHigh_OnSide",
             "class": "ConditionAnd",
             "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsDeeper", "IsLedgeDetected" ]
         },
         {
-            "id": "Hanging_Vault_OnSide",
+            "id": "Hanging_VaultHigh_OnSide",
             "class": "ConditionAnd",
             "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsNotDeeper", "IsLedgeDetected" ]
+        },
+        {
+            "id": "Hanging_MantleLowMid_OnSide",
+            "class": "ConditionAnd",
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Low", "IsDeeper", "IsLedgeDetected" ]
+        },
+        {
+            "id": "Hanging_VaultLowMid_OnSide",
+            "class": "ConditionAnd",
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Low", "IsNotDeeper", "IsLedgeDetected" ]
         },
 
         {
@@ -318,29 +340,41 @@
             "conditionId" : "Hanging_Mantle_OnMiddleObs"
         },
         {
+            "tagAct" : "Wall_HangingMoveUp",
+            "conditionId" : "Hanging_MoveUp"
+        },
+
+        {
+            "tagAct" : "Wall_HangingMoveDown",
+            "conditionId" : "Hanging_MoveDown"
+        },
+        {
             "tagAct" : "Wall_HangToIdle",
             "conditionId" : "Hanging_DownToGround"
         },
+
         {
             "tagAct" : "Wall_AirToHang",
             "conditionId" : "Hanging_Hang_OnSide"
         },
         {
             "tagAct" : "Wall_HangToMantleOnSide",
-            "conditionId" : "Hanging_Mantle_OnSide"
+            "conditionId" : "Hanging_MantleHigh_OnSide" 
         },
         {
             "tagAct" : "Wall_HangToMantleOnSide",
             "comment" : "적절한 애니메이션 찾고 교체 필요",
-            "conditionId" : "Hanging_Vault_OnSide"
+            "conditionId" : "Hanging_VaultHigh_OnSide"
         },
         {
-            "tagAct" : "Wall_HangingMoveUp",
-            "conditionId" : "Hanging_MoveUp"
+            "tagAct" : "Wall_HangToMantleOnSide",
+            "comment" : "적절한 애니메이션 찾고 교체 필요",
+            "conditionId" : "Hanging_MantleLowMid_OnSide" 
         },
         {
-            "tagAct" : "Wall_HangingMoveDown",
-            "conditionId" : "Hanging_MoveDown"
+            "tagAct" : "Wall_HangToMantleOnSide",
+            "comment" : "적절한 애니메이션 찾고 교체 필요",
+            "conditionId" : "Hanging_VaultLowMid_OnSide"
         },
         {
             "tagAct" : "Wall_HangingMoveLeft",

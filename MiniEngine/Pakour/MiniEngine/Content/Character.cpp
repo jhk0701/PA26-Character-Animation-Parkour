@@ -182,6 +182,7 @@ void Character::OnBeforeSortComponent()
 
 	// 이후 Rendering될 것
 }
+
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();

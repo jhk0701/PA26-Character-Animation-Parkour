@@ -18,6 +18,7 @@ void CorrectRootMotion::OnStart(AnimNotifyParam& _param)
 
 	m_elapsedTime = 0.0f;
 	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
+
 	assert(GetDuration() > 1e-4f);
 }
 

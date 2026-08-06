@@ -38,6 +38,7 @@ namespace MiniEngine
 
 	private:
 		bool m_bIsInvert{ false };
+		bool m_bIsProcessed{ false };
 	};
 
 	class CompositeCondition : public ProcessCondition
