@@ -95,13 +95,20 @@ namespace PerceptionNodeUtil
 		return false; // 딛고 선 장애물 외에 아무것도 없음 -> 찾지 못한 것
 	}
 
-	bool CheckLedge(MiniEngine::TravelContext& _context, const MiniEngine::Vector3& _pos, const MiniEngine::Vector3& _dir, const float _radius, MiniEngine::Physics::RaycastResult& _outResult)
+	bool CheckLedge(
+		MiniEngine::TravelContext& _context, 
+		const MiniEngine::Vector3& _pos, 
+		const MiniEngine::Vector3& _dir, 
+		const float _radius,
+		const float _dist,
+		MiniEngine::Physics::RaycastResult& _outResult
+	)
 	{
 		SpherecastParam sphParam;
 		sphParam.m_startPos = _pos;
 		sphParam.m_dir = _dir;
 		sphParam.m_radius = _radius;
-		sphParam.m_maxDistance = ToChar(_context.m_owner)->GetPerceptionConfig().minObstacleDetectDist;
+		sphParam.m_maxDistance = _dist;
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 
@@ -167,9 +174,9 @@ namespace PerceptionNodeUtil
 		if (band > 0)
 		{
 			const Vector3 LEDGE_ORIGIN(PROBE_XZ.x, _context.m_ledge - CONFIG.heightRadius, PROBE_XZ.z);
-
+			
 			RaycastResult ledgeResult;
-			CheckLedge(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, ledgeResult);
+			CheckLedge(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, CONFIG.minObstacleDetectDist,ledgeResult);
 		}
 
 		return band;

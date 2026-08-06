@@ -42,13 +42,13 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	const Transform& TF = pChar->GetRoot()->localTransform;
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
-	Vector3 startOffset(0.0f);
-	startOffset += TF.Right() * m_startOffset.x;
-	startOffset += TF.Up() * m_startOffset.y;
-	startOffset += TF.Forward() * m_startOffset.z;
+	Vector3 startPos = GetCharacterCenterPosition(_context);
+	startPos += TF.Right() * m_startOffset.x;
+	startPos += TF.Up() * m_startOffset.y;
+	startPos += TF.Forward() * m_startOffset.z;
 	
 	RaycastResult result;
-	if (CheckLedge(_context, GetCharacterCenterPosition(_context) + startOffset, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, result) == false)
+	if (CheckLedge(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, CONFIG.onHangingSearchDist, result) == false)
 	{
 		MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] No Ledge");
 		return false;
@@ -132,7 +132,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 	offset += m_startOffset.z * TF.Forward();
 
 	const Vector3 POS = PerceptionNodeUtil::GetCharacterCenterPosition(_context) + offset;
-	const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
+	const float DIST = pChar->GetPerceptionConfig().onHangingSearchDist;
 
 	// 입력 방향으로 이동
 	// 위-아래 입력 우선 처리

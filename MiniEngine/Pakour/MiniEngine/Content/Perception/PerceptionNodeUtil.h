@@ -33,6 +33,7 @@ namespace PerceptionNodeUtil
 		const MiniEngine::Vector3& _pos,
 		const MiniEngine::Vector3& _dir,
 		const float _radius, 
+		const float _dist,
 		MiniEngine::Physics::RaycastResult& _outResult);
 
 	// 장애물 높이 측정
