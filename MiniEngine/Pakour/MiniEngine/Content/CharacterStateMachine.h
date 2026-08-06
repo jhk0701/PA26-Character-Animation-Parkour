@@ -22,7 +22,7 @@ public:
 	virtual void CheckState() {};
 
 protected:
-	std::shared_ptr<CharacterStateMachine> GetMachine() { return m_machine.lock(); }
+	std::shared_ptr<CharacterStateMachine> GetMachine() const { return m_machine.lock(); }
 
 	void ProcessMovement(float _dt);
 	void SyncControllerRotate();

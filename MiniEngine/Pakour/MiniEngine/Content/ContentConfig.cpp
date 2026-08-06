@@ -69,7 +69,9 @@ namespace Content::Config
 			{ "Beam_HangingMoveLeft",		ETagAct::Beam_HangingMoveLeft },
 			{ "Beam_HangingMoveRight",		ETagAct::Beam_HangingMoveRight },
 
-			{ "Protrude_MoveToPoint",		ETagAct::Protrude_MoveToPoint },
+			{ "Protrude_HangingMoveToPoint",	ETagAct::Protrude_HangingMoveToPoint },
+			{ "Protrude_InAirMoveToPoint",		ETagAct::Protrude_InAirMoveToPoint },
+			{ "Protrude_LandingMoveToPoint",	ETagAct::Protrude_LandingMoveToPoint },
 
 			{ "Test",						ETagAct::Test },
 		};

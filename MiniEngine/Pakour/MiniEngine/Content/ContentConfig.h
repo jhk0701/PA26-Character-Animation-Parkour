@@ -93,7 +93,9 @@ namespace Content::Config
 		Beam_HangingMoveLeft,
 		Beam_HangingMoveRight,
 
-		Protrude_MoveToPoint,
+		Protrude_HangingMoveToPoint,
+		Protrude_InAirMoveToPoint,
+		Protrude_LandingMoveToPoint,
 
 		Test,
 		End

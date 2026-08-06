@@ -686,11 +686,69 @@
             "rootMotion":  { "apply": true, "z" : false }
         },
         {
-            "tags": [ "Protrude_MoveToPoint" ],
+            "tags": [ "Protrude_HangingMoveToPoint" ],
             "clip": 19,
             "rootMotion":  { "apply": false },
             "notifies":
             [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.01,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Protrude_InAirMoveToPoint" ],
+            "clip": 19,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Hanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.01,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Protrude_LandingMoveToPoint" ],
+            "clip": 19,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "TransitionState",
+                    "time": 0.8,
+                    "state": "Hanging"
+                },
                 {
                     "class": "EnableCollisionObstacle",
                     "time": 0.01,
@@ -817,7 +875,7 @@
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
-                    "time": [ 0.4, 0.6 ]
+                    "time": [ 0.1, 0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",

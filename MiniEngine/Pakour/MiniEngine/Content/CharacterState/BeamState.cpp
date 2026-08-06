@@ -32,7 +32,6 @@ void BeamState::Refresh()
 	if (OBS_INFO.m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfoTag))
 	{
 		m_curAxis = (ETagAxis)subInfoTag;
-		m_pCurObs = OBS_INFO.m_pObstacle;
 
 		AlignByAxis();
 	}
@@ -42,8 +41,6 @@ void BeamState::OnEnd()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true);
-
-	m_pCurObs = nullptr;
 }
 
 void BeamState::Tick(float _dt)
@@ -53,6 +50,12 @@ void BeamState::Tick(float _dt)
 }
 void BeamState::LateTick(float _dt){}
 
+
+MiniEngine::IObstacle* BeamState::GetCurObs() const
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	return pChar->GetCurObstacleInfo().m_pObstacle;
+}
 
 bool BeamState::ObstacleIsBeamType(Actor* _pObs)
 {
@@ -83,9 +86,9 @@ void BeamState::AdjustPositionToObstacleInfo()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	Character::PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
 	
-	const Vector3& curPos = pChar->GetRoot()->localTransform.position;
-	obsInfo.m_obstacleHitPos.x = curPos.x;
-	obsInfo.m_obstacleHitPos.z = curPos.z;
+	const Vector3& POS = pChar->GetRoot()->localTransform.position;
+	obsInfo.m_obstacleHitPos.x = POS.x;
+	obsInfo.m_obstacleHitPos.z = POS.z;
 }
 
 // Beam Stand
