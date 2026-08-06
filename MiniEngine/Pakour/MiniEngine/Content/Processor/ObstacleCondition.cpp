@@ -12,6 +12,11 @@
 using namespace Content::Config;
 using namespace ProcessorConditionUtil;
 
+bool ObstacleDetectedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	return _result.m_pFirstObstacle != nullptr;
+}
+
 bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
 	if (!_result.m_pFirstObstacle)
@@ -64,3 +69,16 @@ bool ObstacleIsChangedCondition::Evaluate(const TravelResult& _result, const Pro
 	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
 	return pChar->GetCurObstacleInfo().m_bIsNewObstacle;
 }
+
+bool DetectLedgeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	return _result.m_bDetectLedge;
+}
+
+bool ObstacleHitDistanceCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+{
+	// MG_LOG_INFO("[ObstacleHitDistanceCondition] GetValue : {:.2f}, HitDist : {:.2f}", GetValue(), _result.m_obstacleDistance);
+	return GetValue() < _result.m_obstacleDistance;
+}
+
+

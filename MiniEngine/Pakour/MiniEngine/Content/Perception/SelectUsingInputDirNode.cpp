@@ -3,6 +3,8 @@
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 
+#include "Core/Log.h"
+
 uint8_t SelectUsingInputDirNode::InvokeCondition(TravelContext& _context)
 {
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
@@ -25,10 +27,15 @@ uint8_t SelectUsingInputVerticalNode::InvokeCondition(TravelContext& _context)
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
+	uint8_t r = 0;
 	if (INPUT_DIR.y > 0)
-		return 0;
+		r = 0;
 	else if (INPUT_DIR.y < 0)
-		return 2;
+		r = 2;
 	else
-		return 1;
+		r = 1;
+
+	MG_LOG_INFO("[SelectUsingInputVerticalNode::InvokeCondition] result : {}", r);
+
+	return r;
 }

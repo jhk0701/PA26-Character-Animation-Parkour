@@ -6,11 +6,11 @@ namespace MiniEngine::Physics
 	// queryFilterData.word0에 저장
 	enum class Layer : uint32_t 
 	{
-		Default = 1u << 0, // physicsWorld에서 shape 생성 시 기본 값
-		Ground = 1u << 1,
-		Character = 1u << 2,
-		Obstacle = 1u << 3,
-		ObstacleLedge = 1u << 4,
+		Default			= 1u << 0, // physicsWorld에서 shape 생성 시 기본 값
+		Ground			= 1u << 1,
+		Character		= 1u << 2,
+		Obstacle		= 1u << 3,
+		ObstacleLedge	= 1u << 4,
 	};
 	
 	constexpr uint32_t ToMask(Layer _layer) { return static_cast<uint32_t>(_layer); }

@@ -55,6 +55,7 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 
 bool CheckOnHangingMoveDownNode::InvokeCondition(TravelContext& _context)
 {
+	MG_LOG_INFO("[CheckOnHangingMoveDownNode::InvokeCondition] MoveDown");
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 
 	RaycastParam param;
@@ -111,6 +112,35 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	return true;
 }
 
+bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
+{
+	MG_LOG_INFO("[CheckObstacleTowardInputDirNode::InvokeCondition] Check Obstacle Toward Input Dir");
+
+	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
+	const Transform& TF = pChar->GetRoot()->localTransform;
+	const Vector2 INPUT_DIR = pChar->GetInputDir();
+
+	Vector3 offset(0.0f);
+	offset += m_startOffset.x * TF.Right();
+	offset += m_startOffset.y * TF.Up();
+	offset += m_startOffset.z * TF.Forward();
+
+	const Vector3 POS = PerceptionNodeUtil::GetCharacterCenterPosition(_context) + offset;
+	const float DIST = pChar->GetPerceptionConfig().maxObstacleDetectDist;
+
+	// 입력 방향으로 이동
+	// 위-아래 입력 우선 처리
+	Vector3 dir(0.0f);
+	if (fabs(INPUT_DIR.y) > 1e-4f)
+		dir += TF.Up() * INPUT_DIR.y;
+	else if (fabs(INPUT_DIR.x) > 1e-4f)
+		dir += TF.Right() * INPUT_DIR.x;
+
+	dir.Normalize();
+
+	return PerceptionNodeUtil::CheckObstacle(_context, POS, dir, DIST, m_heightMultipier, true);
+}
+
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 {
 	MG_LOG_INFO("[CheckOnHangingMoveToInputDirNode::InvokeCondition] Check Movable");
@@ -128,9 +158,13 @@ bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 	startPos += startOffset;
 
 	// 입력 방향으로 이동
+	// 위-아래 입력 우선 처리
 	Vector3 dir(0.0f);
-	dir += TF.Right() * INPUT_DIR.x;
-	dir += TF.Up() * INPUT_DIR.y;
+	if(fabs(INPUT_DIR.y) > 1e-4f)
+		dir += TF.Up() * INPUT_DIR.y;
+	else if (fabs(INPUT_DIR.x) > 1e-4f)
+		dir += TF.Right() * INPUT_DIR.x;
+
 	dir.Normalize();
 
 	startPos += (dir * CONFIG.onHangingSearchDist);

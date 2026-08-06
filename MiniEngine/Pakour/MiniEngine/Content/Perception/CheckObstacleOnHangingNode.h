@@ -33,6 +33,19 @@ private:
 	Vector3 m_startOffset{ 0.0f, 0.0f, 0.0f };
 };
 
+class CheckObstacleTowardInputDirNode : public ConditionNode
+{
+public:
+	bool InvokeCondition(TravelContext& _context) override;
+
+	void SetHeightMultiplier(float _h) { m_heightMultipier = _h; }
+	void SetStartOffset(const Vector3& _offset) { m_startOffset = _offset; }
+
+private:
+	float m_heightMultipier{ 1.0f };
+	Vector3 m_startOffset{ 0.0f, 0.0f, 0.0f };
+};
+
 // 입력한 방향으로 탐색 거리만큼 이동한 지점에 정면으로 레이를 쏴서
 // 해당 벽면으로 갈 수 있는지 확인
 class CheckOnHangingMoveToInputDirNode : public ConditionNode 

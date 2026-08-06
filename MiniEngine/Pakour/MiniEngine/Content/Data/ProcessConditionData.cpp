@@ -98,6 +98,17 @@ namespace
 			{ "ObstacleIsFrontCondition",		{ CreateCond<ObstacleIsFrontCondition>() }},
 			{ "ObstacleIsChangedCondition",		{ CreateCond<ObstacleIsChangedCondition>() }},
 			{ "DetectLedgeCondition",			{ CreateCond<DetectLedgeCondition>() }},
+			{ "ObstacleDetectedCondition",		{ CreateCond<ObstacleDetectedCondition>() }},
+			{ "ObstacleHitDistanceCondition",	
+				{ 
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<ObstacleHitDistanceCondition> pCond = Create<ObstacleHitDistanceCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
 			{ "InputVerticalCondition",
 				{
 					[](const ConditionSchema& _data)

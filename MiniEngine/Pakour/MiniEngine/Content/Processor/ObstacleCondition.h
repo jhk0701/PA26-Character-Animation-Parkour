@@ -4,6 +4,12 @@
 
 using namespace MiniEngine;
 
+class ObstacleDetectedCondition : public CompareWithValueCondition<uint8_t>
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};
+
 class ObstacleTypeCondition : public CompareWithValueCondition<uint8_t>
 {
 protected:
@@ -31,6 +37,19 @@ protected:
 
 // 장애물이 변경되었는지 확인
 class ObstacleIsChangedCondition : public ProcessCondition
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};
+
+class DetectLedgeCondition : public ProcessCondition
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};
+
+// 탐지한 hit 거리 비교
+class ObstacleHitDistanceCondition : public CompareWithValueCondition<float>
 {
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;

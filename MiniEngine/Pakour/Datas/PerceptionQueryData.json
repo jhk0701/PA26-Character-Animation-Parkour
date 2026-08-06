@@ -20,7 +20,7 @@
         "children": [
             "StateLanding",
             "StateInAir",
-            "StateHanging2",
+            "StateHanging",
             "StateBeam",
             "StateBeam"
         ]
@@ -122,59 +122,6 @@
                 "targetState": "Landing"
             },
         {
-            "id": "StateHanging2",
-            "class": "CheckObstacleTowardInputDirNode",
-            "children": [
-                "CheckOnHanging_ObstacleTag",
-                "CheckOnHanging_EnableToMove"
-            ]
-        },
-            {
-                "id": "CheckOnHanging_ObstacleTag",
-                "class": "SelectObstacleTagNode",
-                "children": [
-                    "CheckOnHanging_SelectByInputY",
-                    "ProcessBeam",
-                    "ProcessProtrude"
-                ]
-            },
-                {
-                    "id": "CheckOnHanging_SelectByInputY",
-                    "class": "SelectUsingInputVerticalNode",
-                    "children": [
-                        "OnHangingUp",
-                        "CheckOnHanging_MeasureObsSeq",
-                        "OnHangingDown"
-                    ]
-                },
-                    {
-                        "id": "CheckOnHanging_MeasureObsSeq",
-                        "class": "SequenceNode",
-                        "children":
-                        [
-                            "MeasureHeightSide",
-                            "MeasureDepthSide",
-                            "Return"
-                        ]
-                    },
-                        {
-                            "id": "MeasureHeightSide",
-                            "class": "MeasureHeight_SideNode"
-                        },
-                        {
-                            "id": "MeasureDepthSide",
-                            "class": "MeasureDepth_SideNode"
-                        },
-            {
-                "id": "CheckOnHanging_EnableToMove",
-                "class": "CheckOnHangingMoveToInputDirNode",
-                "children": [
-                    "Return",
-                    "OnHangingUp_CurrentObstacleLedge"
-                ]   
-            },
-
-        {
             "id": "StateHanging",
             "class": "SelectUsingInputDirNode",
             "children": [
@@ -220,7 +167,7 @@
                     "comment": "현재 벽면의 Ledge 찾기",
                     "children": [
                         "Return",
-                        "Empty"
+                        "Return"
                     ]
                 },
             {
