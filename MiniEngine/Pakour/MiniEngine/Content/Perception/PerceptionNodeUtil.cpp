@@ -106,7 +106,10 @@ namespace PerceptionNodeUtil
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 
 		if (bIsHit)
+		{
 			_context.m_ledge = _outResult.m_pos.y;
+			_context.m_bDetectLedge = true;
+		}
 
 		return bIsHit;
 	}

@@ -133,7 +133,7 @@
                 "id": "CheckOnHanging_ObstacleTag",
                 "class": "SelectObstacleTagNode",
                 "children": [
-                    "SelectUsingInputVerticalNode",
+                    "CheckOnHanging_SelectByInputY",
                     "ProcessBeam",
                     "ProcessProtrude"
                 ]
@@ -152,17 +152,25 @@
                         "class": "SequenceNode",
                         "children":
                         [
-                            "MeasureHeight_SideNode",
-                            "MeasureDepth_SideNode",
+                            "MeasureHeightSide",
+                            "MeasureDepthSide",
                             "Return"
                         ]
                     },
+                        {
+                            "id": "MeasureHeightSide",
+                            "class": "MeasureHeight_SideNode"
+                        },
+                        {
+                            "id": "MeasureDepthSide",
+                            "class": "MeasureDepth_SideNode"
+                        },
             {
                 "id": "CheckOnHanging_EnableToMove",
                 "class": "CheckOnHangingMoveToInputDirNode",
                 "children": [
                     "Return",
-                    "Empty"
+                    "OnHangingUp_CurrentObstacleLedge"
                 ]   
             },
 

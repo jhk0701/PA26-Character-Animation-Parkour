@@ -27,3 +27,9 @@ class InputHorizontalCondition : public CompareWithValueCondition<float>
 protected:
 	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 };
+
+class DetectLedgeCondition : public ProcessCondition 
+{
+protected:
+	bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+};

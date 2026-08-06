@@ -50,6 +50,7 @@ public:
 		Vector3 m_obstacleHitPos{ 0.0f };
 		Vector3 m_obstacleHitNrm{ 0.0f };
 		bool m_bIsNewObstacle{ true };
+		bool m_bDetectLedge{ false };
 
 		bool IsValid() const { return m_pObstacle != nullptr; }
 	};

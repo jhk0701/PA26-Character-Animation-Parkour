@@ -97,8 +97,8 @@ namespace
 			},
 			{ "ObstacleIsFrontCondition",		{ CreateCond<ObstacleIsFrontCondition>() }},
 			{ "ObstacleIsChangedCondition",		{ CreateCond<ObstacleIsChangedCondition>() }},
-			{
-				"InputVerticalCondition",
+			{ "DetectLedgeCondition",			{ CreateCond<DetectLedgeCondition>() }},
+			{ "InputVerticalCondition",
 				{
 					[](const ConditionSchema& _data)
 					{

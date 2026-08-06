@@ -272,6 +272,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		m_curObstacleInfo.m_obstacleDistance = _result.m_obstacleDistance;
 		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
 		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
+		m_curObstacleInfo.m_bDetectLedge = _result.m_bDetectLedge;
 	}
 	else
 	{
@@ -505,7 +506,7 @@ LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
 	result.position = hitResult.m_pos;
 	result.posAlpha = 1.0f;
 	
-	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	// MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	return result;
 }

@@ -294,6 +294,22 @@
         },
 
         {
+            "tagAct" : "Wall_HangingMoveUp",
+            "conditionId" : "Hanging_MoveUp"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveDown",
+            "conditionId" : "Hanging_MoveDown"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveLeft",
+            "conditionId" : "Hanging_MoveLeft"
+        },
+        {
+            "tagAct" : "Wall_HangingMoveRight",
+            "conditionId" : "Hanging_MoveRight"
+        },
+        {
             "tagAct" : "Wall_HangToMantle",
             "conditionId" : "Hanging_Mantle_Top"
         },
@@ -317,22 +333,6 @@
             "tagAct" : "Wall_HangToMantleOnSide",
             "comment" : "적절한 애니메이션 찾고 교체 필요",
             "conditionId" : "Hanging_Vault_OnSide"
-        },
-        {
-            "tagAct" : "Wall_HangingMoveUp",
-            "conditionId" : "Hanging_MoveUp"
-        },
-        {
-            "tagAct" : "Wall_HangingMoveDown",
-            "conditionId" : "Hanging_MoveDown"
-        },
-        {
-            "tagAct" : "Wall_HangingMoveLeft",
-            "conditionId" : "Hanging_MoveLeft"
-        },
-        {
-            "tagAct" : "Wall_HangingMoveRight",
-            "conditionId" : "Hanging_MoveRight"
         },
 
         {

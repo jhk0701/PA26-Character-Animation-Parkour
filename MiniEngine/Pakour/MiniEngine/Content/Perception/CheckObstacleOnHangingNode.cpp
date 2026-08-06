@@ -44,24 +44,14 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	startOffset += TF.Right() * m_startOffset.x;
 	startOffset += TF.Up() * m_startOffset.y;
 	startOffset += TF.Forward() * m_startOffset.z;
-
-	SpherecastParam param;
-	param.m_startPos = GetCharacterCenterPosition(_context) + startOffset; 
-	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-	param.m_radius = CONFIG.onHangingSearchRadius;
-	param.m_maxDistance = CONFIG.onHangingSearchDist;
-
-	// MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
-	// MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
-
+	
 	RaycastResult result;
-	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)) == false)
+	if (CheckLedge(_context, GetCharacterCenterPosition(_context) + startOffset, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, result) == false)
 		return false;
 
 	FillFromResult(_context, result);
 	return true;
 }
-
 
 bool CheckOnHangingMoveDownNode::InvokeCondition(TravelContext& _context)
 {
@@ -123,6 +113,8 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 {
+	MG_LOG_INFO("[CheckOnHangingMoveToInputDirNode::InvokeCondition] Check Movable");
+
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();

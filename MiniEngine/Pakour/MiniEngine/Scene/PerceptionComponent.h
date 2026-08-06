@@ -19,6 +19,7 @@ namespace MiniEngine
 		float m_distance{ 0.0f };
 		float m_ledge{ 0.0f };
 		float m_depth{ 0.0f };
+		bool m_bDetectLedge{ false };
 	};
 
 	struct TravelResult 
@@ -29,6 +30,7 @@ namespace MiniEngine
 		float m_obstacleDistance{ 0.0f };		// 캐릭터와 거리
 		float m_obstacleLedge{ 0.0f };			// 모서리 (최종 높이)
 		float m_obstacleDepth{ 0.0f };			// 깊이
+		bool m_bDetectLedge{ false };			// 모서리 탐지 여부
 
 		void Reset();
 	};

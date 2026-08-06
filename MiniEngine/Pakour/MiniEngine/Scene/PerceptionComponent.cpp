@@ -15,6 +15,7 @@ namespace MiniEngine
 		m_obstacleDistance = 0.0f;
 		m_obstacleLedge = 0.0f;
 		m_obstacleDepth = 0.0f;
+		m_bDetectLedge = false;
 	}
 
 #pragma region Perception Nodes
