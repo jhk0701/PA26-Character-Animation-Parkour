@@ -57,6 +57,9 @@ namespace PerceptionNodeUtil
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
+		/*Vector3 debugEnd = capParam.m_startPos + capParam.m_dir * capParam.m_maxDistance;
+		MiniEngine::Debug::DrawLine(capParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);*/
+
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
 		if (_context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle)) == false)
@@ -85,6 +88,64 @@ namespace PerceptionNodeUtil
 		for (const HitResult& r : hits.m_hitResults)
 		{
 			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) || 
+				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
+				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
+
+			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
+			return true;
+		}
+
+		return false; // 딛고 선 장애물 외에 아무것도 없음 -> 찾지 못한 것
+	}
+
+	bool CheckObstacleSphere(
+		MiniEngine::TravelContext& _context, 
+		const MiniEngine::Vector3& _pos, 
+		const MiniEngine::Vector3& _dir, 
+		const float _dist, 
+		const float _radius, 
+		const bool _bExcludeGroundActor)
+	{
+		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+		const Transform& TF = pChar->GetRoot()->localTransform;
+
+		SpherecastParam sphParam;
+		sphParam.m_radius = _radius;
+		sphParam.m_startPos = _pos;
+		sphParam.m_dir = _dir;
+		sphParam.m_maxDistance = _dist;
+
+		/*Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
+		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);*/
+
+		// 결과물은 거리 순으로 정렬해서 보내줌
+		RaycastMultipleResult hits;
+		if (_context.m_physics->SphereCastMultiple(sphParam, hits, ToMask(Layer::Obstacle)) == false)
+			return false;
+
+		// 현재 처리 중엔 장애물 확인
+		void* pOverlappedObstacle = nullptr;
+		if (pChar->GetCurObstacleInfo().IsValid())
+			pOverlappedObstacle = reinterpret_cast<void*>(pChar->GetCurObstacleInfo().m_pObstacle);
+
+		// 지금 장애물 위에 있는지 확인
+		void* pGroundActor = nullptr;
+		if (_bExcludeGroundActor)
+		{
+			SpherecastParam spParam;
+			spParam.m_startPos = TF.position;
+			spParam.m_radius = sphParam.m_radius;
+			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+			spParam.m_maxDistance = 0.1f;
+
+			RaycastResult downCheckResult;
+			if (_context.m_physics->SphereCast(spParam, downCheckResult, ToMask(Layer::Obstacle)))
+				pGroundActor = downCheckResult.GetActor();
+		}
+
+		for (const HitResult& r : hits.m_hitResults)
+		{
+			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 

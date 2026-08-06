@@ -96,7 +96,6 @@ namespace
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
 					{
 						std::shared_ptr<CheckObstacleTowardInputDirNode> pNode = std::make_shared<CheckObstacleTowardInputDirNode>();
-						pNode->SetHeightMultiplier(_node.HeightMultiplier);
 						pNode->SetStartOffset(_node.StartOffset);
 						return pNode;
 					},

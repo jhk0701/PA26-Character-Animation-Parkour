@@ -20,12 +20,21 @@ namespace PerceptionNodeUtil
 		_context.m_ledge = _result.m_pos.y;
 	}
 
-	// 캐릭터 기준으로 현재 위치에서 특정 방향에 장애물이 있는지 체크
-	bool CheckObstacle(MiniEngine::TravelContext& _context, 
+	// 캐릭터 기준으로 현재 위치에서 특정 방향에 캡슐을 쏘아 장애물이 있는지 체크
+	bool CheckObstacle(
+		MiniEngine::TravelContext& _context, 
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _dir, 
 		const float _dist,
 		const float _hMultiplier = 2.0f, 
+		const bool _bExcludeGroundActor = false);
+
+	bool CheckObstacleSphere(
+		MiniEngine::TravelContext& _context,
+		const MiniEngine::Vector3& _pos,
+		const MiniEngine::Vector3& _dir,
+		const float _dist,
+		const float _radius,
 		const bool _bExcludeGroundActor = false);
 
 	bool CheckLedge(

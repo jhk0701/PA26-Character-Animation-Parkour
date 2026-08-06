@@ -122,8 +122,9 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 {
 	// MG_LOG_INFO("[CheckObstacleTowardInputDirNode::InvokeCondition] Check Obstacle Toward Input Dir");
 
-	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
+	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
+	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
 	Vector3 offset(0.0f);
@@ -131,8 +132,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 	offset += m_startOffset.y * TF.Up();
 	offset += m_startOffset.z * TF.Forward();
 
-	const Vector3 POS = PerceptionNodeUtil::GetCharacterCenterPosition(_context) + offset;
-	const float DIST = pChar->GetPerceptionConfig().onHangingSearchDist;
+	const Vector3 POS = GetCharacterCenterPosition(_context) + offset;
 
 	// 입력 방향으로 이동
 	// 위-아래 입력 우선 처리
@@ -144,7 +144,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 
 	dir.Normalize();
 
-	return PerceptionNodeUtil::CheckObstacle(_context, POS, dir, DIST, m_heightMultipier, true);
+	return CheckObstacleSphere(_context, POS, dir, CONFIG.onHangingSearchDist, CONFIG.onHangingSearchRadius, true);
 }
 
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
