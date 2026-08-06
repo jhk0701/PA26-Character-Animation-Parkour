@@ -404,6 +404,10 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                },
+                {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0, 0.6 ],
                     "endOffset": [ 0, 0, 0.3 ]

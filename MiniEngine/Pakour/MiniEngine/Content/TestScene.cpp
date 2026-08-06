@@ -339,20 +339,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(5.0f, 7.0f, 5.0f);
 		ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.5f);
-		desc.scale = Vector3(1.0f, 2.0f, 0.75f);
-		ObstacleFactory::Create(pScene, desc);
-
-		desc.pos = OFFSET + Vector3(21.0f, 5.0f, -12.5f);
-		desc.scale = Vector3(1.0f, 2.0f, 0.75f);
-		ObstacleFactory::Create(pScene, desc);
-
-		desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.5f);
-		desc.scale = Vector3(1.0f, 2.0f, 0.75f);
-		ObstacleFactory::Create(pScene, desc);
-
-		desc.pos = OFFSET + Vector3(15.0f, 6.0f, -10.0f);
-		desc.scale = Vector3(5.0f, 0.1f, 5.0f);
+				desc.pos = OFFSET + Vector3(15.0f, 6.0f, -10.0f);
+		desc.scale = Vector3(5.0f, 1.0f, 5.0f);
 		ObstacleFactory::Create(pScene, desc);
 
 		{
@@ -362,15 +350,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)Content::Config::ETagEnvDetail::Beam,
 				(uint8_t)Content::Config::ETagAxis::X,
 			};
+			desc.color = Vector3(0.25f, 0.25f, 0.75f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
+			desc.pos = OFFSET + Vector3(5.0f, 2.5f, -3.0f);
+			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
 			desc.pos = OFFSET + Vector3(5.0f, 5.0f, -2.0f);
 			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(5.0f, 7.0f, 0.0f);
 			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 		{
@@ -382,9 +378,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			
 			desc.pos = OFFSET + Vector3(25.0f, 6.0f, 0.5f);
-			desc.scale = Vector3(7.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(7.0f, 0.2f, 0.25f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(25.0f, 7.0f, -4.0f);
@@ -397,6 +394,29 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.pos = OFFSET + Vector3(25.0f, 6.5f, -6.0f);
 			desc.scale = Vector3(7.0f, 0.25f, 0.25f);
+			ObstacleFactory::Create(pScene, desc);
+		}
+
+		{
+			// 구간 3
+			// Protrude 배치
+			desc.detailTags = {
+				(uint8_t)Content::Config::ETagEnvDetail::Protrude,
+			};
+			desc.color = Vector3(0.75f, 0.25f, 0.25f);
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+
+			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.5f);
+			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(21.0f, 5.0f, -12.5f);
+			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.5f);
+			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 	}
@@ -420,6 +440,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	ApplyPhysicsDebug(true);
+	// ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

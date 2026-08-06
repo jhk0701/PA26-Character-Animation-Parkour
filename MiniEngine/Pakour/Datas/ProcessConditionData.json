@@ -77,13 +77,13 @@
         {
             "id": "IsLowerThan_CharacterMid",
             "class": "CharacterHeightCondition",
-            "value" : 1.0
+            "value" : 0.8
         },
         {
             "id": "IsNotLowerThan_CharacterMid",
             "class": "CharacterHeightCondition",
             "isInverted" : true,
-            "value" : 1.0
+            "value" : 0.8
         },
         {
             "id": "IsInputUp",

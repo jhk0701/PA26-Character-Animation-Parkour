@@ -3,10 +3,10 @@
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
+#include "Physics/PhysicsWorld.h"
+
 #include "Core/DebugMarkers.h"
 #include "Core/Log.h"
-
-#include "Physics/PhysicsWorld.h"
 
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
@@ -36,17 +36,21 @@ bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 // 윗면에 장애물이 없는 상황 -> Ledge 찾기
 bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 {
-	MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] Check Upper Ledge");
-
+	// MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] Check Upper Ledge");
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
 	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
-	Vector3 startPos = GetCharacterCenterPosition(_context);
+	Vector3 startPos = GetCharacterHeadPosition(_context);
 	startPos += TF.Right() * m_startOffset.x;
 	startPos += TF.Up() * m_startOffset.y;
 	startPos += TF.Forward() * m_startOffset.z;
 	
+	Vector3 endPos = startPos + Vector3(0.0f, CONFIG.onHangingSearchDist, 0.0f);
+	MiniEngine::Debug::DrawPoint(startPos, MiniEngine::DebugColor::YELLOW, 0.16f);
+	MiniEngine::Debug::DrawLine(startPos, startPos + Vector3(0.0f, CONFIG.onHangingSearchDist, 0.0f), MiniEngine::DebugColor::YELLOW, 0.16f);
+	MiniEngine::Debug::DrawPoint(endPos, MiniEngine::DebugColor::YELLOW, 0.16f);
+
 	RaycastResult result;
 	if (CheckLedge(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, CONFIG.onHangingSearchDist, result) == false)
 	{
