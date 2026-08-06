@@ -13,6 +13,4 @@ public:
 
 private:
 	void AlignToNormal();
-	void ProcessMovement(float _dt);
-	bool CheckEnableToMove(Content::Config::ETagAct _tag);
 };

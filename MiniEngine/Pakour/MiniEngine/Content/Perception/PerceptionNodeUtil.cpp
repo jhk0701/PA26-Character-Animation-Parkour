@@ -165,7 +165,7 @@ namespace PerceptionNodeUtil
 		return false; // 딛고 선 장애물 외에 아무것도 없음 -> 찾지 못한 것
 	}
 
-	bool CheckLedge(
+	bool CheckLedgeSingle(
 		MiniEngine::TravelContext& _context, 
 		const MiniEngine::Vector3& _pos, 
 		const MiniEngine::Vector3& _dir, 
@@ -181,12 +181,43 @@ namespace PerceptionNodeUtil
 		sphParam.m_maxDistance = _dist;
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
-
 		if (bIsHit)
 		{
 			_context.m_ledge = _outResult.m_pos.y;
 			_context.m_bDetectLedge = true;
 		}
+
+		return bIsHit;
+	}
+
+	bool CheckLedgeMultiple(
+		TravelContext& _context,
+		const Vector3& _pos, 
+		const Vector3& _dir, 
+		const float _radius, 
+		const float _dist, 
+		RaycastResult& _outResult
+	)
+	{
+		SpherecastParam sphParam;
+		sphParam.m_startPos = _pos;
+		sphParam.m_dir = _dir;
+		sphParam.m_radius = _radius;
+		sphParam.m_maxDistance = _dist;
+
+		RaycastMultipleResult result;
+		bool bIsHit = _context.m_physics->SphereCastMultiple(sphParam, result, ToMask(Layer::ObstacleLedge));
+
+		if (bIsHit == false)
+			return bIsHit;
+
+		std::sort(result.m_hitResults.begin(), result.m_hitResults.end(), 
+			[](const HitResult& _a, const HitResult& _b) { return _a.m_pos.y > _b.m_pos.y; } // 접촉 높이가 내림차순 정렬
+		);
+		
+		_outResult.FillFromHitResult(result.m_bIsHit, result.m_hitResults.front());
+		_context.m_ledge = _outResult.m_pos.y;
+		_context.m_bDetectLedge = true;
 
 		return bIsHit;
 	}
@@ -246,7 +277,7 @@ namespace PerceptionNodeUtil
 			const Vector3 LEDGE_ORIGIN(PROBE_XZ.x, _context.m_ledge - CONFIG.heightRadius, PROBE_XZ.z);
 			
 			RaycastResult ledgeResult;
-			CheckLedge(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, CONFIG.minObstacleDetectDist,ledgeResult);
+			CheckLedgeSingle(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, CONFIG.minObstacleDetectDist,ledgeResult);
 		}
 
 		return band;

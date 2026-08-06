@@ -22,6 +22,16 @@ namespace MiniEngine::Physics
 		return m_hitActor->userData;
 	}
 
+	void RaycastResult::FillFromHitResult(const bool _bIsHit, const HitResult& _hit)
+	{
+		m_bIsHit = _bIsHit;
+		m_hitActor = _hit.m_hitActor;
+		m_hitShape = _hit.m_hitShape;
+		m_distance = _hit.m_distance;
+		m_pos = _hit.m_pos;
+		m_nrm = _hit.m_nrm;
+	}
+
 	void* HitResult::GetActor() const
 	{
 		return m_hitActor->userData;

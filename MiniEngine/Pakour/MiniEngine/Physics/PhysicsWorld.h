@@ -40,9 +40,8 @@ namespace MiniEngine::Physics
         // physx::PxFilterData m_filterData; // 충돌할 대상 static, dynamic, any
     };
 
-    struct RaycastResult // 레이캐스트 후 결과
+    struct HitResult
     {
-        bool m_bIsHit{ false };
         Vector3 m_pos;
         Vector3 m_nrm;
         float m_distance;
@@ -51,15 +50,19 @@ namespace MiniEngine::Physics
         void* GetActor() const;
     };
 
-    struct HitResult 
+    struct RaycastResult // 레이캐스트 후 결과
     {
+        bool m_bIsHit{ false };
         Vector3 m_pos;
         Vector3 m_nrm;
         float m_distance;
         physx::PxRigidActor* m_hitActor;
         physx::PxShape* m_hitShape;
+
         void* GetActor() const;
+        void FillFromHitResult(const bool _bIsHit, const HitResult& _hit);
     };
+
 
     struct RaycastMultipleResult
     {

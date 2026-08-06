@@ -170,6 +170,6 @@ private:
 
 	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
 	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
-	float m_thresholdWallDig = 0.1f;
+	float m_thresholdWallDig = 0.3f;
 };
 

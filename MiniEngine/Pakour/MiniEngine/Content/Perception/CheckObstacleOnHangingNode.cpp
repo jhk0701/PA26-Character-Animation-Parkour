@@ -46,13 +46,8 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	startPos += TF.Up() * m_startOffset.y;
 	startPos += TF.Forward() * m_startOffset.z;
 	
-	Vector3 endPos = startPos + Vector3(0.0f, CONFIG.onHangingSearchDist, 0.0f);
-	MiniEngine::Debug::DrawPoint(startPos, MiniEngine::DebugColor::YELLOW, 0.16f);
-	MiniEngine::Debug::DrawLine(startPos, startPos + Vector3(0.0f, CONFIG.onHangingSearchDist, 0.0f), MiniEngine::DebugColor::YELLOW, 0.16f);
-	MiniEngine::Debug::DrawPoint(endPos, MiniEngine::DebugColor::YELLOW, 0.16f);
-
 	RaycastResult result;
-	if (CheckLedge(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, CONFIG.onHangingSearchDist, result) == false)
+	if (CheckLedgeMultiple(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, CONFIG.onHangingSearchDist, result) == false)
 	{
 		// MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] No Ledge");
 		return false;
@@ -136,19 +131,29 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 	offset += m_startOffset.y * TF.Up();
 	offset += m_startOffset.z * TF.Forward();
 
-	const Vector3 POS = GetCharacterCenterPosition(_context) + offset;
+	Vector3 pos = TF.position;
 
 	// 입력 방향으로 이동
 	// 위-아래 입력 우선 처리
 	Vector3 dir(0.0f);
 	if (fabs(INPUT_DIR.y) > 1e-4f)
+	{
 		dir += TF.Up() * INPUT_DIR.y;
+		
+		if (INPUT_DIR.y > 0)
+			pos = GetCharacterHeadPosition(_context);
+	}
 	else if (fabs(INPUT_DIR.x) > 1e-4f)
+	{
 		dir += TF.Right() * INPUT_DIR.x;
+		pos = GetCharacterCenterPosition(_context);
+	}
+
+	pos += offset;
 
 	dir.Normalize();
 
-	return CheckObstacleSphere(_context, POS, dir, CONFIG.onHangingSearchDist, CONFIG.onHangingSearchRadius, true);
+	return CheckObstacleSphere(_context, pos, dir, CONFIG.onHangingSearchDist, CONFIG.onHangingSearchRadius, true);
 }
 
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)

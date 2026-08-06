@@ -307,7 +307,7 @@
             "id" : "Protrude_Move",
             "comment" : "벽면에 돌출된 (유리한) 위치로 이동하는 경우",
             "class" : "ConditionAnd",
-            "children" : [ "IsHangingState", "IsProtrude" ]
+            "children" : [ "IsHangingState", "IsProtrude", "IsChanged" ]
         }
     ],
     

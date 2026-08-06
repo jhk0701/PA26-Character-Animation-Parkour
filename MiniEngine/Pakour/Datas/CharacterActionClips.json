@@ -101,7 +101,7 @@
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.5,
                     "state": "InAir"
                 },
                 {
@@ -117,7 +117,7 @@
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.6,
                     "state": "InAir"
                 },
                 {
@@ -526,6 +526,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.0, 0.6 ],
+                    "midOffset": [ 0, 0, -0.5 ],
                     "endOffset": [ 0, 0, 0.25 ]
                 },
                 {
@@ -703,7 +704,7 @@
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.2, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
-                    "endOffset": [ 0, -1.85, -0.3 ]
+                    "endOffset": [ 0, -1.85, -0.5 ]
                 }
             ]
         },

@@ -38,11 +38,19 @@ namespace PerceptionNodeUtil
 		const float _radius,
 		const bool _bExcludeGroundActor = false);
 
-	bool CheckLedge(
+	bool CheckLedgeSingle(
 		MiniEngine::TravelContext& _context,
 		const MiniEngine::Vector3& _pos,
 		const MiniEngine::Vector3& _dir,
 		const float _radius, 
+		const float _dist,
+		MiniEngine::Physics::RaycastResult& _outResult);
+
+	bool CheckLedgeMultiple(
+		MiniEngine::TravelContext& _context,
+		const MiniEngine::Vector3& _pos,
+		const MiniEngine::Vector3& _dir,
+		const float _radius,
 		const float _dist,
 		MiniEngine::Physics::RaycastResult& _outResult);
 

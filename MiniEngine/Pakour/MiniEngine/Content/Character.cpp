@@ -98,8 +98,8 @@ void Character::Construct(const Vector3& _initPosition)
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
-		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.0f, -1.0f);
-		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.0f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, 0.5f, -1.0f);
+		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, 0.5f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.2f, 0.5f, 1.0f);
 
@@ -426,33 +426,16 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 		return result;
 
 	// 벽으로부터 일정 범위 이내에 있는 경우는 ik를 적용하지 않음
-	if (std::fabs(hitResult.m_distance - m_ikRayDistance) < m_thresholdWallDig)
-		return result;
-
 	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);		
-	result.position = hitResult.m_pos;
+	result.position = hitResult.m_pos - TF.Forward() * 0.1f;
 	result.posAlpha = 1.0f;
 
-	if (_ik < (uint8_t)ELimbType::LeftLeg)
-		return result;
-
-	// 회전 적용
-	hitResult.m_nrm.Normalize();
-	const Vector3 UP(0.0f, 1.0f, 0.0f);
-	const float SLOPE = std::acos(std::clamp(UP.Dot(hitResult.m_nrm), -1.0f, 1.0f)); // 경사각 라디안
-	Quaternion q = FromToRotation(UP, hitResult.m_nrm);
-
-	const float MAX_SLOPE = ToRadians(m_maxSlopeDeg);
-	if (SLOPE > MAX_SLOPE && SLOPE > 1e-4f)
-		result.rotation = Quaternion::Slerp(Quaternion(0.0f, 0.0f, 0.0f, 1.0f), q, MAX_SLOPE / SLOPE);
-	else
-		result.rotation = q;
-
-	result.rotation.Normalize();
-	result.rotAlpha = 1.0;
+	// hitResult.m_nrm.Normalize();
+	// result.rotation.Normalize();
+	// result.rotAlpha = 1.0;
 	return result;
 }
 
