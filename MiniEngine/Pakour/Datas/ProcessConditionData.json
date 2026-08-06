@@ -151,7 +151,8 @@
         {
             "id": "Landing_VaultHigh",
             "class": "ConditionAnd",
-            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsNotDeeper" ]
+            "children" : [ 
+                "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsNotDeeper" ]
         },
         {
             "id": "Landing_VaultLowMid",
