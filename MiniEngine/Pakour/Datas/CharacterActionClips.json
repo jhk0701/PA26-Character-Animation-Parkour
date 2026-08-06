@@ -305,6 +305,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0, 0.6 ],
+                    "midOffset" : [ 0.0, 0.0, -0.5 ],
                     "endOffset": [ 0, 0, 0.3 ]
                 },
                 {

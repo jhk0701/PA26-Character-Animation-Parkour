@@ -131,7 +131,7 @@ void Character::Construct(const Vector3& _initPosition)
 
 		pCharCont->SetRootMotionSource(m_skinMeshComp.lock());
 		pCharCont->SetQueryLayer(MiniEngine::Physics::Layer::Character);
-		pCharCont->SetFallingSecondThreshold(0.3f); // 낙하 인정 시간 설정
+		pCharCont->SetFallingSecondThreshold(0.25f); // 낙하 인정 시간 설정
 
 		m_charCont = pCharCont;
 	}
