@@ -285,7 +285,7 @@ void ProcessConditionData::ConstructData(
 		std::shared_ptr<ProcessCondition> pCond = it->second.CreateFunc(pair.second);
 
 
-#ifdef MG_DEBUG
+#ifdef MG_DEBUG_LOG
 		pCond->SetName(pair.first);
 #endif
 		mapCondition.insert( { pair.first, pCond } );
@@ -318,7 +318,7 @@ void ProcessConditionData::ConstructData(
 		std::shared_ptr<ProcessData> pProcessData = std::make_shared<ProcessData>();
 		pProcessData->Init(p.TagAct, mapCondition[p.ConditionId]);
 
-#ifdef MG_DEBUG
+#ifdef MG_DEBUG_LOG
 		pProcessData->SetName(p.ConditionId);
 #endif
 

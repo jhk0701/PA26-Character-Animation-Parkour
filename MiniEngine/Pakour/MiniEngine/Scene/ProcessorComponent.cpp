@@ -34,7 +34,7 @@ namespace MiniEngine
 		{
 			bool bResult = pCond.lock()->Process(_result, _context);
 
-#ifdef MG_DEBUG
+#ifdef MG_DEBUG_LOG
 			MG_LOG_INFO("[ConditionAnd] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
 #endif // MG_DEBUG
 
@@ -51,7 +51,7 @@ namespace MiniEngine
 		{
 			bool bResult = pCond.lock()->Process(_result, _context);
 
-#ifdef MG_DEBUG
+#ifdef MG_DEBUG_LOG
 			MG_LOG_INFO("[ConditionOr] Process {} :: {}", pCond.lock()->GetName(), bResult ? "true" : "false");
 #endif // MG_DEBUG
 
@@ -94,10 +94,10 @@ namespace MiniEngine
 		ProcessContext context;
 		context.pOwner = owner.lock();
 
-		MG_LOG_INFO("[ProcessorComponent::ProcessResult] Start Process Result ========================== ");
+		// MG_LOG_INFO("[ProcessorComponent::ProcessResult] Start Process Result ========================== ");
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
 		{
-#ifdef MG_DEBUG
+#ifdef MG_DEBUG_LOG
 			MG_LOG_INFO("[ProcessorComponent::ProcessResult] Loop :: TryQuery Process Data : {}", pProcess->GetName());
 #endif // DEBUG
 			if (pProcess->TryQuery(_inTravelResult, context, _outResult))

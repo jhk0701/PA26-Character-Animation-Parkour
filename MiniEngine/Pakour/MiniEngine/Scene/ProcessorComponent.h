@@ -24,7 +24,7 @@ namespace MiniEngine
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
 		void Reset() { m_bIsProcessed = false; }
 
-#ifdef MG_DEBUG // 디버그용
+#ifdef MG_DEBUG_LOG // 디버그용
 	public:
 		void SetName(const std::string& _name)  { m_name = _name; }; 
 		const std::string& GetName() const { return m_name; }

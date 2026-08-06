@@ -245,15 +245,15 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		const std::string BAR_NAME = "Bar";
 
 		desc.pos = Vector3(3.0f, 6.5f, 25.0);
-		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
 
 		desc.pos = Vector3(3.0f, 6.5f, 27.0f);
-		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
 
 		desc.pos = Vector3(3.0f, 9.5f, 26.0f);
-		desc.scale = Vector3(4.0f, 0.2f, 0.2f);
+		desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
 
 		desc.pos = Vector3(3.0f, 2.5f, 31.0f);
@@ -306,7 +306,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(17.0f, 10.0f, 5.0f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(-1.5f, 7.0f, -4.5f);
+			desc.pos = OFFSET + Vector3(-1.5f, 7.0f, -5.5f);
 			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
@@ -358,17 +358,17 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 			desc.pos = OFFSET + Vector3(5.0f, 2.5f, -3.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(5.0f, 5.0f, -2.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(5.0f, 7.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
@@ -384,24 +384,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			
 			desc.pos = OFFSET + Vector3(25.0f, 6.0f, 0.5f);
-			desc.scale = Vector3(7.0f, 0.2f, 0.25f);
+			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(25.0f, 7.0f, -4.0f);
-			desc.scale = Vector3(7.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(25.0f, 6.5f, -1.5f);
-			desc.scale = Vector3(7.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(25.0f, 6.5f, -6.0f);
-			desc.scale = Vector3(7.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 
 		{
-			// 구간 3
 			// Protrude 배치
 			desc.detailTags = {
 				(uint8_t)Content::Config::ETagEnvDetail::Protrude,
@@ -410,6 +409,25 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
+			// 구간 1
+			desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc);
+
+
+			// 구간 3
 			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.5f);
 			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
 			ObstacleFactory::Create(pScene, desc);

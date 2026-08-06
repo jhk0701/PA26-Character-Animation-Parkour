@@ -124,8 +124,9 @@ namespace PerceptionNodeUtil
 		sphParam.m_dir = _dir;
 		sphParam.m_maxDistance = _dist;
 
-		/*Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
-		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);*/
+		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
+		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
+		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
 
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
@@ -143,7 +144,7 @@ namespace PerceptionNodeUtil
 		{
 			SpherecastParam spParam;
 			spParam.m_startPos = TF.position;
-			spParam.m_radius = sphParam.m_radius;
+			spParam.m_radius = pChar->GetCapsuleRadius();
 			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 			spParam.m_maxDistance = 0.1f;
 
@@ -156,7 +157,10 @@ namespace PerceptionNodeUtil
 		{
 			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
+			{
+				MG_LOG_INFO("[CheckObstacleSphere] is overlapped");
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
+			}
 
 			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
 			return true;
