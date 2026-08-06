@@ -8,7 +8,7 @@ namespace MiniEngine
 }
 
 /*
-데이터 스키마
+데이터 스키마 간략한 구성
 {
     "condition":
     {
@@ -24,7 +24,7 @@ namespace MiniEngine
 
     "processData":
     {
-        "comment" : "특정 액터 행동과 실행할 조건 1:1 대응",
+        "comment" : "특정 액터 행동과 실행할 조건 1:1 대응시키기",
         "tagAct" : "VaultMid" // "조건이 만족하면 실행할 액션 (ETagAct)",
         "conditionId" : "사용할 조건문"
     },

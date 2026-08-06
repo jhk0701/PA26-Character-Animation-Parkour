@@ -3,8 +3,6 @@
 #include "Content/Character.h"
 #include "Content/ContentConfig.h"
 #include "Core/Log.h"
-#include "Scene/IObstacle.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
 
 using namespace Content::Config;
 

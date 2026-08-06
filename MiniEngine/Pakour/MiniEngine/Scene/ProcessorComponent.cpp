@@ -8,12 +8,19 @@ namespace MiniEngine
 
 	bool ProcessCondition::Process(const TravelResult& _result, const ProcessContext& _context)
 	{
+		// 비용 절약용 처리
+		if (m_bIsProcessed)
+			return m_bProcessResult;
+
 		bool bResult = Evaluate(_result, _context);
 
 		if (m_bIsInvert)
 			bResult = !bResult;
 
-		return bResult;
+		m_bIsProcessed = true;
+		m_bProcessResult = bResult;
+
+		return m_bProcessResult;
 	};
 
 	void CompositeCondition::SetChildren(std::vector<std::weak_ptr<ProcessCondition>>&& _children)
@@ -81,6 +88,9 @@ namespace MiniEngine
 
 	bool ProcessorComponent::ProcessResult(const TravelResult& _inTravelResult, uint8_t& _outResult) const
 	{
+		for (const std::shared_ptr<ProcessCondition>& pCond : m_conditions)
+			pCond->Reset();
+
 		ProcessContext context;
 		context.pOwner = owner.lock();
 
