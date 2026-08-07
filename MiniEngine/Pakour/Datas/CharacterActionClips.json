@@ -686,8 +686,80 @@
             "rootMotion":  { "apply": true, "z" : false }
         },
         {
-            "tags": [ "Protrude_HangingMoveToPoint" ],
+            "tags": [ "Protrude_HangingMoveUp" ],
             "clip": 19,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Protrude_HangingMoveDown" ],
+            "clip": 20,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Protrude_HangingMoveLeft" ],
+            "clip": 21,
+            "rootMotion":  { "apply": false },
+            "notifies":
+            [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 0, -1.0 ],
+                    "endOffset": [ 0, -1.85, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Protrude_HangingMoveRight" ],
+            "clip": 22,
             "rootMotion":  { "apply": false },
             "notifies":
             [
@@ -711,18 +783,18 @@
         },
         {
             "tags": [ "Protrude_InAirMoveToPoint" ],
-            "clip": 19,
+            "clip": 43,
             "rootMotion":  { "apply": false },
             "notifies":
             [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.0,
                     "state": "Hanging"
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.01,
+                    "time": 0.0,
                     "enable": false
                 },
                 {
@@ -732,7 +804,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.7 ],
+                    "time": [ 0.0, 0.6 ],
                     "midOffset": [ 0, 0, -1.0 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 }
@@ -751,7 +823,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.01,
+                    "time": 0.0,
                     "enable": false
                 },
                 {

@@ -314,19 +314,52 @@
             "class" : "ConditionAnd",
             "children" : [ "IsInAirState", "IsProtrude", "IsChanged" ]
         },
+
         {
-            "id" : "Hanging_Protrude_Move",
+            "id" : "Hanging_Protrude_MoveCommon",
             "comment" : "벽면에 돌출된 (유리한) 위치로 이동하는 경우",
             "class" : "ConditionAnd",
             "children" : [ "IsHangingState", "IsProtrude", "IsChanged" ]
+        },
+        {
+            "id" : "Hanging_Protrude_MoveUp",
+            "class" : "ConditionAnd",
+            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputUp" ]
+        },
+        {
+            "id" : "Hanging_Protrude_MoveDown",
+            "class" : "ConditionAnd",
+            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputDown" ]
+        },
+        {
+            "id" : "Hanging_Protrude_MoveLeft",
+            "class" : "ConditionAnd",
+            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputLeft" ]
+        },
+        {
+            "id" : "Hanging_Protrude_MoveRight",
+            "class" : "ConditionAnd",
+            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputRight" ]
         }
     ],
     
     "comment_processDatas" : "순서대로 순회하면 조건을 탐색하므로 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
     "processDatas" : [
         {
-            "tagAct" : "Protrude_HangingMoveToPoint",
-            "conditionId" : "Hanging_Protrude_Move"
+            "tagAct" : "Protrude_HangingMoveUp",
+            "conditionId" : "Hanging_Protrude_MoveUp"
+        },
+        {
+            "tagAct" : "Protrude_HangingMoveDown",
+            "conditionId" : "Hanging_Protrude_MoveDown"
+        },
+        {
+            "tagAct" : "Protrude_HangingMoveLeft",
+            "conditionId" : "Hanging_Protrude_MoveLeft"
+        },
+        {
+            "tagAct" : "Protrude_HangingMoveRight",
+            "conditionId" : "Hanging_Protrude_MoveRight"
         },
         {
             "tagAct" : "Protrude_InAirMoveToPoint",
