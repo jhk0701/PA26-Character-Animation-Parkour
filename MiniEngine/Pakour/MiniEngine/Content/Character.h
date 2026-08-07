@@ -176,8 +176,8 @@ private:
 	float m_ikRayDistance = 0.5f; // 발의 아래, 벽면 등 레이로 체크할 거리
 	std::unordered_map<ELimbType, float> m_ikWallOffset
 	{
-		{ ELimbType::LeftArm, 0.075f},
-		{ ELimbType::RightArm, 0.075f},
+		{ ELimbType::LeftArm, 0.05f},
+		{ ELimbType::RightArm, 0.05f},
 		{ ELimbType::LeftLeg, 0.15f},
 		{ ELimbType::RightLeg, 0.15f},
 	};

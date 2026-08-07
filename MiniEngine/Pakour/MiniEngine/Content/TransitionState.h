@@ -10,3 +10,9 @@ public:
 private:
 	uint8_t m_targetState{ 0U };
 };
+
+class CheckIsFallingNotify : public MiniEngine::AnimNotify
+{
+public:
+	void Activate(MiniEngine::AnimNotifyParam& _param) override;
+};

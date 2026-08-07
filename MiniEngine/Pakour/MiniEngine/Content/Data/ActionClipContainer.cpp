@@ -65,6 +65,12 @@ namespace
 					return pNotify;
 				} 
 			},
+			{ "CheckIsFallingNotify",
+				[](const AnimNotifyData& _data) 
+				{	
+					return std::make_shared<CheckIsFallingNotify>();
+				}
+			},
 			{ "CorrectRootMotion",
 				[](const AnimNotifyData& _data)
 				{
@@ -152,7 +158,7 @@ namespace
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
 					pNotify->SetDirection(_data.Vector);
 					return pNotify;
-				}
+				} 
 			}
 		};
 

@@ -49,7 +49,11 @@ void HangingState::Refresh()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	m_pCurrentObstacle = pChar->GetCurObstacleInfo().m_pObstacle;
 
-	AlignToNormal();
+	uint8_t tag = 0;
+	m_pCurrentObstacle->TryGetTag(TAG_ENV_DETAIL, tag);
+
+	if(tag != (uint8_t)ETagEnvDetail::Protrude)
+		AlignToNormal();
 }
 
 IObstacle* HangingState::GetCurrentObstacle() const

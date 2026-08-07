@@ -317,6 +317,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(15.0f, 10.0f, 5.0f);
 			desc.scale = Vector3(6.0f, 6.0f, 5.0f);
 			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(18.0f, 13.5f, 5.0f);
+			desc.scale = Vector3(0.5f, 1.0f, 5.0f);
+			ObstacleFactory::Create(pScene, desc);
 		}
 
 		{
@@ -473,39 +477,39 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 
 			// 구간 3
-			desc.pos = OFFSET + Vector3(19.0f,7.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(19.0f,7.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.65f);
+			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 		}
