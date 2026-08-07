@@ -268,7 +268,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.3, 0.9 ],
-                    "midOffset" : [ 0, 0.3, 0 ],
+                    "midOffset" : [ 0, 0.0, 0 ],
                     "endOffset": [ 0, 0, 0.5 ]
                 },
                 {
@@ -294,6 +294,10 @@
                     "time": [ 0.7, 0.8 ],
                     "fromTo": [ 1, 0 ],
                     "limbs": [ "LeftArm", "RightArm" ]
+                },
+                {
+                    "class": "CheckIsFallingNotify",
+                    "time": 0.9
                 }
             ]
         },
@@ -411,7 +415,7 @@
         },
         {
             "tags": [ "MantleAirToAttach" ],
-            "clip": 14,
+            "clip": 15,
             "notifies": [
                 {
                     "class": "TransitionState",
@@ -420,17 +424,17 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0,
+                    "time": 0.3,
                     "enable": false
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.6,
+                    "time": 0.9,
                     "enable": true
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
-                    "time": [ 0, 0.3 ]
+                    "time": [ 0.0, 0.1 ]
                 },
                 {
                     "class": "CorrectRootMotion",
@@ -440,26 +444,33 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.1, 0.6 ],
+                    "time": [ 0.1, 0.9 ],
+                    "midOffset" : [ 0, 0.0, -0.5 ],
                     "endOffset": [ 0, 0, 0.3 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0.2, 0.5 ],
+                    "time": [ 0, 0.8 ],
                     "limb": "LeftArm",
-                    "offset": [ -0.25, 0, 0 ]
+                    "offset": [ -0.2, 0.0, 0 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0, 0.8 ],
+                    "limb": "RightArm",
+                    "offset": [ 0.2, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.2, 0.3 ],
+                    "time": [ 0.1, 0.4 ],
                     "fromTo": [ 0, 1 ],
-                    "limbs": [ "LeftArm" ]
+                    "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.4, 0.5 ],
+                    "time": [ 0.7, 0.8 ],
                     "fromTo": [ 1, 0 ],
-                    "limbs": [ "LeftArm" ]
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
@@ -1095,7 +1106,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.3, 0.6 ],
-                    "endOffset": [ 0, -1.0, -0.85 ]
+                    "endOffset": [ 0, -1.0, -0.75 ]
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
@@ -1146,6 +1157,11 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.0, 0.3 ],
+                    "endOffset": [ 0, -2.1, 0.3 ] 
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.3, 0.4 ],
                     "endOffset": [ 0, -2.1, 0.3 ] 
                 },
                 {

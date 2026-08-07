@@ -67,8 +67,10 @@ namespace
 			},
 			{ "CheckIsFallingNotify",
 				[](const AnimNotifyData& _data) 
-				{	
-					return std::make_shared<CheckIsFallingNotify>();
+				{
+					std::shared_ptr<CheckIsFallingNotify> pNotify = std::make_shared<CheckIsFallingNotify>();
+					pNotify->SetTime(_data.TimeStart);
+					return pNotify;
 				}
 			},
 			{ "CorrectRootMotion",
