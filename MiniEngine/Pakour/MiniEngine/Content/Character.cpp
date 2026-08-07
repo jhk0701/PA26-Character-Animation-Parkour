@@ -635,8 +635,7 @@ const PerceptionConfig& Character::GetPerceptionConfig() const
 
 const IObstacle* Character::GetCurrentObstacle() const
 {
-	m_charFSM.lock()->get
-	return nullptr;
+	return m_charFSM.lock()->GetCurrentObstacle();
 }
 
 void Character::TransitionStateMachine(uint8_t _state)
