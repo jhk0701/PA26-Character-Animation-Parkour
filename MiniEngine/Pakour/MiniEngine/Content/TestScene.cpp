@@ -309,6 +309,14 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-1.5f, 7.0f, -5.5f);
 			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
 			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(8.0f, 10.0f, 5.0f);
+			desc.scale = Vector3(0.5f, 2.0f, 5.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(15.0f, 10.0f, 5.0f);
+			desc.scale = Vector3(6.0f, 6.0f, 5.0f);
+			ObstacleFactory::Create(pScene, desc);
 		}
 
 		{
@@ -398,6 +406,39 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(25.0f, 6.5f, -6.0f);
 			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(22.5f, 8.5f, -6.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(28.5f, 8.5f, -6.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(22.5f, 4.5f, -4.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(28.5f, 4.5f, -4.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(22.5f, 7.5f, -2.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(28.5f, 7.5f, -2.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
+
+
+			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		{

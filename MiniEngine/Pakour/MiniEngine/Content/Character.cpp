@@ -99,8 +99,8 @@ void Character::Construct(const Vector3& _initPosition, const std::wstring& _cha
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
 		desc.alphaFadeSpeed = 10.0f;
-		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, -0.75f, -0.75f);
-		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, -0.75f, -0.75f);
+		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, -0.65f, -0.9f);
+		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, -0.65f, -0.9f);
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightLeg] = Vector3(0.2f, 0.5f, 1.0f);
 

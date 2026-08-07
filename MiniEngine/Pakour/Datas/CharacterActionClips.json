@@ -199,12 +199,12 @@
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
                     "properDistance": 1.0,
-                    "lerpWeight": 0.5
+                    "lerpWeight": 0.85
                 },
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.1, 0.9 ],
-                    "midOffset" : [ 0, 0.3, 0 ],
+                    "midOffset" : [ 0, 0.3, -0.5 ],
                     "endOffset": [ 0, 0, 0.5 ]
                 },
                 {
@@ -351,12 +351,12 @@
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
                     "properDistance": 1.0,
-                    "lerpWeight": 0.5
+                    "lerpWeight": 0.85
                 },
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.1, 0.9 ],
-                    "midOffset" : [ 0, 0.5, 0 ],
+                    "midOffset" : [ 0, 0.5, -0.5 ],
                     "endOffset": [ 0, 0, 0.3 ]
                 },
                 {
