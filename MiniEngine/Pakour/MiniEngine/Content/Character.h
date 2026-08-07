@@ -108,6 +108,8 @@ public:
 	LimbIKComponent::TaskResult IKDetectBeamHanging(uint8_t _ik);
 	void ClearIKReserve();
 
+	void SetIKPoleVector(uint8_t _ik, const Vector3& _newVec);
+
 	// 노티파이를 통해서 호출될 것
 	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
 	void IKSetFixedPoint(uint8_t _ik, const Vector3& _posOffset);
@@ -131,7 +133,7 @@ public:
 	// 지형 인식
 	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
 	const PerceptionConfig& GetPerceptionConfig() const;
-	const IObstacle* GetCurrentObstacle() const;
+	IObstacle* GetCurrentObstacle() const;
 
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);

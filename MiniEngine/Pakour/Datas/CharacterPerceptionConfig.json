@@ -14,7 +14,7 @@
 
     "onHanging_SearchDist": 2.0,
     "onHanging_SearchFwdDist" : 0.5,
-    "onHanging_SearchRadius" : 0.45,
+    "onHanging_SearchRadius" : 0.5,
     "onHanging_MovableRange" : 1.5,
 
     "onLanding_FallingCheckDist": 0.2

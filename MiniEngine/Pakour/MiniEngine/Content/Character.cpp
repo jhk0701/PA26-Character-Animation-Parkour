@@ -508,6 +508,11 @@ void Character::ClearIKReserve()
 	m_limbIKComp.lock()->ClearPendingTask();
 }
 
+void Character::SetIKPoleVector(uint8_t _ik, const Vector3& _newVec)
+{
+	m_limbIKComp.lock()->UpdatePoleVector((ELimbType)_ik, _newVec);
+}
+
 void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 {
 	// 파쿠르 중 장애물에 손, 발을 가져다 대는 용도
@@ -633,7 +638,7 @@ const PerceptionConfig& Character::GetPerceptionConfig() const
 	return m_pPerceptionConfig.lock()->Config;
 }
 
-const IObstacle* Character::GetCurrentObstacle() const
+IObstacle* Character::GetCurrentObstacle() const
 {
 	return m_charFSM.lock()->GetCurrentObstacle();
 }

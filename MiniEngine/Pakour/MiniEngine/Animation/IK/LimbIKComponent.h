@@ -87,6 +87,7 @@ namespace MiniEngine
 		void SetTargetPosIK(ELimbType _type, const Vector3& _targetPos) { m_handles[(uint8_t)_type].targetPos = _targetPos; }
 		void SetTargetRotIK(ELimbType _type, const Quaternion& _targetRot) { m_handles[(uint8_t)_type].targetRot = _targetRot; }
 		void SetOriginPosIK(ELimbType _type, const Vector3& _originPos) { m_handles[(uint8_t)_type].originPosW = _originPos; }
+		void UpdatePoleVector(ELimbType _type, const Vector3& _vec) { m_desc.poleDir[(uint8_t)_type] = _vec; }
 
 		void SetPendingTask(ELimbType _type, std::function<TaskResult()>&& _task) { m_pendingTask[(uint8_t)_type] = _task; }
 		

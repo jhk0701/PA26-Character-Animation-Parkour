@@ -20,6 +20,9 @@ void HangingState::OnStart()
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
 	pChar->ReserveIKDetectWall();
 
+	pChar->SetIKPoleVector((uint8_t)ELimbType::LeftArm,		Vector3(-1.0f, -1.0f, -0.5f));
+	pChar->SetIKPoleVector((uint8_t)ELimbType::RightArm,	Vector3(1.0f, -1.0f, -0.5f));
+
 	Refresh();
 }
 
@@ -30,6 +33,9 @@ void HangingState::OnEnd()
 
 	m_pCurrentObstacle = nullptr;
 	pChar->ClearIKReserve();
+
+	pChar->SetIKPoleVector((uint8_t)ELimbType::LeftArm,		Vector3(-1.0f, 0.0f, -1.0f));
+	pChar->SetIKPoleVector((uint8_t)ELimbType::RightArm,	Vector3(1.0f, 0.0f, -1.0f));
 }
 
 void HangingState::Tick(float _dt) {}
