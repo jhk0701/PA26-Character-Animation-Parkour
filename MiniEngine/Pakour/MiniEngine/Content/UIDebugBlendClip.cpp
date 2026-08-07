@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/UIDebugConsole.h"
+#include "Content/UIDebugBlendClip.h"
 #include "Content/Character.h"
 
 #include "Animation/Animator.h"
@@ -9,12 +9,12 @@
 
 using namespace MiniEngine;
 
-void UIDebugConsole::Construct()
+void UIDebugBlendClip::Construct()
 {
 	SetName("Debug Blend Space");
 }
 
-void UIDebugConsole::DrawUI()
+void UIDebugBlendClip::DrawUI()
 {
 	if (m_pChar.expired())
 		return;
@@ -28,7 +28,7 @@ void UIDebugConsole::DrawUI()
 	DrawGraph(pAnim);
 }
 
-void UIDebugConsole::DrawGraph(std::shared_ptr<MiniEngine::Animator>& _pAnim)
+void UIDebugBlendClip::DrawGraph(std::shared_ptr<MiniEngine::Animator>& _pAnim)
 {
 	// 그래프용 분리
 	ImGui::Separator();

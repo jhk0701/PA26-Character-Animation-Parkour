@@ -3,7 +3,7 @@
 class Character;
 namespace MiniEngine { class Animator; }
 
-class UIDebugConsole : public MiniEngine::UIBase 
+class UIDebugBlendClip : public MiniEngine::UIBase 
 {
 public:
 	void Construct() override;

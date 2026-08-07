@@ -16,7 +16,7 @@
 #include "Content/Obstacle.h"
 
 #include "Manager/UIManager.h"
-#include "Content/UIDebugConsole.h"
+#include "Content/UIDebugBlendClip.h"
 
 using namespace MiniEngine;
 
@@ -274,7 +274,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		desc.pos = Vector3(0.0f, 15.0f, 10.0f);
-		desc.scale = Vector3(5.0f, 5.0f, 0.3);
+		desc.scale = Vector3(5.0f, 5.0f, 0.3f);
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{

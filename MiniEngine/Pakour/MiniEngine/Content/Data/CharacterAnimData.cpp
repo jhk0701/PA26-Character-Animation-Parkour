@@ -294,6 +294,19 @@ void CharacterAnimData::Load(const json& _data)
 				}
 			}
 
+			auto itSpeed = element.find("speed");
+			if (itSpeed != element.end()) 
+			{
+				action.Speed = itSpeed->value("speed", action.Speed);
+			}
+
+			auto itOffset = element.find("offset");
+			if (itOffset != element.end() && itOffset->is_array() && itOffset->size() >= 2)
+			{
+				action.StartOffset = (*itOffset)[0].get<float>();
+				action.EndOffset = (*itOffset)[1].get<float>();
+			}
+
 			m_actions.push_back(std::move(action));
 		}
 	}

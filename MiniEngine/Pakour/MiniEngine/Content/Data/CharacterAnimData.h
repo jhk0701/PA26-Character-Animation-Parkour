@@ -51,6 +51,10 @@ struct ActionData
 	std::vector<uint8_t> Tags;	// ETagAct
 	int ClipIndex{ 0 };
 	MiniEngine::ActionClip::RootMotionConfig RootMotion;
+
+	float Speed{ 1.0f };			// 재생 속도
+	float StartOffset{ 0.0f }; 
+	float EndOffset{ 0.0f };	
 	std::vector<AnimNotifyData> Notifies;
 };
 
