@@ -246,6 +246,8 @@ void ActionClipContainer::LoadActionClips(ActionClipLoadParam& _param)
 		std::shared_ptr<ActionClip> pActionClip = std::make_shared<ActionClip>();
 		pActionClip->AddClip(skinnedMesh->GetClipPtr(ACTION.ClipIndex));
 		pActionClip->SetApplyRootBone(ACTION.RootMotion);
+		pActionClip->SetSpeed(ACTION.Speed);
+		pActionClip->SetOffset(ACTION.StartOffset, ACTION.EndOffset);
 
 		for (const AnimNotifyData& NOTIFY : ACTION.Notifies)
 		{
