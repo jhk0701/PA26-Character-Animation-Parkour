@@ -115,7 +115,7 @@ namespace MiniEngine
 
 	void LimbIKComponent::FadeAlpha(float _dt)
 	{
-		const float STEP = m_desc.alphaFadeSpeed * _dt;
+		const float STEP = std::clamp(m_desc.alphaFadeSpeed * _dt, 0.0f, 1.0f);
 
 		for (uint8_t i = 0; i < (uint8_t)ELimbType::End; ++i)
 		{

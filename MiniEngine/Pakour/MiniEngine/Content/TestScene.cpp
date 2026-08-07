@@ -432,16 +432,40 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 
 			// 구간 3
-			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.5f);
-			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
+			desc.pos = OFFSET + Vector3(19.0f,7.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(21.0f, 5.0f, -12.5f);
-			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
+			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.5f);
-			desc.scale = Vector3(1.0f, 2.0f, 0.75f);
+			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.65f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 		}
 	}

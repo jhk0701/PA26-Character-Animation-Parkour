@@ -98,6 +98,7 @@ void Character::Construct(const Vector3& _initPosition, const std::wstring& _cha
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
+		desc.alphaFadeSpeed = 10.0f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, -0.75f, -0.75f);
 		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, -0.75f, -0.75f);
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
@@ -433,11 +434,11 @@ LimbIKComponent::TaskResult Character::IKDetectWall(uint8_t _ik)
 		return result;
 
 	// 벽으로부터 일정 범위 이내에 있는 경우는 ik를 적용하지 않음
-	MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	// MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
 
 	// 위치 적용
 	pIKComp->SetOriginPosIK((ELimbType)_ik, result.position);		
-	result.position = hitResult.m_pos - TF.Forward() * m_ikHandZOffset;
+	result.position = hitResult.m_pos - TF.Forward() * m_ikWallOffset[(ELimbType)_ik];
 	result.posAlpha = 1.0f;
 
 	// hitResult.m_nrm.Normalize();

@@ -22,7 +22,7 @@ private:
 	std::shared_ptr<Character> GetChar();
 	
 	std::weak_ptr<MiniEngine::SceneComponent> m_camHolder;
-	float m_camRotateSpeed{ 120.0f };
+	float m_camRotateSpeed{ 60.0f };
 	float m_camPitchMaxDeg{ 70.0f };
 	MiniEngine::Vector2 m_camRotate{ 0.0f, 0.0f }; // yaw, pitch
 

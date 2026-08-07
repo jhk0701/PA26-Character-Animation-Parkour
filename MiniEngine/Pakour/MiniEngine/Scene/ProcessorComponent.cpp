@@ -6,9 +6,12 @@ namespace MiniEngine
 {
 #pragma region Process Nodes 인지 결과 처리용
 
-	bool ProcessCondition::Process(const TravelResult& _result, const ProcessContext& _context)
+	bool ProcessCondition::Process(
+		const TravelResult& _result, 
+		const ProcessContext& _context
+	)
 	{
-		// 비용 절약용 처리
+		// 비용 절약 차원에서 한번만 검사
 		if (m_bIsProcessed)
 			return m_bProcessResult;
 

@@ -66,13 +66,13 @@
         {
             "id": "IsDeeper",
             "class": "ObstacleDepthCondition",
-            "value" : 1.0
+            "value" : 0.6
         },
         {
             "id": "IsNotDeeper",
             "class": "ObstacleDepthCondition",
             "isInverted" : true,
-            "value" : 1.0
+            "value" : 0.6
         },
         {
             "id": "IsLowerThan_CharacterMid",

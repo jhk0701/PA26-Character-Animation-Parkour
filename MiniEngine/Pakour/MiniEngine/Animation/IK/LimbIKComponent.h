@@ -27,16 +27,13 @@ namespace MiniEngine
 		float maxFootDrop{ 0.45f };  // 다리 길이 절반 근처
 		float maxPelvisDrop{ 0.45f };
 
-		float pelvisLerpSpeed{ 3.0f };  // 골반 오프셋 수렴 속도 (m/s)
-		float alphaFadeSpeed{ 6.0f };   // 예약 작업이 구동하는 alpha 페이드 속도 (1/s)
+		float pelvisLerpSpeed{ 3.0f };
+		float alphaFadeSpeed{ 6.0f };
 
 		float maxHandRotateDeg{ 120.0f }; // 손이 돌 수 있는 최대한의 값
 
 		std::array<Vector3, (uint8_t)ELimbType::End> poleDir;
 
-		// 관절 한계 (사지별, degree). 기본값은 무제한 = 기존 동작.
-		// 의미와 주의점은 SkeletalMeshComponent::SetIKLimits 주석 참고.
-		// ⚠ maxBendDeg 는 약 168도 아래로 내려야 효과가 있다(기존 사거리 상한이 그 근처).
 		static_assert((uint8_t)ELimbType::End == 4, "아래 한계 배열 초기화 목록을 사지 개수에 맞출 것");
 
 		std::array<float, (uint8_t)ELimbType::End> minBendDeg{ 0.0f, 0.0f, 0.0f, 0.0f };

@@ -171,9 +171,13 @@ private:
 
 	// IK 튜닝 멤버 변수
 	float m_ikRayDistance = 0.5f; // 발의 아래, 벽면 등 레이로 체크할 거리
-
-	// 발/골반이 애니 포즈 대비 벗어날 수 있는 한계
-	float m_ikHandZOffset = 0.05f;
+	std::unordered_map<ELimbType, float> m_ikWallOffset
+	{
+		{ ELimbType::LeftArm, 0.075f},
+		{ ELimbType::RightArm, 0.075f},
+		{ ELimbType::LeftLeg, 0.15f},
+		{ ELimbType::RightLeg, 0.15f},
+	};
 	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
 };
 
