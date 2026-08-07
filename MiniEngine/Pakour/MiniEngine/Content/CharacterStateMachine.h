@@ -19,6 +19,8 @@ public:
 
 	virtual void Tick(float _dt) = 0;
 	virtual void LateTick(float _dt) = 0;
+	
+	virtual IObstacle* GetCurrentObstacle() const { return nullptr; };
 	virtual void CheckState() {};
 
 protected:
@@ -43,6 +45,8 @@ public:
 	void Transition(uint8_t _nextID);
 
 	std::shared_ptr<Character> GetCharacter();
+
+	IObstacle* GetCurrentObstacle();
 
 private:
 	bool m_bInitialized{ false };

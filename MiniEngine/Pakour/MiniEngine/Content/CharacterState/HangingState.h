@@ -11,6 +11,11 @@ public:
 	void LateTick(float _dt) override;
 	void Refresh() override;
 
+	IObstacle* GetCurrentObstacle() const override;
+
+
 private:
 	void AlignToNormal();
+
+	IObstacle* m_pCurrentObstacle;
 };

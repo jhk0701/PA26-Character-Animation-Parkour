@@ -252,8 +252,14 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0.0, 0.3 ],
+                    "properDistance": 1.0,
+                    "lerpWeight": 0.85
+                },
+                {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.1, 0.9 ],
+                    "time": [ 0.3, 0.9 ],
                     "midOffset" : [ 0, 0.3, 0 ],
                     "endOffset": [ 0, 0, 0.5 ]
                 },
@@ -303,8 +309,14 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.1 ],
+                    "properDistance": 0.5,
+                    "lerpWeight": 0.85
+                },
+                {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.6 ],
+                    "time": [ 0.1, 0.6 ],
                     "midOffset" : [ 0.0, 0.0, -0.5 ],
                     "endOffset": [ 0, 0, 0.3 ]
                 },
@@ -409,8 +421,14 @@
                     "time": [ 0, 0.3 ]
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.1 ],
+                    "properDistance": 1.0,
+                    "lerpWeight": 0.85
+                },
+                {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0, 0.6 ],
+                    "time": [ 0.1, 0.6 ],
                     "endOffset": [ 0, 0, 0.3 ]
                 },
                 {
@@ -525,8 +543,14 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.1 ],
+                    "properDistance": 0.5,
+                    "lerpWeight": 0.85
+                },
+                {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.0, 0.6 ],
+                    "time": [ 0.1, 0.6 ],
                     "midOffset": [ 0, 0, -0.5 ],
                     "endOffset": [ 0, 0, 0.25 ]
                 },
@@ -703,7 +727,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.7 ],
+                    "time": [ 0.25, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 }
@@ -727,7 +751,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.7 ],
+                    "time": [ 0.25, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 }
@@ -751,7 +775,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.7 ],
+                    "time": [ 0.25, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 }
@@ -775,7 +799,7 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.7 ],
+                    "time": [ 0.25, 0.7 ],
                     "midOffset": [ 0, 0, -1.0 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 }

@@ -131,6 +131,7 @@ public:
 	// 지형 인식
 	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
 	const PerceptionConfig& GetPerceptionConfig() const;
+	const IObstacle* GetCurrentObstacle() const;
 
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);

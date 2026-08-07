@@ -35,12 +35,16 @@ void BeamState::Refresh()
 
 		AlignByAxis();
 	}
+
+	m_pCurrentObstacle = OBS_INFO.m_pObstacle;
 }
 
 void BeamState::OnEnd()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true);
+
+	m_pCurrentObstacle = nullptr;
 }
 
 void BeamState::Tick(float _dt)
@@ -50,11 +54,9 @@ void BeamState::Tick(float _dt)
 }
 void BeamState::LateTick(float _dt){}
 
-
-MiniEngine::IObstacle* BeamState::GetCurObs() const
+IObstacle* BeamState::GetCurrentObstacle() const
 {
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	return pChar->GetCurObstacleInfo().m_pObstacle;
+	return m_pCurrentObstacle;
 }
 
 bool BeamState::ObstacleIsBeamType(Actor* _pObs)
@@ -72,11 +74,11 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 	switch (GetAxis())
 	{
 	case ETagAxis::X:
-		_outDir = GetCurObs()->GetTransform().Right();
+		_outDir = GetCurrentObstacle()->GetTransform().Right();
 		break;
 	// case ETagAxis::Y : y 방향으로 긴 경우 -> 이건 기둥 형태라 생각하고 배제
 	case ETagAxis::Z:
-		_outDir = GetCurObs()->GetTransform().Forward();
+		_outDir = GetCurrentObstacle()->GetTransform().Forward();
 		break;
 	}
 }
@@ -103,7 +105,7 @@ void BeamStandState::Tick(float _dt)
 void BeamStandState::AlignByAxis()
 {
 	// 좁은 발판에 선 상황
-	const IObstacle* pCurObs = GetCurObs();
+	const IObstacle* pCurObs = GetCurrentObstacle();
 	if (!pCurObs)
 		return;
 
@@ -222,7 +224,7 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 	Actor* pActor = reinterpret_cast<Actor*>(result.GetActor());
 	IObstacle* pObs = dynamic_cast<IObstacle*>(pActor);
 
-	return pObs == GetCurObs();
+	return pObs == GetCurrentObstacle();
 }
 
 void BeamStandState::AdjustRotationToObstacleInfo()
@@ -265,7 +267,7 @@ void BeamHangingState::Tick(float _dt)
 void BeamHangingState::AlignByAxis()
 {
 	// 봉에 매달린 상황
-	const IObstacle* pCurObs = GetCurObs();
+	const IObstacle* pCurObs = GetCurrentObstacle();
 	if (!pCurObs)
 		return;
 
@@ -337,6 +339,6 @@ bool BeamHangingState::CheckEnableToMove(std::shared_ptr<Character>& _pChar, con
 	Actor* pActor =  reinterpret_cast<Actor*>(result.GetActor());
 	IObstacle* pObs = dynamic_cast<IObstacle*>(pActor);
 
-	return pObs == GetCurObs();
+	return pObs == GetCurrentObstacle();
 }
 

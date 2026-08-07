@@ -28,6 +28,7 @@ void HangingState::OnEnd()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
 
+	m_pCurrentObstacle = nullptr;
 	pChar->ClearIKReserve();
 }
 
@@ -39,7 +40,15 @@ void HangingState::Refresh()
 {
 	CharacterState::Refresh();
 
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	m_pCurrentObstacle = pChar->GetCurObstacleInfo().m_pObstacle;
+
 	AlignToNormal();
+}
+
+IObstacle* HangingState::GetCurrentObstacle() const
+{
+	return m_pCurrentObstacle;
 }
 
 void HangingState::AlignToNormal()

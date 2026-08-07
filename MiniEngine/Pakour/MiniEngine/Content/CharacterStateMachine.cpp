@@ -103,3 +103,8 @@ std::shared_ptr<Character> CharacterStateMachine::GetCharacter()
 {
 	return std::dynamic_pointer_cast<Character>(owner.lock());
 }
+
+IObstacle* CharacterStateMachine::GetCurrentObstacle()
+{
+	return m_states[m_curState]->GetCurrentObstacle();
+}
