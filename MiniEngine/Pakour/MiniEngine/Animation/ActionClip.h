@@ -34,7 +34,7 @@ namespace MiniEngine
 		void Stop();
 
 		void Sample(float _dt, const Skeleton& _skeleton, LocalPoseTRS& _outPose, AnimNotifyParam& _notifyParam);
-		float GetDuration() const { return m_duration; }
+		const float GetDuration() const;
 		AnimClip* GetClip() const { return m_clip; }
 		const float GetTickPerSec() const;
 		
@@ -47,6 +47,9 @@ namespace MiniEngine
 
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionConfig; }
 
+		void SetSpeed(const float _spd);
+		void SetOffset(const float _startOffset, const float _endOffset);
+
 	private:
 		bool m_bIsPlaying{ false };
 		RootMotionConfig m_rootMotionConfig;
@@ -54,7 +57,14 @@ namespace MiniEngine
 		float m_playTime{ 0.0f };
 		float m_duration{ 0.0f };
 
+		float m_speed{ 1.0f }; 
+		float m_startOffset{ 0.0f };	// 시작에서 더할 것
+		float m_endOffset{ 0.0f };		// 끝에서 뺄 것
+
 		AnimClip* m_clip{ nullptr };
 		std::vector<std::shared_ptr<IAnimNotify>> m_vecNotify;
+
+		const float GetStartTime() const;
+		const float GetEndTime() const;
 	};
 }

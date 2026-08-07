@@ -3,14 +3,12 @@
 
 namespace MiniEngine 
 {
-	ActionClip::ActionClip()
-	{
-	}
+	ActionClip::ActionClip() { }
 
 	void ActionClip::Play()
 	{
 		m_bIsPlaying = true;
-		m_playTime = 0.0f;
+		m_playTime = GetStartTime();
 
 		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
 			n->Init();
@@ -33,12 +31,15 @@ namespace MiniEngine
 			return;
 		}
 
-		m_playTime += _dt;
-		bool bIsLast = false;
+		const float MUL_SPD_DT = _dt * m_speed;
+		m_playTime += MUL_SPD_DT;
 
-		if (m_playTime >= m_duration)
+		bool bIsLast = false;
+		const float END_TIME = GetEndTime();
+
+		if (m_playTime >= END_TIME)
 		{
-			m_playTime = m_duration;
+			m_playTime = END_TIME;
 			bIsLast = true;
 		}
 
@@ -46,7 +47,7 @@ namespace MiniEngine
 		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
 		
 		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
-			n->Update(_dt, _notifyParam);
+			n->Update(MUL_SPD_DT, _notifyParam);
 
 		if (bIsLast)
 		{
@@ -56,10 +57,16 @@ namespace MiniEngine
 		}
 	}
 
-	const float ActionClip::GetTickPerSec() const
+	const float ActionClip::GetDuration() const
 	{
-		return m_clip->ticksPerSecond;
+		float cliped = m_duration;
+		cliped -= (m_startOffset + m_endOffset);
+
+		return cliped;
 	}
+
+	const float ActionClip::GetStartTime() const { return m_startOffset; }
+	const float ActionClip::GetEndTime() const { return m_duration - m_endOffset; }
 
 	void ActionClip::AddClip(AnimClip* _clip)
 	{
@@ -67,8 +74,23 @@ namespace MiniEngine
 		m_clip = _clip;
 	}
 
-	void ActionClip::AddNotify(std::shared_ptr<IAnimNotify> _notify)
+	const float ActionClip::GetTickPerSec() const { return m_clip->ticksPerSecond; }
+	void ActionClip::AddNotify(std::shared_ptr<IAnimNotify> _notify) { m_vecNotify.push_back(_notify); }
+
+	void ActionClip::SetSpeed(const float _spd)
 	{
-		m_vecNotify.push_back(_notify);
+		// 유효성 검사
+		assert(_spd > 1e-4f && _spd > 0.0f);
+		m_speed = _spd;
 	}
+
+	void ActionClip::SetOffset(const float _startOffset, const float _endOffset)
+	{
+		// 유효성 검사
+		assert(m_duration > _startOffset + _endOffset);
+
+		m_startOffset = _startOffset;
+		m_endOffset = _endOffset;
+	}
+
 }
