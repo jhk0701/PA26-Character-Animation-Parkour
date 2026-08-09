@@ -2,10 +2,11 @@
     "minObstacleDetectDist": 1.0,
     "maxObstacleDetectDist": 2.5,
     
-    "heightRadius": 0.5,
-    "heightStep": 1.0,
-    "maxHeightStep": 3,
+    "heightRadius": 0.25,
+    "heightStep": 0.5,
+    "maxHeightStep": 6,
     "heightSearchtDist": 0.1,
+    "heightLift": 0.2,
 
     "depthStep": 0.5,
     "maxDepthStep": 2,

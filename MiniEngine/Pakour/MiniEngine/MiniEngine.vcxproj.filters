@@ -298,9 +298,6 @@
     <ClInclude Include="UI\UIBase.h">
       <Filter>Engine\08.UI</Filter>
     </ClInclude>
-    <ClInclude Include="Content\UIDebugConsole.h">
-      <Filter>Content\06.UI</Filter>
-    </ClInclude>
     <ClInclude Include="Content\CharacterStateMachine.h">
       <Filter>Content\03.Object\Component</Filter>
     </ClInclude>
@@ -420,6 +417,9 @@
     </ClInclude>
     <ClInclude Include="Content\AddMovementNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\UIDebugBlendClip.h">
+      <Filter>Content\06.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -573,9 +573,6 @@
     <ClCompile Include="UI\UIBase.cpp">
       <Filter>Engine\08.UI</Filter>
     </ClCompile>
-    <ClCompile Include="Content\UIDebugConsole.cpp">
-      <Filter>Content\06.UI</Filter>
-    </ClCompile>
     <ClCompile Include="Content\CharacterStateMachine.cpp">
       <Filter>Content\03.Object\Component</Filter>
     </ClCompile>
@@ -692,6 +689,9 @@
     </ClCompile>
     <ClCompile Include="Content\AddMovementNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UIDebugBlendClip.cpp">
+      <Filter>Content\06.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

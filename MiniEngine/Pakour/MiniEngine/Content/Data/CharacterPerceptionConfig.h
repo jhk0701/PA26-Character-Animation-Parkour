@@ -12,6 +12,7 @@ struct PerceptionConfig
 	float heightStep = 1.0f;	// = heightRadius * 2 여야 밴드가 틈이 없음
 	uint8_t maxHeightStep = 3;	// 높이 측정 횟수
 	float heightSearchtDist = 0.1f;
+	float heightLift = 0.05f; // 높이 측정 시, 살짝 들어올려서 시작
 
 	float depthStep = 0.5f; // 확인하는 depth 깊이 단위 0.5m
 	uint8_t maxDepthStep = 2;	// 최대 1.0m 까지만 잰다

@@ -203,7 +203,7 @@
     <ClInclude Include="Content\TransitionState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
-    <ClInclude Include="Content\UIDebugConsole.h" />
+    <ClInclude Include="Content\UIDebugBlendClip.h" />
     <ClInclude Include="Content\UseGravity.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\DebugMarkers.h" />
@@ -304,7 +304,7 @@
     <ClCompile Include="Content\TransitionState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
-    <ClCompile Include="Content\UIDebugConsole.cpp" />
+    <ClCompile Include="Content\UIDebugBlendClip.cpp" />
     <ClCompile Include="Content\UseGravity.cpp" />
     <ClCompile Include="Core\DebugMarkers.cpp" />
     <ClCompile Include="Core\EngineConfig.cpp" />

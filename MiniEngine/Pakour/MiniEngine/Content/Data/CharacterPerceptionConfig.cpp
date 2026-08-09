@@ -10,6 +10,7 @@ void CharacterPerceptionConfig::Load(const json& _data)
 	Config.heightStep					= _data["heightStep"];
 	Config.maxHeightStep				= _data["maxHeightStep"];
 	Config.heightSearchtDist			= _data["heightSearchtDist"];
+	Config.heightLift					= _data["heightLift"];
 
 	Config.depthStep					= _data["depthStep"];
 	Config.maxDepthStep					= _data["maxDepthStep"];

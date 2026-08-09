@@ -58,11 +58,13 @@ namespace PerceptionNodeUtil
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		const Transform& TF = pChar->GetRoot()->localTransform;
+		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * _hMultiplier;
 		capParam.m_startPos = _pos;
+		capParam.m_startPos.y += CONFIG.heightLift;
 		capParam.m_dir = _dir;
 		capParam.m_maxDistance = _dist;
 
@@ -87,6 +89,8 @@ namespace PerceptionNodeUtil
 		{
 			SpherecastParam spParam;
 			spParam.m_startPos = TF.position;
+			spParam.m_startPos.y += CONFIG.heightLift;
+
 			spParam.m_radius = capParam.m_radius;
 			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 			spParam.m_maxDistance = 0.1f;
@@ -98,9 +102,12 @@ namespace PerceptionNodeUtil
 
 		for (const HitResult& r : hits.m_hitResults)
 		{
-			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) || 
+			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
+			{
+				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip, {}", hits.m_hitResults.size());
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
+			}
 
 			FillFromResult(_context, r); // 높이는 MeasureObstacleHeight 가 다시 잰다
 			return true;
@@ -119,6 +126,7 @@ namespace PerceptionNodeUtil
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		const Transform& TF = pChar->GetRoot()->localTransform;
+		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 		SpherecastParam sphParam;
 		sphParam.m_radius = _radius;
@@ -126,9 +134,9 @@ namespace PerceptionNodeUtil
 		sphParam.m_dir = _dir;
 		sphParam.m_maxDistance = _dist;
 
-		//Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
-		//MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
-		//MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
+		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
+		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
+		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
 
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
@@ -146,6 +154,8 @@ namespace PerceptionNodeUtil
 		{
 			SpherecastParam spParam;
 			spParam.m_startPos = TF.position;
+			spParam.m_startPos.y += CONFIG.heightLift;
+
 			spParam.m_radius = pChar->GetCapsuleRadius();
 			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 			spParam.m_maxDistance = 0.1f;
@@ -155,12 +165,13 @@ namespace PerceptionNodeUtil
 				pGroundActor = downCheckResult.GetActor();
 		}
 
+		MG_LOG_INFO("[CheckObstacleSphere] hit result {}", hits.m_hitResults.size());
 		for (const HitResult& r : hits.m_hitResults)
 		{
 			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
 			{
-				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip, {}", hits.m_hitResults.size());
+				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip");
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 			}
 
@@ -243,22 +254,23 @@ namespace PerceptionNodeUtil
 			SpherecastParam param;
 			param.m_startPos = Vector3(
 				PROBE_XZ.x,
-				FOOT_Y + CONFIG.heightRadius + band * CONFIG.heightStep,
+				FOOT_Y + CONFIG.heightLift + CONFIG.heightRadius + band * CONFIG.heightStep,
 				PROBE_XZ.z);
 			param.m_radius = CONFIG.heightRadius;
 			param.m_dir = _dir;
 			param.m_maxDistance = CONFIG.heightSearchtDist;
 
-			/*
+
 			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+			/*
 			MG_LOG_INFO("[PerceptionNodeUtil::MeasureObstacleHeight] Start Pos : ({:.2f}, {:.2f}, {:.2f})", param.m_startPos.x, param.m_startPos.y, param.m_startPos.z);
 			*/
 			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 			{
-				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 				
 				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 				if (bFirstTouched) 
@@ -266,7 +278,7 @@ namespace PerceptionNodeUtil
 			}
 			else
 			{
-				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 				if (!bFirstTouched)
 					bFirstTouched = true;
@@ -307,6 +319,8 @@ namespace PerceptionNodeUtil
 			param.m_origin = TOP + _dir * (CONFIG.depthStep * i);
 			param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 			param.m_maxDistance = CONFIG.depthSearchDownDist;
+
+			MiniEngine::Debug::DrawPoint(param.m_origin, MiniEngine::DebugColor::RED, 0.25f, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 			RaycastResult result;
 			if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
