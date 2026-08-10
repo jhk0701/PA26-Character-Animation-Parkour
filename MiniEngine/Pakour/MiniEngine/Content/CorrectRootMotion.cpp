@@ -19,6 +19,9 @@ void CorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	m_elapsedTime = 0.0f;
 	m_pChar = dynamic_cast<Character*>(_param.m_pActor);
 
+	if (m_pChar)
+		m_startPos = m_pChar->GetRoot()->localTransform.position;
+
 	assert(GetDuration() > 1e-4f);
 }
 
@@ -28,13 +31,12 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 		return;
 
 	const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
-	const Transform& TF = m_pChar->GetRoot()->localTransform;
 
 	// 캐릭터와 장애물의 적정거리 보정
 	Vector3 obsPos = OBS_INFO.m_obstacleHitPos;
 	obsPos.y = OBS_INFO.m_obstacleLedge;
 
-	Vector3 charPos = TF.position;
+	Vector3 charPos = m_startPos;
 	
 	switch (m_corrextAxis)
 	{
@@ -66,13 +68,13 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	switch (m_corrextAxis)
 	{
 	case ECorrectAxis::XZ:
-		lerpedPos.y = TF.position.y;
+		lerpedPos.y = m_startPos.y;
 		break;
 	case ECorrectAxis::XY:
-		lerpedPos.z = TF.position.z;
+		lerpedPos.z = m_startPos.z;
 		break;
 	case ECorrectAxis::YZ:
-		lerpedPos.x = TF.position.x;
+		lerpedPos.x = m_startPos.x;
 		break;
 	case ECorrectAxis::None: __fallthrough;
 	default:

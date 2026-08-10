@@ -24,6 +24,7 @@ private:
 
 	float m_elapsedTime{ 0.0f };
 	float m_properDistance{ 1.0f };
+	MiniEngine::Vector3 m_startPos;
 };
 
 class BezierCorrectRootMotion : public MiniEngine::AnimNotifyState 
