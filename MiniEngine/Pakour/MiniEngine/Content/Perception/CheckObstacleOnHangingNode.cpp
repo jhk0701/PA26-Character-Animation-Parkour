@@ -47,7 +47,7 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	startPos += TF.Forward() * m_startOffset.z;
 	
 	RaycastResult result;
-	if (CheckLedgeMultiple(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.onHangingSearchRadius, CONFIG.onHangingSearchDist, result) == false)
+	if (CheckLedgeMultiple(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.ledgeDetectRadius, CONFIG.onHangingSearchDist, result) == false)
 	{
 		// MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] No Ledge");
 		return false;

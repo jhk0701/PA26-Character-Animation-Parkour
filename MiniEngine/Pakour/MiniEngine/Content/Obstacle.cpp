@@ -45,7 +45,7 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 
 	AddLedge(root,
 		_desc.meshPos + Vector3(0.0f, HALF_EXTENT.y, 0.0f),
-		Vector3(HALF_EXTENT.x, 0.01f, HALF_EXTENT.z));
+		Vector3(HALF_EXTENT.x, 0.02f, HALF_EXTENT.z));
 }
 
 void Obstacle::AddLedge(

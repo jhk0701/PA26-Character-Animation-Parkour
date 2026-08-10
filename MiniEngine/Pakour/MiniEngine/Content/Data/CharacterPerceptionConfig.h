@@ -18,6 +18,8 @@ struct PerceptionConfig
 	uint8_t maxDepthStep = 2;	// 최대 1.0m 까지만 잰다
 	float depthSearchDownDist = 2.0f;
 	float depthLift = 0.05f; // 꼭대기 표면인 경우 방지를 위해 띄어두는 크기
+
+	float ledgeDetectRadius = 0.5f;
 	
 	// 매달린 상태(Hanging)의 주변 탐색 파라미터
 	float onHangingSearchDist = 1.5f;	// 상하좌우 공통 탐지 거리

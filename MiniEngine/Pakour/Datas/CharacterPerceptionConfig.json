@@ -13,6 +13,8 @@
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
 
+    "ledgeDetectRadius" : 0.5,
+
     "onHanging_SearchDist": 2.0,
     "onHanging_SearchFwdDist" : 0.5,
     "onHanging_SearchRadius" : 0.45,

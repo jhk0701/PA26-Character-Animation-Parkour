@@ -134,9 +134,9 @@ namespace PerceptionNodeUtil
 		sphParam.m_dir = _dir;
 		sphParam.m_maxDistance = _dist;
 
-		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
+		/*Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
 		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
-		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
+		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);*/
 
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
@@ -196,6 +196,8 @@ namespace PerceptionNodeUtil
 		sphParam.m_dir = _dir;
 		sphParam.m_radius = _radius;
 		sphParam.m_maxDistance = _dist;
+
+		MiniEngine::Debug::DrawPoint(sphParam.m_startPos, MiniEngine::DebugColor::RED, sphParam.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 		if (bIsHit)
@@ -260,17 +262,16 @@ namespace PerceptionNodeUtil
 			param.m_dir = _dir;
 			param.m_maxDistance = CONFIG.heightSearchtDist;
 
-
-			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
-			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 			/*
+			* Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
+			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 			MG_LOG_INFO("[PerceptionNodeUtil::MeasureObstacleHeight] Start Pos : ({:.2f}, {:.2f}, {:.2f})", param.m_startPos.x, param.m_startPos.y, param.m_startPos.z);
 			*/
 			
 			RaycastResult result;
 			if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 			{
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 				
 				// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 				if (bFirstTouched) 
@@ -278,7 +279,7 @@ namespace PerceptionNodeUtil
 			}
 			else
 			{
-				MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+				// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 				if (!bFirstTouched)
 					bFirstTouched = true;
@@ -295,7 +296,7 @@ namespace PerceptionNodeUtil
 			const Vector3 LEDGE_ORIGIN(PROBE_XZ.x, _context.m_ledge - CONFIG.heightRadius, PROBE_XZ.z);
 			
 			RaycastResult ledgeResult;
-			CheckLedgeSingle(_context, LEDGE_ORIGIN, _dir, CONFIG.heightRadius, CONFIG.minObstacleDetectDist,ledgeResult);
+			CheckLedgeSingle(_context, LEDGE_ORIGIN, _dir, CONFIG.ledgeDetectRadius, CONFIG.minObstacleDetectDist,ledgeResult);
 		}
 
 		return band;
@@ -320,7 +321,7 @@ namespace PerceptionNodeUtil
 			param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 			param.m_maxDistance = CONFIG.depthSearchDownDist;
 
-			MiniEngine::Debug::DrawPoint(param.m_origin, MiniEngine::DebugColor::RED, 0.25f, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+			// MiniEngine::Debug::DrawPoint(param.m_origin, MiniEngine::DebugColor::RED, 0.25f, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 			RaycastResult result;
 			if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
