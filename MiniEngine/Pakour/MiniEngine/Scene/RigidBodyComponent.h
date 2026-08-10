@@ -22,9 +22,9 @@ namespace MiniEngine
 
 		void FixedTick(float _dt) override;
 
-		void Init(Physics::PhysicsWorld& _world, EBodyType _type, 
-			const Vector3& _halfExtents, 
+		void Init(Physics::PhysicsWorld& _world, EBodyType _type, const Vector3& _halfExtents,
 			const std::shared_ptr<SceneComponent>& _target = nullptr,
+			const std::shared_ptr<SceneComponent>& _parent = nullptr,
 			float _denity = 10.0f,
 			bool _bIsSub = false);
 		

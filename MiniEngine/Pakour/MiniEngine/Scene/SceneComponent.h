@@ -19,6 +19,8 @@ namespace MiniEngine
         std::shared_ptr<SceneComponent> GetParent() const { return m_parent.lock(); }
         const std::vector<std::weak_ptr<SceneComponent>>& GetChildren() const { return m_children; }
 
+        void GetWorldTransform(Transform& _outWorldTF) const;
+
     private:
         std::weak_ptr<SceneComponent> m_parent;
         std::vector<std::weak_ptr<SceneComponent>> m_children;

@@ -31,4 +31,12 @@ namespace MiniEngine
             return local * parent->GetWorldMatrix(); // local 먼저 (row-vector)
         return local;
     }
+
+    void SceneComponent::GetWorldTransform(Transform& _outWorldTF) const
+    {
+        GetWorldMatrix().Decompose(
+            _outWorldTF.scale, 
+            _outWorldTF.rotation, 
+            _outWorldTF.position);
+    }
 }

@@ -561,7 +561,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(0.3f, 6.0f, 0.3f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
 		}
-
 		{
 			// 비정형 나무 
 			Obstacle::ObstacleDesc desc;
@@ -588,16 +587,16 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
 
-			desc.pos = OFFSET + Vector3(-13.0f, 9.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-13.0f, 1.0f, 0.0f);
 			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
+			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 2");
 		}
-
-		// 로프
 
 		// vault 깊이 다양화
 
+		// 로프 액션 - 도구 사용
 	}
 	{
 		// 캐릭터 생성

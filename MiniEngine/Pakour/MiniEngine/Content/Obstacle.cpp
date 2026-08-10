@@ -24,50 +24,47 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 	tag += _desc.priority; // 우선 순위
 	for (const uint8_t t : _desc.detailTags)
 		tag += t;
+
+	const Vector3 HALF_EXTENT = _desc.scale * 0.5f;
 	
-	const Vector3 halfExtent = _desc.scale * 0.5f;
+	std::shared_ptr<SceneComponent> root = AddComponent<SceneComponent>();
+	root->localTransform.position = _desc.pos;
+	root->localTransform.rotation = _desc.rot;
+
 	std::shared_ptr<StaticMeshComponent> staticMeshComp = AddComponent<StaticMeshComponent>();
+	staticMeshComp->AttachTo(root);
 	staticMeshComp->SetColor(_desc.color);
 	staticMeshComp->SetMesh(_desc.pMesh);
-	staticMeshComp->localTransform.position = _desc.pos;
-	staticMeshComp->localTransform.scale = halfExtent;
-	staticMeshComp->localTransform.rotation = _desc.rot;
+	staticMeshComp->localTransform.scale = HALF_EXTENT;
+	staticMeshComp->localTransform.position = _desc.meshPos;
 
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
 	std::shared_ptr<RigidBodyComponent> pRB = AddComponent<RigidBodyComponent>();
-	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, halfExtent, staticMeshComp);
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, HALF_EXTENT, staticMeshComp, root);
 	pRB->SetQueryLayer(_desc.layer);
 
-	AddLedge(_desc);
-}
-
-void Obstacle::AddLedge(const ObstacleDesc& _desc)
-{
-	const Vector3 halfExtent = _desc.scale * 0.5f;
-	AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, 0.0f),
-		Vector3(halfExtent.x, 0.02f, halfExtent.z),
-		_desc.rot
-	);
+	AddLedge(root,
+		_desc.meshPos + Vector3(0.0f, HALF_EXTENT.y, 0.0f),
+		Vector3(HALF_EXTENT.x, 0.01f, HALF_EXTENT.z));
 }
 
 void Obstacle::AddLedge(
+	std::shared_ptr<SceneComponent> _parent,
 	const Vector3& _localPos, 
-	const Vector3& _halfExtent, 
-	const Quaternion& _localRot)
+	const Vector3& _halfExtent)
 {
-	// Ledge 구성
-	// box, static rigid body, size, position
-	// scene, rigidbody comp
+	if (!_parent)
+		return;
+
 	std::shared_ptr<Physics::PhysicsWorld> phyWorld = GetScene()->GetPhysics().lock();
-	std::shared_ptr<SceneComponent> pScene = AddComponent<SceneComponent>();
+		std::shared_ptr<SceneComponent> pScene = AddComponent<SceneComponent>();
+	pScene->AttachTo(_parent);
 	pScene->localTransform.position = _localPos;
-	pScene->localTransform.rotation = _localRot;
-	pScene->localTransform.scale = _halfExtent;
 
 	m_pLedges.push_back(pScene);
 
 	std::shared_ptr<RigidBodyComponent> pRB = AddComponent<RigidBodyComponent>();
-	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pScene, 10.0f, true);
+	pRB->Init(*phyWorld, RigidBodyComponent::EBodyType::Static, _halfExtent, pScene, _parent, 10.0f, true);
 	pRB->SetQueryLayer(MiniEngine::Physics::Layer::ObstacleLedge);
 }
 
@@ -75,15 +72,21 @@ float Obstacle::GetNearestLedgeHeight(const Vector3& _pos) const
 {
 	// 소형 장애물(Beam, Protrude)에서 주로 사용할 것
 	float minDist = FLT_MAX;
+
 	float result = GetRoot()->localTransform.position.y;
 	for (int i = 0; i < m_pLedges.size(); ++i)
 	{
 		std::shared_ptr<SceneComponent> pScene = m_pLedges[i].lock();
-		float d = Vector3::DistanceSquared(pScene->localTransform.position, _pos);
+		
+		Transform worldTF;
+		pScene->GetWorldTransform(worldTF);
+		Vector3 worldPos = worldTF.position;
+
+		float d = Vector3::DistanceSquared(worldPos, _pos);
 
 		if (minDist > d)
 		{
-			result = pScene->localTransform.position.y;
+			result = worldPos.y;
 			minDist = d;
 		}
 	}

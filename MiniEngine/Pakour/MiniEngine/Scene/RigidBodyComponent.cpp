@@ -20,6 +20,7 @@ namespace MiniEngine
 		EBodyType _type, 
 		const Vector3& _halfExtents, 
 		const std::shared_ptr<SceneComponent>& _target,
+		const std::shared_ptr<SceneComponent>& _parent,
 		float _denity, 
 		bool _bIsSub)
 	{
@@ -43,8 +44,22 @@ namespace MiniEngine
 		m_target = target;
 		m_bIsSub = _bIsSub;
 
-		const Vector3& pos = target->localTransform.position;
-		const Quaternion& rot = target->localTransform.rotation;
+		Vector3 pos(0.0f);
+		
+		if (_parent) 
+		{
+			const Transform& TF = _parent->localTransform;
+			pos = TF.position;
+			pos += target->localTransform.position.x * TF.Right();
+			pos += target->localTransform.position.y * TF.Up();
+			pos += target->localTransform.position.z * TF.Forward();
+		}
+		else 
+			pos = target->localTransform.position;
+
+		Quaternion rot = _parent ?
+			_parent->localTransform.rotation * target->localTransform.rotation : 
+			target->localTransform.rotation;
 
 		m_actor = (_type == EBodyType::Dynamic) ?
 			_world.CreateDynamicBox(pos, rot, _halfExtents, _denity) :

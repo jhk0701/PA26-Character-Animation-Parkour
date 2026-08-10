@@ -18,6 +18,7 @@ public:
 		MiniEngine::Vector3 color = MiniEngine::Vector3(0.7f, 0.5f, 0.2f);
 		MiniEngine::Vector3 pos;
 		MiniEngine::Vector3 scale;
+		MiniEngine::Vector3 meshPos;
 		MiniEngine::Quaternion rot = MiniEngine::Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		std::vector<uint8_t> detailTags;
 		uint8_t priority{0};
@@ -28,11 +29,10 @@ public:
 	void Construct(const ObstacleDesc& _desc);
 
 private:
-	void AddLedge(const ObstacleDesc& _desc);
 	void AddLedge(
+		std::shared_ptr<MiniEngine::SceneComponent> _parent,
 		const MiniEngine::Vector3& _localPos,
-		const MiniEngine::Vector3& _halfExtent,
-		const MiniEngine::Quaternion& _localRot);
+		const MiniEngine::Vector3& _halfExtent);
 
 	std::vector<std::weak_ptr<MiniEngine::SceneComponent>> m_pLedges;
 
