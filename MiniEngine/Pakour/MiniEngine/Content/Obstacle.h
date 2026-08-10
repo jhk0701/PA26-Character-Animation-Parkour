@@ -12,15 +12,6 @@ namespace MiniEngine
 class Obstacle : public MiniEngine::Actor, public MiniEngine::IObstacle
 {
 public:
-	enum ELedgeOption 
-	{
-		None,
-		Single,
-		Vertical,
-		Horizontal,
-		All
-	};
-
 	struct ObstacleDesc 
 	{
 		std::shared_ptr<MiniEngine::StaticMesh> pMesh;
@@ -31,7 +22,6 @@ public:
 		std::vector<uint8_t> detailTags;
 		uint8_t priority{0};
 		MiniEngine::Physics::Layer layer = MiniEngine::Physics::Layer::Obstacle;
-		ELedgeOption ledgeOpt = ELedgeOption::All;
 	};
 
 	virtual ~Obstacle() {};

@@ -45,7 +45,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(150.0f, 0.5f, 150.0f);
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Ground;
-		desc.ledgeOpt = Obstacle::ELedgeOption::None;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::None;
 
 		std::shared_ptr<Actor> pGround = ObstacleFactory::Create(pScene, desc);
 		pGround->SetName("Ground");
@@ -55,7 +55,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::All;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 1. mantle
 		desc.pos = Vector3(-5.0f, 1.25f, 3.0f);
@@ -151,7 +151,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.detailTags = { (uint8_t)Content::Config::ETagEnvDetail::Protrude };
 		desc.color += Vector3(0.3f, -0.2f, 0.0f);
 		desc.scale = Vector3(1.0f, 0.2f, 0.2f);
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		desc.pos = Vector3(14.0f, 4.0f, 4.5f);
 		ObstacleFactory::Create(pScene, desc);
@@ -167,7 +167,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::All;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 6. 건물
 		desc.pos = Vector3(0.0f, 2.5f, 20.5f);
@@ -185,14 +185,14 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 중간 지붕 형태
 		desc.pos = Vector3(3.5f, 7.5f, 35.0f);
 		desc.scale = Vector3(3.0f, 0.25f, 5.0f);
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		ObstacleFactory::Create(pScene, desc);
 
 		// 경사로
 		desc.pos = Vector3(0.0f, 2.0f, 14.0f);
 		desc.scale = Vector3(10.0f, 1.0f, 10.0f);
 		desc.rot = Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f);
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
@@ -203,7 +203,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			(uint8_t)Content::Config::ETagAxis::X,
 		};
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		// Foot Hold // 밟는 용도
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
@@ -266,7 +266,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::All;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 공중 큐브
 		desc.pos = Vector3(0.0f, 28.5f, 0.0f);
@@ -285,7 +285,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		
 		{
 			// 구간 1
@@ -363,7 +363,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			};
 			desc.color = Vector3(0.25f, 0.25f, 0.75f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 			desc.pos = OFFSET + Vector3(5.0f, 2.5f, -3.0f);
 			desc.scale = Vector3(4.0f, 0.1f, 0.1f);
@@ -388,7 +388,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)Content::Config::ETagAxis::X,
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			
 			desc.pos = OFFSET + Vector3(25.0f, 6.0f, 0.5f);
@@ -410,35 +410,35 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(22.5f, 8.5f, -6.0f);
 			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc);
 
-desc.pos = OFFSET + Vector3(28.5f, 8.5f, -6.0f);
-desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(28.5f, 8.5f, -6.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
 
-desc.pos = OFFSET + Vector3(22.5f, 4.5f, -4.0f);
-desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(22.5f, 4.5f, -4.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
 
-desc.pos = OFFSET + Vector3(28.5f, 4.5f, -4.0f);
-desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(28.5f, 4.5f, -4.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
 
-desc.pos = OFFSET + Vector3(22.5f, 7.5f, -2.0f);
-desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(22.5f, 7.5f, -2.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
 
-desc.pos = OFFSET + Vector3(28.5f, 7.5f, -2.0f);
-desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(28.5f, 7.5f, -2.0f);
+			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc);
 
 
-desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		{
@@ -448,7 +448,7 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		};
 		desc.color = Vector3(0.75f, 0.25f, 0.25f);
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		// 구간 1
 		desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
@@ -519,7 +519,7 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			desc.pMesh = pCubeMesh;
 			desc.detailTags = { 0U };
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		
 			desc.pos = OFFSET + Vector3(-20.0f, 25.0f, 0.0f);
 			desc.scale = Vector3(3.0f, 50.0f, 100.0f);
@@ -542,7 +542,7 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 				(uint8_t)Content::Config::ETagEnvDetail::Pole 
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
 
 			desc.pos = OFFSET + Vector3(-15.0f, 3.0f, 6.0f);
@@ -571,7 +571,7 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 				(uint8_t)Content::Config::ETagEnvDetail::Pole
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
 
 			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 0.0f);

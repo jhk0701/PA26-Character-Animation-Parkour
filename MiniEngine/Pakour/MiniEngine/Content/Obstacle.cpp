@@ -44,69 +44,10 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 void Obstacle::AddLedge(const ObstacleDesc& _desc)
 {
 	const Vector3 halfExtent = _desc.scale * 0.5f;
-	const Vector3 commonLedgeExtentX = Vector3(halfExtent.x, 0.02f, 0.02f);
-	const Vector3 commonLedgeExtentY = Vector3(halfExtent.z, 0.02f, 0.02f);
-
-	switch (_desc.ledgeOpt)
-	{
-	case Single:
-	{
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, 0.0f), 
-			Vector3(halfExtent.x, 0.02f, halfExtent.z), 
-			_desc.rot
-		);
-		break;
-	}
-	case Vertical:
-	{
-		m_pLedges.reserve(2);
-		AddLedge(_desc.pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
-			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
-		);
-		AddLedge(_desc.pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
-			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
-		);
-		break;
-	}
-	case Horizontal:
-	{
-		m_pLedges.reserve(2);
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
-		);
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
-		);
-		break;
-	}
-	case All:
-	{
-		m_pLedges.reserve(4);
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
-		);
-		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, -halfExtent.z),
-			commonLedgeExtentX,
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f) * _desc.rot
-		);
-		AddLedge(_desc.pos + Vector3(halfExtent.x, halfExtent.y, 0.0f),
-			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
-		);
-		AddLedge(_desc.pos + Vector3(-halfExtent.x, halfExtent.y, 0.0f),
-			commonLedgeExtentY,
-			Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f) * _desc.rot
-		);
-		break;
-	}
-	case None: __fallthrough;
-	default: return;
-	}
+	AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, 0.0f),
+		Vector3(halfExtent.x, 0.02f, halfExtent.z),
+		_desc.rot
+	);
 }
 
 void Obstacle::AddLedge(
