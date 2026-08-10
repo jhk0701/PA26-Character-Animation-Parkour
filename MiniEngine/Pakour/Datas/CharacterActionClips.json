@@ -97,8 +97,6 @@
         {
             "tags": [ "Jump" ],
             "clip": 9,
-            "speed" : 1.0,
-            "offset" : [0.0, 0.0],
             "rootMotion": { "apply": false },
             "notifies": [
                 {
@@ -155,8 +153,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.2 ],
-                    "properDistance": 1.0,
-                    "lerpWeight": 0.5
+                    "properDistance": 1.0
                 },
                 {
                     "class": "CharacterIKInvoker",
@@ -204,8 +201,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
-                    "properDistance": 1.0,
-                    "lerpWeight": 0.85
+                    "properDistance": 1.0
                 },
                 {
                     "class": "BezierCorrectRootMotion",
@@ -244,11 +240,13 @@
             ]
         },{
             "tags": [ "VaultAirToAttach" ],
-            "clip": 13,
+            "clip": 46,
+            "rootMotion" : {"apply" : true, "y" : false },
+            "offset": [ 0.6, 1.6 ],
             "notifies":  [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.0,
                     "state": "Landing"
                 },
                 {
@@ -263,37 +261,36 @@
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [ 0.0, 0.3 ],
-                    "properDistance": 1.0,
-                    "lerpWeight": 0.85
+                    "time": [ 0.0, 0.4 ],
+                    "properDistance": 1.0
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.3, 0.9 ],
-                    "midOffset" : [ 0, 0.0, 0 ],
+                    "time": [ 0.4, 0.9 ],
+                    "midOffset" : [ 0, 0.5, 0 ],
                     "endOffset": [ 0, 0, 0.5 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0.1, 0.8 ],
+                    "time": [ 0.3, 0.9 ],
                     "limb": "LeftArm",
                     "offset": [ -0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0.1, 0.8 ],
+                    "time": [ 0.3, 0.9 ],
                     "limb": "RightArm",
                     "offset": [ 0.15, 0.1, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.1, 0.4 ],
+                    "time": [ 0.3, 0.4 ],
                     "fromTo": [ 0, 1 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.7, 0.8 ],
+                    "time": [ 0.7, 0.9 ],
                     "fromTo": [ 1, 0 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 },
@@ -325,8 +322,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
-                    "properDistance": 0.5,
-                    "lerpWeight": 0.85
+                    "properDistance": 0.5
                 },
                 {
                     "class": "BezierCorrectRootMotion",
@@ -380,8 +376,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
-                    "properDistance": 1.0,
-                    "lerpWeight": 0.85
+                    "properDistance": 1.0
                 },
                 {
                     "class": "BezierCorrectRootMotion",
@@ -417,11 +412,13 @@
         },
         {
             "tags": [ "MantleAirToAttach" ],
-            "clip": 15,
+            "clip": 45,
+            "rootMotion": { "apply": true, "y" : false },
+            "offset" : [ 0.7, 1.9 ],
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.3,
                     "state": "Landing"
                 },
                 {
@@ -440,37 +437,36 @@
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [ 0, 0.1 ],
-                    "properDistance": 1.0,
-                    "lerpWeight": 0.85
+                    "time": [ 0, 0.3 ],
+                    "properDistance": 1.0
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.1, 0.9 ],
+                    "time": [ 0.3, 0.9 ],
                     "midOffset" : [ 0, 0.0, -0.5 ],
-                    "endOffset": [ 0, 0, 0.3 ]
+                    "endOffset": [ 0, 0, 0.0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0, 0.8 ],
+                    "time": [ 0.2, 0.6 ],
                     "limb": "LeftArm",
                     "offset": [ -0.2, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKInvoker",
-                    "time": [ 0, 0.8 ],
+                    "time": [ 0.2, 0.6 ],
                     "limb": "RightArm",
                     "offset": [ 0.2, 0.0, 0 ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.1, 0.4 ],
+                    "time": [ 0.2, 0.3 ],
                     "fromTo": [ 0, 1 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 },
                 {
                     "class": "CharacterIKEnabler",
-                    "time": [ 0.7, 0.8 ],
+                    "time": [ 0.5, 0.6 ],
                     "fromTo": [ 1, 0 ],
                     "limbs": [ "LeftArm", "RightArm" ]
                 }
@@ -495,8 +491,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.8 ],
-                    "properDistance": 0.5,
-                    "lerpWeight": 0.85
+                    "properDistance": 0.5
                 }
             ]
         },
@@ -514,8 +509,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.4 ],
-                    "properDistance": 0.5,
-                    "lerpWeight": 0.85
+                    "properDistance": 0.5
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",
@@ -570,8 +564,7 @@
                 {
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.1 ],
-                    "properDistance": 0.5,
-                    "lerpWeight": 0.85
+                    "properDistance": 0.5
                 },
                 {
                     "class": "BezierCorrectRootMotion",

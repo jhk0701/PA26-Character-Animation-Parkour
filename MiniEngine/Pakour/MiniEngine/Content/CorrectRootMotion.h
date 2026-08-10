@@ -16,7 +16,6 @@ public:
 	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
 	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override;
 	void SetProperDistance(float _distance) { m_properDistance = _distance; }
-	void SetLerpWeight(float _weight) { m_lerpWeight = std::clamp(_weight, 0.0f, 1.0f); }
 	void SetCorrectAxis(ECorrectAxis _axis) { m_corrextAxis = _axis; }
 
 private:
@@ -24,9 +23,7 @@ private:
 	ECorrectAxis m_corrextAxis{ ECorrectAxis::XZ };
 
 	float m_elapsedTime{ 0.0f };
-
 	float m_properDistance{ 1.0f };
-	float m_lerpWeight{ 0.5f };
 };
 
 class BezierCorrectRootMotion : public MiniEngine::AnimNotifyState 

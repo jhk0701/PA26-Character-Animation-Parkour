@@ -107,7 +107,7 @@ namespace
 
 		_out.bEnable = _data.value("enable", _out.bEnable);
 		_out.ProperDistance = _data.value("properDistance", _out.ProperDistance);
-		_out.LerpWeight = _data.value("lerpWeight", _out.LerpWeight);
+		// _out.LerpWeight = _data.value("lerpWeight", _out.LerpWeight);
 		// _out.DeltaIntensity = _data.value("deltaIntensity", _out.DeltaIntensity);
 		// _out.BezierY = _data.value("bezierY", _out.BezierY);
 		ReadVec3(_data, "offset", _out.Offset);

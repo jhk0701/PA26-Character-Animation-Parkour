@@ -20,7 +20,6 @@ struct AnimNotifyData
 	std::vector<uint8_t> Limbs;		// CharacterIKEnabler
 
 	float ProperDistance{ 1.0f };	// CorrectRootMotion
-	float LerpWeight{ 0.5f };
 	uint8_t CorrectAxis{ 0 };		// ECorrectAxis
 
 	float AlphaFrom{ 0.0f };		// CharacterIKEnabler
