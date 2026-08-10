@@ -26,11 +26,6 @@ void CharacterState::ProcessMovement(float _dt)
 
 	if (INPUT_DIR.x != 0 || INPUT_DIR.y != 0)
 		inputLerp.Normalize();
-	else
-	{
-		pChar->SetAnimBaseTrackInputAxis(inputLerp);
-		return;
-	}
 
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& CONT_TF = pChar->GetControllerActor()->GetRoot()->localTransform;
