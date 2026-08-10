@@ -192,7 +192,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pos = Vector3(0.0f, 2.0f, 14.0f);
 		desc.scale = Vector3(10.0f, 1.0f, 10.0f);
 		desc.rot = Quaternion::CreateFromYawPitchRoll(0.0f, ToRadians(-30.0f), 0.0f);
-		desc.ledgeOpt = Obstacle::ELedgeOption::Vertical;
+		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
@@ -511,7 +511,7 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 	}
 	{
-		const Vector3 OFFSET(-15.0, 0.0f, 0.0f);
+		const Vector3 OFFSET(-10.0f, 0.0f, 0.0f);
 
 		{
 			// 절벽
@@ -534,22 +534,65 @@ desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 2");
 		}
 		{
-			// 비정형 나무 // 나무 등 기둥
+			// 나무 등 기둥
 			Obstacle::ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 			desc.detailTags = 
-			{
-				(uint8_t)Content::Config::ETagEnvDetail::Pole,
-				(uint8_t)Content::Config::ETagAxis::X,
+			{ 
+				(uint8_t)Content::Config::ETagEnvDetail::Pole 
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			desc.color = Vector3(0.75f, 0.75f, 0.25f);
 
-			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, 6.0f);
-			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
-			ObstacleFactory::Create(pScene, desc)->SetName("Pole");
+			desc.pos = OFFSET + Vector3(-15.0f, 3.0f, 6.0f);
+			desc.scale = Vector3(0.35f, 6.0f, 0.35f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole 1");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 6.0f, 8.0f);
+			desc.scale = Vector3(0.2f, 8.0f, 0.2f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole 2");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 8.0f, 10.0f);
+			desc.scale = Vector3(0.3f, 10.0f, 0.3f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole 3");
+
+			desc.pos = OFFSET + Vector3(-20.0f, 10.0f, 10.0f);
+			desc.scale = Vector3(0.3f, 6.0f, 0.3f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
 		}
-		
+
+		{
+			// 비정형 나무 
+			Obstacle::ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.detailTags =
+			{
+				(uint8_t)Content::Config::ETagEnvDetail::Pole
+			};
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			desc.color = Vector3(0.75f, 0.75f, 0.25f);
+
+			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 0.0f);
+			desc.scale = Vector3(0.35f, 10.0f, 0.35f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree");
+
+			desc.detailTags =
+			{
+				(uint8_t)Content::Config::ETagEnvDetail::Beam,
+				(uint8_t)Content::Config::ETagAxis::X
+			};
+
+			desc.pos = OFFSET + Vector3(-13.0f, 9.0f, 0.0f);
+			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
+
+			desc.pos = OFFSET + Vector3(-13.0f, 9.0f, 0.0f);
+			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
+		}
 
 		// 로프
 
@@ -576,6 +619,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	// ApplyPhysicsDebug(true);
+	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

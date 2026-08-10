@@ -53,7 +53,7 @@ void Obstacle::AddLedge(const ObstacleDesc& _desc)
 	{
 		AddLedge(_desc.pos + Vector3(0.0f, halfExtent.y, 0.0f), 
 			Vector3(halfExtent.x, 0.02f, halfExtent.z), 
-			Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+			_desc.rot
 		);
 		break;
 	}

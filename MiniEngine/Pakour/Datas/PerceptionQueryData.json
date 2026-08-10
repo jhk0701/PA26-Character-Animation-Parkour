@@ -43,7 +43,9 @@
                 "children": [
                     "ProcessDefault",
                     "ProcessBeam",
-                    "ProcessProtrude"
+                    "ProcessProtrude",
+                    "ProcessDefault",
+                    "ProcessDefault"
                 ]
             },
 
@@ -136,7 +138,9 @@
                 [
                     "OnHanging_Detected_Default",
                     "ProcessBeam",
-                    "ProcessProtrude"
+                    "ProcessProtrude",
+                    "OnHanging_Detected_Default",
+                    "OnHanging_Detected_Default"
                 ]
             },
                 {
