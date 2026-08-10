@@ -8,7 +8,6 @@ class CharacterController : public MiniEngine::Controller
 {
 public:
 	void Construct() override;
-	// void Tick(float _dt) override;
 	void LateTick(float _dt) override;
 
 	// 카메라
@@ -28,6 +27,6 @@ private:
 
 	void RotateCamera(float _dt);
 
-	float m_followLerpWeight{ 0.15f };
+	float m_followLerpWeight{ 0.1f };
 	void FollowPawn(float _dt);
 };

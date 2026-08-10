@@ -9,7 +9,7 @@
     "heightLift": 0.2,
 
     "depthStep": 0.5,
-    "maxDepthStep": 2,
+    "maxDepthStep": 3,
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
 

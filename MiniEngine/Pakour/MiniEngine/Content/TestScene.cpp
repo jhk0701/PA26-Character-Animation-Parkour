@@ -42,7 +42,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.pMesh = pCubeMesh;
 		desc.color = Vector3(0.5f, 0.5f, 0.5f);
 		desc.pos = Vector3(0.0f, -0.25f, 0.0f);
-		desc.scale = Vector3(100.0f, 0.5f, 100.0f);
+		desc.scale = Vector3(150.0f, 0.5f, 150.0f);
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Ground;
 		desc.ledgeOpt = Obstacle::ELedgeOption::None;
@@ -410,105 +410,151 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(22.5f, 8.5f, -6.0f);
 			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(28.5f, 8.5f, -6.0f);
-			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+desc.pos = OFFSET + Vector3(28.5f, 8.5f, -6.0f);
+desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(22.5f, 4.5f, -4.0f);
-			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+desc.pos = OFFSET + Vector3(22.5f, 4.5f, -4.0f);
+desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(28.5f, 4.5f, -4.0f);
-			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+desc.pos = OFFSET + Vector3(28.5f, 4.5f, -4.0f);
+desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(20.0f), 0.0f, 0.0f);
+ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(22.5f, 7.5f, -2.0f);
-			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+desc.pos = OFFSET + Vector3(22.5f, 7.5f, -2.0f);
+desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(28.5f, 7.5f, -2.0f);
-			desc.scale = Vector3(5.0f, 0.1f, 0.1f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc);
+desc.pos = OFFSET + Vector3(28.5f, 7.5f, -2.0f);
+desc.scale = Vector3(5.0f, 0.1f, 0.1f);
+desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
+ObstacleFactory::Create(pScene, desc);
 
 
-			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		{
-			// Protrude 배치
-			desc.detailTags = {
-				(uint8_t)Content::Config::ETagEnvDetail::Protrude,
+		// Protrude 배치
+		desc.detailTags = {
+			(uint8_t)Content::Config::ETagEnvDetail::Protrude,
+		};
+		desc.color = Vector3(0.75f, 0.25f, 0.25f);
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+		desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+
+		// 구간 1
+		desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+		ObstacleFactory::Create(pScene, desc)->SetName("P1");
+
+		desc.pos = OFFSET + Vector3(1.5f, 2.5f, -5.0f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+		ObstacleFactory::Create(pScene, desc)->SetName("P2");
+
+		desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+		ObstacleFactory::Create(pScene, desc)->SetName("P3");
+
+		desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+		ObstacleFactory::Create(pScene, desc)->SetName("P4");
+
+		desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+		ObstacleFactory::Create(pScene, desc)->SetName("P5");
+
+
+		// 구간 3
+		desc.pos = OFFSET + Vector3(19.0f, 7.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
+		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+		ObstacleFactory::Create(pScene, desc);
+		}
+	}
+	{
+		const Vector3 OFFSET(-15.0, 0.0f, 0.0f);
+
+		{
+			// 절벽
+			Obstacle::ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.detailTags = { 0U };
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		
+			desc.pos = OFFSET + Vector3(-20.0f, 25.0f, 0.0f);
+			desc.scale = Vector3(3.0f, 50.0f, 100.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff");
+
+			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, -6.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 1");
+
+			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, 6.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 2");
+		}
+		{
+			// 비정형 나무 // 나무 등 기둥
+			Obstacle::ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.detailTags = 
+			{
+				(uint8_t)Content::Config::ETagEnvDetail::Pole,
+				(uint8_t)Content::Config::ETagAxis::X,
 			};
-			desc.color = Vector3(0.75f, 0.25f, 0.25f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
-			// 구간 1
-			desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P1");
-
-			desc.pos = OFFSET + Vector3(1.5f, 2.5f, -5.0f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P2");
-
-			desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P3");
-
-			desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P4");
-
-			desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P5");
-
-
-			// 구간 3
-			desc.pos = OFFSET + Vector3(19.0f,7.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
-
-			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
-			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, 6.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole");
 		}
+		
+
+		// 로프
+
+		// vault 깊이 다양화
+
 	}
 	{
 		// 캐릭터 생성

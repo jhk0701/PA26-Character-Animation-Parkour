@@ -117,6 +117,8 @@ namespace Content::Config
 			{ "Default",	ETagEnvDetail::Default },
 			{ "Beam",		ETagEnvDetail::Beam },
 			{ "Protrude",	ETagEnvDetail::Protrude },
+			{ "Pole",		ETagEnvDetail::Pole },
+			{ "Customize",	ETagEnvDetail::Customize },
 		};
 
 		// 추가 검사

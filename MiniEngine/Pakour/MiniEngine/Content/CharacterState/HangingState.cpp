@@ -17,7 +17,7 @@ void HangingState::OnStart()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
-	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.2f);
 	pChar->ReserveIKDetectWall();
 
 	pChar->SetIKPoleVector((uint8_t)ELimbType::LeftArm,		Vector3(-1.0f, -1.0f, -0.5f));
@@ -40,7 +40,7 @@ void HangingState::OnEnd()
 
 void HangingState::Tick(float _dt) {}
 
-void HangingState::LateTick(float _dt){ }
+void HangingState::LateTick(float _dt) {}
 
 void HangingState::Refresh()
 {
