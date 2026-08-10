@@ -57,6 +57,8 @@ namespace MiniEngine
 			m_overrideTrack.m_pClip == nullptr)
 			return;
 
+		_dt *= m_overrideTrack.m_pClip->GetSpeed(); // 클립의 배속 정보 추가
+
 		const Skeleton& skeleton = GetSkeleton();
 
 		// root motion 추출
@@ -141,6 +143,7 @@ namespace MiniEngine
 		m_overrideTrack.m_actionDuration = _action->GetDuration();
 
 		m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - _fadeDuration;
+
 		if (m_overrideTrack.m_actionEndTime < 0.0f)
 			m_overrideTrack.m_actionEndTime = m_overrideTrack.m_actionDuration - 0.01f;
 

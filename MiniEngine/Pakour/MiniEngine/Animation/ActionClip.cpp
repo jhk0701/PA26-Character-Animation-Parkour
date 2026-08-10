@@ -31,8 +31,8 @@ namespace MiniEngine
 			return;
 		}
 
-		const float MUL_SPD_DT = _dt * m_speed;
-		m_playTime += MUL_SPD_DT;
+		// 배속된 값이 부모에서 곱해져서 내려올 것
+		m_playTime += _dt;
 
 		bool bIsLast = false;
 		const float END_TIME = GetEndTime();
@@ -46,8 +46,9 @@ namespace MiniEngine
 		// 포즈는 바로 적용할 것
 		m_clip->SampleTRS(m_playTime, _skeleton, _outPose);
 		
+		// 노티파이 호출
 		for (const std::shared_ptr<IAnimNotify>& n : m_vecNotify)
-			n->Update(MUL_SPD_DT, _notifyParam);
+			n->Update(_dt, _notifyParam);
 
 		if (bIsLast)
 		{
@@ -92,5 +93,4 @@ namespace MiniEngine
 		m_startOffset = _startOffset;
 		m_endOffset = _endOffset;
 	}
-
 }

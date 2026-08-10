@@ -48,7 +48,11 @@ namespace MiniEngine
 		const RootMotionConfig& GetRootMotionConfig() const { return m_rootMotionConfig; }
 
 		void SetSpeed(const float _spd);
+		float GetSpeed() const { return m_speed; }
+		
 		void SetOffset(const float _startOffset, const float _endOffset);
+		const float GetStartTime() const;
+		const float GetEndTime() const;
 
 	private:
 		bool m_bIsPlaying{ false };
@@ -63,8 +67,5 @@ namespace MiniEngine
 
 		AnimClip* m_clip{ nullptr };
 		std::vector<std::shared_ptr<IAnimNotify>> m_vecNotify;
-
-		const float GetStartTime() const;
-		const float GetEndTime() const;
 	};
 }
