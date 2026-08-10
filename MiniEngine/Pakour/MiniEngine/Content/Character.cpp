@@ -43,6 +43,7 @@ namespace
 		"Hanging",
 		"BeamStand",
 		"BeamHanging",
+		"PoleHanging",
 	};
 
 	// 누락 체크용 매크로
@@ -151,7 +152,8 @@ void Character::Construct(const Vector3& _initPosition, const std::wstring& _cha
 				std::make_shared<InAirState>(),
 				std::make_shared<HangingState>(),
 				std::make_shared<BeamStandState>(),
-				std::make_shared<BeamHangingState>()
+				std::make_shared<BeamHangingState>(),
+				std::make_shared<PoleHangingState>()
 			});
 		m_charFSM = pCharFSM;
 	}

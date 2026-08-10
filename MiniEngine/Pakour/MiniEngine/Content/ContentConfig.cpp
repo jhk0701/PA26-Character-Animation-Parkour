@@ -34,6 +34,7 @@ namespace Content::Config
 
 			{ "Wall_IdleToHang",			ETagAct::Wall_IdleToHang },
 			{ "Wall",						ETagAct::Wall },
+			{ "Wall_RunToHang",				ETagAct::Wall_RunToHang },
 			{ "Wall_AirToHang",				ETagAct::Wall_AirToHang },
 			{ "Wall_HangToIdle",			ETagAct::Wall_HangToIdle },
 			{ "Wall_HangToMantle",			ETagAct::Wall_HangToMantle },
@@ -76,6 +77,13 @@ namespace Content::Config
 
 			{ "Protrude_InAirMoveToPoint",		ETagAct::Protrude_InAirMoveToPoint },
 			{ "Protrude_LandingMoveToPoint",	ETagAct::Protrude_LandingMoveToPoint },
+
+			{ "Pole_IdleToHang",				ETagAct::Pole_IdleToHang },
+			{ "Pole_AirToHang",					ETagAct::Pole_AirToHang },
+			{ "Pole_HangingMoveUp",				ETagAct::Pole_HangingMoveUp },
+			{ "Pole_HangingMoveDown",			ETagAct::Pole_HangingMoveDown },
+			{ "Pole_HangingMoveLeft",			ETagAct::Pole_HangingMoveLeft },
+			{ "Pole_HangingMoveRight",			ETagAct::Pole_HangingMoveRight },
 
 			{ "Test",						ETagAct::Test },
 		};

@@ -5,17 +5,31 @@
 class HangingState : public RotateFixState
 {
 public:
-	void OnStart() override;
-	void OnEnd() override;
-	void Tick(float _dt) override;
-	void LateTick(float _dt) override;
+	virtual ~HangingState() {};
+	
+	virtual void OnStart() override;
+	virtual void OnEnd() override;
+	virtual void Tick(float _dt) override;
+	virtual void LateTick(float _dt) override;
 	void Refresh() override;
 
 	IObstacle* GetCurrentObstacle() const override;
 
+protected:
+	void AlignToNormal();
+	void ClearCurObstacle() { m_pCurrentObstacle = nullptr; }
 
 private:
-	void AlignToNormal();
-
 	IObstacle* m_pCurrentObstacle;
+};
+
+class PoleHangingState : public HangingState 
+{
+public:
+	void OnStart() override;
+	void OnEnd() override;
+	void Tick(float _dt) override;
+
+private:
+	void ProcessMovement(float _dt);
 };

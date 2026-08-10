@@ -22,7 +22,8 @@
             "StateInAir",
             "StateHanging",
             "StateBeam",
-            "StateBeam"
+            "StateBeam",
+            "StateHanging"
         ]
     },
 

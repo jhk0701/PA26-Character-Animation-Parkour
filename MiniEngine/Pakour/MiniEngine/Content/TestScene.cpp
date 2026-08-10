@@ -451,14 +451,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		// 구간 1
-		desc.pos = OFFSET + Vector3(-1.0f, 3.0f, -5.0f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-		ObstacleFactory::Create(pScene, desc)->SetName("P1");
-
-		desc.pos = OFFSET + Vector3(1.5f, 2.5f, -5.0f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-		ObstacleFactory::Create(pScene, desc)->SetName("P2");
-
 		desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
 		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
 		ObstacleFactory::Create(pScene, desc)->SetName("P3");
@@ -512,7 +504,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	}
 	{
 		const Vector3 OFFSET(-10.0f, 0.0f, 0.0f);
-
 		{
 			// 절벽
 			Obstacle::ObstacleDesc desc;
@@ -614,6 +605,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		}
 
 		// vault 깊이 다양화
+		{
+			Obstacle::ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.detailTags = { 0U };
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+
+			desc.pos = OFFSET + Vector3(0.0f, 0.5f, -10.0f);
+			desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+
+			// 전진 입력이 계속되고 잇다면 mantle이 아니라
+			// 더 범위가 넓게 움직이는 vault가 호출되는지 확인
+			ObstacleFactory::Create(pScene, desc)->SetName("Vault Var 2"); 
+		}
 
 		// 로프 액션 - 도구 사용
 	}
@@ -637,6 +641,6 @@ void TestScene::BeginPlay()
 
 #ifdef MG_DEBUG
 	ApplyMarkerDebug(true);
-	ApplyPhysicsDebug(true);
+	// ApplyPhysicsDebug(true);
 #endif // MG_DEBUG
 }

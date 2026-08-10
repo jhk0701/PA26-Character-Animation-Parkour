@@ -31,7 +31,7 @@ void HangingState::OnEnd()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
 
-	m_pCurrentObstacle = nullptr;
+	ClearCurObstacle();
 	pChar->ClearIKReserve();
 
 	pChar->SetIKPoleVector((uint8_t)ELimbType::LeftArm,		Vector3(-1.0f, 0.0f, -1.0f));
@@ -39,7 +39,6 @@ void HangingState::OnEnd()
 }
 
 void HangingState::Tick(float _dt) {}
-
 void HangingState::LateTick(float _dt) {}
 
 void HangingState::Refresh()
@@ -72,4 +71,31 @@ void HangingState::AlignToNormal()
 	Quaternion rot;
 	if (TryYawRotateToward(nrm, rot))
 		pChar->GetRoot()->localTransform.rotation = rot;
+}
+
+
+void PoleHangingState::OnStart()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
+	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.2f);
+
+	Refresh();
+}
+
+void PoleHangingState::OnEnd()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	pChar->SetUseGravity(true); // 매달림 해제
+
+	ClearCurObstacle();
+}
+
+void PoleHangingState::Tick(float _dt)
+{
+	ProcessMovement(_dt);
+}
+
+void PoleHangingState::ProcessMovement(float _dt)
+{
 }

@@ -21,6 +21,11 @@
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Protrude"
         },
+        {
+            "id": "IsPole",
+            "class": "ObstacleTypeCondition",
+            "targetObstacleType" : "Pole"
+        },
 
         {
             "id": "IsLandingState",
@@ -46,6 +51,11 @@
             "id": "IsBeamHangingState",
             "class": "CharacterStateCondition",
             "targetCharStateType" : "BeamHanging"
+        },
+        {
+            "id": "IsPoleHangingState",
+            "class": "CharacterStateCondition",
+            "targetCharStateType" : "PoleHanging"
         },
 
         {
@@ -149,6 +159,13 @@
             "children" : [ "IsLandingState", "IsDefault", "HeightCheck_Wall" ]
         },
         {
+            "id": "Landing_To_PoleHang",
+            "comment" : "Landing -> Wall_Hanging (Idle To Hang)",
+            "class": "ConditionAnd",
+            "children" : [ "IsLandingState", "IsPole", "HeightCheck_Wall" ]
+        },
+
+        {
             "id": "Landing_VaultHigh",
             "class": "ConditionAnd",
             "children" : [ 
@@ -176,6 +193,11 @@
             "children" : [ "IsInAirState", "IsDefault", "HeightCheck_Wall" ]
         },
         {
+            "id": "InAir_ToPoleHanging",
+            "class": "ConditionAnd",
+            "children" : [ "IsInAirState", "IsPole", "HeightCheck_Wall" ]
+        },
+        {
             "id": "InAir_ToMantleAttach",
             "class": "ConditionAnd",
             "children" : [ "IsInAirState", "IsDefault", "IsLedgeDetected", "IsDeeper" ]
@@ -191,7 +213,6 @@
             "class": "ConditionAnd",
             "children" : ["IsHangingState", "IsDefault", "IsNotChanged"]
         },
-
         {
             "id": "Hanging_MoveUp",
             "class": "ConditionAnd",
@@ -211,6 +232,22 @@
             "id": "Hanging_MoveRight",
             "class": "ConditionAnd",
             "children" : [ "Hanging_MoveCommonCondition", "IsInputRight" ]
+        },
+        
+        {
+            "id" : "PoleHanging_MoveCommonCondition",
+            "class": "ConditionAnd",
+            "children" : ["IsPoleHangingState", "IsPole", "IsNotChanged"]
+        },
+        {
+            "id": "PoleHanging_MoveUp",
+            "class": "ConditionAnd",
+            "children" : [ "PoleHanging_MoveCommonCondition", "IsInputUp" ]
+        },
+        {
+            "id": "PoleHanging_MoveDown",
+            "class": "ConditionAnd",
+            "children" : [ "PoleHanging_MoveCommonCondition", "IsInputDown" ]
         },
 
         {
@@ -372,6 +409,44 @@
 
         {
             "tagAct" : "Wall_AirToHang",
+            "conditionId" : "Beam_ToHanging"
+        },
+        {
+            "tagAct" : "Beam_StandToIdle",
+            "conditionId" : "BeamStand_ToLanding"
+        },
+        {
+            "tagAct" : "Beam_HangToIdle",
+            "conditionId" : "BeamHanging_ToLanding"
+        },
+        {
+            "tagAct" : "Beam_IdleToStand",
+            "conditionId" : "ToBeamStand"
+        },
+        {
+            "tagAct" : "Beam_IdleToHang",
+            "conditionId" : "ToBeamHanging"
+        },
+
+        {
+            "tagAct" : "Pole_IdleToHang",
+            "conditionId" : "Landing_To_PoleHang"
+        },
+        {
+            "tagAct" : "Pole_AirToHang",
+            "conditionId" : "InAir_ToPoleHanging"
+        }, 
+        {
+            "tagAct" : "Pole_HangingMoveUp",
+            "conditionId" : "PoleHanging_MoveUp"
+        }, 
+        {
+            "tagAct" : "Pole_HangingMoveDown",
+            "conditionId" : "PoleHanging_MoveDown"
+        }, 
+
+        {
+            "tagAct" : "Wall_AirToHang",
             "conditionId" : "InAir_ToHanging"
         },
         {
@@ -436,33 +511,11 @@
             "tagAct" : "Wall_HangingMoveRight",
             "conditionId" : "Hanging_MoveRight"
         },
-
         {
-            "tagAct" : "Wall_IdleToHang",
-            "conditionId" : "Beam_ToHanging"
-        },
-        {
-            "tagAct" : "Beam_StandToIdle",
-            "conditionId" : "BeamStand_ToLanding"
-        },
-        {
-            "tagAct" : "Beam_HangToIdle",
-            "conditionId" : "BeamHanging_ToLanding"
-        },
-
-        {
-            "tagAct" : "Beam_IdleToStand",
-            "conditionId" : "ToBeamStand"
-        },
-        {
-            "tagAct" : "Beam_IdleToHang",
-            "conditionId" : "ToBeamHanging"
-        },
-
-        {
-            "tagAct" : "Wall_IdleToHang",
+            "tagAct" : "Wall_RunToHang",
             "conditionId" : "Landing_Wall_IdleToHang"
         },
+
         {
             "tagAct" : "VaultHigh",
             "conditionId" : "Landing_VaultHigh"

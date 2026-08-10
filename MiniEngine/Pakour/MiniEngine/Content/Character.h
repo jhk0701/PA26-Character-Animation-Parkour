@@ -33,6 +33,7 @@ public:
 		Hanging,
 		BeamStand,
 		BeamHanging,
+		PoleHanging,
 
 		End
 	};

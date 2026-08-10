@@ -59,7 +59,8 @@ namespace Content::Config
 
 		// Wall 벽면 매달리기
 		Wall,
-		Wall_IdleToHang = Wall,		// 매달리기 시작
+		Wall_IdleToHang = Wall,		// 매달리기 시작 : 일반적인 idle -> Hanging
+		Wall_RunToHang,				// 매달리기 시작 : 테스트 : 뛰다가 벽에 매달리는 경우
 		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우
 		Wall_HangToIdle,		// 매달리기에서 내려옴
 		Wall_HangToMantle,			// 매달린 상태에서 꼭대기에 오름
@@ -103,6 +104,13 @@ namespace Content::Config
 
 		Protrude_InAirMoveToPoint,
 		Protrude_LandingMoveToPoint,
+
+		Pole_IdleToHang,
+		Pole_AirToHang,
+		Pole_HangingMoveUp,
+		Pole_HangingMoveDown,
+		Pole_HangingMoveLeft,
+		Pole_HangingMoveRight,
 
 		Test,
 		End

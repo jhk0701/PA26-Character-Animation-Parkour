@@ -93,7 +93,6 @@ void BeamState::AdjustPositionToObstacleInfo()
 	obsInfo.m_obstacleHitPos.z = POS.z;
 }
 
-
 // Beam Stand
 void BeamStandState::Tick(float _dt)
 {

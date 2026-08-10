@@ -91,6 +91,16 @@
                     "comment": "A_Hanging_Idle"
                 }
             ]
+        },
+        {
+            "state": "PoleHanging",
+            "samples": [
+                {
+                    "coord": [ 0, 0 ],
+                    "clip": 48,
+                    "comment": "Idle"
+                }
+            ]
         }
     ],
     "actions": [
@@ -489,6 +499,48 @@
                     "class": "CorrectRootMotion",
                     "time": [ 0, 0.8 ],
                     "properDistance": 0.5
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Wall_RunToHang" ],
+            "clip": 47,
+            "rootMotion": { "apply": true, "z" : false, "y" : false },
+            "comment": "Landing Runing -> Wall Hanging",
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Hanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.2 ],
+                    "properDistance": 0.5
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.9 ],
+                    "midOffset" : [ 0, 0.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
                 }
             ]
         },
@@ -853,8 +905,8 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.25, 0.7 ],
-                    "midOffset": [ 0, 0, -0.5],
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 1.0, -0.5],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 },
                 {
@@ -906,8 +958,8 @@
                 },
                 {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.25, 0.7 ],
-                    "midOffset": [ 0, 0, -0.5 ],
+                    "time": [ 0.2, 0.7 ],
+                    "midOffset": [ 0, 1.0, -0.5 ],
                     "endOffset": [ 0, -1.85, -0.5 ]
                 },
                 {
@@ -1323,6 +1375,76 @@
                     "state": "InAir"
                 }
             ]
+        },
+        {
+            "tags": [ "Pole_IdleToHang" ],
+            "clip": 47,
+            "rootMotion": { "apply": true, "z" : false, "y" : false },
+            "comment": "Landing Runing -> Pole Hanging",
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "PoleHanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.2 ],
+                    "properDistance": 0.5
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.9 ],
+                    "midOffset" : [ 0, 0.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
+                }
+            ]
+        },  
+        {
+            "tags": [ "Pole_AirToHang" ],
+            "clip": 49,
+            "rootMotion": { "apply": true, "z" : false },
+            "comment": "In Air -> Pole Hanging",
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "PoleHanging"
+                },
+                {
+                    "class": "CorrectRootMotion",
+                    "time": [ 0, 0.4 ],
+                    "properDistance": 0.5
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Pole_HangingMoveUp" ],
+            "clip": 50,
+            "rootMotion": { "apply": true, "z" : false }
+        },
+        {
+            "tags": [ "Pole_HangingMoveDown" ],
+            "clip": 51,
+            "rootMotion": { "apply": true, "z" : false }
         }
 
     ]
