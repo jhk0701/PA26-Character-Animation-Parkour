@@ -13,7 +13,7 @@ void CharacterController::Construct()
 
 	std::shared_ptr<SceneComponent> pCamHolder = AddComponent<SceneComponent>();
 	pCamHolder->AttachTo(GetRoot());
-	pCamHolder->localTransform.position = Vector3(0.0f, 2.0f, 0.0f);
+	pCamHolder->localTransform.position = Vector3(0.0f, 1.0f, 0.0f);
 
 	std::shared_ptr<CameraComponent> pCamComp = AddComponent<CameraComponent>();
 	pCamComp->RegisterMainCamera();

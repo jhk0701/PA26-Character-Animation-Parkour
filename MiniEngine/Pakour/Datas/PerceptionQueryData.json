@@ -103,7 +103,7 @@
         {
             "id": "StateInAir",
             "class": "CheckObstacleNode",
-            "heightMultiplier": 2.0,
+            "heightMultiplier": 1.5,
             "children": [
                 "InAirObstacleFoundSeq",
                 "Empty"

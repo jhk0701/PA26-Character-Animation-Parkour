@@ -178,12 +178,12 @@
         {
             "id": "InAir_ToMantleAttach",
             "class": "ConditionAnd",
-            "children" : [ "IsInAirState", "IsDefault", "IsDeeper" ]
+            "children" : [ "IsInAirState", "IsDefault", "IsLedgeDetected", "IsDeeper" ]
         },
         {
             "id": "InAir_ToVaultAttach",
             "class": "ConditionAnd",
-            "children" : [ "IsInAirState", "IsDefault", "IsNotDeeper" ]
+            "children" : [ "IsInAirState", "IsDefault", "IsLedgeDetected", "IsNotDeeper" ]
         },
 
         {
