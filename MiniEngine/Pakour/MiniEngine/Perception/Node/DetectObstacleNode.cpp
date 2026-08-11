@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Perception/Node/DetectObstacle.h"
+#include "Perception/Node/DetectObstacleNode.h"
 #include "Perception/Node/PerceptionNodeUtil.h"
 #include "Perception/Interface/IObstacle.h"
 #include "Perception/Interface/IPerceptionProcessor.h"
@@ -52,22 +52,8 @@ void DetectObstacle::FilterResults(
 
 void DetectObstacle::ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outPos, Vector3& _outDir) const
 {
-	const Vector3& OFFSET = GetStartOffset();
-	Vector3 startPos = _inOwnerTf.position;
-	startPos += OFFSET.x * _inOwnerTf.Right();
-	startPos += OFFSET.y * _inOwnerTf.Up();
-	startPos += OFFSET.z * _inOwnerTf.Forward();
-
-	_outPos = startPos;
-
-	const Vector3& DIR = GetDirection();
-	Vector3 dir(0.0f);
-	dir += DIR.x * _inOwnerTf.Right();
-	dir += DIR.y * _inOwnerTf.Up();
-	dir += DIR.z * _inOwnerTf.Forward();
-	dir.Normalize();
-
-	_outDir = dir;
+	LocalizePosition(_inOwnerTf, GetStartOffset(), _outPos);
+	LocalizeDirection(_inOwnerTf, GetDirection(), _outDir);
 }
 
 EPerceptionResult DetectObstacleCapsule::InvokeTask(TravelContext& _context, TravelResult& _result)
@@ -88,11 +74,6 @@ EPerceptionResult DetectObstacleCapsule::InvokeTask(TravelContext& _context, Tra
 
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
-
-	/*
-	Vector3 debugEnd = capParam.m_startPos + capParam.m_dir * capParam.m_maxDistance;
-	MiniEngine::Debug::DrawLine(capParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
-	*/
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
@@ -125,12 +106,6 @@ EPerceptionResult DetectObstacleSphere::InvokeTask(TravelContext& _context, Trav
 
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
-
-	/*
-		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
-		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
-		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
-	*/
 
 	RaycastMultipleResult hits;
 	if (_context.m_physics->SphereCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)

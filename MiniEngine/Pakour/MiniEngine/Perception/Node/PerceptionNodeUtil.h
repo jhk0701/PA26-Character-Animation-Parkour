@@ -1,7 +1,12 @@
 #pragma once
 #include "Perception/PerceptionComponent.h"
 
-namespace MiniEngine { class Actor; class IObstacle; }
+namespace MiniEngine 
+{ 
+	class Actor; 
+	class IObstacle; 
+	struct Transform; 
+}
 class Character;
 
 namespace PerceptionNodeUtil 
@@ -18,6 +23,8 @@ namespace PerceptionNodeUtil
 		_context.m_ledge = _result.m_pos.y;
 	}
 
+	void LocalizePosition(const MiniEngine::Transform& _inTf, const MiniEngine::Vector3& _inOffset, MiniEngine::Vector3& _outResult);
+	void LocalizeDirection(const MiniEngine::Transform& _inTf, const MiniEngine::Vector3& _inDir, MiniEngine::Vector3& _outResult);
 
 	std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor);
 	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);

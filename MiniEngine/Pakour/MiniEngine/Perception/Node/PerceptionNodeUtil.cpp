@@ -23,6 +23,25 @@ namespace PerceptionNodeUtil
 		return dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_p));
 	}
 
+	void LocalizePosition(const Transform& _inTf, const Vector3& _inOffset, Vector3& _outResult)
+	{
+		_outResult = _inTf.position;
+
+		_outResult += _inOffset.x * _inTf.Right();
+		_outResult += _inOffset.y * _inTf.Up();
+		_outResult += _inOffset.z * _inTf.Forward();
+	}
+
+	void LocalizeDirection(const Transform& _inTf, const Vector3& _inDir, Vector3& _outResult)
+	{
+		_outResult = Vector3(0.0f);
+		
+		_outResult += _inDir.x * _inTf.Right();
+		_outResult += _inDir.y * _inTf.Up();
+		_outResult += _inDir.z * _inTf.Forward();
+		_outResult.Normalize();
+	}
+
 	// 이하 코드 -> 콘텐츠용
 	// 엔진단에선 제거할 것
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor)

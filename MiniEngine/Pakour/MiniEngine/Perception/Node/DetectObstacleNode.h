@@ -28,6 +28,7 @@ protected:
 		std::shared_ptr<IPerceptionProcessor>& _pProcessor,
 		TravelContext& _context,
 		MiniEngine::Physics::RaycastMultipleResult& _result) const;
+
 	void ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outPos, Vector3& _outDir) const;
 
 	const Vector3& GetStartOffset() const { return m_startOffset; }
@@ -45,7 +46,7 @@ private:
 class DetectObstacleCapsule : public DetectObstacle 
 {
 public:
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result);
+	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 
 	void SetCapsuleRadius(const float _r) { m_capsuleRadius = _r; }
 	void SetCapsuleHeight(const float _h) { m_capsuleHeight = _h; }
@@ -58,7 +59,7 @@ private:
 class DetectObstacleSphere : public DetectObstacle 
 {
 public:
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result);
+	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 
 	void SetRadius(const float _r) { m_radius = _r; }
 

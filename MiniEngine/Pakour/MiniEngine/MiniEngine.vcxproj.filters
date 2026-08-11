@@ -427,10 +427,13 @@
     <ClInclude Include="Perception\Interface\IPerceptionProcessor.h">
       <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Perception\Node\DetectObstacle.h">
+    <ClInclude Include="Perception\Node\PerceptionNodeUtil.h">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
-    <ClInclude Include="Perception\Node\PerceptionNodeUtil.h">
+    <ClInclude Include="Perception\Node\DetectObstacleNode.h">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\MeasureObstacleNode.h">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
   </ItemGroup>
@@ -702,10 +705,13 @@
     <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp">
       <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
     </ClCompile>
-    <ClCompile Include="Perception\Node\DetectObstacle.cpp">
+    <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
-    <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp">
+    <ClCompile Include="Perception\Node\DetectObstacleNode.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\MeasureObstacleNode.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
   </ItemGroup>
