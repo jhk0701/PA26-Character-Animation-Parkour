@@ -6,7 +6,7 @@
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 
 #include "Core/Log.h"
 

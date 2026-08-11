@@ -20,7 +20,7 @@
 #include "Perception/ProcessorComponent.h"
 
 #include "Content/ContentConfig.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 #include "Content/Data/CharacterAnimData.h"
 #include "Content/Data/ActionClipContainer.h"
 #include "Content/Data/PerceptionQueryTree.h"
@@ -199,11 +199,11 @@ void Character::BeginPlay()
 
 void Character::LoadData()
 {
-	std::shared_ptr<CharacterPerceptionConfig> pConfig;
-	if (DataManager::GetInstance()->TryGetDataAsset<CharacterPerceptionConfig>(L"CharacterPerceptionConfig.json", pConfig) == false)
-		MG_LOG_ERROR("[Character::LoadData] CharacterPerceptionConfig.json not found.");
+	std::shared_ptr<CharacterConfigData> pConfig;
+	if (DataManager::GetInstance()->TryGetDataAsset<CharacterConfigData>(L"CharacterConfig.json", pConfig) == false)
+		MG_LOG_ERROR("[Character::LoadData] CharacterConfig.json not found.");
 
-	m_pPerceptionConfig = pConfig;
+	m_pConfig = pConfig;
 
 	// 지형 인식 트리
 	std::shared_ptr<PerceptionQueryData> pQueryData;
@@ -617,9 +617,9 @@ void Character::PlayActionClip(std::shared_ptr<ActionClip> _clip, float _transit
 
 const PerceptionConfig& Character::GetPerceptionConfig() const
 {
-	if (m_pPerceptionConfig.expired())
+	if (m_pConfig.expired())
 	{
-		static const PerceptionConfig FALLBACK;
+		static const CharacterConfig FALLBACK;
 		static bool bWarned = false;
 
 		if (bWarned == false)
@@ -631,13 +631,32 @@ const PerceptionConfig& Character::GetPerceptionConfig() const
 		return FALLBACK;
 	}
 
-	return m_pPerceptionConfig.lock()->Config;
+	return m_pConfig.lock()->Config;
+}
+const CharacterConfig& Character::GetConfig() const
+{
+	if (m_pConfig.expired())
+	{
+		static const CharacterConfig FALLBACK;
+		static bool bWarned = false;
+
+		if (bWarned == false)
+		{
+			bWarned = true;
+			MG_LOG_ERROR("[Character::GetConfig] config not loaded. using default values.");
+		}
+
+		return FALLBACK;
+	}
+
+	return m_pConfig.lock()->Config;
 }
 
 IObstacle* Character::GetCurrentObstacle() const
 {
 	return m_charFSM.lock()->GetCurrentObstacle();
 }
+
 
 void Character::TransitionStateMachine(uint8_t _state)
 {

@@ -4,7 +4,7 @@
 
 #include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 
 #include "Content/ContentConfig.h"
 

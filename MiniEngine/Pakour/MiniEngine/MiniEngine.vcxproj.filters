@@ -388,7 +388,7 @@
     <ClInclude Include="Core\EngineConfig.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Data\CharacterPerceptionConfig.h">
+    <ClInclude Include="Content\Data\CharacterConfigData.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
     <ClInclude Include="Content\Data\ActionClipContainer.h">
@@ -666,7 +666,7 @@
     <ClCompile Include="Core\EngineConfig.cpp">
       <Filter>Engine\02.Core</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp">
+    <ClCompile Include="Content\Data\CharacterConfigData.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
     <ClCompile Include="Content\Data\ActionClipContainer.cpp">

@@ -5,7 +5,7 @@
 
 #include "Scene/Actor.h"
 #include "Content/ContentConfig.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 
 #include "Core/Log.h"
 

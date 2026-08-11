@@ -5,7 +5,7 @@
 #include "Scene/Scene.h"
 #include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 
 #include "Core/Log.h"
 #include "Core/DebugMarkers.h"

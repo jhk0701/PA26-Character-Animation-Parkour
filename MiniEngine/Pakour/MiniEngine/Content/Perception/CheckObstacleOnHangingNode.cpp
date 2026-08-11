@@ -2,7 +2,7 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
 #include "Content/Character.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 #include "Physics/PhysicsWorld.h"
 
 #include "Core/DebugMarkers.h"
@@ -15,13 +15,13 @@ using namespace PerceptionNodeUtil;
 bool CheckOnHangingMoveUpNode::InvokeCondition(TravelContext& _context)
 {
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const CharacterConfig& CHAR_CONFIG = pChar->GetConfig();
 
 	SpherecastParam param;
 	param.m_startPos = GetCharacterCenterPosition(_context);
 	param.m_dir = Vector3(0.0f, 1.0f, 0.0f);
-	param.m_maxDistance = CONFIG.onHangingSearchDist;
-	param.m_radius = CONFIG.onHangingSearchRadius;
+	param.m_maxDistance = CHAR_CONFIG.onHangingSearchDist;
+	param.m_radius = CHAR_CONFIG.onHangingSearchRadius;
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
@@ -39,7 +39,7 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	// MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] Check Upper Ledge");
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const CharacterConfig& CHAR_CONFIG = pChar->GetConfig();
 
 	Vector3 startPos = GetCharacterHeadPosition(_context);
 	startPos += TF.Right() * m_startOffset.x;
@@ -47,7 +47,7 @@ bool CheckOnHangingUpwardLedgeNode::InvokeCondition(TravelContext& _context)
 	startPos += TF.Forward() * m_startOffset.z;
 	
 	RaycastResult result;
-	if (CheckLedgeMultiple(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CONFIG.ledgeDetectRadius, CONFIG.onHangingSearchDist, result) == false)
+	if (CheckLedgeMultiple(_context, startPos, Vector3(0.0f, 1.0f, 0.0f), CHAR_CONFIG.ledgeDetectRadius, CHAR_CONFIG.onHangingSearchDist, result) == false)
 	{
 		// MG_LOG_INFO("[CheckOnHangingUpwardLedgeNode::InvokeCondition] No Ledge");
 		return false;
@@ -66,7 +66,7 @@ bool CheckOnHangingMoveDownNode::InvokeCondition(TravelContext& _context)
 	RaycastParam param;
 	param.m_origin = pChar->GetRoot()->localTransform.position;
 	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-	param.m_maxDistance = pChar->GetPerceptionConfig().onHangingSearchDist;
+	param.m_maxDistance = pChar->GetConfig().onHangingSearchDist;
 
 	RaycastResult result;
 	if (_context.m_physics->Raycast(param, result, Layer::Obstacle | Layer::Ground) == false)
@@ -80,7 +80,7 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 {
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const CharacterConfig& CHAR_CONFIG = pChar->GetConfig();
 
 	Vector3 startOffset(0.0f);
 	startOffset += TF.Right() * m_startOffset.x;
@@ -90,8 +90,8 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	SpherecastParam param;
 	param.m_startPos = GetCharacterCenterPosition(_context) + startOffset;
 	param.m_dir = pChar->GetInputDir().x > 0.0f ? TF.Right() : -TF.Right();
-	param.m_maxDistance = CONFIG.onHangingSearchDist;
-	param.m_radius = CONFIG.onHangingSearchRadius;
+	param.m_maxDistance = CHAR_CONFIG.onHangingSearchDist;
+	param.m_radius = CHAR_CONFIG.onHangingSearchRadius;
 
 	// MiniEngine::Debug::DrawLine(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, 0.1f);
 	// MiniEngine::Debug::DrawPoint(param.m_startPos + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.1f);
@@ -108,7 +108,7 @@ bool CheckOnHangingMoveSideNode::InvokeCondition(TravelContext& _context)
 	// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Height");
 	
 	// 매달리는 상황은 아닌 경우
-	if (BAND < CONFIG.maxHeightStep)
+	if (BAND < CHAR_CONFIG.maxHeightStep)
 	{
 		MeasureObstacleDepth(_context, param.m_dir); // 깊이 측정
 		// MG_LOG_INFO("[CheckOnHangingMoveSideNode] Measure Depth");
@@ -123,7 +123,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const CharacterConfig& CHAR_CONFIG = pChar->GetConfig();
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
 	Vector3 offset(0.0f);
@@ -153,7 +153,7 @@ bool CheckObstacleTowardInputDirNode::InvokeCondition(TravelContext& _context)
 
 	dir.Normalize();
 
-	return CheckObstacleSphere(_context, pos, dir, CONFIG.onHangingSearchDist, CONFIG.onHangingSearchRadius, true);
+	return CheckObstacleSphere(_context, pos, dir, CHAR_CONFIG.onHangingSearchDist, CHAR_CONFIG.onHangingSearchRadius, true);
 }
 
 bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
@@ -162,7 +162,7 @@ bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 
 	std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 	const Transform& TF = pChar->GetRoot()->localTransform;
-	const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+	const CharacterConfig& CHAR_CONFIG = pChar->GetConfig();
 	const Vector2 INPUT_DIR = pChar->GetInputDir();
 
 	Vector3 startPos = GetCharacterCenterPosition(_context);
@@ -182,11 +182,11 @@ bool CheckOnHangingMoveToInputDirNode::InvokeCondition(TravelContext& _context)
 	startOffset += TF.Forward() * m_startOffset.z;
 	startPos += startOffset;
 
-	startPos += (dir * CONFIG.onHangingMovableRange);
+	startPos += (dir * CHAR_CONFIG.onHangingMovableRange);
 
 	RaycastParam param;
 	param.m_origin = startPos;
-	param.m_maxDistance = CONFIG.onHangingSearchFwdDist;
+	param.m_maxDistance = CHAR_CONFIG.onHangingSearchFwdDist;
 	param.m_dir = TF.Forward();
 
 	RaycastResult result;

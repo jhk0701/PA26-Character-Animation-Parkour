@@ -2,7 +2,7 @@
 #include "Content/CharacterState/LandingState.h"
 #include "Scene/Scene.h"
 #include "Perception/Interface/IObstacle.h"
-#include "Content/Data/CharacterPerceptionConfig.h"
+#include "Content/Data/CharacterConfigData.h"
 #include "Core/Log.h"
 #include "Core/DebugMarkers.h"
 
@@ -65,7 +65,7 @@ bool LandingState::IsOnFloor()
 	MiniEngine::Physics::RaycastParam param;
 	param.m_origin = pChar->GetRoot()->localTransform.position;
 	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-	param.m_maxDistance = pChar->GetPerceptionConfig().onLandingFallingCheckDist;
+	param.m_maxDistance = pChar->GetConfig().onLandingFallingCheckDist;
 
 	MiniEngine::Physics::RaycastResult result;
 	return pPhysic->Raycast(param, result, MiniEngine::Physics::Layer::Ground | MiniEngine::Physics::Layer::Obstacle);

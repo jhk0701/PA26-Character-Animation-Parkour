@@ -22,8 +22,8 @@ namespace MiniEngine
 using namespace MiniEngine;
 
 class CharacterStateMachine;
-class CharacterPerceptionConfig;
-struct PerceptionConfig;
+class CharacterConfigData;
+struct CharacterConfig;
 class Character : public Pawn, public IPerceptionProcessor
 {
 public:
@@ -122,6 +122,8 @@ public:
 	const PerceptionConfig& GetPerceptionConfig() const;
 	IObstacle* GetCurrentObstacle() const;
 
+	const CharacterConfig& GetConfig() const;
+
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);
 
@@ -152,7 +154,7 @@ private:
 	std::weak_ptr<LimbIKComponent> m_limbIKComp;
 	std::weak_ptr<CharacterControllerComponent> m_charCont;
 
-	std::weak_ptr<CharacterPerceptionConfig> m_pPerceptionConfig;
+	std::weak_ptr<CharacterConfigData> m_pConfig;
 
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;

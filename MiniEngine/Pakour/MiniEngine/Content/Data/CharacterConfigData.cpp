@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "CharacterPerceptionConfig.h"
+#include "CharacterConfigData.h"
 
-void CharacterPerceptionConfig::Load(const json& _data)
+void CharacterConfigData::Load(const json& _data)
 {
 	Config.minObstacleDetectDist		= _data["minObstacleDetectDist"];
 	Config.maxObstacleDetectDist		= _data["maxObstacleDetectDist"];

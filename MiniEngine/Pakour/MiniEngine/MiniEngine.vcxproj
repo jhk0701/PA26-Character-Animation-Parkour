@@ -179,7 +179,7 @@
     <ClInclude Include="Content\CorrectRotation.h" />
     <ClInclude Include="Content\Data\ActionClipContainer.h" />
     <ClInclude Include="Content\Data\CharacterAnimData.h" />
-    <ClInclude Include="Content\Data\CharacterPerceptionConfig.h" />
+    <ClInclude Include="Content\Data\CharacterConfigData.h" />
     <ClInclude Include="Content\Data\PerceptionQueryTree.h" />
     <ClInclude Include="Content\Data\ProcessConditionData.h" />
     <ClInclude Include="Content\EnableCollisionObstacle.h" />
@@ -281,7 +281,7 @@
     <ClCompile Include="Content\CorrectRotation.cpp" />
     <ClCompile Include="Content\Data\ActionClipContainer.cpp" />
     <ClCompile Include="Content\Data\CharacterAnimData.cpp" />
-    <ClCompile Include="Content\Data\CharacterPerceptionConfig.cpp" />
+    <ClCompile Include="Content\Data\CharacterConfigData.cpp" />
     <ClCompile Include="Content\Data\PerceptionQueryTree.cpp" />
     <ClCompile Include="Content\Data\ProcessConditionData.cpp" />
     <ClCompile Include="Content\EnableCollisionObstacle.cpp" />
