@@ -20,44 +20,32 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
-	void ConditionNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
+	void CompositeNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
 	{
-		// true / false 두 갈래로 고정
-		assert(_children.size() == 2);
 		m_children = std::move(_children);
 	}
 
 	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		if (InvokeCondition(_context))
-			return m_children[0]->Execute(_context, _result);
+			return GetChildren()[0]->Execute(_context, _result);
 		else
-			return m_children[1]->Execute(_context, _result);
-	}
-
-	void SelectorNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
-	{
-		m_children = std::move(_children);
+			return GetChildren()[1]->Execute(_context, _result);
 	}
 
 	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		uint8_t r = InvokeCondition(_context);
-		assert(r < m_children.size());
+		assert(r < GetChildrenCnt());
 
-		return m_children[r]->Execute(_context, _result);
-	}
-
-	void SequenceNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
-	{
-		m_children = std::move(_children);
+		return GetChildren()[r]->Execute(_context, _result);
 	}
 
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		for (size_t i = 0; i < m_children.size(); ++i)
+		for (size_t i = 0; i < GetChildrenCnt(); ++i)
 		{
-			if (m_children[i]->Execute(_context, _result) == EPerceptionResult::Fail)
+			if (GetChildren()[i]->Execute(_context, _result) == EPerceptionResult::Fail)
 				return  EPerceptionResult::Fail;
 		}
 

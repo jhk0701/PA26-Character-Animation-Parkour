@@ -54,43 +54,41 @@ namespace MiniEngine
 		virtual EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) = 0;
 	};
 
+	class CompositeNode : public PerceptionNode
+	{
+	public:
+		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
+
+	protected:
+		size_t GetChildrenCnt() const { return m_children.size(); }
+		const std::vector<std::shared_ptr<PerceptionNode>>& GetChildren() const { return m_children; }
+
+	private:
+		std::vector<std::shared_ptr<PerceptionNode>> m_children;
+
+	};
+
 	// 자식 중 1개 실행
-	class SelectorNode : public PerceptionNode
+	class SelectorNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual uint8_t InvokeCondition(TravelContext& _context) = 0;
-
-		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
-		size_t GetChildrenCnt() const { return m_children.size(); }
-
-	private:
-		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
 	// 단순 이진 조건문 노드
-	class ConditionNode : public PerceptionNode
+	class ConditionNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual bool InvokeCondition(TravelContext& _context) = 0;
-
-		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
-		size_t GetChildrenCnt() const { return m_children.size(); }
-
-	private:
-		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
 	// 자식 연속 실행 노드
-	class SequenceNode : public PerceptionNode
+	class SequenceNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
-		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
-
-	private:
-		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 	};
 
 	// Leaf 노드 - 최종 작업 수행

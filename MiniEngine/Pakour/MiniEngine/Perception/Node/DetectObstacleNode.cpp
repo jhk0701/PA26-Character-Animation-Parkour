@@ -157,7 +157,7 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 
 	RaycastResult firstResult;
 	firstResult.FillFromHitResult(result.m_bIsHit, result.m_hitResults.front());
-	FillFromResult(_context, result);
+	FillFromResult(_context, firstResult);
 	_context.m_bDetectLedge = true;
 
 	return EPerceptionResult::Succeess;
