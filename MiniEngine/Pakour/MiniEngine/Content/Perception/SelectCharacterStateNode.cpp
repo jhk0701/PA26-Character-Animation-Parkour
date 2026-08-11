@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Content/Perception/SelectCharacterStateNode.h"
 #include "Content/Character.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 
 uint8_t SelectCharacterStateNode::InvokeCondition(TravelContext& _context)
 {

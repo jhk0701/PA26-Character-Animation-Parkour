@@ -2,7 +2,7 @@
 #include "Content/Perception/MeasureNode.h"
 
 #include "Content/Character.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Core/Log.h"
 
 

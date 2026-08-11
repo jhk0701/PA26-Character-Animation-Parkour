@@ -1,21 +1,30 @@
 #include "pch.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Perception/Interface/IObstacle.h"
 #include "Physics/PhysicsWorld.h"
 
-#include "Content/ContentConfig.h"
-#include "Content/Character.h"
-#include "Content/Data/CharacterConfigData.h"
-#include "Content/Obstacle.h"
 #include "Core/DebugMarkers.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine;
 using namespace MiniEngine::Physics;
+
+// 제거해야 함
+#include "Content/ContentConfig.h"
+#include "Content/Character.h"
+#include "Content/Data/CharacterConfigData.h"
+#include "Content/Obstacle.h"
 using namespace Content::Config;
 
 namespace PerceptionNodeUtil 
 {
+	IObstacle* ToIObstacle(void* _p)
+	{
+		return dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_p));
+	}
+
+	// 이하 코드 -> 콘텐츠용
+	// 엔진단에선 제거할 것
 	std::shared_ptr<Character> ToChar(std::shared_ptr<Actor> _actor)
 	{
 		return std::dynamic_pointer_cast<Character>(_actor);
@@ -37,16 +46,6 @@ namespace PerceptionNodeUtil
 			return Vector3(0.0f);
 		
 		return pChar->GetRoot()->localTransform.position + Vector3(0.0f, pChar->GetCharacterHeight(), 0.0f);
-	}
-
-	IObstacle* ToIObstacle(void* _p) 
-	{
-		Actor* pActor = reinterpret_cast<Actor*>(_p);
-
-		if (!pActor)
-			return nullptr;
-
-		return dynamic_cast<IObstacle*>(pActor);
 	}
 
 	bool CheckObstacle(TravelContext& _context, 
@@ -84,8 +83,8 @@ namespace PerceptionNodeUtil
 		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
 			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
 			{
-				IObstacle* pA = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_a.GetActor()));
-				IObstacle* pB = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_b.GetActor()));
+				IObstacle* pA = ToIObstacle(_a.GetActor());
+				IObstacle* pB = ToIObstacle(_b.GetActor());
 				if (!pA || !pB)
 					return true;
 
@@ -140,7 +139,6 @@ namespace PerceptionNodeUtil
 		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
 		*/
 
-		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
 		if (_context.m_physics->SphereCastMultiple(sphParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
@@ -149,8 +147,8 @@ namespace PerceptionNodeUtil
 		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
 			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
 			{
-				IObstacle* pA = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_a.GetActor()));
-				IObstacle* pB = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_b.GetActor()));
+				IObstacle* pA = ToIObstacle(_a.GetActor());
+				IObstacle* pB = ToIObstacle(_b.GetActor());
 				if (!pA || !pB)
 					return true;
 
@@ -267,7 +265,7 @@ namespace PerceptionNodeUtil
 			param.m_maxDistance = CONFIG.heightSearchtDist;
 
 			/*
-			* Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
+			Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 			MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 			MG_LOG_INFO("[PerceptionNodeUtil::MeasureObstacleHeight] Start Pos : ({:.2f}, {:.2f}, {:.2f})", param.m_startPos.x, param.m_startPos.y, param.m_startPos.z);
 			*/

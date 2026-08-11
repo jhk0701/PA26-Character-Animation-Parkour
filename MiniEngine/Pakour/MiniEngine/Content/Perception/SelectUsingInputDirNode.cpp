@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SelectUsingInputDirNode.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 
 #include "Core/Log.h"

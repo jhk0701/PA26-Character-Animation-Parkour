@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/Perception/TransitionCharacterFSMNode.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 
 EPerceptionResult TransitionCharacterFSMNode::InvokeTask(TravelContext& _context, TravelResult& _result)

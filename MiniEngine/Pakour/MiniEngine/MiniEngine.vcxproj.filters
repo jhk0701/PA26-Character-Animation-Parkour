@@ -352,9 +352,6 @@
     <ClInclude Include="Content\Perception\ReturnNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Perception\PerceptionNodeUtil.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Perception\SelectCharacterStateNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
@@ -429,6 +426,12 @@
     </ClInclude>
     <ClInclude Include="Perception\Interface\IPerceptionProcessor.h">
       <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\DetectObstacle.h">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\PerceptionNodeUtil.h">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -630,9 +633,6 @@
     <ClCompile Include="Content\Perception\ReturnNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Perception\PerceptionNodeUtil.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
     <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
@@ -701,6 +701,12 @@
     </ClCompile>
     <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp">
       <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\DetectObstacle.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

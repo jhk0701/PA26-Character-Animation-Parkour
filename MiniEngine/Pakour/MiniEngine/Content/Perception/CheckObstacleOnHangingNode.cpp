@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterConfigData.h"
 #include "Physics/PhysicsWorld.h"

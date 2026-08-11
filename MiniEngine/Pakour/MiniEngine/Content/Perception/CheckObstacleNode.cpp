@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/Perception/CheckObstacleNode.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
+#include "Perception/Node/PerceptionNodeUtil.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterConfigData.h"
 #include "Core/Log.h"

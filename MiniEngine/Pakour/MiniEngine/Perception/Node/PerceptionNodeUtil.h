@@ -6,21 +6,23 @@ class Character;
 
 namespace PerceptionNodeUtil 
 {
-	std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor);
-	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);
-	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context);
 	MiniEngine::IObstacle* ToIObstacle(void* _p);
 
 	template<typename THit>
 	void FillFromResult(MiniEngine::TravelContext& _context, const THit& _result)
 	{
-		_context.m_pFirstObstacle			= ToIObstacle(_result.GetActor());
-		_context.m_firstObstacleHitPos		= _result.m_pos;
-		_context.m_firstObstacleHitNrm		= _result.m_nrm;
-		_context.m_distance					= _result.m_distance;
-		_context.m_ledge					= _result.m_pos.y;
+		_context.m_pFirstObstacle = ToIObstacle(_result.GetActor());
+		_context.m_firstObstacleHitPos = _result.m_pos;
+		_context.m_firstObstacleHitNrm = _result.m_nrm;
+		_context.m_distance = _result.m_distance;
+		_context.m_ledge = _result.m_pos.y;
 	}
 
+
+	std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor);
+	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);
+	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context);
+	
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 캡슐을 쏘아 장애물이 있는지 체크
 	bool CheckObstacle(
 		MiniEngine::TravelContext& _context, 

@@ -633,6 +633,7 @@ const PerceptionConfig& Character::GetPerceptionConfig() const
 
 	return m_pConfig.lock()->Config;
 }
+
 const CharacterConfig& Character::GetConfig() const
 {
 	if (m_pConfig.expired())

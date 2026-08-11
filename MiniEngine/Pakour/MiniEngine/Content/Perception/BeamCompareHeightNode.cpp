@@ -3,7 +3,6 @@
 #include "Physics/PhysicsWorld.h"
 
 #include "Content/Character.h"
-#include "Content/Perception/PerceptionNodeUtil.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine::Physics;

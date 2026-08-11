@@ -13,17 +13,16 @@ namespace MiniEngine
 	class Animator;
 	class BlendClip;
 	class ActionClip;
-	class IObstacle;
 	class PerceptionComponent;
-	struct TravelResult;
 	class ProcessorComponent;
+	struct TravelResult;
 }
 
 using namespace MiniEngine;
 
-class CharacterStateMachine;
 class CharacterConfigData;
 struct CharacterConfig;
+class CharacterStateMachine;
 class Character : public Pawn, public IPerceptionProcessor
 {
 public:
@@ -117,12 +116,12 @@ public:
 	bool IsGrounded() const;
 	void SetUseGravity(bool _bUse);
 
+	const CharacterConfig& GetConfig() const;
+
 	// 지형 인식
 	const PerceptionConfig& GetPerceptionConfig() const override;
 	PerceptedObstacleInfo& GetCurObstacleInfo() override { return m_curObstacleInfo; };
 	IObstacle* GetCurObstacle() const override;
-
-	const CharacterConfig& GetConfig() const;
 
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);
