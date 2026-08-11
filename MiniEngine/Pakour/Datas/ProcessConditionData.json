@@ -272,20 +272,26 @@
         },
 
         {
+            "id": "IsHanging",
+            "comment" : "매달린 상태 (일반, Pole) 공통 판정",
+            "class": "ConditionOr",
+            "children" : [ "IsHangingState", "IsPoleHangingState" ]
+        },
+        {
             "id": "Hanging_Mantle_Top",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputUp", "IsFront", "IsLedgeDetected" ]
+            "children" : [ "IsHanging", "IsInputUp", "IsFront", "IsLedgeDetected" ]
         },
         {
             "id": "Hanging_Mantle_OnMiddleObs",
             "comment": "벽면 중간에 있는 장애물에 올라간 경우. 이런 장애물의 경우 잡을 것이 뒤에 있으므로 IsBehind 조건 추가",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputUp", "IsBehind", "IsLedgeDetected" ]
+            "children" : [ "IsHanging", "IsInputUp", "IsBehind", "IsLedgeDetected" ]
         },
         {
             "id": "Hanging_DownToGround",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsInputDown", "IsCloserThan_1" ]
+            "children" : [ "IsHanging", "IsInputDown", "IsCloserThan_1" ]
         },
 
         {
@@ -298,7 +304,7 @@
             "id": "Hanging_ObstacleOnSide",
             "comment": "벽면 중간에 좌 또는 우 방향에 오를 수 있는 장애물을 발견한 경우",
             "class": "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsInputHoriziontal" ]
+            "children" : [ "IsHanging", "IsDefault", "IsInputHoriziontal" ]
         },
         {
             "id": "Hanging_Hang_OnSide",
@@ -471,10 +477,6 @@
             "tagAct" : "Pole_HangingMoveDown",
             "conditionId" : "PoleHanging_MoveDown"
         }, 
-        {
-            "tagAct" : "Wall_HangToIdle",
-            "conditionId" : "PoleHanging_DownToGround"
-        },
         {
             "tagAct" : "Pole_HangingMoveLeft",
             "conditionId" : "PoleHanging_MoveToLeftPole"
