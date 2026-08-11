@@ -16,8 +16,8 @@
 #include "Scene/SkeletalMeshComponent.h"
 #include "Scene/CharacterControllerComponent.h"
 #include "Animation/Animator.h"
-#include "Scene/PerceptionComponent.h"
-#include "Scene/ProcessorComponent.h"
+#include "Perception/PerceptionComponent.h"
+#include "Perception/ProcessorComponent.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Data/CharacterPerceptionConfig.h"

@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Content/Processor/ObstacleCondition.h"
-#include "Scene/PerceptionComponent.h"
+#include "Perception/Condition/ObstacleCondition.h"
+#include "Perception/PerceptionComponent.h"
 #include "Scene/IObstacle.h"
 
 #include "Scene/Actor.h"

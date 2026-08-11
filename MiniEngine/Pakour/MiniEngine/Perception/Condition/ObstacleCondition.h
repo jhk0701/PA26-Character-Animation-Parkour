@@ -1,6 +1,6 @@
 #pragma once
-#include "Scene/ProcessorComponent.h"
-#include "Content/Processor/ProcessorConditionUtil.h"
+#include "Perception/ProcessorComponent.h"
+#include "Perception/Condition/ProcessorConditionUtil.h"
 
 using namespace MiniEngine;
 

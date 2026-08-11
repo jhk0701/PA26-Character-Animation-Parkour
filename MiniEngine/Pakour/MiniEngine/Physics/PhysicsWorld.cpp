@@ -417,13 +417,6 @@ namespace MiniEngine::Physics
 			for (PxU32 i = 0; i < touchCnt; ++i)
 				sortedHits.push_back(&hitBuffer.getTouch(i));
 
-			std::sort(sortedHits.begin(), sortedHits.end(),
-				[](const PxSweepHit* _a, const PxSweepHit* _b)
-				{
-					return _a->distance < _b->distance;
-				}
-			);
-
 			_outResult.m_hitResults.resize(touchCnt);
 			for (PxU32 i = 0; i < touchCnt; ++i)
 			{

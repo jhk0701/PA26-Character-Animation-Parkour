@@ -125,10 +125,7 @@
     <Filter Include="Engine\07.Object\Component\Perception\Node">
       <UniqueIdentifier>{b11b7a05-d39f-4578-9182-ebb922f6cefc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\07.Object\Component\Processor">
-      <UniqueIdentifier>{33ce7844-2b00-471a-9c16-04f015f3ea6a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\07.Object\Component\Processor\Condition">
+    <Filter Include="Engine\07.Object\Component\Perception\Condition">
       <UniqueIdentifier>{66fd23e2-b253-4eb5-9fde-a7da6822b236}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -280,9 +277,6 @@
     <ClInclude Include="Animation\AnimStateMachine.h">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\PerceptionComponent.h">
-      <Filter>Engine\07.Object\Component\Perception</Filter>
-    </ClInclude>
     <ClInclude Include="Content\EnableCollisionObstacle.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
@@ -412,12 +406,6 @@
     <ClInclude Include="Content\Data\ProcessConditionData.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Processor\ObstacleCondition.h">
-      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Processor\ProcessorConditionUtil.h">
-      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Processor\CharacterCondition.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClInclude>
@@ -427,8 +415,17 @@
     <ClInclude Include="Content\UIDebugBlendClip.h">
       <Filter>Content\06.UI</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\ProcessorComponent.h">
-      <Filter>Engine\07.Object\Component\Processor</Filter>
+    <ClInclude Include="Perception\PerceptionComponent.h">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\ProcessorComponent.h">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Condition\ObstacleCondition.h">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Condition\ProcessorConditionUtil.h">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -554,9 +551,6 @@
     </ClCompile>
     <ClCompile Include="Animation\AnimStateMachine.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\PerceptionComponent.cpp">
-      <Filter>Engine\07.Object\Component\Perception</Filter>
     </ClCompile>
     <ClCompile Include="Content\EnableCollisionObstacle.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
@@ -684,12 +678,6 @@
     <ClCompile Include="Content\Data\ProcessConditionData.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Processor\ObstacleCondition.cpp">
-      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Processor\ProcessorConditionUtil.cpp">
-      <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClCompile>
     <ClCompile Include="Content\Processor\CharacterCondition.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
     </ClCompile>
@@ -699,8 +687,17 @@
     <ClCompile Include="Content\UIDebugBlendClip.cpp">
       <Filter>Content\06.UI</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\ProcessorComponent.cpp">
-      <Filter>Engine\07.Object\Component\Processor</Filter>
+    <ClCompile Include="Perception\PerceptionComponent.cpp">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\ProcessorComponent.cpp">
+      <Filter>Engine\07.Object\Component\Perception</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Condition\ObstacleCondition.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -60,6 +60,7 @@ namespace PerceptionNodeUtil
 		const Transform& TF = pChar->GetRoot()->localTransform;
 		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
+		// 1. sweep 지오메트리
 		CapsulecastParam capParam;
 		capParam.m_radius = pChar->GetCapsuleRadius();
 		capParam.m_halfHeight = pChar->GetCapsuleHalfHeight() * _hMultiplier;
@@ -78,6 +79,7 @@ namespace PerceptionNodeUtil
 		if (_context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
 
+		// 2. 우선순위 + 거리에 따른 정렬
 		// 우선 순위에 따른 재정렬 -> 우선 순위에 대한 내림차순
 		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
 			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
@@ -94,32 +96,15 @@ namespace PerceptionNodeUtil
 			}
 		);
 
+		// 3. 추가 필터링
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())  
 			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurrentObstacle());
 
-		// 지금 장애물 위에 있는지 확인
-		void* pGroundActor = nullptr;
-		if (_bExcludeGroundActor)
-		{
-			SpherecastParam spParam;
-			spParam.m_startPos = TF.position;
-			spParam.m_startPos.y += CONFIG.heightLift;
-
-			spParam.m_radius = capParam.m_radius;
-			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-			spParam.m_maxDistance = 0.1f;
-
-			RaycastResult downCheckResult;
-			if (_context.m_physics->SphereCast(spParam, downCheckResult, ToMask(Layer::Obstacle)))
-				pGroundActor = downCheckResult.GetActor();
-		}
-
 		for (const HitResult& r : hits.m_hitResults)
 		{
-			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
-				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
+			if (pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle)
 			{
 				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip, {}", hits.m_hitResults.size());
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
@@ -142,7 +127,6 @@ namespace PerceptionNodeUtil
 	{
 		std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
 		const Transform& TF = pChar->GetRoot()->localTransform;
-		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
 
 		SpherecastParam sphParam;
 		sphParam.m_radius = _radius;
@@ -151,17 +135,16 @@ namespace PerceptionNodeUtil
 		sphParam.m_maxDistance = _dist;
 
 		/*
-		
-		*/
 		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
 		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
 		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
+		*/
 
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
 		if (_context.m_physics->SphereCastMultiple(sphParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
-		
+
 		// 우선 순위에 따른 재정렬 -> 우선 순위에 대한 내림차순
 		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
 			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
@@ -178,33 +161,17 @@ namespace PerceptionNodeUtil
 			}
 		);
 
+		const PerceptionConfig& CONFIG = pChar->GetPerceptionConfig();
+
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())
 			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurrentObstacle());
 
-		// 지금 장애물 위에 있는지 확인
-		void* pGroundActor = nullptr;
-		if (_bExcludeGroundActor)
-		{
-			SpherecastParam spParam;
-			spParam.m_startPos = TF.position;
-			spParam.m_startPos.y += CONFIG.heightLift;
-
-			spParam.m_radius = pChar->GetCapsuleRadius();
-			spParam.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-			spParam.m_maxDistance = 0.1f;
-
-			RaycastResult downCheckResult;
-			if (_context.m_physics->SphereCast(spParam, downCheckResult, ToMask(Layer::Obstacle)))
-				pGroundActor = downCheckResult.GetActor();
-		}
-
 		MG_LOG_INFO("[CheckObstacleSphere] hit result {}", hits.m_hitResults.size());
 		for (const HitResult& r : hits.m_hitResults)
 		{
-			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
-				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
+			if (pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle)
 			{
 				Actor* pA = reinterpret_cast<Actor*>(r.GetActor());
 

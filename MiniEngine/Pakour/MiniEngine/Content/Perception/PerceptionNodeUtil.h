@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene/PerceptionComponent.h"
+#include "Perception/PerceptionComponent.h"
 
 namespace MiniEngine { class Actor; class IObstacle; }
 class Character;

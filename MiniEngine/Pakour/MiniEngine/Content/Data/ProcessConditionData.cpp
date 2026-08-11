@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Content/Data/ProcessConditionData.h"
-#include "Scene/ProcessorComponent.h"
+#include "Perception/ProcessorComponent.h"
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
-#include "Content/Processor/ObstacleCondition.h"
+#include "Perception/Condition/ObstacleCondition.h"
 #include "Content/Processor/CharacterCondition.h"
 #include "Core/Log.h"
 

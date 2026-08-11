@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/Data/PerceptionQueryTree.h"
-#include "Scene/PerceptionComponent.h"
+#include "Perception/PerceptionComponent.h"
 #include "Core/Log.h"
 
 #include "Content/ContentConfig.h"

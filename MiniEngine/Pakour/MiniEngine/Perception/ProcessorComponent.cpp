@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Scene/ProcessorComponent.h"
+#include "Perception/ProcessorComponent.h"
 #include "Core/Log.h"
 
 namespace MiniEngine 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene/PerceptionComponent.h"
+#include "Perception/PerceptionComponent.h"
 
 using namespace MiniEngine;
 
