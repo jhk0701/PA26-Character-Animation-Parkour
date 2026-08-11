@@ -197,11 +197,6 @@ void Character::BeginPlay()
 	m_charCont.lock()->SetCheckFalling(true);
 }
 
-//void Character::Tick(float _dt)
-//{
-//	Pawn::Tick(_dt);
-//}
-
 void Character::LoadData()
 {
 	std::shared_ptr<CharacterPerceptionConfig> pConfig;
@@ -311,7 +306,6 @@ void Character::SetEnableCollisionObstacle(bool _bEnable)
 {
 	m_charCont.lock()->SetLayerCollisionEnabled(MiniEngine::Physics::Layer::Obstacle, _bEnable);
 }
-
 
 void Character::ReserveIKDetectGround()
 {

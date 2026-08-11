@@ -34,9 +34,7 @@ bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessC
 bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
 	// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
-	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-
-	return (GetValue() + pChar->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
+	return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
 }
 
 bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
@@ -49,8 +47,7 @@ bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const Process
 
 bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
-	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-	const Transform& TF = pChar->GetRoot()->localTransform;
+	const Transform& TF = _context.pOwner->GetRoot()->localTransform;
 
 	Vector3 point = _result.m_firstObstacleHitPos;
 	point.y = 0.0f;

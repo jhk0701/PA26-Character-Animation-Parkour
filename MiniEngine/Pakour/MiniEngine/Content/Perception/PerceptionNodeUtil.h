@@ -14,11 +14,11 @@ namespace PerceptionNodeUtil
 	template<typename THit>
 	void FillFromResult(MiniEngine::TravelContext& _context, const THit& _result)
 	{
-		_context.m_pFirstObstacle = ToIObstacle(_result.GetActor());
-		_context.m_firstObstacleHitPos = _result.m_pos;
-		_context.m_firstObstacleHitNrm = _result.m_nrm;
-		_context.m_distance = _result.m_distance;
-		_context.m_ledge = _result.m_pos.y;
+		_context.m_pFirstObstacle			= ToIObstacle(_result.GetActor());
+		_context.m_firstObstacleHitPos		= _result.m_pos;
+		_context.m_firstObstacleHitNrm		= _result.m_nrm;
+		_context.m_distance					= _result.m_distance;
+		_context.m_ledge					= _result.m_pos.y;
 	}
 
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 캡슐을 쏘아 장애물이 있는지 체크
