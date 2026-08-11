@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "Content/Data/ProcessConditionData.h"
+
 #include "Perception/ProcessorComponent.h"
+#include "Perception/Condition/ObstacleCondition.h"
+#include "Perception/Config/ObstacleConfig.h"
+
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
-#include "Perception/Condition/ObstacleCondition.h"
 #include "Content/Processor/CharacterCondition.h"
+
 #include "Core/Log.h"
 
 #include <functional>

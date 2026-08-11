@@ -57,7 +57,7 @@ namespace MiniEngine
 	class CompositeNode : public PerceptionNode
 	{
 	public:
-		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children);
+		void SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children) { m_children = std::move(_children); };
 
 	protected:
 		size_t GetChildrenCnt() const { return m_children.size(); }
@@ -66,6 +66,13 @@ namespace MiniEngine
 	private:
 		std::vector<std::shared_ptr<PerceptionNode>> m_children;
 
+	};
+
+	// 자식 연속 실행 노드
+	class SequenceNode : public CompositeNode
+	{
+	public:
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 	};
 
 	// 자식 중 1개 실행
@@ -82,13 +89,6 @@ namespace MiniEngine
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual bool InvokeCondition(TravelContext& _context) = 0;
-	};
-
-	// 자식 연속 실행 노드
-	class SequenceNode : public CompositeNode
-	{
-	public:
-		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 	};
 
 	// Leaf 노드 - 최종 작업 수행

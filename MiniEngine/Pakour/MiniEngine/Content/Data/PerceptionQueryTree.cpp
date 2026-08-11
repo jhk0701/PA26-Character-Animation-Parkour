@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Content/Data/PerceptionQueryTree.h"
+
+#include "Perception/Config/ObstacleConfig.h"
 #include "Perception/PerceptionComponent.h"
-#include "Core/Log.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
@@ -21,6 +22,8 @@
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
+
+#include "Core/Log.h"
 
 using namespace MiniEngine;
 
@@ -69,7 +72,7 @@ namespace
 
 			// Selector : 자식 중 Success 나올 때까지 연속 호출
 			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
-			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)Content::Config::ETagEnvDetail::End } },
+			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)ETagEnvDetail::End } },
 			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
 			{ "SelectUsingInputDirNode",	{ CreateNode<SelectUsingInputDirNode>(),	4 } },	// 상 / 하 / 좌우 / 입력없음 // 
 			{ "SelectUsingInputVerticalNode",	{ CreateNode<SelectUsingInputVerticalNode>(),	3 } },

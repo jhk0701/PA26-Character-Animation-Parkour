@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "TestScene.h"
 
-#include "Core/Log.h"
 #include "Manager/PathManager.h"
 #include "Manager/AssetManager.h"
 #include "Manager/DataManager.h"
@@ -10,6 +9,8 @@
 #include "Scene/RigidBodyComponent.h"
 #include "Scene/Tag.h"
 
+#include "Perception/Config/ObstacleConfig.h"
+
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
 #include "Content/CharacterController.h"
@@ -17,6 +18,7 @@
 
 #include "Manager/UIManager.h"
 #include "Content/UIDebugBlendClip.h"
+#include "Core/Log.h"
 
 using namespace MiniEngine;
 
@@ -148,7 +150,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		// 벽면 돌출물 설치
-		desc.detailTags = { (uint8_t)Content::Config::ETagEnvDetail::Protrude };
+		desc.detailTags = { (uint8_t)ETagEnvDetail::Protrude };
 		desc.color += Vector3(0.3f, -0.2f, 0.0f);
 		desc.scale = Vector3(1.0f, 0.2f, 0.2f);
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
@@ -199,8 +201,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		Obstacle::ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = {
-			(uint8_t)Content::Config::ETagEnvDetail::Beam,
-			(uint8_t)Content::Config::ETagAxis::X,
+			(uint8_t)ETagEnvDetail::Beam,
+			(uint8_t)ETagAxis::X,
 		};
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
@@ -358,8 +360,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 구간 1
 			// beam 배치
 			desc.detailTags = {
-				(uint8_t)Content::Config::ETagEnvDetail::Beam,
-				(uint8_t)Content::Config::ETagAxis::X,
+				(uint8_t)ETagEnvDetail::Beam,
+				(uint8_t)ETagAxis::X,
 			};
 			desc.color = Vector3(0.25f, 0.25f, 0.75f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -384,8 +386,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 구간 2
 			// beam 배치
 			desc.detailTags = {
-				(uint8_t)Content::Config::ETagEnvDetail::Beam,
-				(uint8_t)Content::Config::ETagAxis::X,
+				(uint8_t)ETagEnvDetail::Beam,
+				(uint8_t)ETagAxis::X,
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
@@ -444,7 +446,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		{
 		// Protrude 배치
 		desc.detailTags = {
-			(uint8_t)Content::Config::ETagEnvDetail::Protrude,
+			(uint8_t)ETagEnvDetail::Protrude,
 		};
 		desc.color = Vector3(0.75f, 0.25f, 0.25f);
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -530,7 +532,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pMesh = pCubeMesh;
 			desc.detailTags = 
 			{ 
-				(uint8_t)Content::Config::ETagEnvDetail::Pole 
+				(uint8_t)ETagEnvDetail::Pole 
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
@@ -561,7 +563,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pMesh = pCubeMesh;
 			desc.detailTags =
 			{
-				(uint8_t)Content::Config::ETagEnvDetail::Pole
+				(uint8_t)ETagEnvDetail::Pole
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
@@ -573,8 +575,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.detailTags =
 			{
-				(uint8_t)Content::Config::ETagEnvDetail::Beam,
-				(uint8_t)Content::Config::ETagAxis::X
+				(uint8_t)ETagEnvDetail::Beam,
+				(uint8_t)ETagAxis::X
 			};
 
 			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);

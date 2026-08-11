@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "Content/CharacterState/BeamState.h"
+
+#include "Platform/Input.h"
+#include "Scene/Scene.h"
 #include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
-#include "Platform/Input.h"
-
-#include "Scene/Scene.h"
-#include "Physics/PhysicsWorld.h"
+#include "Content/ContentConfig.h"
 
 #include "Core/Log.h"
 
+using namespace MiniEngine;
 using namespace Content::Config;
 
 void BeamState::OnStart()

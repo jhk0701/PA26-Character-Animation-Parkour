@@ -20,11 +20,6 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
-	void CompositeNode::SetChildren(std::vector<std::shared_ptr<PerceptionNode>>&& _children)
-	{
-		m_children = std::move(_children);
-	}
-
 	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		if (InvokeCondition(_context))

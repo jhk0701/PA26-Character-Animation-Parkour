@@ -219,6 +219,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Perception\Condition\ObstacleCondition.h" />
     <ClInclude Include="Perception\Condition\ProcessorConditionUtil.h" />
+    <ClInclude Include="Perception\Config\ObstacleConfig.h" />
     <ClInclude Include="Perception\Interface\IObstacle.h" />
     <ClInclude Include="Perception\Interface\IPerceptionProcessor.h" />
     <ClInclude Include="Perception\Node\DetectObstacleNode.h" />
@@ -325,6 +326,7 @@
     <ClCompile Include="Core\Timer.cpp" />
     <ClCompile Include="Perception\Condition\ObstacleCondition.cpp" />
     <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp" />
+    <ClCompile Include="Perception\Config\ObstacleConfig.cpp" />
     <ClCompile Include="Perception\Node\DetectObstacleNode.cpp" />
     <ClCompile Include="Perception\Node\MeasureObstacleNode.cpp" />
     <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp" />

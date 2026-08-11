@@ -1,7 +1,6 @@
 #pragma once
 #include "Content/CharacterState/RotateFixState.h"
-#include "Content/ContentConfig.h"
-
+#include "Perception/Config/ObstacleConfig.h"
 
 class BeamState : public RotateFixState
 {
@@ -17,7 +16,7 @@ public:
 protected:
 	virtual void AlignByAxis() = 0;
 
-	Content::Config::ETagAxis GetAxis() const { return m_curAxis; }
+	MiniEngine::ETagAxis GetAxis() const { return m_curAxis; }
 	IObstacle* GetCurrentObstacle() const override;
 	
 	bool ObstacleIsBeamType(Actor* _pObs);
@@ -25,7 +24,7 @@ protected:
 	void AdjustPositionToObstacleInfo();
 
 private:
-	Content::Config::ETagAxis m_curAxis;
+	MiniEngine::ETagAxis m_curAxis;
 	IObstacle* m_pCurrentObstacle{ nullptr };
 };
 

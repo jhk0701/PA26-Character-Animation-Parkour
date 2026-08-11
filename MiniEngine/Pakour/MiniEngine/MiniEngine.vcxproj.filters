@@ -128,6 +128,9 @@
     <Filter Include="Engine\07.Object\Component\Perception\Interface">
       <UniqueIdentifier>{85c544df-6a01-489b-bb7c-044bbaf9f18e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Component\Perception\Config">
+      <UniqueIdentifier>{1f0b9be8-c8f5-4e82-b408-2fea19e2bada}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -436,6 +439,9 @@
     <ClInclude Include="Perception\Node\MeasureObstacleNode.h">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
+    <ClInclude Include="Perception\Config\ObstacleConfig.h">
+      <Filter>Engine\07.Object\Component\Perception\Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -713,6 +719,9 @@
     </ClCompile>
     <ClCompile Include="Perception\Node\MeasureObstacleNode.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Config\ObstacleConfig.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

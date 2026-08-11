@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "Content/CharacterState/HangingState.h"
+
 #include "Platform/Input.h"
-#include "Physics/PhysicsWorld.h"
 #include "Scene/Scene.h"
 #include "Perception/Interface/IObstacle.h"
+#include "Perception/Config/ObstacleConfig.h"
+
 #include "Content/Character.h"
 #include "Content/Data/CharacterConfigData.h"
 
@@ -12,6 +14,7 @@
 
 using namespace Content::Config;
 using namespace MiniEngine::Physics;
+using namespace MiniEngine;
 
 void HangingState::OnStart()
 {

@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "Content/CharacterState/InAirState.h"
+
+#include "Scene/Scene.h"
+#include "Perception/Config/ObstacleConfig.h"
+#include "Perception/Interface/IObstacle.h"
+
 #include "Content/Character.h"
 #include "Content/ContentConfig.h"
-#include "Scene/Scene.h"
-#include "Physics/PhysicsWorld.h"
-#include "Perception/Interface/IObstacle.h"
 
 #include "Core/Log.h"
 
