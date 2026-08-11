@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Physics/PhysicsWorld.h"
 
 #include "Content/ContentConfig.h"

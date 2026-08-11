@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene/Pawn.h"
+#include "Perception/Interface/IPerceptionProcessor.h"
 #include "Animation/IK/LimbIKComponent.h"
 
 #include <unordered_map>
@@ -23,7 +24,7 @@ using namespace MiniEngine;
 class CharacterStateMachine;
 class CharacterPerceptionConfig;
 struct PerceptionConfig;
-class Character : public Pawn
+class Character : public Pawn, public IPerceptionProcessor
 {
 public:
 	enum class EState : uint8_t
@@ -40,21 +41,6 @@ public:
 
 	static bool TryParseState(const std::string& _name, uint8_t& _outState);
 	static const char* GetStateName(uint8_t _state);
-
-	struct PerceptedObstacleInfo
-	{
-		// uint8_t m_actTag;
-		IObstacle* m_pObstacle{ nullptr };
-		float m_obstacleDistance{ 0.0f };
-		float m_obstacleLedge{ 0.0f };
-		float m_obstacleDepth{ 0.0f };
-		Vector3 m_obstacleHitPos{ 0.0f };
-		Vector3 m_obstacleHitNrm{ 0.0f };
-		bool m_bIsNewObstacle{ true };
-		bool m_bDetectLedge{ false };
-
-		bool IsValid() const { return m_pObstacle != nullptr; }
-	};
 
 	Character();
 	virtual ~Character();
@@ -132,7 +118,7 @@ public:
 	void SetUseGravity(bool _bUse);
 
 	// 지형 인식
-	PerceptedObstacleInfo& GetCurObstacleInfo() { return m_curObstacleInfo; };
+	PerceptedObstacleInfo& GetCurObstacleInfo() override { return m_curObstacleInfo; };
 	const PerceptionConfig& GetPerceptionConfig() const;
 	IObstacle* GetCurrentObstacle() const;
 

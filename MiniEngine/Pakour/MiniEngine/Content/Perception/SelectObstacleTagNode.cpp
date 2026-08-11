@@ -2,7 +2,7 @@
 #include "Content/Perception/SelectObstacleTagNode.h"
 
 #include "Content/ContentConfig.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Core/Log.h"
 
 uint8_t SelectObstacleTagNode::InvokeCondition(TravelContext& _context)

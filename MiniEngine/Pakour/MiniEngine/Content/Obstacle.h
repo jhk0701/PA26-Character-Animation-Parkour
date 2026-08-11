@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene/Actor.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Physics/CollsionLayer.h"
 
 namespace MiniEngine 

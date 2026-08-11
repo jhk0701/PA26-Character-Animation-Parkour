@@ -3,7 +3,7 @@
 #include "Platform/Input.h"
 #include "Physics/PhysicsWorld.h"
 #include "Scene/Scene.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
 

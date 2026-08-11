@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Perception/Condition/ObstacleCondition.h"
 #include "Perception/PerceptionComponent.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 
 #include "Scene/Actor.h"
 #include "Content/ContentConfig.h"

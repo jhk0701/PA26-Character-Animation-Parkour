@@ -2,7 +2,7 @@
 #include "CharacterCondition.h"
 
 #include "Perception/PerceptionComponent.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"

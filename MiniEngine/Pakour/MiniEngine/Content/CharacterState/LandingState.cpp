@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Content/CharacterState/LandingState.h"
 #include "Scene/Scene.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
 #include "Core/Log.h"
 #include "Core/DebugMarkers.h"

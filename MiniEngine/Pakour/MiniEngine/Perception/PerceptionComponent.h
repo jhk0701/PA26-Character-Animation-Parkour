@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene/Component.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Physics/PhysicsWorld.h"
 #include <functional>
 

@@ -30,7 +30,7 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	if (!m_pChar)
 		return;
 
-	const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
+	const PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
 	// 캐릭터와 장애물의 적정거리 보정
 	Vector3 obsPos = OBS_INFO.m_obstacleHitPos;
@@ -104,7 +104,7 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	const Transform& TF = m_pChar->GetRoot()->localTransform;
 	m_startPoint = TF.position;
 
-	const Character::PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
+	const PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
 	m_endPoint = OBS_INFO.m_obstacleHitPos;
 	m_endPoint.y = OBS_INFO.m_obstacleLedge;

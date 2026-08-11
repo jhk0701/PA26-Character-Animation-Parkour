@@ -4,7 +4,7 @@
 #include "Content/ContentConfig.h"
 #include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 
 #include "Core/Log.h"
 

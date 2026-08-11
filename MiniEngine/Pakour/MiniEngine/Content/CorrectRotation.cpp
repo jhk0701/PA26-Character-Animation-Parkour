@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CorrectRotation.h"
 #include "Content/Character.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine;

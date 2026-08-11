@@ -2,7 +2,7 @@
 #include "Content/Perception/SelectUsingHeightNode.h"
 #include "Content/Perception/PerceptionNodeUtil.h"
 
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
 

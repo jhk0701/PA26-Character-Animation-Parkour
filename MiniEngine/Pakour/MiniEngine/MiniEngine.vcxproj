@@ -220,13 +220,14 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Perception\Condition\ObstacleCondition.h" />
     <ClInclude Include="Perception\Condition\ProcessorConditionUtil.h" />
+    <ClInclude Include="Perception\Interface\IObstacle.h" />
+    <ClInclude Include="Perception\Interface\IPerceptionProcessor.h" />
     <ClInclude Include="Perception\PerceptionComponent.h" />
     <ClInclude Include="Perception\ProcessorComponent.h" />
     <ClInclude Include="Physics\CollsionLayer.h" />
     <ClInclude Include="Physics\PhysicsWorld.h" />
     <ClInclude Include="Scene\CharacterControllerComponent.h" />
     <ClInclude Include="Scene\Controller.h" />
-    <ClInclude Include="Scene\IObstacle.h" />
     <ClInclude Include="Scene\Pawn.h" />
     <ClInclude Include="Scene\RigidBodyComponent.h" />
     <ClInclude Include="Scene\Tag.h" />

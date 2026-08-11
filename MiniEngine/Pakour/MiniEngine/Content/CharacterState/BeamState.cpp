@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Content/CharacterState/BeamState.h"
-#include "Scene/IObstacle.h"
+#include "Perception/Interface/IObstacle.h"
 #include "Content/Character.h"
 #include "Platform/Input.h"
 
@@ -25,7 +25,7 @@ void BeamState::Refresh()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	// Beam 상태 진입의 전제
 	// Beam 태그가 달린 오브젝트를 처리하고 있을 것
-	const Character::PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
+	const PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
 	assert(OBS_INFO.IsValid());
 
 	uint8_t subInfoTag;
@@ -86,7 +86,7 @@ void BeamState::GetDirectionByAxis(Vector3& _outDir)
 void BeamState::AdjustPositionToObstacleInfo()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Character::PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
+	PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
 	
 	const Vector3& POS = pChar->GetRoot()->localTransform.position;
 	obsInfo.m_obstacleHitPos.x = POS.x;
@@ -229,7 +229,7 @@ bool BeamStandState::CheckEnableToMove(std::shared_ptr<Character>& _pChar)
 void BeamStandState::AdjustRotationToObstacleInfo()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Character::PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
+	PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
 
 	Vector3 fwd = pChar->GetRoot()->localTransform.Forward();
 	float d = fwd.Dot(obsInfo.m_obstacleHitNrm);

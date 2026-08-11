@@ -110,9 +110,6 @@
     <Filter Include="Content\03.Object\Obstacle">
       <UniqueIdentifier>{222fb038-20b4-4c3f-9c10-b87c38459a42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\07.Object\Interface">
-      <UniqueIdentifier>{85c544df-6a01-489b-bb7c-044bbaf9f18e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\07.Object\Animation\IK">
       <UniqueIdentifier>{37b13630-9b42-450a-b4ed-f2f60de759a5}</UniqueIdentifier>
     </Filter>
@@ -127,6 +124,9 @@
     </Filter>
     <Filter Include="Engine\07.Object\Component\Perception\Condition">
       <UniqueIdentifier>{66fd23e2-b253-4eb5-9fde-a7da6822b236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\07.Object\Component\Perception\Interface">
+      <UniqueIdentifier>{85c544df-6a01-489b-bb7c-044bbaf9f18e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -334,9 +334,6 @@
     <ClInclude Include="Content\Obstacle.h">
       <Filter>Content\03.Object\Obstacle</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\IObstacle.h">
-      <Filter>Engine\07.Object\Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Content\CorrectRotation.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
@@ -426,6 +423,12 @@
     </ClInclude>
     <ClInclude Include="Perception\Condition\ProcessorConditionUtil.h">
       <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Interface\IObstacle.h">
+      <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Interface\IPerceptionProcessor.h">
+      <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
