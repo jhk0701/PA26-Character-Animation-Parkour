@@ -12,7 +12,7 @@
 using namespace MiniEngine::Physics;
 using namespace PerceptionNodeUtil;
 
-void DetectObstacle::SortResults(RaycastMultipleResult& _result) const
+void DetectNode::SortResults(RaycastMultipleResult& _result) const
 {
 	std::sort(_result.m_hitResults.begin(), _result.m_hitResults.end(),
 		[this](const HitResult& _a, const HitResult& _b)
@@ -30,7 +30,7 @@ void DetectObstacle::SortResults(RaycastMultipleResult& _result) const
 	);
 }
 
-void DetectObstacle::FilterResults(
+void DetectNode::FilterResults(
 	std::shared_ptr<IPerceptionProcessor>& _pProcessor, 
 	TravelContext& _context, 
 	MiniEngine::Physics::RaycastMultipleResult& _result) const
@@ -50,13 +50,13 @@ void DetectObstacle::FilterResults(
 	}
 }
 
-void DetectObstacle::ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outPos, Vector3& _outDir) const
+void DetectNode::ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outPos, Vector3& _outDir) const
 {
 	LocalizePosition(_inOwnerTf, GetStartOffset(), _outPos);
 	LocalizeDirection(_inOwnerTf, GetDirection(), _outDir);
 }
 
-EPerceptionResult DetectObstacleCapsule::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
@@ -89,7 +89,7 @@ EPerceptionResult DetectObstacleCapsule::InvokeTask(TravelContext& _context, Tra
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult DetectObstacleSphere::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
@@ -107,6 +107,7 @@ EPerceptionResult DetectObstacleSphere::InvokeTask(TravelContext& _context, Trav
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
+	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
 	if (_context.m_physics->SphereCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)
 		return EPerceptionResult::Succeess;
@@ -116,6 +117,48 @@ EPerceptionResult DetectObstacleSphere::InvokeTask(TravelContext& _context, Trav
 
 	// 3. 추가 필터링 : 현재 처리 중인지 장애물 확인
 	FilterResults(pProcessor, _context, hits);
+
+	return EPerceptionResult::Succeess;
+}
+
+EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+{
+	SpherecastParam param;
+	param.m_radius = m_radius;
+	param.m_maxDistance = GetDistance();
+	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
+
+	RaycastResult result;
+	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
+	{
+		FillFromResult(_context, result);
+		_context.m_bDetectLedge = true;
+	}
+
+	return EPerceptionResult::Succeess;
+}
+
+EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+{
+	SpherecastParam param;
+	param.m_radius = m_radius;
+	param.m_maxDistance = GetDistance();
+	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
+
+	RaycastMultipleResult result;
+	bool bIsHit = _context.m_physics->SphereCastMultiple(param, result, ToMask(Layer::ObstacleLedge));
+
+	if (bIsHit == false)
+		return EPerceptionResult::Succeess;
+
+	std::sort(result.m_hitResults.begin(), result.m_hitResults.end(),
+		[](const HitResult& _a, const HitResult& _b) { return _a.m_pos.y > _b.m_pos.y; } // 접촉 높이가 내림차순 정렬
+	);
+
+	RaycastResult firstResult;
+	firstResult.FillFromHitResult(result.m_bIsHit, result.m_hitResults.front());
+	FillFromResult(_context, result);
+	_context.m_bDetectLedge = true;
 
 	return EPerceptionResult::Succeess;
 }

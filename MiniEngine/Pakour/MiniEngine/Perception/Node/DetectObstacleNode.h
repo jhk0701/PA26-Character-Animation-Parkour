@@ -14,7 +14,7 @@ namespace MiniEngine::Physics
 using namespace MiniEngine;
 
 // 공통 작업용 부모 클래스
-class DetectObstacle : public TaskNode
+class DetectNode : public TaskNode
 {
 public:
 	void SetStartOffset(const Vector3& _pos) { m_startOffset = _pos; }
@@ -43,7 +43,7 @@ private:
 	float m_heightMultiplier{ 1.0f };
 };
 
-class DetectObstacleCapsule : public DetectObstacle 
+class DetectObstacleCapsuleNode : public DetectNode
 {
 public:
 	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
@@ -56,7 +56,29 @@ private:
 	float m_capsuleHeight{ 1.0f };
 };
 
-class DetectObstacleSphere : public DetectObstacle 
+class DetectObstacleSphereNode : public DetectNode
+{
+public:
+	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+
+	void SetRadius(const float _r) { m_radius = _r; }
+
+private:
+	float m_radius{ 0.5f };
+};
+
+class DetectLedgeNode : public DetectNode
+{
+public:
+	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+
+	void SetRadius(const float _r) { m_radius = _r; }
+
+private:
+	float m_radius{ 0.5f };
+};
+
+class DetectLedgeMultipleNode : public DetectNode
 {
 public:
 	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
