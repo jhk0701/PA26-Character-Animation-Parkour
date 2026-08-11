@@ -118,9 +118,9 @@ public:
 	void SetUseGravity(bool _bUse);
 
 	// 지형 인식
+	const PerceptionConfig& GetPerceptionConfig() const override;
 	PerceptedObstacleInfo& GetCurObstacleInfo() override { return m_curObstacleInfo; };
-	const PerceptionConfig& GetPerceptionConfig() const;
-	IObstacle* GetCurrentObstacle() const;
+	IObstacle* GetCurObstacle() const override;
 
 	const CharacterConfig& GetConfig() const;
 

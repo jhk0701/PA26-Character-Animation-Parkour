@@ -14,6 +14,5 @@ namespace MiniEngine
 #ifdef MG_DEBUG_LOG
 		virtual const std::string& DebugName() = 0;
 #endif // MG_DEBUG_LOG
-
 	};
 }

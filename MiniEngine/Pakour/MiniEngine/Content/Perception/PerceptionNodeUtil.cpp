@@ -100,7 +100,7 @@ namespace PerceptionNodeUtil
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())  
-			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurrentObstacle());
+			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurObstacle());
 
 		for (const HitResult& r : hits.m_hitResults)
 		{
@@ -166,7 +166,7 @@ namespace PerceptionNodeUtil
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())
-			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurrentObstacle());
+			pOverlappedObstacle = dynamic_cast<void*>(pChar->GetCurObstacle());
 
 		MG_LOG_INFO("[CheckObstacleSphere] hit result {}", hits.m_hitResults.size());
 		for (const HitResult& r : hits.m_hitResults)

@@ -652,11 +652,10 @@ const CharacterConfig& Character::GetConfig() const
 	return m_pConfig.lock()->Config;
 }
 
-IObstacle* Character::GetCurrentObstacle() const
+IObstacle* Character::GetCurObstacle() const
 {
 	return m_charFSM.lock()->GetCurrentObstacle();
 }
-
 
 void Character::TransitionStateMachine(uint8_t _state)
 {
