@@ -7,8 +7,8 @@
 
 bool CheckObstacleNode::InvokeCondition(TravelContext& _context)
 {
+	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
 	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
-	const Transform& TF = pChar->GetRoot()->localTransform;
 
 	Vector3 offset(0.0f);
 	offset += m_startOffset.x * TF.Right();

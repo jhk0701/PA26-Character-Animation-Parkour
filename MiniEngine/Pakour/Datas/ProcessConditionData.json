@@ -138,11 +138,11 @@
 
         {
             "id": "IsChanged",
-            "class": "ObstacleIsChangedCondition"
+            "class": "DetectNewObstacle"
         },
         {
             "id": "IsNotChanged",
-            "class": "ObstacleIsChangedCondition",
+            "class": "DetectNewObstacle",
             "isInverted" : true
         },
 

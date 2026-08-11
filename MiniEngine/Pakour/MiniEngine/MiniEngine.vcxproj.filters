@@ -122,6 +122,15 @@
     <Filter Include="Content\03.Object\Component\PerceptionNode">
       <UniqueIdentifier>{3a9fc159-c6a9-4273-a768-226f3f1edad7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Component\Perception\Node">
+      <UniqueIdentifier>{b11b7a05-d39f-4578-9182-ebb922f6cefc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\07.Object\Component\Processor">
+      <UniqueIdentifier>{33ce7844-2b00-471a-9c16-04f015f3ea6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\07.Object\Component\Processor\Condition">
+      <UniqueIdentifier>{66fd23e2-b253-4eb5-9fde-a7da6822b236}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -400,9 +409,6 @@
     <ClInclude Include="Content\Data\CharacterAnimData.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\ProcessorComponent.h">
-      <Filter>Engine\07.Object\Component\Perception</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Data\ProcessConditionData.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
@@ -420,6 +426,9 @@
     </ClInclude>
     <ClInclude Include="Content\UIDebugBlendClip.h">
       <Filter>Content\06.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ProcessorComponent.h">
+      <Filter>Engine\07.Object\Component\Processor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -672,9 +681,6 @@
     <ClCompile Include="Content\Data\CharacterAnimData.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\ProcessorComponent.cpp">
-      <Filter>Engine\07.Object\Component\Perception</Filter>
-    </ClCompile>
     <ClCompile Include="Content\Data\ProcessConditionData.cpp">
       <Filter>Content\05.Data</Filter>
     </ClCompile>
@@ -692,6 +698,9 @@
     </ClCompile>
     <ClCompile Include="Content\UIDebugBlendClip.cpp">
       <Filter>Content\06.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ProcessorComponent.cpp">
+      <Filter>Engine\07.Object\Component\Processor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

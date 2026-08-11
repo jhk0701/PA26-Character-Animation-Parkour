@@ -96,7 +96,7 @@ namespace
 				}
 			},
 			{ "ObstacleIsFrontCondition",		{ CreateCond<ObstacleIsFrontCondition>() }},
-			{ "ObstacleIsChangedCondition",		{ CreateCond<ObstacleIsChangedCondition>() }},
+			{ "DetectNewObstacle",				{ CreateCond<DetectNewObstacle>() }},
 			{ "DetectLedgeCondition",			{ CreateCond<DetectLedgeCondition>() }},
 			{ "ObstacleDetectedCondition",		{ CreateCond<ObstacleDetectedCondition>() }},
 			{ "ObstacleHitDistanceCondition",	

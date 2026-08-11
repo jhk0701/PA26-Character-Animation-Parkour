@@ -3,8 +3,8 @@
 #include "Scene/PerceptionComponent.h"
 #include "Scene/IObstacle.h"
 
+#include "Scene/Actor.h"
 #include "Content/ContentConfig.h"
-#include "Content/Character.h"
 #include "Content/Data/CharacterPerceptionConfig.h"
 
 #include "Core/Log.h"
@@ -59,12 +59,6 @@ bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const Proce
 	Vector3 charFwd = TF.Forward();
 
 	return dir.Dot(charFwd) > 0.0f;
-}
-
-bool ObstacleIsChangedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
-{
-	std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-	return pChar->GetCurObstacleInfo().m_bIsNewObstacle;
 }
 
 bool DetectLedgeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

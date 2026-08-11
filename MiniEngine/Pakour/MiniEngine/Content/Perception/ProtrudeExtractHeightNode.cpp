@@ -20,12 +20,8 @@ EPerceptionResult ProtrudeExtractHeightNode::InvokeTask(TravelContext& _context,
 
 EPerceptionResult PoleExtractDataNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	std::shared_ptr<Character> pChar = PerceptionNodeUtil::ToChar(_context.m_owner);
-	if (!pChar)
-		return EPerceptionResult::Fail;
-
 	const float LEDGE = _context.m_pFirstObstacle->GetNearestLedgeHeight(_context.m_firstObstacleHitPos);
-	const float CHAR_Y = pChar->GetRoot()->localTransform.position.y;
+	const float CHAR_Y = _context.m_owner->GetRoot()->localTransform.position.y;
 	const float DIFF = LEDGE - CHAR_Y;
 
 	if (DIFF >= m_heightLimit)
