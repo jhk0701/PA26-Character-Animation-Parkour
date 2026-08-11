@@ -45,7 +45,7 @@
                     "ProcessDefault",
                     "ProcessBeam",
                     "ProcessProtrude",
-                    "ProcessDefault",
+                    "ProcessPole",
                     "ProcessDefault"
                 ]
             },
@@ -102,6 +102,21 @@
                     "id": "ProtrudeExtractHeight",
                     "class": "ProtrudeExtractHeightNode"
                 },
+            {
+                "id": "ProcessPole",
+                "class": "SequenceNode",
+                "comment": "pole 지형 정보 추출 후 리턴 시퀀스",
+                "children": [
+                    "PoleExtract",
+                    "Return"
+                ]
+            },
+                {
+                    "id": "PoleExtract",
+                    "class": "PoleExtractDataNode",
+                    "comment": "인식 높이 경계처리 변수.",
+                    "heightMultiplier": 3.0        
+                },
 
         {
             "id": "StateInAir",
@@ -140,7 +155,7 @@
                     "OnHanging_Detected_Default",
                     "ProcessBeam",
                     "ProcessProtrude",
-                    "OnHanging_Detected_Default",
+                    "ProcessPole",
                     "OnHanging_Detected_Default"
                 ]
             },

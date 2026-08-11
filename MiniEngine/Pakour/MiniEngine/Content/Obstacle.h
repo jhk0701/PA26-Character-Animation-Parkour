@@ -41,10 +41,14 @@ public:
 	virtual float GetNearestLedgeHeight(const MiniEngine::Vector3& _pos) const override;
 	virtual bool TryGetTag(uint8_t _idx, uint8_t& _outTag) override;
 	virtual const MiniEngine::Transform& GetTransform() const override;
+	uint8_t GetPriority() const override { return m_priority; };
 
 #ifdef MG_DEBUG_LOG
 	virtual const std::string& DebugName() override;
 #endif
+
+private:
+	uint8_t m_priority{ 0U };
 };
 
 class ObstacleFactory 

@@ -78,6 +78,22 @@ namespace PerceptionNodeUtil
 		if (_context.m_physics->CapsuleCastMultiple(capParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
 
+		// 우선 순위에 따른 재정렬 -> 우선 순위에 대한 내림차순
+		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
+			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
+			{
+				IObstacle* pA = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_a.GetActor()));
+				IObstacle* pB = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_b.GetActor()));
+				if (!pA || !pB)
+					return true;
+
+				if(pA->GetPriority() == pB->GetPriority())
+					return _a.m_distance < _b.m_distance;
+				
+				return pA->GetPriority() > pB->GetPriority();
+			}
+		);
+
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
 		if (pChar->GetCurObstacleInfo().IsValid())  
@@ -134,14 +150,33 @@ namespace PerceptionNodeUtil
 		sphParam.m_dir = _dir;
 		sphParam.m_maxDistance = _dist;
 
-		/*Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
+		/*
+		
+		*/
+		Vector3 debugEnd = sphParam.m_startPos + sphParam.m_dir * sphParam.m_maxDistance;
 		MiniEngine::Debug::DrawLine(sphParam.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 0.5f);
-		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);*/
+		MiniEngine::Debug::DrawPoint(debugEnd, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 0.5f);
 
 		// 결과물은 거리 순으로 정렬해서 보내줌
 		RaycastMultipleResult hits;
 		if (_context.m_physics->SphereCastMultiple(sphParam, hits, ToMask(Layer::Obstacle)) == false)
 			return false;
+		
+		// 우선 순위에 따른 재정렬 -> 우선 순위에 대한 내림차순
+		std::sort(hits.m_hitResults.begin(), hits.m_hitResults.end(),
+			[](const MiniEngine::Physics::HitResult& _a, const MiniEngine::Physics::HitResult& _b)
+			{
+				IObstacle* pA = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_a.GetActor()));
+				IObstacle* pB = dynamic_cast<IObstacle*>(reinterpret_cast<Actor*>(_b.GetActor()));
+				if (!pA || !pB)
+					return true;
+
+				if (pA->GetPriority() == pB->GetPriority())
+					return _a.m_distance < _b.m_distance;
+
+				return pA->GetPriority() > pB->GetPriority();
+			}
+		);
 
 		// 현재 처리 중엔 장애물 확인
 		void* pOverlappedObstacle = nullptr;
@@ -171,7 +206,9 @@ namespace PerceptionNodeUtil
 			if ((pGroundActor != nullptr && r.GetActor() == pGroundActor) ||
 				(pOverlappedObstacle != nullptr && r.GetActor() == pOverlappedObstacle))
 			{
-				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip");
+				Actor* pA = reinterpret_cast<Actor*>(r.GetActor());
+
+				MG_LOG_INFO("[CheckObstacleSphere] is overlapped -> skip :: {}", pA->GetName());
 				continue; // 이미 올라온 장애물, 현재 처리 중인 장애물 -> 다음 후보로
 			}
 
@@ -197,7 +234,7 @@ namespace PerceptionNodeUtil
 		sphParam.m_radius = _radius;
 		sphParam.m_maxDistance = _dist;
 
-		MiniEngine::Debug::DrawPoint(sphParam.m_startPos, MiniEngine::DebugColor::RED, sphParam.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+		// MiniEngine::Debug::DrawPoint(sphParam.m_startPos, MiniEngine::DebugColor::RED, sphParam.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 		bool bIsHit = _context.m_physics->SphereCast(sphParam, _outResult, ToMask(Layer::ObstacleLedge));
 		if (bIsHit)

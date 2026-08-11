@@ -51,8 +51,10 @@ void HangingState::Refresh()
 	uint8_t tag = 0;
 	m_pCurrentObstacle->TryGetTag(TAG_ENV_DETAIL, tag);
 
-	if(tag != (uint8_t)ETagEnvDetail::Protrude)
-		AlignToNormal();
+	if (tag == (uint8_t)ETagEnvDetail::Protrude || (uint8_t)ETagEnvDetail::Pole)
+		return;
+	
+	AlignToNormal();
 }
 
 IObstacle* HangingState::GetCurrentObstacle() const
@@ -67,6 +69,8 @@ void HangingState::AlignToNormal()
 	Vector3 nrm = -pChar->GetCurObstacleInfo().m_obstacleHitNrm;
 	nrm.y = 0.0f;
 	nrm.Normalize();
+
+	// MG_LOG_INFO("[HangingState::AlignToNormal] : ({:.2f}, {:.2f}, {:.2f})", nrm.x, nrm.y, nrm.z);
 
 	Quaternion rot;
 	if (TryYawRotateToward(nrm, rot))
@@ -89,13 +93,4 @@ void PoleHangingState::OnEnd()
 	pChar->SetUseGravity(true); // 매달림 해제
 
 	ClearCurObstacle();
-}
-
-void PoleHangingState::Tick(float _dt)
-{
-	ProcessMovement(_dt);
-}
-
-void PoleHangingState::ProcessMovement(float _dt)
-{
 }

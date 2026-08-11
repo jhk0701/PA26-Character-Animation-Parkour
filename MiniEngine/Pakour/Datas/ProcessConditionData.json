@@ -164,6 +164,12 @@
             "class": "ConditionAnd",
             "children" : [ "IsLandingState", "IsPole", "HeightCheck_Wall" ]
         },
+        {
+            "id": "Landing_Pole_Fallback",
+            "comment" : "Landing 상태에서 Pole 장애물에 대한 폴백",
+            "class": "ConditionAnd",
+            "children" : [ "IsLandingState", "IsPole", "HeightCheck_High" ]
+        },
 
         {
             "id": "Landing_VaultHigh",
@@ -253,6 +259,16 @@
             "id" : "PoleHanging_DownToGround",
             "class": "ConditionAnd",
             "children" : [ "IsPoleHangingState", "IsInputDown", "IsCloserThan_1" ]
+        },
+        {
+            "id" : "PoleHanging_MoveToLeftPole",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsPole", "IsInputLeft" ]
+        },
+        {
+            "id" : "PoleHanging_MoveToRightPole",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsPole", "IsInputRight" ]
         },
 
         {
@@ -440,6 +456,11 @@
         },
         {
             "tagAct" : "Pole_AirToHang",
+            "comment" : "Pole이지만 높이가 부족한 경우 처리",        
+            "conditionId" : "Landing_Pole_Fallback"
+        },
+        {
+            "tagAct" : "Pole_AirToHang",
             "conditionId" : "InAir_ToPoleHanging"
         }, 
         {
@@ -453,6 +474,14 @@
         {
             "tagAct" : "Wall_HangToIdle",
             "conditionId" : "PoleHanging_DownToGround"
+        },
+        {
+            "tagAct" : "Pole_HangingMoveLeft",
+            "conditionId" : "PoleHanging_MoveToLeftPole"
+        },
+        {
+            "tagAct" : "Pole_HangingMoveRight",
+            "conditionId" : "PoleHanging_MoveToRightPole"
         },
 
         {

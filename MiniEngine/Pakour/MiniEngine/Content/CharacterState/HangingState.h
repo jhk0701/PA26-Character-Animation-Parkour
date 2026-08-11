@@ -28,8 +28,4 @@ class PoleHangingState : public HangingState
 public:
 	void OnStart() override;
 	void OnEnd() override;
-	void Tick(float _dt) override;
-
-private:
-	void ProcessMovement(float _dt);
 };

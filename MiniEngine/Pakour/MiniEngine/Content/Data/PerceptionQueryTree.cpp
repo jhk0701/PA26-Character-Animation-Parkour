@@ -65,7 +65,7 @@ namespace
 			{ "MeasureDepth_SideNode",		{ CreateNode<MeasureDepth_SideNode>(),		0 } },
 			{ "MeasureHeight_SideNode",		{ CreateNode<MeasureHeight_SideNode>(),		0 } },
 			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
-			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } },
+			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } }, // 
 
 			// Selector : 자식 중 Success 나올 때까지 연속 호출
 			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
@@ -144,6 +144,17 @@ namespace
 						return pNode;
 					},
 					0
+				} 
+			},
+			{ "PoleExtractDataNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<PoleExtractDataNode> pNode = std::make_shared<PoleExtractDataNode>();
+						pNode->SetHeightLimit(_node.HeightMultiplier);
+						return pNode;
+					},
+					0 
 				} 
 			},
 		};

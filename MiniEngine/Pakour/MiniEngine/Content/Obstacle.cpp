@@ -19,12 +19,11 @@ void Obstacle::Construct(const ObstacleDesc& _desc)
 	SetName("Obstacle");
 
 	Tag& tag = GetTag();
-
 	tag += (uint8_t)Content::Config::ETagEnv::Obstacle;
-	tag += _desc.priority; // 우선 순위
 	for (const uint8_t t : _desc.detailTags)
 		tag += t;
 
+	m_priority = _desc.priority; // 우선 순위
 	const Vector3 HALF_EXTENT = _desc.scale * 0.5f;
 	
 	std::shared_ptr<SceneComponent> root = AddComponent<SceneComponent>();

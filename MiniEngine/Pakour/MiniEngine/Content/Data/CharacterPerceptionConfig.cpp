@@ -16,7 +16,6 @@ void CharacterPerceptionConfig::Load(const json& _data)
 	Config.maxDepthStep					= _data["maxDepthStep"];
 	Config.depthSearchDownDist			= _data["depthSearchDownDist"];
 	Config.depthLift					= _data["depthLift"];
-
 	Config.ledgeDetectRadius			= _data["ledgeDetectRadius"];
 
 	Config.onHangingSearchDist			= _data["onHanging_SearchDist"];

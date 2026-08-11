@@ -533,24 +533,27 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)Content::Config::ETagEnvDetail::Pole 
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
+			desc.meshPos = Vector3(0.0f);
+			desc.priority = 1U; // 한 단계 높은 우선순위
 
-			desc.pos = OFFSET + Vector3(-15.0f, 3.0f, 6.0f);
-			desc.scale = Vector3(0.35f, 6.0f, 0.35f);
+			desc.pos = OFFSET + Vector3(-18.5f, 3.0f, 6.0f);
+			desc.scale = Vector3(0.2f, 6.0f, 0.2f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 1");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 6.0f, 8.0f);
+			desc.pos = OFFSET + Vector3(-18.5f, 6.0f, 8.0f);
 			desc.scale = Vector3(0.2f, 8.0f, 0.2f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 2");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 8.0f, 10.0f);
-			desc.scale = Vector3(0.3f, 10.0f, 0.3f);
+			desc.pos = OFFSET + Vector3(-18.5f, 8.0f, 10.0f);
+			desc.scale = Vector3(0.2f, 10.0f, 0.2f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 3");
 
-			desc.pos = OFFSET + Vector3(-20.0f, 10.0f, 10.0f);
-			desc.scale = Vector3(0.3f, 6.0f, 0.3f);
+			desc.pos = OFFSET + Vector3(-18.5f, 14.0f, 12.0f);
+			desc.scale = Vector3(0.2f, 14.0f, 0.2f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
+
+			desc.priority = 0U; // 우선순위 초기화
 		}
 		{
 			// 비정형 나무 
@@ -561,12 +564,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)Content::Config::ETagEnvDetail::Pole
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
-			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
+			desc.priority = 1U; // 한 단계 높은 우선순위
 
 			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 0.0f);
-			desc.scale = Vector3(0.35f, 10.0f, 0.35f);
-			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree");
+			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole");
 
 			desc.detailTags =
 			{
@@ -575,33 +578,35 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			};
 
 			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(45.0f), 0.0f, ToRadians(10.0f));
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(45.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 2");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, ToRadians(35.0f));
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 3");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 6.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, ToRadians(15.0f));
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 4");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 4.0f, 0.0f);
-			desc.scale = Vector3(4.0f, 0.25f, 0.25f);
+			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(100.0f), 0.0f, ToRadians(10.0f));
-			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 4");
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(100.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 5");
+
+			desc.priority = 0U;
 		}
 
 		// vault 깊이 다양화
