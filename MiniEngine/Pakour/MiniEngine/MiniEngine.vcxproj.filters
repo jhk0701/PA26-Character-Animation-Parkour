@@ -358,33 +358,6 @@
     <ClInclude Include="Content\CharacterIKNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Perception\SelectCharacterStateNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\CheckObstacleNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\SelectObstacleTagNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\SelectUsingHeightNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\MeasureNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\BeamCompareHeightNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\ProtrudeExtractHeightNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Perception\CheckObstacleOnHangingNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Core\EngineConfig.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
@@ -656,33 +629,6 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterIKNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\CheckObstacleNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\SelectObstacleTagNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\MeasureNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\BeamCompareHeightNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\ProtrudeExtractHeightNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\CheckObstacleOnHangingNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
     <ClCompile Include="Core\EngineConfig.cpp">
       <Filter>Engine\02.Core</Filter>

@@ -165,10 +165,10 @@
             {
                 "id" : "Landing_DetectFoward",
                 "class" : "DetectObstacleCapsuleNode",
-                "startOffset" : [ 0.0, 0.25, 0.0 ],
+                "startOffset" : [ 0.0, 1.0, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
-                "radius" : 0.5,
+                "radius" : 0.3,
                 "height" : 1.0,
                 "heightMultiplier" : 1.0
             },
@@ -258,7 +258,7 @@
                 "startOffset" : [ 0.0, 0.75, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 1.0,
-                "radius" : 1.0,
+                "radius" : 0.5,
                 "height" : 1.0,
                 "heightMultiplier" : 1.5
             },
@@ -280,7 +280,7 @@
                 "startOffset" : [ 0.0, 0.75, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
-                "radius" : 1.5
+                "radius" : 1.0
             },
         {
             "id" : "HangingState",

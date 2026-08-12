@@ -14,16 +14,6 @@
 #include "Perception/Node/Decorator/InheritDecorator.h"
 #include "Perception/Node/Decorator/ObstacleDecorator.h"
 
-#include "Content/Perception/SelectCharacterStateNode.h"
-#include "Content/Perception/SelectObstacleTagNode.h"
-#include "Content/Perception/SelectUsingHeightNode.h"
-#include "Content/Perception/SelectUsingInputDirNode.h"
-#include "Content/Perception/CheckObstacleNode.h"
-#include "Content/Perception/MeasureNode.h"
-#include "Content/Perception/BeamCompareHeightNode.h"
-#include "Content/Perception/ProtrudeExtractHeightNode.h"
-#include "Content/Perception/CheckObstacleOnHangingNode.h"
-
 #include "Content/Perception/Decorator/CharacterDecorator.h"
 #include "Content/Perception/DetectObstacleUsingInputNode.h"
 
@@ -218,94 +208,6 @@ namespace
 
 			// 콘텐츠
 			{ "DetectObstacleUsingInputNode",	{ CreateDetectNode<DetectObstacleUsingInputNode>(), 0} },
-
-			// 구버전 Task
-			{ "MeasureDepthNode",			{ CreateNode<MeasureDepthNode>(),			0 } },
-			{ "MeasureHeightNode",			{ CreateNode<MeasureHeightNode>(),			0 } },
-			{ "MeasureDepth_SideNode",		{ CreateNode<MeasureDepth_SideNode>(),		0 } },
-			{ "MeasureHeight_SideNode",		{ CreateNode<MeasureHeight_SideNode>(),		0 } },
-			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
-			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } }, // 
-
-			// Switch : 자식 중 Success 나올 때까지 연속 호출
-			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
-			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)ETagEnvDetail::End } },
-			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
-			{ "SelectUsingInputDirNode",	{ CreateNode<SelectUsingInputDirNode>(),	4 } },	// 상 / 하 / 좌우 / 입력없음 // 
-			{ "SelectUsingInputVerticalNode",	{ CreateNode<SelectUsingInputVerticalNode>(),	3 } },
-
-			// Condition — children[0] = true, children[1] = false
-			{ "CheckOnHangingMoveUpNode",	{ CreateNode<CheckOnHangingMoveUpNode>(),	CONDITION_CHILDREN } },
-			{ "CheckOnHangingMoveDownNode",	{ CreateNode<CheckOnHangingMoveDownNode>(),	CONDITION_CHILDREN } },
-
-			// 파라미터를 갖는 노드
-			{ "CheckObstacleNode",
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<CheckObstacleNode> pNode = std::make_shared<CheckObstacleNode>();
-						pNode->SetHeightMultiplier(_node.HeightMultiplier);
-						pNode->SetStartOffset(_node.StartOffset);
-						return pNode;
-					},
-					CONDITION_CHILDREN
-				} 
-			},
-			{ "CheckObstacleTowardInputDirNode", 
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<CheckObstacleTowardInputDirNode> pNode = std::make_shared<CheckObstacleTowardInputDirNode>();
-						pNode->SetStartOffset(_node.StartOffset);
-						return pNode;
-					},
-					CONDITION_CHILDREN
-				}
-			},
-			{ "CheckOnHangingUpwardLedgeNode",	
-				{ 
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<CheckOnHangingUpwardLedgeNode> pNode = std::make_shared<CheckOnHangingUpwardLedgeNode>();
-						pNode->SetStartOffset(_node.StartOffset);
-						return pNode;
-					}, 
-					CONDITION_CHILDREN 
-				} 
-			},
-			{ "CheckOnHangingMoveSideNode",
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<CheckOnHangingMoveSideNode> pNode = std::make_shared<CheckOnHangingMoveSideNode>();
-						pNode->SetStartOffset(_node.StartOffset);
-						return pNode;
-					},
-					CONDITION_CHILDREN
-				}
-			},
-			{ "CheckOnHangingMoveToInputDirNode",
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<CheckOnHangingMoveToInputDirNode> pNode = std::make_shared<CheckOnHangingMoveToInputDirNode>();
-						pNode->SetStartOffset(_node.StartOffset);
-						return pNode;
-					},
-					CONDITION_CHILDREN
-				}
-			},
-			{ "PoleExtractDataNode",
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<PoleExtractDataNode> pNode = std::make_shared<PoleExtractDataNode>();
-						pNode->SetHeightLimit(_node.HeightMultiplier);
-						return pNode;
-					},
-					0 
-				} 
-			},
 		};
 	}
 

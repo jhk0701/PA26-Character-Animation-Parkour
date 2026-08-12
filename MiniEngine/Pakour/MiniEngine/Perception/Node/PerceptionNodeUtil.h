@@ -8,9 +8,6 @@ namespace MiniEngine
 	struct Transform; 
 }
 
-// TODO: 제거
-class Character;
-
 namespace PerceptionNodeUtil 
 {
 	MiniEngine::IObstacle* ToIObstacle(void* _p);
@@ -27,55 +24,4 @@ namespace PerceptionNodeUtil
 
 	void LocalizePosition(const MiniEngine::Transform& _inTf, const MiniEngine::Vector3& _inOffset, MiniEngine::Vector3& _outResult);
 	void LocalizeDirection(const MiniEngine::Transform& _inTf, const MiniEngine::Vector3& _inDir, MiniEngine::Vector3& _outResult);
-
-	std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor);
-	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);
-	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context);
-	
-	// TODO: 제거
-	// 캐릭터 기준으로 현재 위치에서 특정 방향에 캡슐을 쏘아 장애물이 있는지 체크
-	bool CheckObstacle(
-		MiniEngine::TravelContext& _context, 
-		const MiniEngine::Vector3& _pos, 
-		const MiniEngine::Vector3& _dir, 
-		const float _dist,
-		const float _hMultiplier = 2.0f, 
-		const bool _bExcludeGroundActor = false);
-
-	bool CheckObstacleSphere(
-		MiniEngine::TravelContext& _context,
-		const MiniEngine::Vector3& _pos,
-		const MiniEngine::Vector3& _dir,
-		const float _dist,
-		const float _radius,
-		const bool _bExcludeGroundActor = false);
-
-	bool CheckLedgeSingle(
-		MiniEngine::TravelContext& _context,
-		const MiniEngine::Vector3& _pos,
-		const MiniEngine::Vector3& _dir,
-		const float _radius, 
-		const float _dist,
-		MiniEngine::Physics::RaycastResult& _outResult);
-
-	bool CheckLedgeMultiple(
-		MiniEngine::TravelContext& _context,
-		const MiniEngine::Vector3& _pos,
-		const MiniEngine::Vector3& _dir,
-		const float _radius,
-		const float _dist,
-		MiniEngine::Physics::RaycastResult& _outResult);
-
-	// 장애물 높이 측정
-	// 횟수는 config를 통해서 조절
-	uint8_t MeasureObstacleHeight(
-		MiniEngine::TravelContext& _context, 
-		const MiniEngine::Vector3& _dir);
-
-	// 꼭대기에서 전방으로 0.5 씩 나아가며 하향 레이로 딛을 면이 이어지는지 잰다.
-	// 결과는 {0, 0.5, 1.0}
-	void MeasureObstacleDepth(
-		MiniEngine::TravelContext& _context,
-		const MiniEngine::Vector3& _dir);
-
 }
