@@ -427,8 +427,9 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 		const bool bIsSwitch = (std::dynamic_pointer_cast<SwitchNode>(SELF) != nullptr);
 		const bool bIsBinaryCondition = (std::dynamic_pointer_cast<BinaryConditionNode>(SELF) != nullptr);
 		const bool bIsSequence = (std::dynamic_pointer_cast<SequenceNode>(SELF) != nullptr);
+		const bool bIsSelector = (std::dynamic_pointer_cast<SelectorNode>(SELF) != nullptr);
 
-		if (bIsSwitch == false && bIsBinaryCondition == false && bIsSequence == false)
+		if (bIsSwitch == false && bIsBinaryCondition == false && bIsSequence == false && bIsSelector == false)
 		{
 			// TaskNode — 자식을 가질 수 없다
 			if (NODE.Children.empty() == false)
@@ -478,8 +479,10 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 			std::static_pointer_cast<SwitchNode>(SELF)->SetChildren(std::move(children));
 		else if (bIsBinaryCondition)
 			std::static_pointer_cast<BinaryConditionNode>(SELF)->SetChildren(std::move(children));
-		else
+		else if (bIsSequence)
 			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
+		else if (bIsSelector)
+			std::static_pointer_cast<SelectorNode>(SELF)->SetChildren(std::move(children));
 
 		// Deco 붙이기
 		std::vector<std::shared_ptr<PerceptionDecorator>> decos;
