@@ -20,6 +20,22 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
+	bool PerceptionNode::Evaluate(const TravelContext& _context) const
+	{
+		if (m_conditions.size() == 0)
+			return true;
+
+		// 단일 노드 내, 다중 조건은 기본 && 로 처리할 것
+		// 한 노드에 조건 두 개 넣은건 그럴 둘다 통과해야한다고 의도한 것으로 간주함
+		for (const std::shared_ptr<PerceptionCondition>& pCond : m_conditions)
+		{
+			if (pCond->Evaluate(_context) == false)
+				return false;
+		}
+
+		return true;
+	}
+
 	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		return InvokeTask(_context, _result);
@@ -27,10 +43,14 @@ namespace MiniEngine
 
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		for (size_t i = 0; i < GetChildrenCnt(); ++i)
+		const std::vector<std::shared_ptr<PerceptionNode>>& children = GetChildren();
+		for (const std::shared_ptr<PerceptionNode>& child : children)
 		{
-			if (GetChildren()[i]->Execute(_context, _result) == EPerceptionResult::Fail)
-				return  EPerceptionResult::Fail;
+			// 1. 자식에 달린 조건 확인 -> false라면 중단
+			// 2. 자식 노드들 실행 -> 하나라도 fail이라면 중단
+			if (child->Evaluate(_context) == false  ||
+				child->Execute(_context, _result) == EPerceptionResult::Fail)
+				return EPerceptionResult::Fail;
 		}
 
 		return EPerceptionResult::Succeess;
@@ -38,15 +58,22 @@ namespace MiniEngine
 
 	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		for (size_t i = 0; i < GetChildrenCnt(); ++i)
+		const std::vector<std::shared_ptr<PerceptionNode>>& children = GetChildren();
+		for (const std::shared_ptr<PerceptionNode>& child : children)
 		{
-			if (GetChildren()[i]->Execute(_context, _result) == EPerceptionResult::Succeess)
+			// 1. 자식에 달린 조건 확인 -> false라면 다음 자식 확인
+			if (child->Evaluate(_context) == false)
+				continue;
+
+			// 2. 자식 실행 결과 하나라도 Success 라면 종료
+			if (child->Execute(_context, _result) == EPerceptionResult::Succeess)
 				return  EPerceptionResult::Succeess;
 		}
 
 		return EPerceptionResult::Fail;
 	}
 
+	// 조건 노드가 만들어졌으니 제거할 것
 	EPerceptionResult SwitchNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		uint8_t r = InvokeCondition(_context);
@@ -54,7 +81,6 @@ namespace MiniEngine
 
 		return GetChildren()[r]->Execute(_context, _result);
 	}
-
 	EPerceptionResult BinaryConditionNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		if (InvokeCondition(_context))
@@ -62,7 +88,6 @@ namespace MiniEngine
 		else
 			return GetChildren()[1]->Execute(_context, _result);
 	}
-
 
 #pragma endregion
 
@@ -86,4 +111,5 @@ namespace MiniEngine
 		
 		return m_queryTree->Execute(context, m_result);
 	}
+
 }
