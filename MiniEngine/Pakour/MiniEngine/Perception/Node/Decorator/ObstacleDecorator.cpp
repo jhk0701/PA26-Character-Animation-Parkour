@@ -2,6 +2,8 @@
 #include "Perception/Node/Decorator/ObstacleDecorator.h"
 #include "Perception/Config/ObstacleConfig.h"
 
+#include "Scene/Actor.h"
+
 namespace MiniEngine 
 {
 	bool ObstacleDetectedDecorator::Evaluate(const TravelContext& _context) const
@@ -18,11 +20,9 @@ namespace MiniEngine
 		return tag == GetValue();
 	}
 
-	bool CompareLedgeDecorator::Evaluate(const TravelContext& _context) const
+	bool CompareHeightDecorator::Evaluate(const TravelContext& _context) const
 	{
-		if (!_context.m_bDetectLedge)
-			return false;
-
-		return Compare(_context.m_ledge);
+		const float FOOT_Y = _context.m_owner->GetRoot()->localTransform.position.y;
+		return Compare(_context.m_ledge - FOOT_Y);
 	}
 }

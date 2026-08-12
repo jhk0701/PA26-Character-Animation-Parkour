@@ -16,7 +16,7 @@ namespace MiniEngine
 		bool Evaluate(const TravelContext& _context) const override;
 	};
 
-	class CompareLedgeDecorator : public CompareWithValueDecorator<float> 
+	class CompareHeightDecorator : public CompareWithValueDecorator<float> 
 	{
 	public:
 		bool Evaluate(const TravelContext& _context) const override;

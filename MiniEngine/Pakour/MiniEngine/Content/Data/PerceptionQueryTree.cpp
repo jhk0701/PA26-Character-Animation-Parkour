@@ -102,11 +102,11 @@ namespace
 					}
 				}
 			},
-			{ "CompareLedgeDecorator", 
+			{ "CompareHeightDecorator", 
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<CompareLedgeDecorator> pDeco = std::make_shared<CompareLedgeDecorator>();
+						std::shared_ptr<CompareHeightDecorator> pDeco = std::make_shared<CompareHeightDecorator>();
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.ValueFloat);
 						return pDeco;

@@ -5,6 +5,31 @@
         "id" : "ObstacleDetected",
         "class" : "ObstacleDetectedDecorator"
     },
+    {
+        "comment" : "---------------장애물 높이 기준---------------",
+        "id" : "IsWall",
+        "class" : "CompareHeightDecorator",
+        "comparer" : "Greater",
+        "val_float" : 3.0
+    },    
+    {
+        "id" : "IsHigh",
+        "class" : "CompareHeightDecorator",
+        "comparer" : "Greater",
+        "val_float" : 2.0
+    },
+    {
+        "id" : "IsMid",
+        "class" : "CompareHeightDecorator",
+        "comparer" : "Greater",
+        "val_float" : 1.0
+    },
+    {
+        "id" : "IsLow",
+        "class" : "CompareHeightDecorator",
+        "comparer" : "Greater",
+        "val_float" : 0.3
+    },
 
     {
         "comment" : "---------------장애물 유형 확인---------------",
@@ -92,17 +117,135 @@
     {
         "id" : "Root",
         "class" : "SelectorNode",
-        "children" : [ "LandingState" ]
+        "comment" : "현재 캐릭터 상태에 따라 탐색 방향 제어",
+        "children" : [ "LandingState", "InAirState", "BeamStandState", "BeamHangingState" ]
     },
         {
             "id" : "LandingState",
             "class" : "SequenceNode",
             "decos" : [ "IsLandingState" ],
-            "children" : []
+            "children" : [ "Landing_DetectFoward", "Obstacle_Detected" ]
         },
             {
-                "id" : "Detect"
+                "id" : "Landing_DetectFoward",
+                "class" : "DetectObstacleCapsuleNode",
+                "startOffset" : [ 0.0, 0.25, 0.0 ],
+                "direction" : [ 0.0, 0.0, 1.0 ],
+                "distance" : 2.5,
+                "radius" : 0.5,
+                "height" : 1.0,
+                "heightMultiplier" : 1.0
+            },
+            {
+                "id" : "Obstacle_Detected",
+                "class" : "SelectorNode",
+                "decos" : [ "ObstacleDetected" ],
+                "children" : [ 
+                    "Process_Default", 
+                    "Process_Beam", 
+                    "Process_Protrude", 
+                    "Process_Pole"
+                ]
+            },
+                {
+                    "id" : "Process_Default",
+                    "class" : "SequenceNode",
+                    "decos" : [ "IsDefault" ],
+                    "children" : [
+                        "Measure_Height_Forward",
+                        "Check_Height",
+                        "Return"
+                    ]
+                },
+                    {
+                        "id" : "Measure_Height_Forward",
+                        "class" : "MeasureObstacleHeightNode",
+                        "direction" : [ 0.0, 0.0, 1.0 ]
+                    },
+                    {
+                        "id" : "Check_Height",
+                        "class" : "SelectorNode",
+                        "children" : [ "Detect_Wall", "Measure_Depth_Forward" ]
+                    },
+                        {
+                            "id" : "Detect_Wall",
+                            "class" : "ReturnResultNode",
+                            "decos" : [ "IsWall" ]
+                        },
+                        {
+                            "id" : "Measure_Depth_Forward",
+                            "class" : "MeasureObstacleDepthNode",
+                            "direction" : [ 0.0, 0.0, 1.0 ]
+                        },
+                {
+                    "id" : "Process_Beam",
+                    "class" : "SequenceNode",
+                    "decos" : [ "IsBeam" ],
+                    "children" : [ "Extract_BeamData", "Return" ]
+                },
+                    {
+                        "comment" : "Beam 지형에 대한 높이 처리",
+                        "id" : "Extract_BeamData",
+                        "class" : "ProcessBeamNode"
+                    },
+                {
+                    "id" : "Process_Protrude",
+                    "class" : "SequenceNode",
+                    "decos" : [ "IsProtrude" ],
+                    "children" : [ "Extract_ProtrudeData", "Return" ]
+                },
+                    {
+                        "comment" : "Protrude 지형에 대한 높이 처리",
+                        "id" : "Extract_ProtrudeData",
+                        "class" : "ProcessProtrudeNode"
+                    },
+                {
+                    "id" : "Process_Pole",
+                    "class" : "SequenceNode",
+                    "children" : [ "Extract_PoleData", "Return" ]
+                },
+                    {
+                        "comment" : "Pole 지형에 대한 높이 처리",
+                        "id" : "Extract_PoleData",
+                        "class" : "ProcessPoleNode"
+                    },
+        {
+            "id" : "InAirState",
+            "class" : "SequenceNode",
+            "decos" : [ "IsInAirState" ],
+            "children" : [ "InAir_DetectFoward", "Obstacle_Detected" ]
+        },
+            {
+                "id" : "InAir_DetectFoward",
+                "class" : "DetectObstacleCapsuleNode",
+                "startOffset" : [ 0.0, 0.0, 0.0 ],
+                "direction" : [ 0.0, 0.0, 1.0 ],
+                "distance" : 1.0,
+                "radius" : 1.0,
+                "height" : 1.0,
+                "heightMultiplier" : 1.5
+            },
+        {
+            "id" : "BeamStandState",
+            "class" : "SequenceNode",
+            "decos" : [ "IsBeamStandState" ],
+            "children" : [ "BeamStand_DetectFoward", "Obstacle_Detected" ]
+        },
+        {
+            "id" : "BeamHangingState",
+            "class" : "SequenceNode",
+            "decos" : [ "IsBeamHangingState" ],
+            "children" : [ "BeamStand_DetectFoward", "Obstacle_Detected" ]
+        },
+            {
+                "id" : "Beam_DetectFoward",
+                "class" : "DetectObstacleCapsuleNode",
+                "startOffset" : [ 0.0, 0.0, 0.5 ],
+                "direction" : [ 0.0, 0.0, 1.0 ],
+                "distance" : 2.5,
+                "radius" : 0.5,
+                "height" : 1.0,
+                "heightMultiplier" : 3.0
             }
-
   ]
 }
