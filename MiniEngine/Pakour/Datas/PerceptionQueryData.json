@@ -316,14 +316,154 @@
                 },
                     {
                         "id" : "Hanging_Detected_Default",
-                        "comment" : "Default의 경우, 입력 y 값에 따라 처리 세분화. 아래 쪽에 장애물은 착지 시도"
+                        "comment" : "Default의 경우, 입력 y 값에 따라 처리 세분화. 아래 쪽에 장애물은 착지 시도",
+                        "class" : "SelectorNode",
+                        "children" : [ 
+                            "Hanging_Process_Default_Up", 
+                            "Hanging_Process_Default_Down", 
+                            "Hanging_Process_Default_Right", 
+                            "Hanging_Process_Default_Left" 
+                        ]
                     },
+                        {
+                            "id" : "Hanging_Process_Default_Up",
+                            "class" : "SequenceNode",
+                            "decos" : [ "IsInputUp" ],
+                            "children" : [ "Hanging_Process_Default_Up_Detect_Ledge", "Return" ]
+                        },
+                            {
+                                "id" : "Hanging_Process_Default_Up_Detect_Ledge",
+                                "class" : "DetectLedgeMultipleNode",
+                                "startOffset" : [ 0.0, 0.0, -0.75 ],
+                                "direction" : [ 0.0, 1.0, 0.0 ],
+                                "distance" : 2.0,
+                                "radius" : 0.5
+                            },
+                        {
+                            "id" : "Hanging_Process_Default_Down",
+                            "class" : "ReturnResultNode",
+                            "decos" : [ "IsInputDown" ]
+                        },
+                        {
+                            "id" : "Hanging_Process_Default_Right",
+                            "class" : "SequenceNode",
+                            "decos" : [ "IsInputRight" ],
+                            "children" : [ 
+                                "Hanging_Process_Default_Right_MeasureHeight",  
+                                "Hanging_Process_Default_Right_MeasureDepth",
+                                "Return"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_Process_Default_Right_MeasureHeight",
+                                "class" : "MeasureObstacleHeightNode",
+                                "direction" : [ 1.0, 0.0, 0.0 ]
+                            },
+                            {
+                                "id" : "Hanging_Process_Default_Right_MeasureDepth",
+                                "class" : "MeasureObstacleDepthNode",
+                                "direction" : [ 1.0, 0.0, 0.0 ]
+                            },
+                        {
+                            "id" : "Hanging_Process_Default_Left",
+                            "class" : "SequenceNode",
+                            "decos" : [ "IsInputLeft" ],
+                            "children" : [
+                                "Hanging_Process_Default_Left_MeasureHeight",
+                                "Hanging_Process_Default_Left_MeasureDepth",
+                                "Return"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_Process_Default_Left_MeasureHeight",
+                                "class" : "MeasureObstacleHeightNode",
+                                "direction" : [ -1.0, 0.0, 0.0 ]
+                            },
+                            {
+                                "id" : "Hanging_Process_Default_Left_MeasureDepth",
+                                "class" : "MeasureObstacleDepthNode",
+                                "direction" : [ -1.0, 0.0, 0.0 ]
+                            },
                 {
                     "id" : "Hanging_NotDetected",
                     "comment" : "입력 받고 있는 방향으로 이동 가능한지 확인",
                     "class" : "SelectorNode",
-                    "children" : []
-                }
+                    "children" : [
+                        "Hanging_NotDetected_Check_Up",
+                        "Hanging_NotDetected_Check_Down",
+                        "Hanging_NotDetected_Check_Right",
+                        "Hanging_NotDetected_Check_Left"
+                    ]
+                },
+                    {
+                        "id" : "Hanging_NotDetected_Check_Up",
+                        "decos" : [ "IsInputUp" ],
+                        "class" : "SequenceNode",
+                        "children" : [ 
+                            "Hanging_NotDetected_Check_Movable_Up",
+                            "Hanging_NotDetected_Check_Climbable"
+                        ]
+                    },
+                        {
+                            "id" : "Hanging_NotDetected_Check_Movable_Up",
+                            "class" : "CheckObstacleSphereNode",
+                            "startOffset" : [ 0.0, 2.5, 0.3 ],
+                            "direction" : [ 0.0, 0.0, 1.0 ],
+                            "distance" : 0.5,
+                            "radius" : 0.05
+                        },
+                        {
+                            "id" : "Hanging_NotDetected_Check_Climbable",
+                            "class" : "SelectorNode",
+                            "children" : [
+                                "Hanging_NotDetected_Check_Climbable_MoveUp",
+                                "Hanging_NotDetected_Check_Climbable_ClimbUp"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_NotDetected_Check_Climbable_MoveUp",
+                                "class" : "ReturnResultNode",
+                                "decos" : [ "ObstacleDetected" ]
+                            },
+                            {
+                                "id" : "Hanging_NotDetected_Check_Climbable_ClimbUp",
+                                "class" : "SequenceNode",
+                                "children" : [
+                                    "Hanging_NotDetected_Check_Climbable_ClimbUp_CheckLedge",
+                                    "Return"
+                                ]
+                            },
+                                {
+                                    "id" : "Hanging_NotDetected_Check_Climbable_ClimbUp_CheckLedge",
+                                    "class" : "DetectLedgeNode",                                  
+                                    "startOffset" : [ 0.0, 0.0, 3.0 ],
+                                    "direction" : [ 0.0, 1.0, 0.0 ],
+                                    "distance" : 2.0,
+                                    "radius" : 0.5
+                                },
+                    {
+                        "id" : "Hanging_NotDetected_Check_Down",
+                        "decos" : [ "IsInputDown" ],
+                        "class" : "SelectorNode",
+                        "children" : [
+                            
+                        ]
+                    },
+                        {
+
+                        },
+                    {
+                        "id" : "Hanging_NotDetected_Check_Right",
+                        "decos" : [ "IsInputRight" ],
+                        "class" : "",
+                        "children" : []
+                    },
+                    {
+                        "id" : "Hanging_NotDetected_Check_Left",
+                        "decos" : [ "IsInputLeft" ],
+                        "class" : "",
+                        "children" : []
+                    }
 
   ]
 }

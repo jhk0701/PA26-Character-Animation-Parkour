@@ -41,7 +41,7 @@ namespace MiniEngine
 
 		// 각 노드 개별 멤버 변수
 		"startOffset" : [ 0.0, 0.0, 0.0 ],
-		"direction" : [ 0.0, 0.0. 1.0 ],
+		"direction" : [ 0.0, 0.0, 1.0 ],
 		"distance" : 1.0,
 		"radius" : 0.5,
 		"height" : 1.0,

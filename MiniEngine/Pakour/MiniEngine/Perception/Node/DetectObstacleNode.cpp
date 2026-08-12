@@ -121,6 +121,34 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	return EPerceptionResult::Succeess;
 }
 
+EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+{
+	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+
+	if (!pProcessor)
+		return EPerceptionResult::Fail;
+
+	// 지오메트리 생성
+	SpherecastParam param;
+	param.m_radius = GetRadius();
+	param.m_maxDistance = GetDistance();
+
+	// Owner 트랜스폼 기준 적용
+	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
+
+	RaycastResult result;
+	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
+	{
+		_context.m_pFirstObstacle = nullptr;
+		return EPerceptionResult::Succeess;
+	}
+
+	FillFromResult(_context, result);
+
+	return EPerceptionResult::Succeess;
+}
+
 EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	SpherecastParam param;
