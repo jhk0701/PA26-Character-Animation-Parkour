@@ -112,7 +112,7 @@ namespace MiniEngine
 	};
 
 	// 단순 이진 조건문 노드
-	class ConditionNode : public CompositeNode
+	class BinaryConditionNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;

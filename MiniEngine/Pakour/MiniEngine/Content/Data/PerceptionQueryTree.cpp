@@ -293,10 +293,10 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 		const int EXPECTED = REGISTRY.at(NODE.NodeClass).ExpectedChildren;
 
 		const bool bIsSwitch = (std::dynamic_pointer_cast<SwitchNode>(SELF) != nullptr);
-		const bool bIsCondition = (std::dynamic_pointer_cast<ConditionNode>(SELF) != nullptr);
+		const bool bIsBinaryCondition = (std::dynamic_pointer_cast<BinaryConditionNode>(SELF) != nullptr);
 		const bool bIsSequence = (std::dynamic_pointer_cast<SequenceNode>(SELF) != nullptr);
 
-		if (bIsSwitch == false && bIsCondition == false && bIsSequence == false)
+		if (bIsSwitch == false && bIsBinaryCondition == false && bIsSequence == false)
 		{
 			// TaskNode — 자식을 가질 수 없다
 			if (NODE.Children.empty() == false)
@@ -337,8 +337,8 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 
 		if (bIsSwitch)
 			std::static_pointer_cast<SwitchNode>(SELF)->SetChildren(std::move(children));
-		else if (bIsCondition)
-			std::static_pointer_cast<ConditionNode>(SELF)->SetChildren(std::move(children));
+		else if (bIsBinaryCondition)
+			std::static_pointer_cast<BinaryConditionNode>(SELF)->SetChildren(std::move(children));
 		else
 			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
 	}

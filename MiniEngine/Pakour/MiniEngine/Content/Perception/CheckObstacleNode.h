@@ -3,7 +3,7 @@
 
 using namespace MiniEngine;
 
-class CheckObstacleNode : public ConditionNode
+class CheckObstacleNode : public BinaryConditionNode
 {
 public:
 	bool InvokeCondition(TravelContext& _context) override;

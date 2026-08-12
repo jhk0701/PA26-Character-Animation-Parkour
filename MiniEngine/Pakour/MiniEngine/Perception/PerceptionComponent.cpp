@@ -55,7 +55,7 @@ namespace MiniEngine
 		return GetChildren()[r]->Execute(_context, _result);
 	}
 
-	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult BinaryConditionNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		if (InvokeCondition(_context))
 			return GetChildren()[0]->Execute(_context, _result);
