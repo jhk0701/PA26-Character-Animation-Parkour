@@ -132,15 +132,15 @@ namespace MiniEngine
 	class PerceptionComponent : public Component
 	{
 	public:
-		void OnAttach() override;
-
 		EPerceptionResult Travel(); // 탐색
+
 		void SetQueryTree(std::shared_ptr<PerceptionNode>&& _newTree) { m_queryTree = _newTree; };
+
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 		const TravelResult& GetLastestTravelResult() const { return m_result; }
+
 	private:
-		std::weak_ptr<Physics::PhysicsWorld> m_physics;
 		std::shared_ptr<PerceptionNode> m_queryTree;
 
 		TravelResult m_result; // 가장 마지막으로 인식한 결과물

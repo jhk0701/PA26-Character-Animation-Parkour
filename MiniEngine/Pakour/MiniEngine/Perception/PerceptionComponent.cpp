@@ -91,15 +91,9 @@ namespace MiniEngine
 
 #pragma endregion
 
-	void PerceptionComponent::OnAttach()
-	{
-		Component::OnAttach();
-		m_physics = owner.lock()->GetScene()->GetPhysics();
-	}
-
 	EPerceptionResult PerceptionComponent::Travel()
 	{
-		if (m_physics.expired() || IsInitialized() == false)
+		if (IsInitialized() == false)
 		{
 			m_result.Reset();
 			return EPerceptionResult::Fail;
