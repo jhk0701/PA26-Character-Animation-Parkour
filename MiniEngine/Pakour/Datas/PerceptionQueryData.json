@@ -238,6 +238,7 @@
                 {
                     "id" : "Process_Pole",
                     "class" : "SequenceNode",
+                    "decos" : [ "IsPole" ],
                     "children" : [ "Extract_PoleData", "Return" ]
                 },
                     {

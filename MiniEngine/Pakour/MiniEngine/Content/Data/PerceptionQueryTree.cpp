@@ -437,7 +437,7 @@ void PerceptionQueryData::Load(const json& _data)
 			// TODO : 매개변수들은 따로 처리할 방법이 필요
 			// 현재는 우선 node에 멤버변수로 계속 포함시킴
 			ReadVec3(element, "startOffset", node.StartOffset);
-			ReadVec3(element, "direction", node.StartOffset);
+			ReadVec3(element, "direction", node.Direction);
 			node.Distance			= element.value("distance", node.Distance);
 			node.Radius				= element.value("radius", node.Radius);
 			node.Height				= element.value("height", node.Height);
@@ -535,6 +535,8 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 
 		// Deco 붙이기
 		std::vector<std::shared_ptr<PerceptionDecorator>> decos;
+		decos.reserve(NODE.Decos.size());
+
 		for (const std::string& DECO_ID : NODE.Decos)
 		{
 			auto it = createdDeco.find(DECO_ID);
@@ -586,7 +588,7 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 
 		for (const std::string& CHILD_ID : NODE.Children)
 		{
-			auto it = createdNode.find(NODE.Id);
+			auto it = createdNode.find(CHILD_ID);
 			if (it == createdNode.end())
 			{
 				MG_LOG_ERROR("[PerceptionQueryTree] node '{}' references unknown id '{}'.", NODE.Id, CHILD_ID);
