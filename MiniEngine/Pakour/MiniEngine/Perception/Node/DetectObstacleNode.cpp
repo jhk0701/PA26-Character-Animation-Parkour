@@ -12,6 +12,15 @@
 using namespace MiniEngine::Physics;
 using namespace PerceptionNodeUtil;
 
+namespace 
+{
+	void DebugRay(const Vector3& _start, const Vector3& _end, float _radius, float _duration = 1.0f)
+	{
+		MiniEngine::Debug::DrawLine(_start, _end, MiniEngine::DebugColor::YELLOW, 1.0f);
+		MiniEngine::Debug::DrawPoint(_end, MiniEngine::DebugColor::YELLOW, _radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+	}
+}
+
 void DetectNode::SortResults(RaycastMultipleResult& _result) const
 {
 	std::sort(_result.m_hitResults.begin(), _result.m_hitResults.end(),
@@ -75,14 +84,13 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
-	Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
-	MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
-
-	Vector3 debugPointLow = debugEnd - Vector3(0.0f, param.m_halfHeight, 0.0f);
-	Vector3 debugPointHigh = debugEnd + Vector3(0.0f, param.m_halfHeight, 0.0f);
-	MiniEngine::Debug::DrawLine(debugPointLow, debugPointHigh, MiniEngine::DebugColor::YELLOW, 1.0f);
-	MiniEngine::Debug::DrawPoint(debugPointLow, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
-	MiniEngine::Debug::DrawPoint(debugPointHigh, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+	//Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
+	//MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
+	//Vector3 debugPointLow = debugEnd - Vector3(0.0f, param.m_halfHeight, 0.0f);
+	//Vector3 debugPointHigh = debugEnd + Vector3(0.0f, param.m_halfHeight, 0.0f);
+	//MiniEngine::Debug::DrawLine(debugPointLow, debugPointHigh, MiniEngine::DebugColor::YELLOW, 1.0f);
+	//MiniEngine::Debug::DrawPoint(debugPointLow, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+	//MiniEngine::Debug::DrawPoint(debugPointHigh, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
@@ -137,6 +145,8 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 	param.m_maxDistance = GetDistance();
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
+	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
 	{
@@ -189,6 +199,8 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, T
 
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
+
+	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)

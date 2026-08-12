@@ -305,12 +305,15 @@
                 "class" : "DetectObstacleUsingInputNode",
                 "startOffset" : [ 0.0, 0.75, 0.0 ],
                 "distance" : 2.0,
-                "radius" : 1.0
+                "radius" : 0.5
             },
             {
                 "id" : "Hanging_Process_Detect",
                 "class" : "SelectorNode",
-                "children" : [ "Hanging_Detected", "Hanging_NotDetected" ]
+                "children" : [ 
+                    "Hanging_Detected", 
+                    "Hanging_NotDetected" 
+                ]
             },
                 {
                     "id" : "Hanging_Detected",
@@ -446,7 +449,7 @@
                                 {
                                     "id" : "Hanging_NotDetected_ClimbUp_CheckLedge",
                                     "class" : "DetectLedgeNode",                                  
-                                    "startOffset" : [ 0.0, 0.0, 3.0 ],
+                                    "startOffset" : [ 0.0, 1.5, 0.3 ],
                                     "direction" : [ 0.0, 1.0, 0.0 ],
                                     "distance" : 2.0,
                                     "radius" : 0.5
