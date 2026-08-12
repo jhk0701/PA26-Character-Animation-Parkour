@@ -191,7 +191,6 @@
     <ClInclude Include="Content\Perception\ProtrudeExtractHeightNode.h" />
     <ClInclude Include="Content\Perception\SelectCharacterStateNode.h" />
     <ClInclude Include="Content\Perception\CheckObstacleNode.h" />
-    <ClInclude Include="Content\Perception\ReturnNode.h" />
     <ClInclude Include="Content\Perception\SelectObstacleTagNode.h" />
     <ClInclude Include="Content\Perception\SelectUsingHeightNode.h" />
     <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h" />
@@ -221,9 +220,11 @@
     <ClInclude Include="Perception\Config\ObstacleConfig.h" />
     <ClInclude Include="Perception\Interface\IObstacle.h" />
     <ClInclude Include="Perception\Interface\IPerceptionProcessor.h" />
+    <ClInclude Include="Perception\Node\Condition\ObstacleNodeCondition.h" />
     <ClInclude Include="Perception\Node\DetectObstacleNode.h" />
     <ClInclude Include="Perception\Node\MeasureObstacleNode.h" />
     <ClInclude Include="Perception\Node\PerceptionNodeUtil.h" />
+    <ClInclude Include="Perception\Node\ReturnNode.h" />
     <ClInclude Include="Perception\PerceptionComponent.h" />
     <ClInclude Include="Perception\ProcessorComponent.h" />
     <ClInclude Include="Physics\CollsionLayer.h" />
@@ -295,7 +296,6 @@
     <ClCompile Include="Content\Perception\ProtrudeExtractHeightNode.cpp" />
     <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp" />
     <ClCompile Include="Content\Perception\CheckObstacleNode.cpp" />
-    <ClCompile Include="Content\Perception\ReturnNode.cpp" />
     <ClCompile Include="Content\Perception\SelectObstacleTagNode.cpp" />
     <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp" />
     <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp" />
@@ -325,9 +325,11 @@
     <ClCompile Include="Perception\Condition\ObstacleCondition.cpp" />
     <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp" />
     <ClCompile Include="Perception\Config\ObstacleConfig.cpp" />
+    <ClCompile Include="Perception\Node\Condition\ObstacleNodeCondition.cpp" />
     <ClCompile Include="Perception\Node\DetectObstacleNode.cpp" />
     <ClCompile Include="Perception\Node\MeasureObstacleNode.cpp" />
     <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp" />
+    <ClCompile Include="Perception\Node\ReturnNode.cpp" />
     <ClCompile Include="Perception\PerceptionComponent.cpp" />
     <ClCompile Include="Perception\ProcessorComponent.cpp" />
     <ClCompile Include="Physics\CollsionLayer.cpp" />

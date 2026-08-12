@@ -16,7 +16,7 @@
     {
         "id": "RootQuery",
         "class": "SelectCharacterStateNode",
-        "comment": "Character::EState 순서",
+        "comment": "Character::EState 순서 switch",
         "children": [
             "StateLanding",
             "StateInAir",
@@ -53,6 +53,7 @@
             {
                 "id": "ProcessDefault",
                 "class": "SelectUsingHeightNode",
+                "comment": "ledge - 액터 높이에 따른 switch -> 값 비교",
                 "children": [
                     "Return",
                     "MeasureDepthSeq",
@@ -86,7 +87,7 @@
                 {
                     "id": "BeamCompareHeight",
                     "class": "BeamCompareHeightNode",
-                    "comment": "캐릭터와 장애물의 y 위치 비교"
+                    "comment": "캐릭터와 장애물의 y 위치값 추출"
                 },
 
             {
@@ -121,6 +122,7 @@
         {
             "id": "StateInAir",
             "class": "CheckObstacleNode",
+            "comment" : "장애물 탐지여부",
             "heightMultiplier": 1.5,
             "children": [
                 "InAirObstacleFoundSeq",
@@ -137,6 +139,7 @@
         {
             "id": "StateHanging",
             "class": "CheckObstacleTowardInputDirNode",
+            "comment" : "입력 방향을 향한 장애물 탐지",
             "children": [
                 "OnHanging_Detected",
                 "OnHanging_NotDetected"
@@ -145,6 +148,7 @@
             {
                 "id": "OnHanging_Detected",
                 "class": "SelectObstacleTagNode",
+                "comment" : "장애물 태그를 이용한 switch 구분",
                 "children":
                 [
                     "OnHanging_Detected_Default",
@@ -256,6 +260,7 @@
         {
             "id": "StateBeam",
             "class": "CheckObstacleNode",
+            "comment" : "장애물 탐지 여부, 단 높이를 좀 넓게 구분",
             "heightMultiplier": 3.0,
             "startOffset": [ 0.0, 0.0, 0.55 ],
             "children": [

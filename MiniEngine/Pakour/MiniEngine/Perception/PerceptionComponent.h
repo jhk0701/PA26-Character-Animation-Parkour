@@ -45,11 +45,12 @@ namespace MiniEngine
 
 #pragma region Perception Nodes 인지 처리 노드
 
+	// 최상위 부모
 	// 노드에 붙어 실행 전 조건문 역할을 할 것
-	class PerceptionCondition
+	class PerceptionDecorator
 	{
 	public:
-		virtual ~PerceptionCondition() {};
+		virtual ~PerceptionDecorator() {};
 		virtual bool Evaluate(const TravelContext& _context) const = 0;
 	};
 
@@ -64,10 +65,10 @@ namespace MiniEngine
 		// 단일 노드 내, 다중 조건은 기본 && 로 처리
 		// 한 노드에 조건 두 개 넣은건, 둘 다 통과해야한다고 의도한 것으로 간주함
 		bool Evaluate(const TravelContext& _context) const;
-		void SetConditions(std::vector<std::shared_ptr<PerceptionCondition>>&& _conditions) { m_conditions = std::move(_conditions); };
+		void SetConditions(std::vector<std::shared_ptr<PerceptionDecorator>>&& _conditions) { m_conditions = std::move(_conditions); };
 
 	private:
-		std::vector<std::shared_ptr<PerceptionCondition>> m_conditions;
+		std::vector<std::shared_ptr<PerceptionDecorator>> m_conditions;
 	};
 
 	// Leaf 노드 - 최종 작업 수행
@@ -110,14 +111,12 @@ namespace MiniEngine
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 	};
 
-
-	// TODO : 조건문들에 대한 범용화 진행중
+	// Switch 조건문 노드
 	class SwitchNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual uint8_t InvokeCondition(TravelContext& _context) = 0;
-		// 자식들 조건 중 True가 뜨면 종료
 	};
 
 	// 단순 이진 조건문 노드
@@ -126,11 +125,7 @@ namespace MiniEngine
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual bool InvokeCondition(TravelContext& _context) = 0;
-
-		// 복수의 조건을 가지는 형태?
-		// 조건은 true, false만 허용
 	};
-
 
 #pragma endregion
 

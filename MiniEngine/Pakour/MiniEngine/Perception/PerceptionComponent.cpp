@@ -27,7 +27,7 @@ namespace MiniEngine
 
 		// 단일 노드 내, 다중 조건은 기본 && 로 처리할 것
 		// 한 노드에 조건 두 개 넣은건 그럴 둘다 통과해야한다고 의도한 것으로 간주함
-		for (const std::shared_ptr<PerceptionCondition>& pCond : m_conditions)
+		for (const std::shared_ptr<PerceptionDecorator>& pCond : m_conditions)
 		{
 			if (pCond->Evaluate(_context) == false)
 				return false;

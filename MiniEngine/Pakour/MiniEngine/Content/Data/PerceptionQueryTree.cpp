@@ -7,7 +7,10 @@
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
 
-#include "Content/Perception/ReturnNode.h"
+#include "Perception/Node/ReturnNode.h"
+#include "Perception/Node/DetectObstacleNode.h"
+#include "Perception/Node/MeasureObstacleNode.h"
+
 #include "Content/Perception/SelectCharacterStateNode.h"
 #include "Content/Perception/SelectObstacleTagNode.h"
 #include "Content/Perception/SelectUsingHeightNode.h"

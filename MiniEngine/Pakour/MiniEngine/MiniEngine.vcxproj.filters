@@ -131,6 +131,9 @@
     <Filter Include="Engine\07.Object\Component\Perception\Config">
       <UniqueIdentifier>{1f0b9be8-c8f5-4e82-b408-2fea19e2bada}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\07.Object\Component\Perception\Node\Condition">
+      <UniqueIdentifier>{4aff5d6b-4de7-4b08-bff9-8ec42b7cdbd0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXBase.h">
@@ -352,9 +355,6 @@
     <ClInclude Include="Content\CharacterIKNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Perception\ReturnNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Perception\SelectCharacterStateNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
@@ -438,6 +438,12 @@
     </ClInclude>
     <ClInclude Include="Perception\Config\ObstacleConfig.h">
       <Filter>Engine\07.Object\Component\Perception\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\ReturnNode.h">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\Condition\ObstacleNodeCondition.h">
+      <Filter>Engine\07.Object\Component\Perception\Node\Condition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -636,9 +642,6 @@
     <ClCompile Include="Content\CharacterIKNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Perception\ReturnNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
     <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
@@ -716,6 +719,12 @@
     </ClCompile>
     <ClCompile Include="Perception\Config\ObstacleConfig.cpp">
       <Filter>Engine\07.Object\Component\Perception\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\ReturnNode.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\Condition\ObstacleNodeCondition.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node\Condition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
