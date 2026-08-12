@@ -4,7 +4,7 @@
 
 using namespace MiniEngine;
 
-class CharacterStateDecorator : CompareWithValueDecorator<uint8_t>
+class CharacterStateDecorator : public CompareWithValueDecorator<uint8_t>
 {
 public:
 	bool Evaluate(const TravelContext& _context) const override;

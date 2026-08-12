@@ -73,7 +73,7 @@ namespace MiniEngine
 		return EPerceptionResult::Fail;
 	}
 
-	// 조건 노드가 만들어졌으니 제거할 것
+	// TODO : 조건 노드가 만들어졌으니 제거할 것
 	EPerceptionResult SwitchNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		uint8_t r = InvokeCondition(_context);

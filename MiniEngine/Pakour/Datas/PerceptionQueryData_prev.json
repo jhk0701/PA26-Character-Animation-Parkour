@@ -1,8 +1,6 @@
 {
   "root": "RootQuery",
-  "decos": [
 
-  ],
   "nodes": [
     {
         "id": "Empty",

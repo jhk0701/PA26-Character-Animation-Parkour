@@ -10,6 +10,8 @@
 #include "Perception/Node/ReturnNode.h"
 #include "Perception/Node/DetectObstacleNode.h"
 #include "Perception/Node/MeasureObstacleNode.h"
+#include "Perception/Node/Decorator/InheritDecorator.h"
+#include "Perception/Node/Decorator/ObstacleDecorator.h"
 
 #include "Content/Perception/SelectCharacterStateNode.h"
 #include "Content/Perception/SelectObstacleTagNode.h"
@@ -20,6 +22,8 @@
 #include "Content/Perception/BeamCompareHeightNode.h"
 #include "Content/Perception/ProtrudeExtractHeightNode.h"
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
+
+#include "Content/Perception/Decorator/CharacterDecorator.h"
 
 #include <functional>
 #include <unordered_map>
@@ -33,10 +37,16 @@ namespace
 {
 #pragma region Node Registry
 
+	using FuncCreateDeco = std::function<std::shared_ptr<PerceptionDecorator>(const PerceptionDecoData&)>;
 	using FuncCreateNode = std::function<std::shared_ptr<PerceptionNode>(const PerceptionNodeData&)>;
 
 	constexpr int CHILDREN_ANY = -1;
 	constexpr int CONDITION_CHILDREN = 2;
+
+	struct DecoSpec 
+	{
+		FuncCreateDeco Create;
+	};
 
 	struct NodeSpec
 	{
@@ -45,22 +55,73 @@ namespace
 	};
 
 	template<typename T>
+	FuncCreateDeco CreateDeco() 
+	{
+		return [](const PerceptionDecoData&) -> std::shared_ptr<PerceptionDecorator>
+		{
+			return std::make_shared<T>();
+		};
+	}
+
+	template<typename T>
 	FuncCreateNode CreateNode()
 	{
 		return [](const PerceptionNodeData&) -> std::shared_ptr<PerceptionNode>
-			{
-				return std::make_shared<T>();
-			};
+		{
+			return std::make_shared<T>();
+		};
+	}
+
+	void DecoRegistry(std::unordered_map<std::string, DecoSpec>& _out) 
+	{
+		_out =
+		{
+			{ "ObstacleDetectedDecorator",		{ CreateDeco<ObstacleDetectedDecorator>() } },
+			{ "CompareObstacleTypeDecorator",	
+				{ 
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<CompareObstacleTypeDecorator> pDeco = std::make_shared<CompareObstacleTypeDecorator>();
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.ValueUint8);
+						return pDeco;
+					}
+				}
+			},
+			{ "CompareLedgeDecorator", 
+				{
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<CompareLedgeDecorator> pDeco = std::make_shared<CompareLedgeDecorator>();
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.ValueFloat);
+						return pDeco;
+					}
+				}
+			},
+
+			{ "CharacterStateDecorator", 
+				{
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<CharacterStateDecorator> pDeco = std::make_shared<CharacterStateDecorator>();
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.TargetState);
+						return pDeco;
+					}
+				}
+			}
+		};
 	}
 
 	// 새 인식 노드 클래스는 아래에 추가
-	const std::unordered_map<std::string, NodeSpec>& NodeRegistry()
+	void NodeRegistry(std::unordered_map<std::string, NodeSpec>& _out)
 	{
-		// 1번만 호출하도록 static으로 선언
-		static const std::unordered_map<std::string, NodeSpec> REGISTRY =
+		_out =
 		{
 			// SequenceNode : 자식 연속 호출 Fail이 나오면 중단, 실패 처리
 			{ "SequenceNode",				{ CreateNode<SequenceNode>(),				CHILDREN_ANY } },
+			{ "SelectorNode",				{ CreateNode<SelectorNode>(),				CHILDREN_ANY } },
 
 			// Task (Leaf)
 			{ "ReturnResultNode",			{ CreateNode<ReturnResultNode>(),			0 } },
@@ -152,8 +213,6 @@ namespace
 				} 
 			},
 		};
-
-		return REGISTRY;
 	}
 
 #pragma endregion
@@ -183,13 +242,63 @@ void PerceptionQueryData::Load(const json& _data)
 			return;
 		}
 
+		// deco 읽기
+		auto itDecos = _data.find("decos");
+		if (itDecos == _data.end() || itDecos->is_array() == false) 
+		{
+			MG_LOG_ERROR("[PerceptionQueryData] 'decos' array is missing.");
+			return;
+		}
+
+		m_decos.reserve(itDecos->size());
+
+		for (const json& el : *itDecos)
+		{
+			PerceptionDecoData deco;
+			deco.Id = el.value("id", std::string());
+			deco.Class = el.value("class", std::string());
+
+			if (deco.Id.empty() || deco.Class.empty())
+			{
+				MG_LOG_ERROR("[PerceptionQueryData] decorator needs both 'id' and 'class'.");
+				return;
+			}
+
+			// 멤버 변수 파싱
+			deco.ValueFloat = el.value("val_float", deco.ValueFloat);
+			deco.ValueUint8 = el.value("val_uint8", deco.ValueUint8);
+			const std::string COMPARER_NAME = el.value("comparer", std::string());
+			if (COMPARER_NAME.empty() == false) 
+			{
+				if (TryParseComparerType(COMPARER_NAME, deco.ComparerType) == false) 
+				{
+					MG_LOG_ERROR("[PerceptionQueryData] deco '{}' has unknown Comparer '{}'.", deco.Id, COMPARER_NAME);
+					return;
+				}
+			}
+
+			const std::string STATE_NAME = el.value("targetState", std::string());
+			if (STATE_NAME.empty() == false)
+			{
+				if (Character::TryParseState(STATE_NAME, deco.TargetState) == false)
+				{
+					MG_LOG_ERROR("[PerceptionQueryData] deco '{}' has unknown targetState '{}'.",
+						deco.Id, STATE_NAME);
+					return;
+				}
+			}
+
+			m_decos.push_back(std::move(deco));
+		}
+
+		// node 읽기
 		auto itNodes = _data.find("nodes");
 		if (itNodes == _data.end() || itNodes->is_array() == false)
 		{
 			MG_LOG_ERROR("[PerceptionQueryData] 'nodes' array is missing.");
 			return;
 		}
-
+		
 		m_nodes.reserve(itNodes->size());
 
 		for (const json& element : *itNodes)
@@ -212,6 +321,14 @@ void PerceptionQueryData::Load(const json& _data)
 					node.Children.push_back(child.get<std::string>());
 			}
 
+			auto itDecos = element.find("decos");
+			if (itDecos != element.end() && itDecos->is_array()) 
+			{
+				node.Decos.reserve(itDecos->size());
+				for (const json& deco : *itDecos)
+					node.Decos.push_back(deco.get<std::string>());
+			}
+
 			// TODO : 매개변수들은 따로 처리할 방법이 필요
 			// 현재는 우선 node에 멤버변수로 계속 포함시킴
 			node.HeightMultiplier = element.value("heightMultiplier", node.HeightMultiplier);
@@ -230,6 +347,7 @@ void PerceptionQueryData::Load(const json& _data)
 
 			m_nodes.push_back(std::move(node));
 		}
+
 	}
 	catch (const json::exception& e)
 	{
@@ -250,50 +368,61 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 		return nullptr;
 	}
 
-	const std::vector<PerceptionNodeData>& NODES = GetNodes();
-	const std::unordered_map<std::string, NodeSpec>& REGISTRY = NodeRegistry();
+	std::unordered_map<std::string, DecoSpec> decoRegistry;
+	DecoRegistry(decoRegistry);
+	std::unordered_map<std::string, NodeSpec> nodeRegistry;
+	NodeRegistry(nodeRegistry);
+
+	std::unordered_map<std::string, std::shared_ptr<PerceptionDecorator>> createdDeco;
+	createdDeco.reserve(m_decos.size());
 
 	// 데이터 읽고 노드 생성
-	std::unordered_map<std::string, std::shared_ptr<PerceptionNode>> created;
-	created.reserve(NODES.size());
+	std::unordered_map<std::string, std::shared_ptr<PerceptionNode>> createdNode;
+	createdNode.reserve(m_nodes.size());
 
-	for (const PerceptionNodeData& NODE : NODES)
+	for (const PerceptionDecoData& DECO : m_decos)
 	{
-		auto itSpec = REGISTRY.find(NODE.NodeClass);
-		if (itSpec == REGISTRY.end())
+		auto itSpec = decoRegistry.find(DECO.Class);
+		if (itSpec == decoRegistry.end()) 
+		{
+			MG_LOG_ERROR("[PerceptionQueryTree] unknown deco class '{}' (id '{}').",
+				DECO.Class, DECO.Id);
+			return nullptr;
+		}
+
+		if (createdDeco.find(DECO.Id) != createdDeco.end())
+		{
+			MG_LOG_ERROR("[PerceptionQueryTree] duplicated deco id '{}'.", DECO.Id);
+			return nullptr;
+		}
+
+		createdDeco[DECO.Id] = itSpec->second.Create(DECO);
+	}
+
+	for (const PerceptionNodeData& NODE : m_nodes)
+	{
+		auto itSpec = nodeRegistry.find(NODE.NodeClass);
+		if (itSpec == nodeRegistry.end())
 		{
 			MG_LOG_ERROR("[PerceptionQueryTree] unknown node class '{}' (id '{}').",
 				NODE.NodeClass, NODE.Id);
 			return nullptr;
 		}
 
-		if (created.find(NODE.Id) != created.end())
+		if (createdNode.find(NODE.Id) != createdNode.end())
 		{
 			MG_LOG_ERROR("[PerceptionQueryTree] duplicated node id '{}'.", NODE.Id);
 			return nullptr;
 		}
 
-		created[NODE.Id] = itSpec->second.Create(NODE);
+		createdNode[NODE.Id] = itSpec->second.Create(NODE);
 	}
 
-	// 혹시 없는 노드가 데이터에 있는 경우 로깅
-	auto resolve = [&created](const std::string& _id, const std::string& _ownerId) -> std::shared_ptr<PerceptionNode>
-		{
-			auto it = created.find(_id);
-			if (it == created.end())
-			{
-				MG_LOG_ERROR("[PerceptionQueryTree] node '{}' references unknown id '{}'.", _ownerId, _id);
-				return nullptr;
-			}
-
-			return it->second;
-		};
-
 	// 자식 설정
-	for (const PerceptionNodeData& NODE : NODES)
+	for (const PerceptionNodeData& NODE : m_nodes)
 	{
-		const std::shared_ptr<PerceptionNode>& SELF = created[NODE.Id];
-		const int EXPECTED = REGISTRY.at(NODE.NodeClass).ExpectedChildren;
+		const std::shared_ptr<PerceptionNode>& SELF = createdNode[NODE.Id];
+		const int EXPECTED = nodeRegistry.at(NODE.NodeClass).ExpectedChildren;
 
 		const bool bIsSwitch = (std::dynamic_pointer_cast<SwitchNode>(SELF) != nullptr);
 		const bool bIsBinaryCondition = (std::dynamic_pointer_cast<BinaryConditionNode>(SELF) != nullptr);
@@ -331,7 +460,14 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 
 		for (const std::string& CHILD_ID : NODE.Children)
 		{
-			std::shared_ptr<PerceptionNode> pChild = resolve(CHILD_ID, NODE.Id);
+			auto it = createdNode.find(NODE.Id);
+			if (it == createdNode.end())
+			{
+				MG_LOG_ERROR("[PerceptionQueryTree] node '{}' references unknown id '{}'.", NODE.Id, CHILD_ID);
+				return nullptr;
+			}
+
+			std::shared_ptr<PerceptionNode> pChild = it->second;
 			if (pChild == nullptr)
 				return nullptr;
 
@@ -344,17 +480,35 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 			std::static_pointer_cast<BinaryConditionNode>(SELF)->SetChildren(std::move(children));
 		else
 			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
+
+		// Deco 붙이기
+		std::vector<std::shared_ptr<PerceptionDecorator>> decos;
+		for (const std::string& DECO_ID : NODE.Decos)
+		{
+			auto it = createdDeco.find(DECO_ID);
+			if (it == createdDeco.end()) 
+			{
+				MG_LOG_ERROR("[PerceptionQueryTree] deco '{}' references unknown id '{}'.", NODE.Id, DECO_ID);
+				return nullptr;
+			}
+
+			std::shared_ptr<PerceptionDecorator> pDeco = it->second;
+			if (pDeco == nullptr)
+				return nullptr;
+
+			decos.push_back(std::move(pDeco));
+		}
 	}
 
-	auto itRoot = created.find(GetRootId());
-	if (itRoot == created.end())
+	auto itRoot = createdNode.find(GetRootId());
+	if (itRoot == createdNode.end())
 	{
 		MG_LOG_ERROR("[PerceptionQueryTree] root id '{}' not found.", GetRootId());
 		return nullptr;
 	}
 
 	MG_LOG_INFO("[PerceptionQueryTree] constructed {} nodes. root = '{}'.",
-		created.size(), GetRootId());
+		createdNode.size(), GetRootId());
 
 	return itRoot->second;
 }

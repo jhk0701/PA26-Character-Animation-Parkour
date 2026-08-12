@@ -13,6 +13,8 @@ namespace MiniEngine
 	{
 		std::shared_ptr<Actor> m_owner;
 		std::shared_ptr<Physics::PhysicsWorld> m_physics;
+
+		// TODO : 중복된 사항 -> 정리 후 제거할 것
 		IObstacle* m_pFirstObstacle{ nullptr };
 		Vector3 m_firstObstacleHitPos;
 		Vector3 m_firstObstacleHitNrm;
@@ -110,6 +112,7 @@ namespace MiniEngine
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 	};
+
 
 	// Switch 조건문 노드
 	class SwitchNode : public CompositeNode

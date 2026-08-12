@@ -12,6 +12,9 @@ enum class ECompareType : uint8_t
 	Lesser
 };
 
+bool TryParseComparerType(const std::string& _name, uint8_t& _outTag);
+const char* GetComparerTypeName(uint8_t _tag);
+
 template<typename T>
 class CompareWithValueDecorator : public PerceptionDecorator 
 {
