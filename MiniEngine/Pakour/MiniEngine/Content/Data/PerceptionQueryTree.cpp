@@ -179,9 +179,10 @@ namespace
 				}
 			},
 			{ "DetectObstacleSphereNode",	{ CreateDetectNode<DetectObstacleSphereNode>(), 0} },
-			{ "CheckObstacleSphereNode",	{ CreateDetectNode<CheckObstacleSphereNode>(), 0} }, 
 			{ "DetectLedgeNode",			{ CreateDetectNode<DetectLedgeNode>(),			0} },
 			{ "DetectLedgeMultipleNode",	{ CreateDetectNode<DetectLedgeMultipleNode>(),	0} },
+			{ "DetectFloorNode",			{ CreateDetectNode<DetectFloorNode>(),			0} },
+			{ "CheckObstacleSphereNode",	{ CreateDetectNode<CheckObstacleSphereNode>(),	0} },
 			{ "MeasureObstacleHeightNode",	
 				{ 
 					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>

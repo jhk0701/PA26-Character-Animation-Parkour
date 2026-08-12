@@ -66,13 +66,6 @@ public:
 	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 };
 
-class CheckObstacleSphereNode : public DetectNode 
-{
-public:
-	virtual ~CheckObstacleSphereNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
-};
-
 class DetectLedgeNode : public DetectNode
 {
 public:
@@ -84,5 +77,19 @@ class DetectLedgeMultipleNode : public DetectNode
 {
 public:
 	virtual ~DetectLedgeMultipleNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+};
+
+class CheckObstacleSphereNode : public DetectNode
+{
+public:
+	virtual ~CheckObstacleSphereNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+};
+
+class DetectFloorNode : public DetectNode
+{
+public:
+	virtual ~DetectFloorNode() {};
 	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 };

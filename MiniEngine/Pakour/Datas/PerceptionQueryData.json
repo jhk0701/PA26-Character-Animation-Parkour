@@ -407,7 +407,7 @@
                         {
                             "id" : "Hanging_NotDetected_Check_Movable_Up",
                             "class" : "CheckObstacleSphereNode",
-                            "startOffset" : [ 0.0, 2.5, 0.3 ],
+                            "startOffset" : [ 0.0, 3.5, 0.3 ],
                             "direction" : [ 0.0, 0.0, 1.0 ],
                             "distance" : 0.5,
                             "radius" : 0.05
@@ -416,25 +416,25 @@
                             "id" : "Hanging_NotDetected_Check_Climbable",
                             "class" : "SelectorNode",
                             "children" : [
-                                "Hanging_NotDetected_Check_Climbable_MoveUp",
-                                "Hanging_NotDetected_Check_Climbable_ClimbUp"
+                                "Hanging_NotDetected_MoveUp",
+                                "Hanging_NotDetected_ClimbUp"
                             ]
                         },
                             {
-                                "id" : "Hanging_NotDetected_Check_Climbable_MoveUp",
+                                "id" : "Hanging_NotDetected_MoveUp",
                                 "class" : "ReturnResultNode",
                                 "decos" : [ "ObstacleDetected" ]
                             },
                             {
-                                "id" : "Hanging_NotDetected_Check_Climbable_ClimbUp",
+                                "id" : "Hanging_NotDetected_ClimbUp",
                                 "class" : "SequenceNode",
                                 "children" : [
-                                    "Hanging_NotDetected_Check_Climbable_ClimbUp_CheckLedge",
+                                    "Hanging_NotDetected_ClimbUp_CheckLedge",
                                     "Return"
                                 ]
                             },
                                 {
-                                    "id" : "Hanging_NotDetected_Check_Climbable_ClimbUp_CheckLedge",
+                                    "id" : "Hanging_NotDetected_ClimbUp_CheckLedge",
                                     "class" : "DetectLedgeNode",                                  
                                     "startOffset" : [ 0.0, 0.0, 3.0 ],
                                     "direction" : [ 0.0, 1.0, 0.0 ],
@@ -444,26 +444,122 @@
                     {
                         "id" : "Hanging_NotDetected_Check_Down",
                         "decos" : [ "IsInputDown" ],
-                        "class" : "SelectorNode",
+                        "class" : "SequenceNode",
                         "children" : [
-                            
+                            "Hanging_NotDetected_CheckFloor",
+                            "Hanging_NotDetected_IsFloor"
                         ]
                     },
                         {
-
+                            "id" : "Hanging_NotDetected_CheckFloor",
+                            "class" : "DetectFloorNode",
+                            "startOffset" : [ 0.0, 0.0, 0.0 ],
+                            "direction" : [ 0.0, -1.0, 0.0 ],
+                            "distance" : 2.0,
+                            "radius" : 0.05
                         },
+                        {
+                            "id" : "Hanging_NotDetected_IsFloor",
+                            "class" : "SelectorNode",
+                            "children" : [
+                                "Hanging_NotDetected_DownToFloor",
+                                "Hanging_NotDetected_Check_Movable_Down_Seq"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_NotDetected_DownToFloor",
+                                "class" : "ReturnResultNode",
+                                "decos" : [ "ObstacleDetected" ]
+                            },
+                            {
+                                "id" : "Hanging_NotDetected_Check_Movable_Down_Seq",
+                                "class" : "SequenceNode",
+                                "children" : [
+                                    "Hanging_NotDetected_Check_Movable_Down",
+                                    "Hanging_NotDetected_Process_Movable_Down"
+                                ]
+                            },
+                                {
+                                    "id" : "Hanging_NotDetected_Check_Movable_Down",
+                                    "class" : "CheckObstacleSphereNode",
+                                    "startOffset" : [ 0.0, -2.0, 0.3 ],
+                                    "direction" : [ 0.0, 0.0, 1.0 ],
+                                    "distance" : 0.5,
+                                    "radius" : 0.05
+                                },
+                                {
+                                    "id" : "Hanging_NotDetected_Process_Movable_Down",
+                                    "class" : "SelectorNode",
+                                    "children" : [ 
+                                        "Hanging_NotDetected_Movable_Down", 
+                                        "Empty" 
+                                    ]
+                                },
+                                {
+                                    "id" : "Hanging_NotDetected_Movable_Down",
+                                    "class" : "ReturnResultNode",
+                                    "decos" : ["ObstacleDetected"]
+                                },
                     {
                         "id" : "Hanging_NotDetected_Check_Right",
                         "decos" : [ "IsInputRight" ],
-                        "class" : "",
-                        "children" : []
+                        "class" : "SequenceNode",
+                        "children" : [
+                            "Hanging_NotDetected_Check_Movable_Right",
+                            "Hanging_NotDetected_Process_Movable_Right"
+                        ]
                     },
+                        {
+                            "id" : "Hanging_NotDetected_Check_Movable_Right",
+                            "class" : "CheckObstacleSphereNode",
+                            "startOffset" : [ 2.0, 0.0, 0.3 ],
+                            "direction" : [ 0.0, 0.0, 1.0 ],
+                            "distance" : 0.5,
+                            "radius" : 0.05
+                        },
+                        {
+                            "id" : "Hanging_NotDetected_Process_Movable_Right",
+                            "class" : "SelectorNode",
+                            "children" : [
+                                "Hanging_NotDetected_Movable_Right",
+                                "Empty"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_NotDetected_Movable_Right",
+                                "class" : "ReturnResultNode",
+                                "decos" : [ "ObstacleDetected" ]
+                            },
                     {
                         "id" : "Hanging_NotDetected_Check_Left",
                         "decos" : [ "IsInputLeft" ],
-                        "class" : "",
-                        "children" : []
-                    }
+                        "class" : "SequenceNode",
+                        "children" : [
+                            "Hanging_NotDetected_Check_Movable_Left",
+                            "Hanging_NotDetected_Process_Movable_Left"
+                        ]
+                    },
+                        {
+                            "id" : "Hanging_NotDetected_Check_Movable_Left",
+                            "class" : "CheckObstacleSphereNode",
+                            "startOffset" : [ -2.0, 0.0, 0.3 ],
+                            "direction" : [ 0.0, 0.0, 1.0 ],
+                            "distance" : 0.5,
+                            "radius" : 0.05
+                        },
+                        {
+                            "id" : "Hanging_NotDetected_Process_Movable_Left",
+                            "class" : "SelectorNode",
+                            "children" : [
+                                "Hanging_NotDetected_Movable_Left",
+                                "Empty"
+                            ]
+                        },
+                            {
+                                "id" : "Hanging_NotDetected_Movable_Left",
+                                "class" : "ReturnResultNode",
+                                "decos" : [ "ObstacleDetected" ]
+                            }
 
   ]
 }
