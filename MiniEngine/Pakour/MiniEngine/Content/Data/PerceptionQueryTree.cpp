@@ -325,6 +325,7 @@ void PerceptionQueryData::Load(const json& _data)
 {
 	m_bValid = false;
 	m_rootId.clear();
+	m_decos.clear();
 	m_nodes.clear();
 
 	try
@@ -461,6 +462,7 @@ void PerceptionQueryData::Load(const json& _data)
 	{
 		MG_LOG_ERROR("[PerceptionQueryData] parse failed : {}", e.what());
 		m_nodes.clear();
+		m_decos.clear();
 		return;
 	}
 
@@ -548,7 +550,6 @@ std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 
 			decos.push_back(std::move(pDeco));
 		}
-
 		SELF->SetConditions(std::move(decos));
 
 		const int EXPECTED = nodeRegistry.at(NODE.NodeClass).ExpectedChildren;

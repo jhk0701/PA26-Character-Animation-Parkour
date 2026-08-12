@@ -106,25 +106,25 @@
         "id" : "IsInputUp",
         "class" : "InputVerticalDecorator",
         "comparer" : "Greater",
-        "val_float" : "0.1"
+        "val_float" : 0.1
     },
     {
         "id" : "IsInputDown",
         "class" : "InputVerticalDecorator",
         "comparer" : "Lesser",
-        "val_float" : "-0.1"
+        "val_float" : -0.1
     },
     {
         "id" : "IsInputRight",
         "class" : "InputHorizontalDecorator",
         "comparer" : "Greater",
-        "val_float" : "0.1"
+        "val_float" : 0.1
     },
     {
         "id" : "IsInputLeft",
         "class" : "InputHorizontalDecorator",
         "comparer" : "Lesser",
-        "val_float" : "-0.1"
+        "val_float" : -0.1
     }
 
   ],
@@ -157,7 +157,10 @@
             "id" : "LandingState",
             "class" : "SequenceNode",
             "decos" : [ "IsLandingState" ],
-            "children" : [ "Landing_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ 
+                "Landing_DetectFoward", 
+                "Obstacle_Detected" 
+            ]
         },
             {
                 "id" : "Landing_DetectFoward",
@@ -282,13 +285,19 @@
             "id" : "HangingState",
             "class" : "SequenceNode",
             "decos" : [ "IsHangingState" ],
-            "children" : []
+            "children" : [ 
+                "Hanging_Detect_TowardInput",
+                "Hanging_Process_Detect"
+            ]
         },
         {
             "id" : "PoleState",
             "class" : "SequenceNode",
             "decos" : [ "IsPoleState" ],
-            "children" : [ "Hanging_Detect_TowardInput", "Hanging_Process_Detect" ]
+            "children" : [ 
+                "Hanging_Detect_TowardInput", 
+                "Hanging_Process_Detect" 
+            ]
         },
             {
                 "id" : "Hanging_Detect_TowardInput",
