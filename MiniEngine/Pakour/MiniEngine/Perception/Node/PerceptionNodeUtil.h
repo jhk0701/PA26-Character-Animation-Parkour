@@ -7,6 +7,8 @@ namespace MiniEngine
 	class IObstacle; 
 	struct Transform; 
 }
+
+// TODO: 제거
 class Character;
 
 namespace PerceptionNodeUtil 
@@ -30,6 +32,7 @@ namespace PerceptionNodeUtil
 	MiniEngine::Vector3 GetCharacterCenterPosition(MiniEngine::TravelContext& _context);
 	MiniEngine::Vector3 GetCharacterHeadPosition(MiniEngine::TravelContext& _context);
 	
+	// TODO: 제거
 	// 캐릭터 기준으로 현재 위치에서 특정 방향에 캡슐을 쏘아 장애물이 있는지 체크
 	bool CheckObstacle(
 		MiniEngine::TravelContext& _context, 
