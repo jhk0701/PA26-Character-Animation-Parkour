@@ -20,13 +20,11 @@ public:
 	T GetValue() const { return m_value; }
 
 	void SetComparer(ECompareType _comparer) { m_comparer = _comparer; }
-	ECompareType GetComparer() const { return m_comparer; }
-
 	bool Compare(const T& _t) const;
 
 private:
 	T m_value;
-	ECompareType m_comparer{ ECompareType::Greater; }
+	ECompareType m_comparer{ ECompareType::Greater };
 };
 
 template<typename T>

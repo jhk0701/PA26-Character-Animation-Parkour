@@ -131,8 +131,11 @@
     <Filter Include="Engine\07.Object\Component\Perception\Config">
       <UniqueIdentifier>{1f0b9be8-c8f5-4e82-b408-2fea19e2bada}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\07.Object\Component\Perception\Node\Condition">
+    <Filter Include="Engine\07.Object\Component\Perception\Node\Decorator">
       <UniqueIdentifier>{4aff5d6b-4de7-4b08-bff9-8ec42b7cdbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\03.Object\Component\PerceptionNode\Decorator">
+      <UniqueIdentifier>{ff880d88-89f2-4b44-9034-14431180cc3d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -418,9 +421,6 @@
     <ClInclude Include="Perception\Condition\ObstacleCondition.h">
       <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
     </ClInclude>
-    <ClInclude Include="Perception\Condition\ProcessorConditionUtil.h">
-      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
-    </ClInclude>
     <ClInclude Include="Perception\Interface\IObstacle.h">
       <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
     </ClInclude>
@@ -442,8 +442,20 @@
     <ClInclude Include="Perception\Node\ReturnNode.h">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
-    <ClInclude Include="Perception\Node\Condition\ObstacleNodeCondition.h">
-      <Filter>Engine\07.Object\Component\Perception\Node\Condition</Filter>
+    <ClInclude Include="Perception\Condition\InheritCondition.h">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\Decorator\ObstacleDecorator.h">
+      <Filter>Engine\07.Object\Component\Perception\Node\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\Decorator\InheritDecorator.h">
+      <Filter>Engine\07.Object\Component\Perception\Node\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Perception\Decorator\CharacterDecorator.h">
+      <Filter>Content\03.Object\Component\PerceptionNode\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="Perception\Node\ProcessObstacleNode.h">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -705,9 +717,6 @@
     <ClCompile Include="Perception\Condition\ObstacleCondition.cpp">
       <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
     </ClCompile>
-    <ClCompile Include="Perception\Condition\ProcessorConditionUtil.cpp">
-      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
-    </ClCompile>
     <ClCompile Include="Perception\Node\PerceptionNodeUtil.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
@@ -723,8 +732,20 @@
     <ClCompile Include="Perception\Node\ReturnNode.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
-    <ClCompile Include="Perception\Node\Condition\ObstacleNodeCondition.cpp">
-      <Filter>Engine\07.Object\Component\Perception\Node\Condition</Filter>
+    <ClCompile Include="Perception\Condition\InheritCondition.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\Decorator\ObstacleDecorator.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\Decorator\InheritDecorator.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\Decorator\CharacterDecorator.cpp">
+      <Filter>Content\03.Object\Component\PerceptionNode\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="Perception\Node\ProcessObstacleNode.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

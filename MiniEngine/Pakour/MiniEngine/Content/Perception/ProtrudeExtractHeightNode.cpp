@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ProtrudeExtractHeightNode.h"
-
-#include "Content/Character.h"
+#include "Scene/Actor.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine::Physics;

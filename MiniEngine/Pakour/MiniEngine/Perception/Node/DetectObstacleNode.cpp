@@ -68,8 +68,8 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 
 	// 지오메트리 생성
 	CapsulecastParam param;
-	param.m_radius			= m_capsuleRadius;
-	param.m_halfHeight		= m_capsuleHeight * GetHeightMultiplier();
+	param.m_radius			= GetRadius();
+	param.m_halfHeight		= m_capsuleHeight * 0.5f * m_heightMultiplier;
 	param.m_maxDistance		= GetDistance();
 
 	// Owner 트랜스폼 기준 적용
@@ -101,7 +101,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 
 	// 지오메트리 생성
 	SpherecastParam param;
-	param.m_radius = m_radius;
+	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
 
 	// Owner 트랜스폼 기준 적용
@@ -124,7 +124,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	SpherecastParam param;
-	param.m_radius = m_radius;
+	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
@@ -141,7 +141,7 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	SpherecastParam param;
-	param.m_radius = m_radius;
+	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
