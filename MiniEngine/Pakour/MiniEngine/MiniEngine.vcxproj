@@ -188,6 +188,7 @@
     <ClInclude Include="Content\Perception\BeamCompareHeightNode.h" />
     <ClInclude Include="Content\Perception\CheckObstacleOnHangingNode.h" />
     <ClInclude Include="Content\Perception\Decorator\CharacterDecorator.h" />
+    <ClInclude Include="Content\Perception\DetectObstacleUsingInputNode.h" />
     <ClInclude Include="Content\Perception\MeasureNode.h" />
     <ClInclude Include="Content\Perception\ProtrudeExtractHeightNode.h" />
     <ClInclude Include="Content\Perception\SelectCharacterStateNode.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="Content\Perception\BeamCompareHeightNode.cpp" />
     <ClCompile Include="Content\Perception\CheckObstacleOnHangingNode.cpp" />
     <ClCompile Include="Content\Perception\Decorator\CharacterDecorator.cpp" />
+    <ClCompile Include="Content\Perception\DetectObstacleUsingInputNode.cpp" />
     <ClCompile Include="Content\Perception\MeasureNode.cpp" />
     <ClCompile Include="Content\Perception\ProtrudeExtractHeightNode.cpp" />
     <ClCompile Include="Content\Perception\SelectCharacterStateNode.cpp" />

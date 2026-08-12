@@ -17,6 +17,8 @@ using namespace MiniEngine;
 class DetectNode : public TaskNode
 {
 public:
+	virtual ~DetectNode() {};
+
 	void SetStartOffset(const Vector3& _pos) { m_startOffset = _pos; }
 	void SetDirection(const Vector3& _dir) { m_dir = _dir; }
 	void SetDistance(const float _dist) { m_dist = _dist; }
@@ -46,7 +48,8 @@ private:
 class DetectObstacleCapsuleNode : public DetectNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual ~DetectObstacleCapsuleNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 
 	void SetCapsuleHeight(const float _h) { m_capsuleHeight = _h; }
 	void SetHeightMultiplier(const float _mul) { m_heightMultiplier = _mul; }
@@ -59,17 +62,20 @@ private:
 class DetectObstacleSphereNode : public DetectNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual ~DetectObstacleSphereNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 };
 
 class DetectLedgeNode : public DetectNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual ~DetectLedgeNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 };
 
 class DetectLedgeMultipleNode : public DetectNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual ~DetectLedgeMultipleNode() {};
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 };

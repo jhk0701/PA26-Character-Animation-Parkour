@@ -25,6 +25,7 @@
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
 
 #include "Content/Perception/Decorator/CharacterDecorator.h"
+#include "Content/Perception/DetectObstacleUsingInputNode.h"
 
 #include <functional>
 #include <unordered_map>
@@ -114,6 +115,7 @@ namespace
 				}
 			},
 
+			// 콘텐츠 추가
 			{ "CharacterStateDecorator", 
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
@@ -121,6 +123,28 @@ namespace
 						std::shared_ptr<CharacterStateDecorator> pDeco = std::make_shared<CharacterStateDecorator>();
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.TargetState);
+						return pDeco;
+					}
+				}
+			},
+			{ "InputVerticalDecorator",
+				{
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<InputVerticalDecorator> pDeco = std::make_shared<InputVerticalDecorator>();
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.ValueFloat);
+						return pDeco;
+					}
+				}
+			},
+			{ "InputHorizontalDecorator",
+				{
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<InputHorizontalDecorator> pDeco = std::make_shared<InputHorizontalDecorator>();
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.ValueFloat);
 						return pDeco;
 					}
 				}
@@ -189,6 +213,9 @@ namespace
 					}, 0 
 				} 	
 			},
+
+			// 콘텐츠
+			{ "DetectObstacleUsingInputNode",	{ CreateDetectNode<DetectObstacleUsingInputNode>(), 0} },
 
 			// 구버전 Task
 			{ "MeasureDepthNode",			{ CreateNode<MeasureDepthNode>(),			0 } },

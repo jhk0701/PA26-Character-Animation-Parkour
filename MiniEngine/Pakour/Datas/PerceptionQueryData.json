@@ -99,6 +99,32 @@
         "class" : "CharacterStateDecorator",
         "comparer" : "Equal",
         "targetState" : "PoleHanging"
+    },
+
+    {
+        "comment" : "---------------캐릭터 입력 상태 확인---------------",
+        "id" : "IsInputUp",
+        "class" : "InputVerticalDecorator",
+        "comparer" : "Greater",
+        "val_float" : "0.1"
+    },
+    {
+        "id" : "IsInputDown",
+        "class" : "InputVerticalDecorator",
+        "comparer" : "Lesser",
+        "val_float" : "-0.1"
+    },
+    {
+        "id" : "IsInputRight",
+        "class" : "InputHorizontalDecorator",
+        "comparer" : "Greater",
+        "val_float" : "0.1"
+    },
+    {
+        "id" : "IsInputLeft",
+        "class" : "InputHorizontalDecorator",
+        "comparer" : "Lesser",
+        "val_float" : "-0.1"
     }
 
   ],
@@ -118,7 +144,14 @@
         "id" : "Root",
         "class" : "SelectorNode",
         "comment" : "현재 캐릭터 상태에 따라 탐색 방향 제어",
-        "children" : [ "LandingState", "InAirState", "BeamStandState", "BeamHangingState" ]
+        "children" : [ 
+            "LandingState", 
+            "InAirState",
+            "BeamStandState", 
+            "BeamHangingState", 
+            "HangingState", 
+            "PoleState" 
+        ]
     },
         {
             "id" : "LandingState",
@@ -218,7 +251,7 @@
             {
                 "id" : "InAir_DetectFoward",
                 "class" : "DetectObstacleCapsuleNode",
-                "startOffset" : [ 0.0, 0.0, 0.0 ],
+                "startOffset" : [ 0.0, 0.75, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 1.0,
                 "radius" : 1.0,
@@ -229,23 +262,68 @@
             "id" : "BeamStandState",
             "class" : "SequenceNode",
             "decos" : [ "IsBeamStandState" ],
-            "children" : [ "BeamStand_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ "Beam_DetectFoward", "Obstacle_Detected" ]
         },
         {
             "id" : "BeamHangingState",
             "class" : "SequenceNode",
             "decos" : [ "IsBeamHangingState" ],
-            "children" : [ "BeamStand_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ "Beam_DetectFoward", "Obstacle_Detected" ]
         },
             {
                 "id" : "Beam_DetectFoward",
-                "class" : "DetectObstacleCapsuleNode",
-                "startOffset" : [ 0.0, 0.0, 0.5 ],
+                "class" : "DetectObstacleSphereNode",
+                "startOffset" : [ 0.0, 0.75, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
-                "radius" : 0.5,
-                "height" : 1.0,
-                "heightMultiplier" : 3.0
-            }
+                "radius" : 1.5
+            },
+        {
+            "id" : "HangingState",
+            "class" : "SequenceNode",
+            "decos" : [ "IsHangingState" ],
+            "children" : []
+        },
+        {
+            "id" : "PoleState",
+            "class" : "SequenceNode",
+            "decos" : [ "IsPoleState" ],
+            "children" : [ "Hanging_Detect_TowardInput", "Hanging_Process_Detect" ]
+        },
+            {
+                "id" : "Hanging_Detect_TowardInput",
+                "class" : "DetectObstacleUsingInputNode",
+                "startOffset" : [ 0.0, 0.75, 0.0 ],
+                "distance" : 2.0,
+                "radius" : 1.0
+            },
+            {
+                "id" : "Hanging_Process_Detect",
+                "class" : "SelectorNode",
+                "children" : [ "Hanging_Detected", "Hanging_NotDetected" ]
+            },
+                {
+                    "id" : "Hanging_Detected",
+                    "comment" : "장애물 태그로 나누되, Default의 경우 입력 방향에 따른 처리 필요",
+                    "class" : "SelectorNode",
+                    "decos" : [ "ObstacleDetected" ],
+                    "children" : [
+                        "Hanging_Detected_Default", 
+                        "Process_Beam", 
+                        "Process_Protrude", 
+                        "Process_Pole"
+                    ]
+                },
+                    {
+                        "id" : "Hanging_Detected_Default",
+                        "comment" : "Default의 경우, 입력 y 값에 따라 처리 세분화. 아래 쪽에 장애물은 착지 시도"
+                    },
+                {
+                    "id" : "Hanging_NotDetected",
+                    "comment" : "입력 받고 있는 방향으로 이동 가능한지 확인",
+                    "class" : "SelectorNode",
+                    "children" : []
+                }
+
   ]
 }

@@ -10,3 +10,14 @@ public:
 	bool Evaluate(const TravelContext& _context) const override;
 };
 
+class InputVerticalDecorator : public CompareWithValueDecorator<float> 
+{
+public:
+	bool Evaluate(const TravelContext& _context) const override;
+};
+
+class InputHorizontalDecorator : public CompareWithValueDecorator<float> 
+{
+public:
+	bool Evaluate(const TravelContext& _context) const override;
+};

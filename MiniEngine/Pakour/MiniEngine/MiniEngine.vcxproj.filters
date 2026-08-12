@@ -457,6 +457,9 @@
     <ClInclude Include="Perception\Node\ProcessObstacleNode.h">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Perception\DetectObstacleUsingInputNode.h">
+      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -746,6 +749,9 @@
     </ClCompile>
     <ClCompile Include="Perception\Node\ProcessObstacleNode.cpp">
       <Filter>Engine\07.Object\Component\Perception\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Perception\DetectObstacleUsingInputNode.cpp">
+      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
