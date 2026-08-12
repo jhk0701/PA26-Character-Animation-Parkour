@@ -78,7 +78,6 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 	}
 
 	return EPerceptionResult::Succeess;
-	// return band;
 }
 
 EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, TravelResult& _result)

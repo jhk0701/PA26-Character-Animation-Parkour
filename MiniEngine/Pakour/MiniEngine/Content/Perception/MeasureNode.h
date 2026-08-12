@@ -2,6 +2,7 @@
 #include "Perception/PerceptionComponent.h"
 
 using namespace MiniEngine;
+// TODO : 폐기 예정
 
 // 선행 조건 : Obstacle을 이미 감지해서 최초 접촉점이 있어야함
 class MeasureDepthNode : public TaskNode

@@ -214,8 +214,7 @@ void Character::LoadData()
 		return;
 	}
 
-	PerceptionQueryTree perceptQueryTree;
-	std::shared_ptr<PerceptionNode> pQueryTree = perceptQueryTree.ConstructTree(*pQueryData);
+	std::shared_ptr<PerceptionNode> pQueryTree = pQueryData->ConstructTree();
 	if (pQueryTree == nullptr)
 	{
 		MG_LOG_ERROR("[Character::LoadData] failed to construct query tree. perception disabled.");

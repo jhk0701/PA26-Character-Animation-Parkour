@@ -20,9 +20,9 @@ namespace MiniEngine
 
 using namespace MiniEngine;
 
+class CharacterStateMachine;
 class CharacterConfigData;
 struct CharacterConfig;
-class CharacterStateMachine;
 class Character : public Pawn, public IPerceptionProcessor
 {
 public:

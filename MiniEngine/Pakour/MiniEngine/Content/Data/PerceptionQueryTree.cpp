@@ -242,15 +242,15 @@ void PerceptionQueryData::Load(const json& _data)
 }
 
 // 콘텐츠에서 사용할 지형 인식 로직
-std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const PerceptionQueryData& _data)
+std::shared_ptr<PerceptionNode> PerceptionQueryData::ConstructTree()
 {
-	if (_data.IsValid() == false)
+	if (IsValid() == false)
 	{
 		MG_LOG_ERROR("[PerceptionQueryTree] query data is invalid.");
 		return nullptr;
 	}
 
-	const std::vector<PerceptionNodeData>& NODES = _data.GetNodes();
+	const std::vector<PerceptionNodeData>& NODES = GetNodes();
 	const std::unordered_map<std::string, NodeSpec>& REGISTRY = NodeRegistry();
 
 	// 데이터 읽고 노드 생성
@@ -346,15 +346,15 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 			std::static_pointer_cast<SequenceNode>(SELF)->SetChildren(std::move(children));
 	}
 
-	auto itRoot = created.find(_data.GetRootId());
+	auto itRoot = created.find(GetRootId());
 	if (itRoot == created.end())
 	{
-		MG_LOG_ERROR("[PerceptionQueryTree] root id '{}' not found.", _data.GetRootId());
+		MG_LOG_ERROR("[PerceptionQueryTree] root id '{}' not found.", GetRootId());
 		return nullptr;
 	}
 
 	MG_LOG_INFO("[PerceptionQueryTree] constructed {} nodes. root = '{}'.",
-		created.size(), _data.GetRootId());
+		created.size(), GetRootId());
 
 	return itRoot->second;
 }

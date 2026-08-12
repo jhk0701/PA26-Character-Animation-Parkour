@@ -9,3 +9,4 @@ class CharacterStateDecorator : CompareWithValueDecorator<uint8_t>
 public:
 	bool Evaluate(const TravelContext& _context) const override;
 };
+
