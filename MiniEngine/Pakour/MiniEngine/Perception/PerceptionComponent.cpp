@@ -20,6 +20,11 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
+	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		return InvokeTask(_context, _result);
+	}
+
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		for (size_t i = 0; i < GetChildrenCnt(); ++i)
@@ -31,9 +36,15 @@ namespace MiniEngine
 		return EPerceptionResult::Succeess;
 	}
 
-	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
-		return InvokeTask(_context, _result);
+		for (size_t i = 0; i < GetChildrenCnt(); ++i)
+		{
+			if (GetChildren()[i]->Execute(_context, _result) == EPerceptionResult::Succeess)
+				return  EPerceptionResult::Succeess;
+		}
+
+		return EPerceptionResult::Fail;
 	}
 
 	EPerceptionResult SwitchNode::Execute(TravelContext& _context, TravelResult& _result)

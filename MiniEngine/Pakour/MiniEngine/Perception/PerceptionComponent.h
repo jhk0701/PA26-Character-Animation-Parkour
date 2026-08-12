@@ -55,6 +55,7 @@ namespace MiniEngine
 	};
 
 	// Leaf 노드 - 최종 작업 수행
+	// Context Write는 오로지 Task에서만 수행하기
 	class TaskNode : public PerceptionNode
 	{
 	public:
@@ -75,10 +76,10 @@ namespace MiniEngine
 
 	private:
 		std::vector<std::shared_ptr<PerceptionNode>> m_children;
-
 	};
 
 	// 자식 연속 실행 노드
+	// 하나라도 Fail이면 중단
 	class SequenceNode : public CompositeNode
 	{
 	public:
@@ -86,6 +87,22 @@ namespace MiniEngine
 	};
 
 	// 자식 중 1개 실행
+	// 조건 확인 후, True인 자식을 실행
+	class SelectorNode : public CompositeNode 
+	{
+	public:
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+	};
+
+	// 노드에 붙어 실행 전 조건문 역할을 할 것
+	class PerceptionCondition
+	{
+	public:
+		virtual ~PerceptionCondition() {};
+		virtual bool Evaluate(const TravelContext& _context) const = 0;
+	};
+
+	// TODO : 조건문들에 대한 범용화 진행중
 	class SwitchNode : public CompositeNode
 	{
 	public:
@@ -104,7 +121,6 @@ namespace MiniEngine
 		// 복수의 조건을 가지는 형태?
 		// 조건은 true, false만 허용
 	};
-
 
 #pragma endregion
 
