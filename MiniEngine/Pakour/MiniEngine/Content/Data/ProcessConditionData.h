@@ -8,7 +8,7 @@ namespace MiniEngine
 }
 
 /*
-데이터 스키마 간략한 구성
+데이터 스키마
 {
     "condition":
     {
