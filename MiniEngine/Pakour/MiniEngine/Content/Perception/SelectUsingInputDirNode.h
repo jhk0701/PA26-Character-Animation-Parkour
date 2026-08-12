@@ -3,13 +3,13 @@
 
 using namespace MiniEngine;
 
-class SelectUsingInputDirNode : public SelectorNode
+class SelectUsingInputDirNode : public SwitchNode
 {
 public:
 	uint8_t InvokeCondition(TravelContext& _context) override;
 };
 
-class SelectUsingInputVerticalNode : public SelectorNode
+class SelectUsingInputVerticalNode : public SwitchNode
 {
 public:
 	uint8_t InvokeCondition(TravelContext& _context) override;

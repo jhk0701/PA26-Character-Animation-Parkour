@@ -195,7 +195,6 @@
     <ClInclude Include="Content\Perception\SelectObstacleTagNode.h" />
     <ClInclude Include="Content\Perception\SelectUsingHeightNode.h" />
     <ClInclude Include="Content\Perception\SelectUsingInputDirNode.h" />
-    <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h" />
     <ClInclude Include="Content\Processor\CharacterCondition.h" />
     <ClInclude Include="Content\TransitionState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
@@ -300,7 +299,6 @@
     <ClCompile Include="Content\Perception\SelectObstacleTagNode.cpp" />
     <ClCompile Include="Content\Perception\SelectUsingHeightNode.cpp" />
     <ClCompile Include="Content\Perception\SelectUsingInputDirNode.cpp" />
-    <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp" />
     <ClCompile Include="Content\Processor\CharacterCondition.cpp" />
     <ClCompile Include="Content\TransitionState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />

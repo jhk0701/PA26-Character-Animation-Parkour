@@ -134,11 +134,6 @@
                     "CheckObstacleTag"
                 ]
             },
-            {
-                "id": "TransitionToLanding",
-                "class": "TransitionCharacterFSMNode",
-                "targetState": "Landing"
-            },
         {
             "id": "StateHanging",
             "class": "CheckObstacleTowardInputDirNode",

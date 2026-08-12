@@ -54,6 +54,16 @@ namespace MiniEngine
 		virtual EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) = 0;
 	};
 
+	// Leaf 노드 - 최종 작업 수행
+	class TaskNode : public PerceptionNode
+	{
+	public:
+		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
+		virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) = 0;
+	};
+
+	// 합성 노드, 자식을 가질 수 있는 형태 노드에서 상속
+	// 여전히 순수가상함수 상태
 	class CompositeNode : public PerceptionNode
 	{
 	public:
@@ -76,11 +86,12 @@ namespace MiniEngine
 	};
 
 	// 자식 중 1개 실행
-	class SelectorNode : public CompositeNode
+	class SwitchNode : public CompositeNode
 	{
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual uint8_t InvokeCondition(TravelContext& _context) = 0;
+		// 자식들 조건 중 True가 뜨면 종료
 	};
 
 	// 단순 이진 조건문 노드
@@ -89,15 +100,11 @@ namespace MiniEngine
 	public:
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 		virtual bool InvokeCondition(TravelContext& _context) = 0;
+
+		// 복수의 조건을 가지는 형태?
+		// 조건은 true, false만 허용
 	};
 
-	// Leaf 노드 - 최종 작업 수행
-	class TaskNode : public PerceptionNode
-	{
-	public:
-		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
-		virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) = 0;
-	};
 
 #pragma endregion
 

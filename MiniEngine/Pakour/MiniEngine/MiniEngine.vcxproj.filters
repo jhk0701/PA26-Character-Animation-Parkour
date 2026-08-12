@@ -382,9 +382,6 @@
     <ClInclude Include="Content\Perception\CheckObstacleOnHangingNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Perception\TransitionCharacterFSMNode.h">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Core\EngineConfig.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
@@ -667,9 +664,6 @@
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
     <ClCompile Include="Content\Perception\CheckObstacleOnHangingNode.cpp">
-      <Filter>Content\03.Object\Component\PerceptionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Perception\TransitionCharacterFSMNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
     </ClCompile>
     <ClCompile Include="Core\EngineConfig.cpp">

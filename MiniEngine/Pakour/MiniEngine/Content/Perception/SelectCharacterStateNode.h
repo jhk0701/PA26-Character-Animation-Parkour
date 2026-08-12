@@ -3,9 +3,8 @@
 
 using namespace MiniEngine;
 
-class SelectCharacterStateNode : public SelectorNode
+class SelectCharacterStateNode : public SwitchNode
 {
 public:
 	uint8_t InvokeCondition(TravelContext& _context) override;
 };
-

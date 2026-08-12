@@ -20,22 +20,6 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
-	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
-	{
-		if (InvokeCondition(_context))
-			return GetChildren()[0]->Execute(_context, _result);
-		else
-			return GetChildren()[1]->Execute(_context, _result);
-	}
-
-	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
-	{
-		uint8_t r = InvokeCondition(_context);
-		assert(r < GetChildrenCnt());
-
-		return GetChildren()[r]->Execute(_context, _result);
-	}
-
 	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
 	{
 		for (size_t i = 0; i < GetChildrenCnt(); ++i)
@@ -51,6 +35,23 @@ namespace MiniEngine
 	{
 		return InvokeTask(_context, _result);
 	}
+
+	EPerceptionResult SwitchNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		uint8_t r = InvokeCondition(_context);
+		assert(r < GetChildrenCnt());
+
+		return GetChildren()[r]->Execute(_context, _result);
+	}
+
+	EPerceptionResult ConditionNode::Execute(TravelContext& _context, TravelResult& _result)
+	{
+		if (InvokeCondition(_context))
+			return GetChildren()[0]->Execute(_context, _result);
+		else
+			return GetChildren()[1]->Execute(_context, _result);
+	}
+
 
 #pragma endregion
 

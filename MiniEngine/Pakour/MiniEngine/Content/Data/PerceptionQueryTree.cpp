@@ -17,7 +17,6 @@
 #include "Content/Perception/BeamCompareHeightNode.h"
 #include "Content/Perception/ProtrudeExtractHeightNode.h"
 #include "Content/Perception/CheckObstacleOnHangingNode.h"
-#include "Content/Perception/TransitionCharacterFSMNode.h"
 
 #include <functional>
 #include <unordered_map>
@@ -137,17 +136,6 @@ namespace
 					},
 					CONDITION_CHILDREN
 				}
-			},
-			{ "TransitionCharacterFSMNode",
-				{
-					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
-					{
-						std::shared_ptr<TransitionCharacterFSMNode> pNode = std::make_shared<TransitionCharacterFSMNode>();
-						pNode->SetTargetState(_node.TargetState);
-						return pNode;
-					},
-					0
-				} 
 			},
 			{ "PoleExtractDataNode",
 				{
@@ -304,11 +292,11 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 		const std::shared_ptr<PerceptionNode>& SELF = created[NODE.Id];
 		const int EXPECTED = REGISTRY.at(NODE.NodeClass).ExpectedChildren;
 
-		const bool bIsSelector = (std::dynamic_pointer_cast<SelectorNode>(SELF) != nullptr);
+		const bool bIsSwitch = (std::dynamic_pointer_cast<SwitchNode>(SELF) != nullptr);
 		const bool bIsCondition = (std::dynamic_pointer_cast<ConditionNode>(SELF) != nullptr);
 		const bool bIsSequence = (std::dynamic_pointer_cast<SequenceNode>(SELF) != nullptr);
 
-		if (bIsSelector == false && bIsCondition == false && bIsSequence == false)
+		if (bIsSwitch == false && bIsCondition == false && bIsSequence == false)
 		{
 			// TaskNode — 자식을 가질 수 없다
 			if (NODE.Children.empty() == false)
@@ -347,8 +335,8 @@ std::shared_ptr<PerceptionNode> PerceptionQueryTree::ConstructTree(const Percept
 			children.push_back(std::move(pChild));
 		}
 
-		if (bIsSelector)
-			std::static_pointer_cast<SelectorNode>(SELF)->SetChildren(std::move(children));
+		if (bIsSwitch)
+			std::static_pointer_cast<SwitchNode>(SELF)->SetChildren(std::move(children));
 		else if (bIsCondition)
 			std::static_pointer_cast<ConditionNode>(SELF)->SetChildren(std::move(children));
 		else

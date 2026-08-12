@@ -3,7 +3,7 @@
 
 using namespace MiniEngine;
 
-class SelectObstacleTagNode : public SelectorNode
+class SelectObstacleTagNode : public SwitchNode
 {
 public:
 	uint8_t InvokeCondition(TravelContext& _context) override;

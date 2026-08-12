@@ -22,6 +22,5 @@ bool CheckObstacleNode::InvokeCondition(TravelContext& _context)
 
 	const float DIST = pProcessor->GetPerceptionConfig().maxObstacleDetectDist;
 	
-	// 정면으로 먼저 확인
 	return PerceptionNodeUtil::CheckObstacle(_context, pos, dir, DIST, m_heightMultipier, true);
 }

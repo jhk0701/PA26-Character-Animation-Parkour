@@ -3,7 +3,7 @@
 
 using namespace MiniEngine;
 
-class SelectUsingHeightNode : public SelectorNode
+class SelectUsingHeightNode : public SwitchNode
 {
 public:
 	uint8_t InvokeCondition(TravelContext& _context) override;
