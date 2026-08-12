@@ -8,8 +8,6 @@
 
 #include "Core/Log.h"
 
-using namespace ProcessorConditionUtil;
-
 namespace MiniEngine 
 {
 	bool ObstacleDetectedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

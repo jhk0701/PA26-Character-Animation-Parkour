@@ -3,8 +3,9 @@
 
 namespace MiniEngine 
 {
-	/*class ObstacleDetectedCondition : 
+	class ObstacleDetectedDecorator : public PerceptionDecorator
 	{
-
-	};*/
+	public:
+		bool Evaluate(const TravelContext& _context) const override;
+	};
 }

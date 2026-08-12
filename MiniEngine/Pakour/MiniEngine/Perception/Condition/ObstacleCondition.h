@@ -1,6 +1,6 @@
 #pragma once
 #include "Perception/ProcessorComponent.h"
-#include "Perception/Condition/ProcessorConditionUtil.h"
+#include "Perception/Condition/InheritCondition.h"
 
 
 namespace MiniEngine 

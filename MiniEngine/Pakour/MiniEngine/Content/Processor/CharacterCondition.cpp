@@ -10,7 +10,13 @@
 
 #include "Core/Log.h"
 
-using namespace ProcessorConditionUtil;
+namespace 
+{
+    std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor)
+    {
+        return std::dynamic_pointer_cast<Character>(_actor);
+    }
+}
 
 bool CharacterStateCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 {
