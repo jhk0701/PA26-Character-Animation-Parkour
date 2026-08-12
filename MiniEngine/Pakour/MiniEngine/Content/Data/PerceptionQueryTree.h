@@ -26,6 +26,7 @@ namespace MiniEngine
 		"val_float" : 0.0,
 		"val_uint8" : 0,
 		"comparer" : "Greater", // "GEqual", "Equal", "LEqual", "Lesser"
+        "targetObstacleType" : "Default", // 장애물 타입
 		"targetState" : "Landing",
 	}
 
@@ -39,8 +40,14 @@ namespace MiniEngine
 		"decos" : [ "데코 Id 1", "데코 Id 2", ... ] // 해당 노드에 대한 데코레이터 설정
 
 		// 각 노드 개별 멤버 변수
-		"heightMultiplier" : 1.0,
 		"startOffset" : [ 0.0, 0.0, 0.0 ],
+		"direction" : [ 0.0, 0.0. 1.0 ],
+		"distance" : 1.0,
+		"radius" : 0.5,
+		"height" : 1.0,
+		"heightMultiplier" : 1.0,
+
+		"targetState" : "Landing"
 	}
 */
 
@@ -54,6 +61,7 @@ struct PerceptionDecoData
 	float ValueFloat{ 0.0f };
 	uint8_t ValueUint8{ 0 };
 
+	uint8_t TargetObstacleType{ 0U }; // -> ETagEnvDetail
 	// Character::EState
 	uint8_t TargetState{ 0 };
 };
@@ -65,9 +73,13 @@ struct PerceptionNodeData
 	std::vector<std::string> Children;
 	std::vector<std::string> Decos;
 
-	// CheckObstacleNode
-	float HeightMultiplier{ 1.0f };
+	// DetectNode
 	MiniEngine::Vector3 StartOffset{ 0.0f, 0.0f, 0.0f };
+	MiniEngine::Vector3 Direction{ 0.0f, 0.0f, 1.0f };
+	float Distance{ 1.0f };
+	float Radius{ 0.5f };
+	float Height{ 1.0f };
+	float HeightMultiplier{ 1.0f };
 
 	// Character::EState
 	uint8_t TargetState{ 0 };

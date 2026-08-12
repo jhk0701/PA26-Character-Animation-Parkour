@@ -20,7 +20,7 @@ namespace MiniEngine
 	public:
 		EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 
-		void SetHeightLimit(const float _limit) { m_heightLimit = _limit; }
+		void SetHeight(const float _limit) { m_heightLimit = _limit; }
 	private:
 		float m_heightLimit{ 2.0f };
 	};

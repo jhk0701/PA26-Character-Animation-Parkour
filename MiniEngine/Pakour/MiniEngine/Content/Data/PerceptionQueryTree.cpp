@@ -10,6 +10,7 @@
 #include "Perception/Node/ReturnNode.h"
 #include "Perception/Node/DetectObstacleNode.h"
 #include "Perception/Node/MeasureObstacleNode.h"
+#include "Perception/Node/ProcessObstacleNode.h"
 #include "Perception/Node/Decorator/InheritDecorator.h"
 #include "Perception/Node/Decorator/ObstacleDecorator.h"
 
@@ -71,6 +72,20 @@ namespace
 		};
 	}
 
+	template<typename T>
+	FuncCreateNode CreateDetectNode()
+	{
+		return [](const PerceptionNodeData& _data) -> std::shared_ptr<PerceptionNode>
+		{
+			std::shared_ptr<T> p = std::make_shared<T>();
+			p->SetStartOffset(_data.StartOffset);
+			p->SetDirection(_data.Direction);
+			p->SetDistance(_data.Distance);
+			p->SetRadius(_data.Radius);
+			return p;
+		};
+	}
+
 	void DecoRegistry(std::unordered_map<std::string, DecoSpec>& _out) 
 	{
 		_out =
@@ -82,7 +97,7 @@ namespace
 					{
 						std::shared_ptr<CompareObstacleTypeDecorator> pDeco = std::make_shared<CompareObstacleTypeDecorator>();
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
-						pDeco->SetValue(_data.ValueUint8);
+						pDeco->SetValue(_data.TargetObstacleType);
 						return pDeco;
 					}
 				}
@@ -118,13 +133,64 @@ namespace
 	{
 		_out =
 		{
-			// SequenceNode : 자식 연속 호출 Fail이 나오면 중단, 실패 처리
 			{ "SequenceNode",				{ CreateNode<SequenceNode>(),				CHILDREN_ANY } },
 			{ "SelectorNode",				{ CreateNode<SelectorNode>(),				CHILDREN_ANY } },
 
 			// Task (Leaf)
 			{ "ReturnResultNode",			{ CreateNode<ReturnResultNode>(),			0 } },
 			{ "ReturnEmptyNode",			{ CreateNode<ReturnEmptyNode>(),			0 } },
+			{ "DetectObstacleCapsuleNode",	
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<DetectObstacleCapsuleNode> p = std::make_shared<DetectObstacleCapsuleNode>();
+						p->SetStartOffset(_node.StartOffset);
+						p->SetDirection(_node.Direction);
+						p->SetDistance(_node.Distance);
+						p->SetRadius(_node.Radius);
+						p->SetCapsuleHeight(_node.Height);
+						p->SetHeightMultiplier(_node.HeightMultiplier);
+						return p;
+					}, 0
+				}
+			},
+			{ "DetectObstacleSphereNode",	{ CreateDetectNode<DetectObstacleSphereNode>(), 0} },
+			{ "DetectLedgeNode",			{ CreateDetectNode<DetectLedgeNode>(),			0} },
+			{ "DetectLedgeMultipleNode",	{ CreateDetectNode<DetectLedgeMultipleNode>(),	0} },
+			{ "MeasureObstacleHeightNode",	
+				{ 
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<MeasureObstacleHeightNode> p = std::make_shared<MeasureObstacleHeightNode>();
+						p->SetDirection(_node.Direction);
+						return p;
+					}, 0
+				} 
+			},
+			{ "MeasureObstacleDepthNode",	
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<MeasureObstacleDepthNode> p = std::make_shared<MeasureObstacleDepthNode>();
+						p->SetDirection(_node.Direction);
+						return p;
+					}, 0
+				} 
+			},
+			{ "ProcessBeamNode",			{ CreateNode<ProcessBeamNode>(),			0 } },
+			{ "ProcessProtrudeNode",		{ CreateNode<ProcessProtrudeNode>(),		0 } },
+			{ "ProcessPoleNode",			
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<ProcessPoleNode> p = std::make_shared<ProcessPoleNode>();
+						p->SetHeight(_node.Height);
+						return p;
+					}, 0 
+				} 	
+			},
+
+			// 구버전 Task
 			{ "MeasureDepthNode",			{ CreateNode<MeasureDepthNode>(),			0 } },
 			{ "MeasureHeightNode",			{ CreateNode<MeasureHeightNode>(),			0 } },
 			{ "MeasureDepth_SideNode",		{ CreateNode<MeasureDepth_SideNode>(),		0 } },
@@ -132,7 +198,7 @@ namespace
 			{ "BeamCompareHeightNode",		{ CreateNode<BeamCompareHeightNode>(),		0 } },
 			{ "ProtrudeExtractHeightNode",	{ CreateNode<ProtrudeExtractHeightNode>(),	0 } }, // 
 
-			// Selector : 자식 중 Success 나올 때까지 연속 호출
+			// Switch : 자식 중 Success 나올 때까지 연속 호출
 			{ "SelectCharacterStateNode",	{ CreateNode<SelectCharacterStateNode>(),	(int)Character::EState::End } },
 			{ "SelectObstacleTagNode",		{ CreateNode<SelectObstacleTagNode>(),		(int)ETagEnvDetail::End } },
 			{ "SelectUsingHeightNode",		{ CreateNode<SelectUsingHeightNode>(),		3 } },	// 무시 / 깊이측정 / 벽
@@ -276,6 +342,16 @@ void PerceptionQueryData::Load(const json& _data)
 				}
 			}
 
+			const std::string OBS_TYPE_NAME = el.value("targetObstacleType", std::string());
+			if (OBS_TYPE_NAME.empty() == false)
+			{
+				if (TryParseTagEnvDetail(OBS_TYPE_NAME, deco.TargetObstacleType) == false)
+				{
+					MG_LOG_ERROR("[PerceptionQueryData] deco '{}' has unknown targetObstacleType '{}'.", deco.Id, OBS_TYPE_NAME);
+					return;
+				}
+			}
+
 			const std::string STATE_NAME = el.value("targetState", std::string());
 			if (STATE_NAME.empty() == false)
 			{
@@ -330,8 +406,12 @@ void PerceptionQueryData::Load(const json& _data)
 
 			// TODO : 매개변수들은 따로 처리할 방법이 필요
 			// 현재는 우선 node에 멤버변수로 계속 포함시킴
-			node.HeightMultiplier = element.value("heightMultiplier", node.HeightMultiplier);
 			ReadVec3(element, "startOffset", node.StartOffset);
+			ReadVec3(element, "direction", node.StartOffset);
+			node.Distance			= element.value("distance", node.Distance);
+			node.Radius				= element.value("radius", node.Radius);
+			node.Height				= element.value("height", node.Height);
+			node.HeightMultiplier	= element.value("heightMultiplier", node.HeightMultiplier);
 
 			const std::string STATE_NAME = element.value("targetState", std::string());
 			if (STATE_NAME.empty() == false)
