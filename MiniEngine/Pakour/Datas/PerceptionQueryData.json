@@ -273,7 +273,7 @@
                         "class" : "DetectFloorNode",
                         "startOffset" : [ 0.0, 0.5, 0.5 ],
                         "direction" : [ 0.0, -1.0, 0.0 ],
-                        "distance" : 0.6,
+                        "distance" : 2.0,
                         "radius" : 0.05
                     },
                     {
