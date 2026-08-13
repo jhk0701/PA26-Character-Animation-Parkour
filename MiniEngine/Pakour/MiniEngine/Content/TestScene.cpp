@@ -671,7 +671,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 3");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 8.0f, 10.0f);
-			desc.scale = Vector3(5.0f, 3.0f, 5.0f);
+			desc.scale = Vector3(4.0f, 3.0f, 4.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 3 Cube");
 
 			desc.detailTags =
@@ -715,7 +715,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.priority = 0U;
 
 			desc.pos = OFFSET + Vector3(-7.5f, 7.5f * 0.5f, 0.0f);
-			desc.scale = Vector3(0.2f, 7.5f, 0.2f);
+			desc.scale = Vector3(0.1f, 7.5f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 1");
 		}
 

@@ -1375,7 +1375,7 @@
         },
         {
             "tags": [ "Pole_IdleToHang" ],
-            "clip": 47,
+            "clip": 49,
             "rootMotion": { "apply": true, "z" : false, "y" : false },
             "comment": "Landing Runing -> Pole Hanging",
             "notifies": [
@@ -1396,14 +1396,8 @@
                 },
                 {
                     "class": "CorrectRootMotion",
-                    "time": [ 0, 0.2 ],
-                    "properDistance": 0.3
-                },
-                {
-                    "class": "BezierCorrectRootMotion",
-                    "time": [ 0.2, 0.9 ],
-                    "midOffset" : [ 0, 0.0, -0.5 ],
-                    "endOffset": [ 0, -1.5, -0.5 ]
+                    "time": [ 0, 0.4 ],
+                    "properDistance": 0.5
                 }
             ]
         },  

@@ -99,7 +99,7 @@ void Character::Construct(const Vector3& _initPosition, const std::wstring& _cha
 		desc.maxFootDrop = 0.4f;
 		desc.maxFootRaise = 0.4f;
 		desc.maxPelvisDrop = 0.45f;
-		desc.alphaFadeSpeed = 10.0f;
+		desc.alphaFadeSpeed = 20.0f;
 		desc.poleDir[(uint8_t)ELimbType::LeftArm] = Vector3(-1.0f, -0.0f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::RightArm] = Vector3(1.0f, -0.0f, -1.0f);
 		desc.poleDir[(uint8_t)ELimbType::LeftLeg] = Vector3(-0.2f, 0.5f, 1.0f);
@@ -541,7 +541,9 @@ LimbIKComponent::TaskResult Character::IKDetectPole(uint8_t _ik)
 	pIKComp->SetOriginPosIK((ELimbType)_ik, originalPos);
 
 	Vector3 polePos = pObs->GetTransform().position;
-	result.position = Vector3(polePos.x, originalPos.y, polePos.z) + GetRoot()->localTransform.Right() * m_ikPoleOffset[(ELimbType)_ik];
+	result.position = 
+		Vector3(polePos.x, originalPos.y, polePos.z) + 
+		GetRoot()->localTransform.Right() * m_ikPoleOffset[(ELimbType)_ik];
 	result.posAlpha = 1.0f;
 
 	return result;
