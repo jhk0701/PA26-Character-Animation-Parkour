@@ -348,10 +348,10 @@
                             {
                                 "id" : "Hanging_Process_Default_Up_Detect_Ledge",
                                 "class" : "DetectLedgeMultipleNode",
-                                "startOffset" : [ 0.0, 1.0, -0.75 ],
+                                "startOffset" : [ 0.0, 1.5, -0.75 ],
                                 "direction" : [ 0.0, 1.0, 0.0 ],
-                                "distance" : 2.5,
-                                "radius" : 0.5
+                                "distance" : 1.0,
+                                "radius" : 0.3
                             },
                         {
                             "id" : "Hanging_Process_Default_Down",

@@ -522,6 +522,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(3.0f, 50.0f, 100.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff");
 
+			desc.color = Vector3(0.5f, 0.5f, 0.1f);
+
 			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, -6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 1");
@@ -529,6 +531,22 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, 6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 2");
+
+			desc.pos = OFFSET + Vector3(-18.5f, 5.0f, 2.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 3");
+
+			desc.pos = OFFSET + Vector3(-18.5f, 3.0f, -4.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 4");
+
+			{
+				// 돌출부 배치
+				desc.detailTags = { (uint8_t)ETagEnvDetail::Protrude };
+				desc.priority = 1U;
+				desc.color = Vector3(1.0f, 0.1f, 0.1f);
+			}
+
 		}
 		{
 			// 나무 등 기둥

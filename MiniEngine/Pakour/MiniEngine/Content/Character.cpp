@@ -241,11 +241,16 @@ void Character::LoadData()
 
 void Character::TryPerception()
 {
+	TryPerception(GetRoot()->localTransform.Forward());
+}
+
+void Character::TryPerception(const Vector3& _dir)
+{
 	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
 		return; // 이미 행동 중이라면 탐색하지 않도록
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	EPerceptionResult perceptResult = pPercept->Travel(); // 탐색 개시
+	EPerceptionResult perceptResult = pPercept->Travel(_dir); // 탐색 개시
 
 	if (perceptResult != EPerceptionResult::Succeess) // 빈 결과는 리턴
 	{

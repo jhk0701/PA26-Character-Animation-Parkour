@@ -56,6 +56,7 @@ public:
 	void LoadData();
 
 	void TryPerception();
+	void TryPerception(const Vector3& _dir);
 	void ProcessPerceptionResult(const TravelResult& _result);
 
 	void Jump();
@@ -66,10 +67,8 @@ public:
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 
 #ifdef MG_DEBUG_LOG
-	
 	std::weak_ptr<PerceptionComponent> GetPerception() const { return m_perception; }
 	std::weak_ptr<ProcessorComponent> GetProcessor() const { return m_processor; }
-
 #endif // MG_DEBUG_LOG
 
 	// State
