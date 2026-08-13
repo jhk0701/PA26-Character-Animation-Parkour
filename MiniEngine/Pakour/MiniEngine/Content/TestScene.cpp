@@ -534,6 +534,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 나무 등 기둥
 			Obstacle::ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
+
 			desc.detailTags = 
 			{ 
 				(uint8_t)ETagEnvDetail::Pole 
@@ -573,11 +574,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
 			desc.priority = 1U; // 한 단계 높은 우선순위
 
-			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, -5.0f);
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree 1");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 5.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, -10.0f);
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree 2");
 
@@ -587,30 +588,30 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)ETagAxis::X
 			};
 
-			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 1");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(45.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 2");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 3");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 6.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 6.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(30.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 4");
 
-			desc.pos = OFFSET + Vector3(-15.0f, 4.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 4.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(100.0f), 0.0f, 0.0f);
@@ -618,21 +619,87 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.priority = 0U;
 		}
-
-		// vault 깊이 다양화
 		{
+		
 			Obstacle::ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
-			desc.detailTags = { 0U };
+			desc.detailTags =
+			{
+				(uint8_t)ETagEnvDetail::Default
+			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			desc.color = Vector3(0.75f, 0.25f, 0.25f);
+			desc.priority = 0U;
 
-			desc.pos = OFFSET + Vector3(0.0f, 0.5f, -10.0f);
-			desc.scale = Vector3(4.0f, 1.0f, 3.0f);
+			desc.pos = OFFSET + Vector3(-15.0f, 7.5f * 0.5f, 0.0f);
+			desc.scale = Vector3(0.5f, 7.5f, 0.5f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1");
 
-			// 전진 입력이 계속되고 잇다면 mantle이 아니라
-			// 더 범위가 넓게 움직이는 vault가 호출되는지 확인
-			ObstacleFactory::Create(pScene, desc)->SetName("Vault Var 2"); 
+			desc.pos = OFFSET + Vector3(-16.0f, 6.0f, 0.0f);
+			desc.scale = Vector3(3.0f, 0.25f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Plate");
+
+			desc.pos = OFFSET + Vector3(-7.5f, 5.0f, 5.0f);
+			desc.scale = Vector3(0.5f, 10.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 2");
+
+			desc.pos = OFFSET + Vector3(-7.5f, 8.0f, 5.0f);
+			desc.scale = Vector3(3.0f, 0.25f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 2 Plate");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 10.0f);
+			desc.scale = Vector3(0.5f, 10.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 3");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 8.0f, 10.0f);
+			desc.scale = Vector3(3.0f, 3.0f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 3 Cube");
+
+			desc.detailTags =
+			{
+				(uint8_t)ETagEnvDetail::Beam,
+				(uint8_t)ETagAxis::X
+			};
+
+			desc.pos = OFFSET + Vector3(-15.0f, 7.5f, 0.0f);
+			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 1");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 7.5f, 0.0f);
+			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 2");
+			
+			desc.pos = OFFSET + Vector3(-15.0f, 7.5f, 0.0f);
+			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f * 3.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 3");
+
+
+			desc.pos = OFFSET + Vector3(-7.5f, 8.5f, 5.0f);
+			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 2 Branch 1");
+
+			desc.meshPos = Vector3(0.0f);
+			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+			desc.detailTags =
+			{
+				(uint8_t)ETagEnvDetail::Pole
+			};
+			desc.color = Vector3(0.25f, 0.75f, 0.25f);
+			desc.priority = 0U;
+
+			desc.pos = OFFSET + Vector3(-7.5f, 7.5f * 0.5f, 0.0f);
+			desc.scale = Vector3(0.2f, 7.5f, 0.2f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 1");
 		}
+
 	}
 	{
 		// 캐릭터 생성
