@@ -562,19 +562,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.meshPos = Vector3(0.0f);
 			desc.priority = 1U; // 한 단계 높은 우선순위
 
-			desc.pos = OFFSET + Vector3(-18.5f, 3.0f, 6.0f);
+			desc.pos = OFFSET + Vector3(-18.3f, 3.0f, 6.0f);
 			desc.scale = Vector3(0.1f, 6.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 1");
 
-			desc.pos = OFFSET + Vector3(-18.5f, 6.0f, 8.0f);
+			desc.pos = OFFSET + Vector3(-18.3f, 6.0f, 8.0f);
 			desc.scale = Vector3(0.1f, 8.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 2");
 
-			desc.pos = OFFSET + Vector3(-18.5f, 8.0f, 10.0f);
+			desc.pos = OFFSET + Vector3(-18.3f, 8.0f, 10.0f);
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 3");
 
-			desc.pos = OFFSET + Vector3(-18.5f, 14.0f, 12.0f);
+			desc.pos = OFFSET + Vector3(-18.3f, 14.0f, 12.0f);
 			desc.scale = Vector3(0.1f, 14.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
 
