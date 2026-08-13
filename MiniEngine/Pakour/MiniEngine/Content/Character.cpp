@@ -260,6 +260,7 @@ bool Character::TryPerception(const Vector3& _dir)
 	}
 
 	ProcessPerceptionResult(pPercept->GetResult()); // 탐색 결과 확인
+
 	return true;
 }
 

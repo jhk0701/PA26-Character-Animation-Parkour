@@ -1629,13 +1629,13 @@
         },
         {
             "tags": [ "Wall_IdleToHang_Cliff_MoveDown" ],
-            "clip": 43,
+            "clip": 16,
             "rootMotion":  { "apply": false },
             "notifies":
             [
                 {
                     "class": "TransitionState",
-                    "time": 0.0,
+                    "time": 0.1,
                     "state": "Hanging"
                 },
                 {
@@ -1649,10 +1649,14 @@
                     "enable": true
                 },
                 {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0.0, 0.3 ]
+                },
+                {
                     "class": "BezierCorrectRootMotion",
-                    "time": [ 0.0, 0.2 ],
+                    "time": [ 0.2, 0.8 ],
                     "midOffset": [ 0, 0, -1.0 ],
-                    "endOffset": [ 0, -1.85, -0.5 ]
+                    "endOffset": [ 0, -1.85, -0.75 ]
                 }
             ]
         }

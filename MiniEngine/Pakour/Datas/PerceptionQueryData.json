@@ -288,8 +288,8 @@
                         {
                             "id" : "Landing_Find_Cliff_Ledge",  
                             "class" : "DetectFloorNode",
-                            "startOffset" : [ 0.0, 0.5, 0.0 ],
-                            "direction" : [ 0.0, -1.0, 0.0 ],
+                            "startOffset" : [ 0.0, -0.1, 0.5 ],
+                            "direction" : [ 0.0, 0.0, -1.0 ],
                             "distance" : 0.6,
                             "radius" : 0.25
                         },

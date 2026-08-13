@@ -80,6 +80,7 @@
             "comment" : "장애물 높이 결과가 음수",
             "id": "HeightCheck_Minus",
             "class": "ObstacleHeightCondition",
+            "isInverted" : true,
             "value" : 0.0
         },
 
