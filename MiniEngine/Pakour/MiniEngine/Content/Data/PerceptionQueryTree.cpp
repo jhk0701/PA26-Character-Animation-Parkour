@@ -163,7 +163,6 @@ namespace
 						p->SetDistance(_node.Distance);
 						p->SetRadius(_node.Radius);
 						p->SetCapsuleHeight(_node.Height);
-						p->SetHeightMultiplier(_node.HeightMultiplier);
 						return p;
 					}, 0
 				}
@@ -343,7 +342,6 @@ void PerceptionQueryData::Load(const json& _data)
 			node.Distance			= element.value("distance", node.Distance);
 			node.Radius				= element.value("radius", node.Radius);
 			node.Height				= element.value("height", node.Height);
-			node.HeightMultiplier	= element.value("heightMultiplier", node.HeightMultiplier);
 
 			const std::string STATE_NAME = element.value("targetState", std::string());
 			if (STATE_NAME.empty() == false)

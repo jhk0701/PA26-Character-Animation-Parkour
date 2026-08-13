@@ -102,7 +102,7 @@ namespace MiniEngine
 		TravelContext context;
 		context.m_owner = owner.lock();
 		context.m_physics = context.m_owner->GetScene()->GetPhysics().lock();
-		context.direction = _dir;
+		context.m_direction = _dir;
 
 		return m_queryTree->Execute(context, m_result);
 	}

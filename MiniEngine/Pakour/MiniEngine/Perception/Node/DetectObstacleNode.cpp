@@ -78,11 +78,16 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	// 지오메트리 생성
 	CapsulecastParam param;
 	param.m_radius			= GetRadius();
-	param.m_halfHeight		= m_capsuleHeight * 0.5f * m_heightMultiplier;
+	param.m_halfHeight		= m_capsuleHeight * 0.5f;
 	param.m_maxDistance		= GetDistance();
 
 	// Owner 트랜스폼 기준 적용
-	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
+	LocalizePosition(TF, GetStartOffset(), param.m_startPos);
+
+	if (GetDirection().LengthSquared() > 1e-4f)
+		LocalizeDirection(TF, GetDirection(), param.m_dir);
+	else
+		param.m_dir = _context.m_direction;
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
@@ -125,7 +130,12 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	param.m_maxDistance = GetDistance();
 
 	// Owner 트랜스폼 기준 적용
-	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
+	LocalizePosition(TF, GetStartOffset(), param.m_startPos);
+
+	if (GetDirection().LengthSquared() > 1e-4f)
+		LocalizeDirection(TF, GetDirection(), param.m_dir);
+	else
+		param.m_dir = _context.m_direction;
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
@@ -150,6 +160,7 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 	SpherecastParam param;
 	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
+
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
 #if MG_DEBUG_LOG || MG_DEBUG
@@ -171,6 +182,7 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 	SpherecastParam param;
 	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
+
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
 	RaycastMultipleResult result;

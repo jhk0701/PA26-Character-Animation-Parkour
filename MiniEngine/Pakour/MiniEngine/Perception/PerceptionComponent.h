@@ -13,7 +13,7 @@ namespace MiniEngine
 	{
 		std::shared_ptr<Actor> m_owner;
 		std::shared_ptr<Physics::PhysicsWorld> m_physics;
-		Vector3 direction;
+		Vector3 m_direction;
 
 		// TODO : 중복된 사항 -> 정리 후 제거할 것
 		IObstacle* m_pFirstObstacle{ nullptr };
@@ -136,13 +136,11 @@ namespace MiniEngine
 	class PerceptionComponent : public Component
 	{
 	public:
-		EPerceptionResult Travel(const Vector3& _dir); // 탐색
-
 		void SetQueryTree(std::shared_ptr<PerceptionNode>&& _newTree) { m_queryTree = _newTree; };
-
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
-		const TravelResult& GetLastestTravelResult() const { return m_result; }
+		EPerceptionResult Travel(const Vector3& _dir); // 탐색
+		const TravelResult& GetResult() const { return m_result; }
 
 	private:
 		std::shared_ptr<PerceptionNode> m_queryTree;

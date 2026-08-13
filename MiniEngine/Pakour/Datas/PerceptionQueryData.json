@@ -166,7 +166,6 @@
                 "id" : "Landing_DetectFoward",
                 "class" : "DetectObstacleCapsuleNode",
                 "startOffset" : [ 0.0, 1.0, 0.0 ],
-                "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
                 "radius" : 0.25,
                 "height" : 1.0

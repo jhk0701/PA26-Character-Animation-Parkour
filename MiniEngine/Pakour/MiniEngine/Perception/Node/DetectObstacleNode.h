@@ -39,7 +39,7 @@ protected:
 
 private:
 	Vector3 m_startOffset{ 0.0f };
-	Vector3 m_dir{ 0.0f, 0.0f, 1.0f };
+	Vector3 m_dir{ 0.0f, 0.0f, 0.0f };
 	float m_dist{ 1.0f };
 	float m_radius{ 0.5f };
 };
@@ -51,11 +51,8 @@ public:
 	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
 
 	void SetCapsuleHeight(const float _h) { m_capsuleHeight = _h; }
-	void SetHeightMultiplier(const float _mul) { m_heightMultiplier = _mul; }
-
 private:
 	float m_capsuleHeight{ 1.0f };
-	float m_heightMultiplier{ 1.0f };
 };
 
 class DetectObstacleSphereNode : public DetectNode

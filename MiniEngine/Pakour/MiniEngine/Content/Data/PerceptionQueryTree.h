@@ -45,7 +45,6 @@ namespace MiniEngine
 		"distance" : 1.0,
 		"radius" : 0.5,
 		"height" : 1.0,
-		"heightMultiplier" : 1.0,
 
 		"targetState" : "Landing"
 	}
@@ -75,11 +74,10 @@ struct PerceptionNodeData
 
 	// DetectNode
 	MiniEngine::Vector3 StartOffset{ 0.0f, 0.0f, 0.0f };
-	MiniEngine::Vector3 Direction{ 0.0f, 0.0f, 1.0f };
+	MiniEngine::Vector3 Direction{ 0.0f, 0.0f, 0.0f };
 	float Distance{ 1.0f };
 	float Radius{ 0.5f };
 	float Height{ 1.0f };
-	float HeightMultiplier{ 1.0f };
 
 	// Character::EState
 	uint8_t TargetState{ 0 };

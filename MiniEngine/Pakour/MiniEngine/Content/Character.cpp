@@ -252,31 +252,31 @@ void Character::TryPerception(const Vector3& _dir)
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
 	EPerceptionResult perceptResult = pPercept->Travel(_dir); // 탐색 개시
 
-	if (perceptResult != EPerceptionResult::Succeess) // 빈 결과는 리턴
+	if (perceptResult != EPerceptionResult::Succeess)
 	{
+		// 빈 결과는 리턴
 		MG_LOG_INFO("[Character::TryPerception] Perception Travel Result is not success");
 		return;
 	}
 
-	const TravelResult& result = pPercept->GetLastestTravelResult(); // 탐색 결과 확인
-	ProcessPerceptionResult(result);
+	ProcessPerceptionResult(pPercept->GetResult()); // 탐색 결과 확인
 }
 
 void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
 	{
-		// 현재 장애물과 다른 장애물 인식
 		m_curObstacleInfo.m_bIsNewObstacle = m_curObstacleInfo.m_pObstacle != _result.m_pFirstObstacle;
-
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
+
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
 		m_curObstacleInfo.m_obstacleDistance = _result.m_obstacleDistance;
+
 		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
-		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
 		m_curObstacleInfo.m_bDetectLedge = _result.m_bDetectLedge;
 
+		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
 		m_curObstacleInfo.m_obstacleHeight = _result.m_obstacleLedge - GetRoot()->localTransform.position.y;
 	}
 	else
