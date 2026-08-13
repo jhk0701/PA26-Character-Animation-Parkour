@@ -207,8 +207,6 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 	return EPerceptionResult::Succeess;
 }
 
-
-
 EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
 	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
@@ -257,6 +255,11 @@ EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, TravelRes
 
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
+
+#if MG_DEBUG_LOG || MG_DEBUG
+	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+#endif // MG
+
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)

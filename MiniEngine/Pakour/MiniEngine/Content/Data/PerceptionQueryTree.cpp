@@ -46,13 +46,15 @@ namespace
 	};
 
 	template<typename T>
-	FuncCreateDeco CreateDeco() 
+	std::shared_ptr<T> CreateDecoInstance(const PerceptionDecoData& _data) 
 	{
-		return [](const PerceptionDecoData&) -> std::shared_ptr<PerceptionDecorator>
-		{
-			return std::make_shared<T>();
-		};
+		std::shared_ptr<T> pDeco = std::make_shared<T>();
+		pDeco->SetInvert(_data.IsInverted);
+		return pDeco;
 	}
+
+	template<typename T>
+	FuncCreateDeco CreateDeco() { return CreateDecoInstance<T>; }
 
 	template<typename T>
 	FuncCreateNode CreateNode()
@@ -86,7 +88,7 @@ namespace
 				{ 
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<CompareObstacleTypeDecorator> pDeco = std::make_shared<CompareObstacleTypeDecorator>();
+						std::shared_ptr<CompareObstacleTypeDecorator> pDeco = CreateDecoInstance<CompareObstacleTypeDecorator>(_data);
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.TargetObstacleType);
 						return pDeco;
@@ -97,7 +99,7 @@ namespace
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<CompareHeightDecorator> pDeco = std::make_shared<CompareHeightDecorator>();
+						std::shared_ptr<CompareHeightDecorator> pDeco = CreateDecoInstance<CompareHeightDecorator>(_data);
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.ValueFloat);
 						return pDeco;
@@ -110,7 +112,7 @@ namespace
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<CharacterStateDecorator> pDeco = std::make_shared<CharacterStateDecorator>();
+						std::shared_ptr<CharacterStateDecorator> pDeco = CreateDecoInstance<CharacterStateDecorator>(_data);
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.TargetState);
 						return pDeco;
@@ -121,7 +123,7 @@ namespace
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<InputVerticalDecorator> pDeco = std::make_shared<InputVerticalDecorator>();
+						std::shared_ptr<InputVerticalDecorator> pDeco = CreateDecoInstance<InputVerticalDecorator>(_data);
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.ValueFloat);
 						return pDeco;
@@ -132,7 +134,7 @@ namespace
 				{
 					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
 					{
-						std::shared_ptr<InputHorizontalDecorator> pDeco = std::make_shared<InputHorizontalDecorator>();
+						std::shared_ptr<InputHorizontalDecorator> pDeco = CreateDecoInstance<InputHorizontalDecorator>(_data);
 						pDeco->SetComparer((ECompareType)_data.ComparerType);
 						pDeco->SetValue(_data.ValueFloat);
 						return pDeco;
@@ -261,6 +263,8 @@ void PerceptionQueryData::Load(const json& _data)
 			}
 
 			// 멤버 변수 파싱
+			deco.IsInverted = el.value("isInverted", deco.IsInverted);
+
 			deco.ValueFloat = el.value("val_float", deco.ValueFloat);
 			deco.ValueUint8 = el.value("val_uint8", deco.ValueUint8);
 			const std::string COMPARER_NAME = el.value("comparer", std::string());

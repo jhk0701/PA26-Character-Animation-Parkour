@@ -20,6 +20,16 @@ namespace MiniEngine
 
 #pragma region Perception Nodes
 
+	bool PerceptionDecorator::Process(const TravelContext& _context)
+	{
+		bool bResult = Evaluate(_context);
+
+		if (m_bIsInvert)
+			bResult = !bResult;
+
+		return bResult;
+	}
+
 	bool PerceptionNode::Evaluate(const TravelContext& _context) const
 	{
 		if (m_conditions.size() == 0)
@@ -29,7 +39,7 @@ namespace MiniEngine
 		// 한 노드에 조건 두 개 넣은건 그럴 둘다 통과해야한다고 의도한 것으로 간주함
 		for (const std::shared_ptr<PerceptionDecorator>& pCond : m_conditions)
 		{
-			if (pCond->Evaluate(_context) == false)
+			if (pCond->Process(_context) == false)
 				return false;
 		}
 
@@ -48,6 +58,7 @@ namespace MiniEngine
 		{
 			// 1. 자식에 달린 조건 확인 -> false라면 중단
 			// 2. 자식 노드들 실행 -> 하나라도 fail이라면 중단
+			// Sequece 인데 Deco를 달았다면, 조건 불일치 시 종료 요청으로 간주
 			if (child->Evaluate(_context) == false  ||
 				child->Execute(_context, _result) == EPerceptionResult::Fail)
 				return EPerceptionResult::Fail;
@@ -90,5 +101,6 @@ namespace MiniEngine
 
 		return m_queryTree->Execute(context, m_result);
 	}
+
 
 }

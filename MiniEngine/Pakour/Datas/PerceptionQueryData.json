@@ -6,6 +6,12 @@
         "class" : "ObstacleDetectedDecorator"
     },
     {
+        "id" : "ObstacleIsNotDetected",
+        "class" : "ObstacleDetectedDecorator",
+        "isInverted" : true
+    },
+
+    {
         "comment" : "---------------장애물 높이 기준---------------",
         "id" : "IsWall",
         "class" : "CompareHeightDecorator",
@@ -159,7 +165,7 @@
             "decos" : [ "IsLandingState" ],
             "children" : [ 
                 "Landing_DetectFoward", 
-                "Obstacle_Detected" 
+                "Landing_Check_ObstacleDetected" 
             ]
         },
             {
@@ -171,80 +177,127 @@
                 "height" : 1.0
             },
             {
-                "id" : "Obstacle_Detected",
+                "id" : "Landing_Check_ObstacleDetected",
                 "class" : "SelectorNode",
-                "decos" : [ "ObstacleDetected" ],
-                "children" : [ 
-                    "Process_Default", 
-                    "Process_Beam", 
-                    "Process_Protrude", 
-                    "Process_Pole"
+                "children" : [
+                    "Obstacle_Detected",
+                    "Landing_Check_FowardDown_Seq"
                 ]
             },
+
                 {
-                    "id" : "Process_Default",
-                    "class" : "SequenceNode",
-                    "decos" : [ "IsDefault" ],
-                    "children" : [
-                        "Measure_Height_Forward",
-                        "Check_Height",
-                        "Return"
+                    "id" : "Obstacle_Detected",
+                    "class" : "SelectorNode",
+                    "decos" : [ "ObstacleDetected" ],
+                    "children" : [ 
+                        "Process_Default", 
+                        "Process_Beam", 
+                        "Process_Protrude", 
+                        "Process_Pole"
                     ]
                 },
                     {
-                        "id" : "Measure_Height_Forward",
-                        "class" : "MeasureObstacleHeightNode",
-                        "direction" : [ 0.0, 0.0, 1.0 ]
-                    },
-                    {
-                        "id" : "Check_Height",
-                        "class" : "SelectorNode",
-                        "children" : [ "Detect_Wall", "Measure_Depth_Forward" ]
+                        "id" : "Process_Default",
+                        "class" : "SequenceNode",
+                        "decos" : [ "IsDefault" ],
+                        "children" : [
+                            "Measure_Height_Forward",
+                            "Check_Height",
+                            "Return"
+                        ]
                     },
                         {
-                            "id" : "Detect_Wall",
-                            "class" : "ReturnResultNode",
-                            "decos" : [ "IsWall" ]
-                        },
-                        {
-                            "id" : "Measure_Depth_Forward",
-                            "class" : "MeasureObstacleDepthNode",
+                            "id" : "Measure_Height_Forward",
+                            "class" : "MeasureObstacleHeightNode",
                             "direction" : [ 0.0, 0.0, 1.0 ]
                         },
+                        {
+                            "id" : "Check_Height",
+                            "class" : "SelectorNode",
+                            "children" : [ "Detect_Wall", "Measure_Depth_Forward" ]
+                        },
+                            {
+                                "id" : "Detect_Wall",
+                                "class" : "ReturnResultNode",
+                                "decos" : [ "IsWall" ]
+                            },
+                            {
+                                "id" : "Measure_Depth_Forward",
+                                "class" : "MeasureObstacleDepthNode",
+                                "direction" : [ 0.0, 0.0, 1.0 ]
+                            },
+                    {
+                        "id" : "Process_Beam",
+                        "class" : "SequenceNode",
+                        "decos" : [ "IsBeam" ],
+                        "children" : [ "Extract_BeamData", "Return" ]
+                    },
+                        {
+                            "comment" : "Beam 지형에 대한 높이 처리",
+                            "id" : "Extract_BeamData",
+                            "class" : "ProcessBeamNode"
+                        },
+                    {
+                        "id" : "Process_Protrude",
+                        "class" : "SequenceNode",
+                        "decos" : [ "IsProtrude" ],
+                        "children" : [ "Extract_ProtrudeData", "Return" ]
+                    },
+                        {
+                            "comment" : "Protrude 지형에 대한 높이 처리",
+                            "id" : "Extract_ProtrudeData",
+                            "class" : "ProcessProtrudeNode"
+                        },
+                    {
+                        "id" : "Process_Pole",
+                        "class" : "SequenceNode",
+                        "decos" : [ "IsPole" ],
+                        "children" : [ "Extract_PoleData", "Return" ]
+                    },
+                        {
+                            "comment" : "Pole 지형에 대한 높이 처리",
+                            "id" : "Extract_PoleData",
+                            "class" : "ProcessPoleNode",
+                            "height" : 3.0
+                        },
                 {
-                    "id" : "Process_Beam",
+                    "id" : "Landing_Check_FowardDown_Seq",
                     "class" : "SequenceNode",
-                    "decos" : [ "IsBeam" ],
-                    "children" : [ "Extract_BeamData", "Return" ]
+                    "children" : [ 
+                        "Landing_Check_FowardDown",
+                        "Landing_IsCliff"
+                    ]
                 },
                     {
-                        "comment" : "Beam 지형에 대한 높이 처리",
-                        "id" : "Extract_BeamData",
-                        "class" : "ProcessBeamNode"
+                        "id" : "Landing_Check_FowardDown",
+                        "class" : "DetectFloorNode",
+                        "startOffset" : [ 0.0, 0.5, 0.5 ],
+                        "direction" : [ 0.0, -1.0, 0.0 ],
+                        "distance" : 0.6,
+                        "radius" : 0.05
                     },
-                {
-                    "id" : "Process_Protrude",
-                    "class" : "SequenceNode",
-                    "decos" : [ "IsProtrude" ],
-                    "children" : [ "Extract_ProtrudeData", "Return" ]
-                },
                     {
-                        "comment" : "Protrude 지형에 대한 높이 처리",
-                        "id" : "Extract_ProtrudeData",
-                        "class" : "ProcessProtrudeNode"
+                        "id" : "Landing_IsCliff",
+                        "class" : "SequenceNode",
+                        "decos" : [ "ObstacleIsNotDetected" ],
+                        "children" : [
+                            "Landing_Find_Cliff_Ledge",
+                            "Landing_Return_Cliff_Ledge"
+                        ]
                     },
-                {
-                    "id" : "Process_Pole",
-                    "class" : "SequenceNode",
-                    "decos" : [ "IsPole" ],
-                    "children" : [ "Extract_PoleData", "Return" ]
-                },
-                    {
-                        "comment" : "Pole 지형에 대한 높이 처리",
-                        "id" : "Extract_PoleData",
-                        "class" : "ProcessPoleNode",
-                        "height" : 3.0
-                    },
+                        {
+                            "id" : "Landing_Find_Cliff_Ledge",  
+                            "class" : "DetectFloorNode",
+                            "startOffset" : [ 0.0, 0.5, 0.0 ],
+                            "direction" : [ 0.0, -1.0, 0.0 ],
+                            "distance" : 0.6,
+                            "radius" : 0.1
+                        },
+                        {
+                            "id" : "Landing_Return_Cliff_Ledge",
+                            "class" : "ReturnResultNode",
+                            "decos" : [ "ObstacleDetected" ]
+                        },
         {
             "id" : "InAirState",
             "class" : "SequenceNode",

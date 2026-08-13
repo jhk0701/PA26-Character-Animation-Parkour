@@ -6,18 +6,18 @@ using namespace MiniEngine;
 
 class CharacterStateDecorator : public CompareWithValueDecorator<uint8_t>
 {
-public:
+protected:
 	bool Evaluate(const TravelContext& _context) const override;
 };
 
 class InputVerticalDecorator : public CompareWithValueDecorator<float> 
 {
-public:
+protected:
 	bool Evaluate(const TravelContext& _context) const override;
 };
 
 class InputHorizontalDecorator : public CompareWithValueDecorator<float> 
 {
-public:
+protected:
 	bool Evaluate(const TravelContext& _context) const override;
 };

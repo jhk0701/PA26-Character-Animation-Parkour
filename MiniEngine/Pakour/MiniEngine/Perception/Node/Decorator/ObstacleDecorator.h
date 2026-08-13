@@ -6,19 +6,19 @@ namespace MiniEngine
 {
 	class ObstacleDetectedDecorator : public PerceptionDecorator
 	{
-	public:
+	protected:
 		bool Evaluate(const TravelContext& _context) const override;
 	};
 
 	class CompareObstacleTypeDecorator : public CompareWithValueDecorator<uint8_t>
 	{
-	public:
+	protected:
 		bool Evaluate(const TravelContext& _context) const override;
 	};
 
 	class CompareHeightDecorator : public CompareWithValueDecorator<float> 
 	{
-	public:
+	protected:
 		bool Evaluate(const TravelContext& _context) const override;
 	};
 }

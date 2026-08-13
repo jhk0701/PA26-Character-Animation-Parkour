@@ -54,7 +54,14 @@ namespace MiniEngine
 	{
 	public:
 		virtual ~PerceptionDecorator() {};
+		bool Process(const TravelContext& _context);
+
+		void SetInvert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
+	protected:
 		virtual bool Evaluate(const TravelContext& _context) const = 0;
+
+	private:
+		bool m_bIsInvert{ false }; // 반전 여부
 	};
 
 	// 최상위 부모

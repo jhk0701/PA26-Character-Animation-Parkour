@@ -22,6 +22,8 @@ namespace MiniEngine
 		"id" : "인스턴스 구분용 문자열",
 		"class" : "클래스 이름",
 
+		"isInverted" : true,
+
 		// 각 노드별 멤버 변수
 		"val_float" : 0.0,
 		"val_uint8" : 0,
@@ -54,6 +56,8 @@ struct PerceptionDecoData
 {
 	std::string Id;
 	std::string Class;
+
+	bool IsInverted{ false };
 
 	uint8_t ComparerType{ 0 }; // string name -> uint8_t 전환
 
