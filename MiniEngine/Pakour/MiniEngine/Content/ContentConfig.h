@@ -39,10 +39,7 @@ namespace Content::Config
 		Wall_HangingMoveLeft,
 		Wall_HangingMoveRight,
 
-		Wall_InnerRotateRight,  // 270도 단일 벽의 모서리 돌기 오른쪽
-		Wall_InnerRotateLeft,	// 270도 단일 벽의 모서리 돌기 왼쪽
-		Wall_OuterRotateRight,	// 90도 벽과 벽이 만나는 지점 오른쪽
-		Wall_OuterRotateLeft,	// 90도 벽과 벽이 만나는 지점 왼쪽
+		Wall_IdleToHang_Cliff_MoveDown, // 매달리기 시작 : 절벽에서 내려옴
 
 		BeamStand,
 		Beam_IdleToStand = BeamStand,

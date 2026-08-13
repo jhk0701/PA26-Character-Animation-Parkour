@@ -47,10 +47,7 @@ namespace Content::Config
 			{ "Wall_HangingMoveLeft",		ETagAct::Wall_HangingMoveLeft },
 			{ "Wall_HangingMoveRight",		ETagAct::Wall_HangingMoveRight },
 
-			{ "Wall_InnerRotateRight",		ETagAct::Wall_InnerRotateRight },
-			{ "Wall_InnerRotateLeft",		ETagAct::Wall_InnerRotateLeft },
-			{ "Wall_OuterRotateRight",		ETagAct::Wall_OuterRotateRight },
-			{ "Wall_OuterRotateLeft",		ETagAct::Wall_OuterRotateLeft },
+			{ "Wall_IdleToHang_Cliff_MoveDown",		ETagAct::Wall_IdleToHang_Cliff_MoveDown },
 
 			{ "Beam_IdleToStand",			ETagAct::Beam_IdleToStand },
 			{ "BeamStand",					ETagAct::BeamStand },

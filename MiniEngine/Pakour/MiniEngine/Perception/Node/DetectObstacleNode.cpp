@@ -260,7 +260,6 @@ EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, TravelRes
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // MG
 
-
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)
 	{

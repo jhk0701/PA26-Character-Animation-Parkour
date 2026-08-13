@@ -32,7 +32,10 @@ namespace MiniEngine
 	bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
-		return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
+		const float DIFF = _result.m_obstacleLedge - _context.pOwner->GetRoot()->localTransform.position.y;
+		return GetValue() <= DIFF;
+		
+		// return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
 	}
 
 	bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

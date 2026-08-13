@@ -7,6 +7,7 @@
         },
 
         {
+            "comment" : "---------------장애물 유형 조건---------------",
             "id": "IsDefault",
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Default"
@@ -28,6 +29,7 @@
         },
 
         {
+            "comment" : "---------------캐릭터 상태 조건---------------",
             "id": "IsLandingState",
             "class": "CharacterStateCondition",
             "targetCharStateType" : "Landing"
@@ -59,6 +61,7 @@
         },
 
         {
+            "comment" : "---------------장애물 높이 조건---------------",
             "id": "HeightCheck_Wall",
             "class": "ObstacleHeightCondition",
             "value" : 3.0
@@ -74,6 +77,14 @@
             "value" : 0.49
         },
         {
+            "comment" : "장애물 높이 결과가 음수",
+            "id": "HeightCheck_Minus",
+            "class": "ObstacleHeightCondition",
+            "value" : 0.0
+        },
+
+        {
+            "comment" : "---------------장애물 깊이 조건---------------",
             "id": "IsDeeper",
             "class": "ObstacleDepthCondition",
             "value" : 0.6
@@ -84,7 +95,9 @@
             "isInverted" : true,
             "value" : 0.6
         },
+
         {
+            "comment" : "---------------캐릭터 높이에 대한 장애물 높이 비교---------------",
             "id": "IsLowerThan_CharacterMid",
             "class": "CharacterHeightCondition",
             "value" : 0.8
@@ -95,7 +108,9 @@
             "isInverted" : true,
             "value" : 0.8
         },
+
         {
+            "comment" : "---------------입력 조건---------------",
             "id": "IsInputUp",
             "class": "InputVerticalCondition",
             "value" : 0.1
@@ -115,6 +130,7 @@
             "class": "InputHorizontalCondition",
             "value" : -0.1
         },
+
         {
             "id" : "IsLedgeDetected",
             "class" : "DetectLedgeCondition"
@@ -427,6 +443,12 @@
             "id" : "Hanging_Protrude_MoveRight",
             "class" : "ConditionAnd",
             "children" : [ "Hanging_Protrude_MoveCommon", "IsInputRight" ]
+        },
+
+        {
+            "id" : "Landing_Cliff_MoveDown",
+            "class" : "ConditionAnd",
+            "children" : [ "IsLandingState", "IsDefault", "HeightCheck_Minus" ]
         }
     ],
     
@@ -620,6 +642,11 @@
         {
             "tagAct" : "MantleLow",
             "conditionId" : "Landing_MantleLowMid"
+        },
+
+        {
+            "tagAct" : "Wall_IdleToHang_Cliff_MoveDown",
+            "conditionId" : "Landing_Cliff_MoveDown"
         }
     ]
 }

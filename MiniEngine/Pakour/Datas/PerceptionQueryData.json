@@ -291,7 +291,7 @@
                             "startOffset" : [ 0.0, 0.5, 0.0 ],
                             "direction" : [ 0.0, -1.0, 0.0 ],
                             "distance" : 0.6,
-                            "radius" : 0.1
+                            "radius" : 0.25
                         },
                         {
                             "id" : "Landing_Return_Cliff_Ledge",
