@@ -556,7 +556,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.detailTags = 
 			{ 
 				(uint8_t)ETagEnvDetail::Pole,
-				(uint8_t)ETagAxis::X
+				(uint8_t)ETagAxis::X // 특정 축으로 매달리기
 			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
@@ -745,5 +745,4 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 void TestScene::BeginPlay()
 {
 	Scene::BeginPlay();
-
 }
