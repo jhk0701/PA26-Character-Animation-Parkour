@@ -654,7 +654,7 @@ void TestScene::BeginPlay()
 {
 	Scene::BeginPlay();
 
-#if defined(MG_DEBUG) || defined(MG_DEBUG_LOG)
+#if MG_DEBUG || MG_DEBUG_LOG || WITH_EDITOR
 	ApplyMarkerDebug(true);
 	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG

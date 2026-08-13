@@ -30,7 +30,7 @@ namespace MiniEngine
         m_light.m_ambient = 0.3f;
         m_light.m_color = Vector3(1.0f, 1.0f, 1.0f);
 
-#ifdef MG_DEBUG || WITH_EDITOR
+#if MG_DEBUG || MG_DEBUG_LOG || WITH_EDITOR
         m_debugDraw.Init(_device, _context);
 #endif // DEBUG
     }
@@ -78,7 +78,7 @@ namespace MiniEngine
         for (std::shared_ptr<Actor>& pActor : m_actors)
             pActor->Render(_context);
 
-#ifdef MG_DEBUG || WITH_EDITOR
+#if MG_DEBUG || MG_DEBUG_LOG || WITH_EDITOR
         if (m_bPhysicsDebug || m_bMarkerDebug)
         {
             m_debugLines.clear();

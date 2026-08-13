@@ -22,7 +22,7 @@ namespace MiniEngine
 
 		// 결과 반전 처리 -> 조건문에서 ! 와 동일
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
-		void Reset() { m_bIsProcessed = false; }
+		void Reset() { m_bIsProcessed = false; m_bProcessResult = false; }
 
 		const bool GetResult() const { return m_bProcessResult; }
 
