@@ -232,12 +232,12 @@ namespace MiniEngine
 	{
 		if (m_bCheckFalling == false)
 			return;
-
+		
 		// 직전까지 falling 상태
 		// 근데, 이번 프레임이 땅에 착지 + m_verticalVelocity >= 0.0f -> falling은 아님
-		if (m_bIsFalling && 
-			m_grounded && 
-			m_verticalVelocity >= 0.0f)
+		if (m_bIsFalling &&
+			m_grounded &&
+			(m_verticalVelocity > 0.0f || m_verticalVelocity < 1e-4f))
 		{
 			m_bIsFalling = false;
 			m_fallingElapsed = 0.0f;
@@ -257,9 +257,11 @@ namespace MiniEngine
 				m_bIsFalling = true;
 				m_fallingElapsed = 0.0f;
 			}
+
+			return;
 		}
-		else
-			m_fallingElapsed = 0.0f;
+
+		m_fallingElapsed = 0.0f;
 	}
 
 

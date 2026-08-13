@@ -55,8 +55,8 @@ public:
 
 	void LoadData();
 
-	void TryPerception();
-	void TryPerception(const Vector3& _dir);
+	bool TryPerception();
+	bool TryPerception(const Vector3& _dir);
 	void ProcessPerceptionResult(const TravelResult& _result);
 
 	void Jump();

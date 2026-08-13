@@ -239,15 +239,15 @@ void Character::LoadData()
 	m_processor.lock()->Init(std::move(conditions), std::move(processDatas));
 }
 
-void Character::TryPerception()
+bool Character::TryPerception()
 {
-	TryPerception(GetRoot()->localTransform.Forward());
+	return TryPerception(GetRoot()->localTransform.Forward());
 }
 
-void Character::TryPerception(const Vector3& _dir)
+bool Character::TryPerception(const Vector3& _dir)
 {
 	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
-		return; // 이미 행동 중이라면 탐색하지 않도록
+		return false; // 이미 행동 중이라면 탐색하지 않도록
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
 	EPerceptionResult perceptResult = pPercept->Travel(_dir); // 탐색 개시
@@ -256,10 +256,11 @@ void Character::TryPerception(const Vector3& _dir)
 	{
 		// 빈 결과는 리턴
 		MG_LOG_INFO("[Character::TryPerception] Perception Travel Result is not success");
-		return;
+		return false;
 	}
 
 	ProcessPerceptionResult(pPercept->GetResult()); // 탐색 결과 확인
+	return true;
 }
 
 void Character::ProcessPerceptionResult(const TravelResult& _result)

@@ -1,6 +1,11 @@
 #pragma once
 #include "Content/CharacterStateMachine.h"
 
+namespace MiniEngine::Physics
+{
+	struct RaycastResult;
+}
+
 class InAirState : public CharacterState
 {
 public:
@@ -12,5 +17,8 @@ public:
 
 private:
 	void ProcessContiniousMovement(float _dt);
-	bool CheckDown(uint8_t& _outTag);
+	void CheckDown();
+
+	void DefaultFallback();
+	void WriteCurrentObstacleInfo(IObstacle* _pObstacle, const MiniEngine::Physics::RaycastResult& _hitResult);
 };

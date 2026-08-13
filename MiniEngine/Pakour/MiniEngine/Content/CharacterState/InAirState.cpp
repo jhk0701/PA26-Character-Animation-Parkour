@@ -42,16 +42,71 @@ void InAirState::CheckState()
 	// 공중 + 떨어지는 상황
 	// 바닥 감지 필요
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	if (pChar->IsGrounded() == false)
+	if (pChar->IsGrounded() == false &&
+		pChar->IsFalling())
 		return;
 
-	// 착지 시점에서 장애물 한번 확인
-	uint8_t tag(0U);
-	if (CheckDown(tag) && tag != (uint8_t)ETagEnvDetail::Default) 
-	{
+	CheckDown(); // 아래쪽 장애물 확인 절차
+}
 
+void InAirState::ProcessContiniousMovement(float _dt)
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
+	Vector3 decayMovement = Vector3::Lerp(pChar->GetPrevForce(), Vector3(0.0f), 0.75f * _dt);
+	pChar->SetForce(decayMovement);
+	pChar->AddMovementInput(decayMovement * _dt);
+}
+
+void InAirState::CheckDown()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	std::shared_ptr<Physics::PhysicsWorld> pPhysics = pChar->GetScene()->GetPhysics().lock();
+
+	const Transform& TF = pChar->GetRoot()->localTransform;
+
+	SpherecastParam param;
+	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
+	param.m_maxDistance = 0.1f;
+	param.m_startPos = TF.position;
+	param.m_radius = pChar->GetCapsuleRadius();
+
+	RaycastResult result;
+	bool bIsHit = pPhysics->SphereCast(param, result, Layer::Obstacle | Layer::Ground);
+	if (!bIsHit)
+		return;
+	
+	Actor* pActor = reinterpret_cast<Actor*>(result.GetActor());
+	IObstacle* pObstacle = dynamic_cast<IObstacle*>(pActor);
+	
+	uint8_t tag = 0U;
+	if (pObstacle == nullptr || 
+		pObstacle->TryGetTag(TAG_ENV_DETAIL, tag) == false)
+	{
+		DefaultFallback();
 		return;
 	}
+
+	WriteCurrentObstacleInfo(pObstacle, result);
+
+	switch ((ETagEnvDetail)tag)
+	{
+	case ETagEnvDetail::Beam:
+	{
+		if (std::shared_ptr<ActionClip> pClip = pChar->GetActions((uint8_t)ETagAct::BeamStand))
+			pChar->PlayActionClip(pClip, 0.2f);
+		break;
+	case ETagEnvDetail::Protrude: __fallthrough;
+	case ETagEnvDetail::Pole: __fallthrough;
+	default:
+		DefaultFallback();
+		return;
+	}
+}
+
+void InAirState::DefaultFallback()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	// 공중 -> 착지 모션
 	if (std::shared_ptr<ActionClip> pClip = pChar->GetActions((uint8_t)ETagAct::FallingToLand))
@@ -65,41 +120,17 @@ void InAirState::CheckState()
 	GetMachine()->Transition(STATE);
 }
 
-void InAirState::ProcessContiniousMovement(float _dt)
+void InAirState::WriteCurrentObstacleInfo(IObstacle* _pObstacle, const MiniEngine::Physics::RaycastResult& _hitResult)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+	PerceptedObstacleInfo& info = pChar->GetCurObstacleInfo();
 
-	Vector3 decayMovement = Vector3::Lerp(pChar->GetPrevForce(), Vector3(0.0f), 0.75f * _dt);
-	pChar->SetForce(decayMovement);
-	pChar->AddMovementInput(decayMovement * _dt);
-}
-
-bool InAirState::CheckDown(uint8_t& _outTag)
-{
-	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	std::shared_ptr<Physics::PhysicsWorld> pPhysics = pChar->GetScene()->GetPhysics().lock();
-
-	const Transform& TF = pChar->GetRoot()->localTransform;
-
-	RaycastParam param;
-	param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
-	param.m_maxDistance = 0.1f;
-	param.m_origin = TF.position;
-
-	RaycastResult result;
-	bool bIsHit = pPhysics->Raycast(param, result, ToMask(Layer::Obstacle));
-	if (!bIsHit)
-		return false;
-
-	Actor* pActor = reinterpret_cast<Actor*>(result.GetActor());
-	if (!pActor)
-		return false;
-
-	IObstacle* pObstacle = dynamic_cast<IObstacle*>(pActor);
-	if (!pObstacle)
-		return false;
-
-	pObstacle->TryGetTag(TAG_ENV_DETAIL, _outTag);
-
-	return bIsHit;
+	info.m_pObstacle = _pObstacle;
+	info.m_bIsNewObstacle = true;
+	info.m_obstacleDistance = _hitResult.m_distance;
+	info.m_obstacleDepth = 0.0f;
+	info.m_obstacleHeight = 0.0f;
+	info.m_obstacleHitNrm = _hitResult.m_nrm;
+	info.m_obstacleHitPos = _hitResult.m_pos;
+	info.m_obstacleLedge = info.m_obstacleHitPos.y;
 }
