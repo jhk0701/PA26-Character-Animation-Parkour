@@ -95,6 +95,7 @@ void InAirState::CheckDown()
 	{
 		if (std::shared_ptr<ActionClip> pClip = pChar->GetActions((uint8_t)ETagAct::BeamStand))
 			pChar->PlayActionClip(pClip, 0.2f);
+	}
 		break;
 	case ETagEnvDetail::Protrude: __fallthrough;
 	case ETagEnvDetail::Pole: __fallthrough;
