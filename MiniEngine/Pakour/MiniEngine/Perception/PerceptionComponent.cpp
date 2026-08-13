@@ -73,22 +73,6 @@ namespace MiniEngine
 		return EPerceptionResult::Fail;
 	}
 
-	// TODO : 조건 노드가 만들어졌으니 제거할 것
-	EPerceptionResult SwitchNode::Execute(TravelContext& _context, TravelResult& _result)
-	{
-		uint8_t r = InvokeCondition(_context);
-		assert(r < GetChildrenCnt());
-
-		return GetChildren()[r]->Execute(_context, _result);
-	}
-	EPerceptionResult BinaryConditionNode::Execute(TravelContext& _context, TravelResult& _result)
-	{
-		if (InvokeCondition(_context))
-			return GetChildren()[0]->Execute(_context, _result);
-		else
-			return GetChildren()[1]->Execute(_context, _result);
-	}
-
 #pragma endregion
 
 	EPerceptionResult PerceptionComponent::Travel(const Vector3& _dir)

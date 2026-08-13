@@ -114,23 +114,6 @@ namespace MiniEngine
 		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
 	};
 
-
-	// Switch 조건문 노드
-	class SwitchNode : public CompositeNode
-	{
-	public:
-		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
-		virtual uint8_t InvokeCondition(TravelContext& _context) = 0;
-	};
-
-	// 단순 이진 조건문 노드
-	class BinaryConditionNode : public CompositeNode
-	{
-	public:
-		EPerceptionResult Execute(TravelContext& _context, TravelResult& _result) override;
-		virtual bool InvokeCondition(TravelContext& _context) = 0;
-	};
-
 #pragma endregion
 
 	class PerceptionComponent : public Component
