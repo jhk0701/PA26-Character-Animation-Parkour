@@ -55,7 +55,8 @@ void HangingState::Refresh()
 	uint8_t tag = 0;
 	m_pCurrentObstacle->TryGetTag(TAG_ENV_DETAIL, tag);
 
-	if (tag == (uint8_t)ETagEnvDetail::Protrude || tag == (uint8_t)ETagEnvDetail::Pole)
+	if (tag == (uint8_t)ETagEnvDetail::Protrude || 
+		tag == (uint8_t)ETagEnvDetail::Pole)
 		return;
 
 	AlignToNormal();
@@ -104,9 +105,24 @@ void PoleHangingState::AlignToNormal()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
+	uint8_t subInfo = 0;
+	if (pChar->GetCurObstacleInfo().m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfo) == false)
+	{
+		AlignDefault();
+		return;
+	}
+
+	AlighAxis(subInfo);
+}
+
+
+void PoleHangingState::AlignDefault()
+{
+	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	const Vector3 CHAR_FWD = pChar->GetRoot()->localTransform.Forward();
 	const PerceptedObstacleInfo& CUR_OBS = pChar->GetCurObstacleInfo();
 	const Transform& OBS_TF = CUR_OBS.m_pObstacle->GetTransform();
+
 	const std::vector<Vector3> DIR
 	{
 		OBS_TF.Forward(),
@@ -127,10 +143,14 @@ void PoleHangingState::AlignToNormal()
 			nearestNrm = dir;
 		}
 	}
-
-	// MG_LOG_INFO("[PoleHangingState::AlignToNormal] : ({:.2f}, {:.2f}, {:.2f})", nearestNrm.x, nearestNrm.y, nearestNrm.z);
+	// 
 
 	Quaternion rot;
 	if (TryYawRotateToward(nearestNrm, rot))
 		pChar->GetRoot()->localTransform.rotation = rot;
+}
+
+void PoleHangingState::AlighAxis(uint8_t _axis)
+{
+	MG_LOG_INFO("[PoleHangingState::AlighAxis] : {}", _axis);
 }

@@ -31,4 +31,7 @@ public:
 
 protected:
 	void AlignToNormal() override;
+
+	void AlignDefault();
+	void AlighAxis(uint8_t _axis);
 };
