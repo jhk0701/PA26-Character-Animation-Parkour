@@ -83,6 +83,9 @@ namespace MiniEngine
 	public:
 		void SetName(const std::string& _name) { m_name = _name; };
 		const std::string& GetName() const { return m_name; }
+
+		std::shared_ptr<ProcessCondition> GetCondition() { return m_pCondition.lock(); }
+
 	private:
 		std::string m_name;
 #endif // MG_DEBUG
@@ -101,6 +104,7 @@ namespace MiniEngine
 		};
 
 		const std::vector<std::shared_ptr<ProcessCondition>>& GetConditions() const { return m_conditions; };
+		const std::vector<std::shared_ptr<ProcessData>>& GetProcessDatas() const { return m_processDatas; };
 
 	private:
 		// 각 객체의 소유권은 컴포넌트에서 관리
