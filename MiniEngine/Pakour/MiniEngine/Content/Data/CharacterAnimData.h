@@ -30,6 +30,7 @@ struct AnimNotifyData
 	MiniEngine::Vector3 MidOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion
 	MiniEngine::Vector3 EndOffset{ 0.0f, 0.0f, 0.0f };	// BezierCorrectRootMotion
 	MiniEngine::Vector3 RotateDeg{ 0.0f, 0.0f, 0.0f };	// CorrectFixedRotation
+	std::vector<bool> AxisMask{ true, true, true }; // BezierCorrectRootMotion
 };
 
 struct BlendSampleData

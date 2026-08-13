@@ -55,6 +55,15 @@ namespace
 		return TryParseName(LIMB_NAMES, std::size(LIMB_NAMES), _name, _out);
 	}
 
+	void ReadBool3(const json& _data, const char* _key, std::vector<bool>& _out) 
+	{
+		auto it = _data.find(_key);
+		if (it == _data.end() || it->is_array() == false || it->size() != 3)
+			return;
+
+		_out = { (*it)[0].get<bool>(), (*it)[1].get<bool>(), (*it)[2].get<bool>() };
+	}
+
 	void ReadVec3(const json& _data, const char* _key, Vector3& _out)
 	{
 		auto it = _data.find(_key);
@@ -115,6 +124,7 @@ namespace
 		ReadVec3(_data, "midOffset", _out.MidOffset);
 		ReadVec3(_data, "endOffset", _out.EndOffset);
 		ReadVec3(_data, "rotateDeg", _out.RotateDeg);
+		ReadBool3(_data, "axisMask", _out.AxisMask);
 
 		// fromTo : CharacterIKEnabler 의 알파 [from, to]
 		auto itFromTo = _data.find("fromTo");

@@ -40,6 +40,7 @@ public:
 	// z : 캐릭터 Forward
 	void SetMidOffset(const MiniEngine::Vector3& _offset) { m_midOffset = _offset; }
 	void SetEndOffset(const MiniEngine::Vector3& _offset) { m_endOffset = _offset; }
+	void SetAxisMask(const std::vector<bool>& _mask) { m_bAxisMask = _mask; }
 
 private:
 	Character* m_pChar{ nullptr };
@@ -52,4 +53,6 @@ private:
 	MiniEngine::Vector3 m_startPoint{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_midPoint{ 0.0f, 0.0f, 0.0f };
 	MiniEngine::Vector3 m_endPoint{ 0.0f, 0.0f, 0.0f };
+
+	std::vector<bool> m_bAxisMask { true, true, true };
 };

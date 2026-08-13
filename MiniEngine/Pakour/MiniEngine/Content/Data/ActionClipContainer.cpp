@@ -91,6 +91,7 @@ namespace
 					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
 					pNotify->SetMidOffset(_data.MidOffset); // pNotify->SetBezierY(_data.BezierY);
 					pNotify->SetEndOffset(_data.EndOffset);
+					pNotify->SetAxisMask(_data.AxisMask);
 					return pNotify;
 				} 
 			},

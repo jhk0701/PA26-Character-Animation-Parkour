@@ -122,11 +122,24 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 	midOffset += TF.Forward() * m_midOffset.z;
 	m_midPoint += midOffset;
 
-	// MG_LOG_INFO("[BezierCorrection::OnStart] Mid offset : ({:.2f}, {:.2f}, {:.2f})", m_midOffset.x, m_midOffset.y, m_midOffset.z);
-	/*MG_LOG_INFO("[BezierCorrection::OnStart]\nStart P ({:.2f}, {:.2f}, {:.2f})\nMid P ({:.2f}, {:.2f}, {:.2f})\nEnd P ({:.2f}, {:.2f}, {:.2f})",
-		m_startPoint.x, m_startPoint.y, m_startPoint.z,
-		m_midPoint.x, m_midPoint.y, m_midPoint.z,
-		m_endPoint.x, m_endPoint.y, m_endPoint.z);*/
+	// 마스크 적용
+	if (m_bAxisMask[0] == false)
+	{
+		m_midPoint.x = m_startPoint.x;
+		m_endPoint.x = m_startPoint.x;
+	}
+
+	if (m_bAxisMask[1] == false) 
+	{
+		m_midPoint.y = m_startPoint.y;
+		m_endPoint.y = m_startPoint.y;
+	}
+
+	if (m_bAxisMask[2] == false)
+	{
+		m_midPoint.z = m_startPoint.z;
+		m_endPoint.z = m_startPoint.z;
+	}
 
 	assert(GetDuration() > 1e-4f);
 }
