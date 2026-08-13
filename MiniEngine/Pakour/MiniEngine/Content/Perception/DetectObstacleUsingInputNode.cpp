@@ -11,11 +11,10 @@ EPerceptionResult DetectObstacleUsingInputNode::InvokeTask(TravelContext& _conte
 	const Vector2 INPUT = pChar->GetInputDir();
 	Vector3 newDir(0.0f);
 
-	if (std::fabs(INPUT.x) > 1e-4f) 
-		newDir.x = INPUT.x > 0.0f ? 1.0f : -1.0f;
-
 	if (std::fabs(INPUT.y) > 1e-4f)
 		newDir.y = INPUT.y > 0.0f ? 1.0f : -1.0f;
+	else if (std::fabs(INPUT.x) > 1e-4f) 
+		newDir.x = INPUT.x > 0.0f ? 1.0f : -1.0f;
 
 	SetDirection(newDir);
 

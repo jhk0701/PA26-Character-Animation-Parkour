@@ -1,3 +1,4 @@
+#pragma once
 #include "UI/UIBase.h"
 
 class Character;
@@ -7,7 +8,6 @@ class UIDebugBlendClip : public MiniEngine::UIBase
 {
 public:
 	void Construct() override;
-
 	void SetCharacter(std::weak_ptr<Character> _char) { m_pChar = _char; }
 
 protected:

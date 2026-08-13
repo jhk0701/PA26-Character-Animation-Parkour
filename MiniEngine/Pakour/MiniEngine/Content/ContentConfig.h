@@ -75,8 +75,14 @@ namespace Content::Config
 		Pole_AirToHang,
 		Pole_HangingMoveUp,
 		Pole_HangingMoveDown,
-		Pole_HangingMoveLeft,
-		Pole_HangingMoveRight,
+
+		Pole_MoveUp_ToOther,
+		Pole_MoveDown_ToOther,
+		Pole_MoveLeft_ToOther,
+		Pole_MoveRight_ToOther,
+
+		Pole_ToHanging_Left,
+		Pole_ToHanging_Right,
 
 		Test,
 		End

@@ -30,7 +30,6 @@ protected:
 		std::shared_ptr<IPerceptionProcessor>& _pProcessor,
 		TravelContext& _context,
 		MiniEngine::Physics::RaycastMultipleResult& _result) const;
-
 	void ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outPos, Vector3& _outDir) const;
 
 	const Vector3& GetStartOffset() const { return m_startOffset; }

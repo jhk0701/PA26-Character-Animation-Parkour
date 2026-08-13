@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/UIDebugBlendClip.h"
+#include "Content/UI/UIDebugBlendClip.h"
 #include "Content/Character.h"
 
 #include "Animation/Animator.h"
@@ -18,6 +18,7 @@ void UIDebugBlendClip::DrawUI()
 {
 	if (m_pChar.expired())
 		return;
+
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 400.0f), ImGuiCond_FirstUseEver);
 
 	std::shared_ptr<Character> pChar = m_pChar.lock();

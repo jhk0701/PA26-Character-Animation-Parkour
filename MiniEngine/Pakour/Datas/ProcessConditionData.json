@@ -260,16 +260,6 @@
             "class": "ConditionAnd",
             "children" : [ "IsPoleHangingState", "IsInputDown", "IsCloserThan_1" ]
         },
-        {
-            "id" : "PoleHanging_MoveToLeftPole",
-            "class" : "ConditionAnd",
-            "children" : [ "IsPoleHangingState", "IsPole", "IsInputLeft" ]
-        },
-        {
-            "id" : "PoleHanging_MoveToRightPole",
-            "class" : "ConditionAnd",
-            "children" : [ "IsPoleHangingState", "IsPole", "IsInputRight" ]
-        },
 
         {
             "id": "IsHanging",
@@ -277,6 +267,38 @@
             "class": "ConditionOr",
             "children" : [ "IsHangingState", "IsPoleHangingState" ]
         },
+        {
+            "id" : "Hanging_ToPole_Up",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHanging", "IsPole", "IsInputUp" ]
+        },
+        {
+            "id" : "Hanging_ToPole_Down",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHanging", "IsPole", "IsInputDown" ]
+        },
+        {
+            "id" : "Hanging_ToPole_Left",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHanging", "IsPole", "IsInputLeft" ]
+        },
+        {
+            "id" : "Hanging_ToPole_Right",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHanging", "IsPole", "IsInputRight" ]
+        },
+
+        {
+            "id" : "Pole_ToHanging_Left",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsDefault", "IsChanged", "IsInputLeft" ]
+        },
+        {
+            "id" : "Pole_ToHanging_Right",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsDefault", "IsChanged", "IsInputRight" ]
+        },
+
         {
             "id": "Hanging_Mantle_Top",
             "class": "ConditionAnd",
@@ -477,13 +499,31 @@
             "tagAct" : "Pole_HangingMoveDown",
             "conditionId" : "PoleHanging_MoveDown"
         }, 
+        
         {
-            "tagAct" : "Pole_HangingMoveLeft",
-            "conditionId" : "PoleHanging_MoveToLeftPole"
+            "tagAct" : "Pole_MoveUp_ToOther",
+            "conditionId" : "Hanging_ToPole_Up"
         },
         {
-            "tagAct" : "Pole_HangingMoveRight",
-            "conditionId" : "PoleHanging_MoveToRightPole"
+            "tagAct" : "Pole_MoveDown_ToOther",
+            "conditionId" : "Hanging_ToPole_Down"
+        },
+        {
+            "tagAct" : "Pole_MoveLeft_ToOther",
+            "conditionId" : "Hanging_ToPole_Left"
+        },
+        {
+            "tagAct" : "Pole_MoveRight_ToOther",
+            "conditionId" : "Hanging_ToPole_Right"
+        },
+
+        {
+            "tagAct" : "Pole_ToHanging_Left",
+            "conditionId" : "Pole_ToHanging_Left"
+        },
+        {
+            "tagAct" : "Pole_ToHanging_Right",
+            "conditionId" : "Pole_ToHanging_Right"
         },
 
         {

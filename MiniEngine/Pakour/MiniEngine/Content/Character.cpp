@@ -267,7 +267,6 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 #ifdef MG_DEBUG_LOG
 		MG_LOG_INFO("[Character::ProcessPerceptionResult] ObsName : {}", _result.m_pFirstObstacle->DebugName());
 #endif // MG_LOG_INFO
-
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;

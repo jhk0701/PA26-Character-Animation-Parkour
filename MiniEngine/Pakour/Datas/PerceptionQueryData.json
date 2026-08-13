@@ -244,7 +244,8 @@
                     {
                         "comment" : "Pole 지형에 대한 높이 처리",
                         "id" : "Extract_PoleData",
-                        "class" : "ProcessPoleNode"
+                        "class" : "ProcessPoleNode",
+                        "height" : 3.0
                     },
         {
             "id" : "InAirState",
@@ -303,7 +304,7 @@
             {
                 "id" : "Hanging_Detect_TowardInput",
                 "class" : "DetectObstacleUsingInputNode",
-                "startOffset" : [ 0.0, 0.75, 0.0 ],
+                "startOffset" : [ 0.0, 1.0, 0.0 ],
                 "distance" : 2.0,
                 "radius" : 0.5
             },
@@ -331,6 +332,7 @@
                         "id" : "Hanging_Detected_Default",
                         "comment" : "Default의 경우, 입력 y 값에 따라 처리 세분화. 아래 쪽에 장애물은 착지 시도",
                         "class" : "SelectorNode",
+                        "decos" : ["IsDefault"],
                         "children" : [ 
                             "Hanging_Process_Default_Up", 
                             "Hanging_Process_Default_Down", 
@@ -525,7 +527,7 @@
                         {
                             "id" : "Hanging_NotDetected_Check_Movable_Right",
                             "class" : "CheckObstacleSphereNode",
-                            "startOffset" : [ 2.0, 0.0, 0.3 ],
+                            "startOffset" : [ 2.0, 1.0, 0.3 ],
                             "direction" : [ 0.0, 0.0, 1.0 ],
                             "distance" : 0.5,
                             "radius" : 0.05
@@ -555,7 +557,7 @@
                         {
                             "id" : "Hanging_NotDetected_Check_Movable_Left",
                             "class" : "CheckObstacleSphereNode",
-                            "startOffset" : [ -2.0, 0.0, 0.3 ],
+                            "startOffset" : [ -2.0, 1.0, 0.3 ],
                             "direction" : [ 0.0, 0.0, 1.0 ],
                             "distance" : 0.5,
                             "radius" : 0.05

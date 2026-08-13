@@ -17,7 +17,8 @@
 #include "Content/Obstacle.h"
 
 #include "Manager/UIManager.h"
-#include "Content/UIDebugBlendClip.h"
+#include "Content/UI/UIDebugBlendClip.h"
+#include "Content/UI/UIDebugPerceptionResult.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine;
@@ -439,69 +440,71 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(-20.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc);
 
-
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		{
-		// Protrude 배치
-		desc.detailTags = {
-			(uint8_t)ETagEnvDetail::Protrude,
-		};
-		desc.color = Vector3(0.75f, 0.25f, 0.25f);
-		desc.layer = MiniEngine::Physics::Layer::Obstacle;
-		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+			// Protrude 배치
+			desc.detailTags = {
+				(uint8_t)ETagEnvDetail::Protrude,
+			};
+			desc.priority = 1U;
+			desc.color = Vector3(0.75f, 0.25f, 0.25f);
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
-		// 구간 1
-		desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-		ObstacleFactory::Create(pScene, desc)->SetName("P3");
+			// 구간 1
+			desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc)->SetName("P3");
 
-		desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-		ObstacleFactory::Create(pScene, desc)->SetName("P4");
+			desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc)->SetName("P4");
 
-		desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-		ObstacleFactory::Create(pScene, desc)->SetName("P5");
+			desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
+			ObstacleFactory::Create(pScene, desc)->SetName("P5");
 
 
-		// 구간 3
-		desc.pos = OFFSET + Vector3(19.0f, 7.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			// 구간 3
+			desc.pos = OFFSET + Vector3(19.0f, 7.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
-		desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
-		desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
+			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
+			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.priority = 0U;
 		}
 	}
 	{
@@ -540,19 +543,19 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.priority = 1U; // 한 단계 높은 우선순위
 
 			desc.pos = OFFSET + Vector3(-18.5f, 3.0f, 6.0f);
-			desc.scale = Vector3(0.2f, 6.0f, 0.2f);
+			desc.scale = Vector3(0.1f, 6.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 1");
 
 			desc.pos = OFFSET + Vector3(-18.5f, 6.0f, 8.0f);
-			desc.scale = Vector3(0.2f, 8.0f, 0.2f);
+			desc.scale = Vector3(0.1f, 8.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 2");
 
 			desc.pos = OFFSET + Vector3(-18.5f, 8.0f, 10.0f);
-			desc.scale = Vector3(0.2f, 10.0f, 0.2f);
+			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 3");
 
 			desc.pos = OFFSET + Vector3(-18.5f, 14.0f, 12.0f);
-			desc.scale = Vector3(0.2f, 14.0f, 0.2f);
+			desc.scale = Vector3(0.1f, 14.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
 
 			desc.priority = 0U; // 우선순위 초기화
@@ -639,6 +642,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pCont->Construct();
 
 		pCont->Possess(pChar);
+
+#ifdef MG_DEBUG_LOG
+		std::shared_ptr<UIDebugPerceptionResult> uiPerceptionResult = UIManager::GetInstance()->CreateUI<UIDebugPerceptionResult>().lock();
+		uiPerceptionResult->SetCharacter(pChar);
+#endif 
 	}
 }
 
@@ -646,7 +654,7 @@ void TestScene::BeginPlay()
 {
 	Scene::BeginPlay();
 
-#ifdef MG_DEBUG
+#if defined(MG_DEBUG) || defined(MG_DEBUG_LOG)
 	ApplyMarkerDebug(true);
 	ApplyPhysicsDebug(true);
 #endif // MG_DEBUG

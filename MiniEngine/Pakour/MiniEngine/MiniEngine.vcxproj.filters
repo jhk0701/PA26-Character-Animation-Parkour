@@ -382,9 +382,6 @@
     <ClInclude Include="Content\AddMovementNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Content\UIDebugBlendClip.h">
-      <Filter>Content\06.UI</Filter>
-    </ClInclude>
     <ClInclude Include="Perception\PerceptionComponent.h">
       <Filter>Engine\07.Object\Component\Perception</Filter>
     </ClInclude>
@@ -432,6 +429,12 @@
     </ClInclude>
     <ClInclude Include="Content\Perception\DetectObstacleUsingInputNode.h">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\UI\UIDebugBlendClip.h">
+      <Filter>Content\06.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\UI\UIDebugPerceptionResult.h">
+      <Filter>Content\06.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -654,9 +657,6 @@
     <ClCompile Include="Content\AddMovementNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
-    <ClCompile Include="Content\UIDebugBlendClip.cpp">
-      <Filter>Content\06.UI</Filter>
-    </ClCompile>
     <ClCompile Include="Perception\PerceptionComponent.cpp">
       <Filter>Engine\07.Object\Component\Perception</Filter>
     </ClCompile>
@@ -698,6 +698,12 @@
     </ClCompile>
     <ClCompile Include="Content\Perception\DetectObstacleUsingInputNode.cpp">
       <Filter>Content\03.Object\Component\PerceptionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UI\UIDebugBlendClip.cpp">
+      <Filter>Content\06.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UI\UIDebugPerceptionResult.cpp">
+      <Filter>Content\06.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

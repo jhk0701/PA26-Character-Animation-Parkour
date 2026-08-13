@@ -29,25 +29,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLog|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -191,7 +191,8 @@
     <ClInclude Include="Content\TransitionState.h" />
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
-    <ClInclude Include="Content\UIDebugBlendClip.h" />
+    <ClInclude Include="Content\UI\UIDebugBlendClip.h" />
+    <ClInclude Include="Content\UI\UIDebugPerceptionResult.h" />
     <ClInclude Include="Content\UseGravity.h" />
     <ClInclude Include="Core\DebugLine.h" />
     <ClInclude Include="Core\DebugMarkers.h" />
@@ -291,7 +292,8 @@
     <ClCompile Include="Content\TransitionState.cpp" />
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
-    <ClCompile Include="Content\UIDebugBlendClip.cpp" />
+    <ClCompile Include="Content\UI\UIDebugBlendClip.cpp" />
+    <ClCompile Include="Content\UI\UIDebugPerceptionResult.cpp" />
     <ClCompile Include="Content\UseGravity.cpp" />
     <ClCompile Include="Core\DebugMarkers.cpp" />
     <ClCompile Include="Core\EngineConfig.cpp" />

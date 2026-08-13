@@ -1457,8 +1457,65 @@
                 }
             ]
         },
+
         {
-            "tags": [ "Pole_HangingMoveLeft" ],
+            "tags": [ "Pole_MoveUp_ToOther" ],
+            "clip": 50,
+            "rootMotion": { "apply": false },
+            "notifies":[
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "PoleHanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.75 ],
+                    "midOffset" : [ 0, 1.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Pole_MoveDown_ToOther" ],
+            "clip": 51,
+            "rootMotion": { "apply": false },
+            "notifies":[
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "PoleHanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.75 ],
+                    "midOffset" : [ 0, 1.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Pole_MoveLeft_ToOther" ],
             "clip": 52,
             "rootMotion": { "apply": false },
             "notifies": [
@@ -1486,7 +1543,7 @@
             ]
         },
         {
-            "tags": [ "Pole_HangingMoveRight" ],
+            "tags": [ "Pole_MoveRight_ToOther" ],
             "clip": 53,
             "rootMotion": { "apply": false },
             "notifies": [
@@ -1494,6 +1551,63 @@
                     "class": "TransitionState",
                     "time": 0.1,
                     "state": "PoleHanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.75 ],
+                    "midOffset" : [ 0, 1.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
+                }
+            ]
+        },
+
+        {
+            "tags": [ "Pole_ToHanging_Left" ],
+            "clip": 21,
+            "rootMotion":  { "apply": false },
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Hanging"
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.9,
+                    "enable": true
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.2, 0.75 ],
+                    "midOffset" : [ 0, 1.0, -0.5 ],
+                    "endOffset": [ 0, -1.5, -0.5 ]
+                }
+            ]
+        },
+        {
+            "tags": [ "Pole_ToHanging_Right" ],
+            "clip": 22,
+            "rootMotion":  { "apply": false },
+            "notifies": [
+                {
+                    "class": "TransitionState",
+                    "time": 0.1,
+                    "state": "Hanging"
                 },
                 {
                     "class": "EnableCollisionObstacle",

@@ -24,10 +24,13 @@ namespace MiniEngine
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
 		void Reset() { m_bIsProcessed = false; }
 
+		const bool GetResult() const { return m_bProcessResult; }
+
 #ifdef MG_DEBUG_LOG // 디버그용
 	public:
 		void SetName(const std::string& _name)  { m_name = _name; }; 
 		const std::string& GetName() const { return m_name; }
+
 	private:
 		std::string m_name;
 #endif // MG_DEBUG
@@ -96,6 +99,8 @@ namespace MiniEngine
 			m_conditions = std::move(_conds);
 			m_processDatas = std::move(_datas);
 		};
+
+		const std::vector<std::shared_ptr<ProcessCondition>>& GetConditions() const { return m_conditions; };
 
 	private:
 		// 각 객체의 소유권은 컴포넌트에서 관리

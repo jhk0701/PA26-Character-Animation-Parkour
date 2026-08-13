@@ -16,7 +16,7 @@ public:
 	IObstacle* GetCurrentObstacle() const override;
 
 protected:
-	void AlignToNormal();
+	virtual void AlignToNormal();
 	void ClearCurObstacle() { m_pCurrentObstacle = nullptr; }
 
 private:
@@ -28,4 +28,7 @@ class PoleHangingState : public HangingState
 public:
 	void OnStart() override;
 	void OnEnd() override;
+
+protected:
+	void AlignToNormal() override;
 };

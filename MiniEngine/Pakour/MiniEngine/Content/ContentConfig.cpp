@@ -82,8 +82,14 @@ namespace Content::Config
 			{ "Pole_AirToHang",					ETagAct::Pole_AirToHang },
 			{ "Pole_HangingMoveUp",				ETagAct::Pole_HangingMoveUp },
 			{ "Pole_HangingMoveDown",			ETagAct::Pole_HangingMoveDown },
-			{ "Pole_HangingMoveLeft",			ETagAct::Pole_HangingMoveLeft },
-			{ "Pole_HangingMoveRight",			ETagAct::Pole_HangingMoveRight },
+
+			{ "Pole_MoveUp_ToOther",			ETagAct::Pole_MoveUp_ToOther },
+			{ "Pole_MoveDown_ToOther",			ETagAct::Pole_MoveDown_ToOther },
+			{ "Pole_MoveLeft_ToOther",			ETagAct::Pole_MoveLeft_ToOther },
+			{ "Pole_MoveRight_ToOther",			ETagAct::Pole_MoveRight_ToOther },
+
+			{ "Pole_ToHanging_Left",			ETagAct::Pole_ToHanging_Left },
+			{ "Pole_ToHanging_Right",			ETagAct::Pole_ToHanging_Right },
 
 			{ "Test",						ETagAct::Test },
 		};
