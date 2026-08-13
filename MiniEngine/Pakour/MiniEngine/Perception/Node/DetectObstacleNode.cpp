@@ -84,7 +84,7 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
-	/*
+#if MG_DEBUG_LOG || MG_DEBUG
 	Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 	MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 	Vector3 debugPointLow = debugEnd - Vector3(0.0f, param.m_halfHeight, 0.0f);
@@ -92,7 +92,8 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	MiniEngine::Debug::DrawLine(debugPointLow, debugPointHigh, MiniEngine::DebugColor::YELLOW, 1.0f);
 	MiniEngine::Debug::DrawPoint(debugPointLow, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 	MiniEngine::Debug::DrawPoint(debugPointHigh, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
-	*/
+#endif // 0
+
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
@@ -126,7 +127,9 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
+#if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+#endif // 0
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
@@ -149,7 +152,9 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 	param.m_maxDistance = GetDistance();
 	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
+#if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+#endif // 0
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
@@ -170,6 +175,10 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 
 	RaycastMultipleResult result;
 	bool bIsHit = _context.m_physics->SphereCastMultiple(param, result, ToMask(Layer::ObstacleLedge));
+
+#if MG_DEBUG_LOG || MG_DEBUG
+	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+#endif // 0
 
 	if (bIsHit == false)
 		return EPerceptionResult::Succeess;
@@ -204,7 +213,9 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, T
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
+#if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+#endif // 0
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)

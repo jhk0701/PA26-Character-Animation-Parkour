@@ -436,6 +436,9 @@
     <ClInclude Include="Content\UI\UIDebugPerceptionResult.h">
       <Filter>Content\06.UI</Filter>
     </ClInclude>
+    <ClInclude Include="Content\UI\UIDebugMarkerOption.h">
+      <Filter>Content\06.UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXBase.cpp">
@@ -703,6 +706,9 @@
       <Filter>Content\06.UI</Filter>
     </ClCompile>
     <ClCompile Include="Content\UI\UIDebugPerceptionResult.cpp">
+      <Filter>Content\06.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UI\UIDebugMarkerOption.cpp">
       <Filter>Content\06.UI</Filter>
     </ClCompile>
   </ItemGroup>

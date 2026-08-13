@@ -17,17 +17,22 @@ void UIDebugPerceptionResult::DrawUI()
 	if (m_pChar.expired())
 		return;
 
-	std::shared_ptr<Character> pChar = m_pChar.lock();
-
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 600.0f), ImGuiCond_FirstUseEver);
 
+	std::shared_ptr<Character> pChar = m_pChar.lock();
 	ImGui::Text("Character State : %s", pChar->GetStateName((uint8_t)pChar->GetState()));
 	
-	Actor* pCurObs = dynamic_cast<Actor*>(pChar->GetCurObstacle());
-	ImGui::Text("Current Obs Name : %s", pCurObs != nullptr ? pCurObs->GetName().c_str() : "NULL");
+	if (ImGui::CollapsingHeader("Perceptions"))
+	{
+		Actor* pCurObs = dynamic_cast<Actor*>(pChar->GetCurObstacle());
+		ImGui::Text("Current Obs Name : %s", pCurObs != nullptr ? pCurObs->GetName().c_str() : "NULL");
 
-	Actor* pPerceptedObs = dynamic_cast<Actor*>(pChar->GetCurObstacleInfo().m_pObstacle);
-	ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
+		const PerceptedObstacleInfo& INFO = pChar->GetCurObstacleInfo();
+		Actor* pPerceptedObs = dynamic_cast<Actor*>(INFO.m_pObstacle);
+		ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
+
+		ImGui::Text("Height : %f, Depth : %f", INFO.m_obstacleHeight, INFO.m_obstacleDepth);
+	}
 
 	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders)) 
 	{

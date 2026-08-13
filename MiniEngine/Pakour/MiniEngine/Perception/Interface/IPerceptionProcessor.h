@@ -32,8 +32,9 @@ namespace MiniEngine
 		bool m_bIsNewObstacle{ true };
 		bool m_bDetectLedge{ false };
 		float m_obstacleDistance{ 0.0f };
-		float m_obstacleLedge{ 0.0f };
+		float m_obstacleLedge{ 0.0f }; // 모서리 위치
 		float m_obstacleDepth{ 0.0f };
+		float m_obstacleHeight{ 0.0f }; // 모서리 위치 - 현재 y 위치
 		Vector3 m_obstacleHitPos{ 0.0f };
 		Vector3 m_obstacleHitNrm{ 0.0f };
 

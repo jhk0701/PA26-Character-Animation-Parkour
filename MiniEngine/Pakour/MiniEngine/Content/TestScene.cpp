@@ -19,6 +19,7 @@
 #include "Manager/UIManager.h"
 #include "Content/UI/UIDebugBlendClip.h"
 #include "Content/UI/UIDebugPerceptionResult.h"
+#include "Content/UI/UIDebugMarkerOption.h"
 #include "Core/Log.h"
 
 using namespace MiniEngine;
@@ -394,7 +395,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 			
-			desc.pos = OFFSET + Vector3(25.0f, 6.0f, 0.5f);
+			desc.pos = OFFSET + Vector3(25.0f, 6.7f, 0.5f);
 			desc.scale = Vector3(7.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc);
 
@@ -574,7 +575,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 0.0f);
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
-			ObstacleFactory::Create(pScene, desc)->SetName("Pole");
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree 1");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, 5.0f);
+			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree 2");
 
 			desc.detailTags =
 			{
@@ -628,8 +633,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 더 범위가 넓게 움직이는 vault가 호출되는지 확인
 			ObstacleFactory::Create(pScene, desc)->SetName("Vault Var 2"); 
 		}
-
-		// 로프 액션 - 도구 사용
 	}
 	{
 		// 캐릭터 생성
@@ -646,6 +649,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 #ifdef MG_DEBUG_LOG
 		std::shared_ptr<UIDebugPerceptionResult> uiPerceptionResult = UIManager::GetInstance()->CreateUI<UIDebugPerceptionResult>().lock();
 		uiPerceptionResult->SetCharacter(pChar);
+
+		std::shared_ptr<UIDebugMarkerOption> uiMarkerOpt = UIManager::GetInstance()->CreateUI<UIDebugMarkerOption>().lock();
+		uiMarkerOpt->SetScene(shared_from_this());
 #endif 
 	}
 }
@@ -654,8 +660,4 @@ void TestScene::BeginPlay()
 {
 	Scene::BeginPlay();
 
-#if MG_DEBUG || MG_DEBUG_LOG || WITH_EDITOR
-	ApplyMarkerDebug(true);
-	ApplyPhysicsDebug(true);
-#endif // MG_DEBUG
 }

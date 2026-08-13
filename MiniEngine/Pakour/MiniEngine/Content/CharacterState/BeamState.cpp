@@ -29,6 +29,8 @@ void BeamState::Refresh()
 	const PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
 	assert(OBS_INFO.IsValid());
 
+	m_pCurrentObstacle = OBS_INFO.m_pObstacle;
+
 	uint8_t subInfoTag;
 	if (OBS_INFO.m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfoTag))
 	{
@@ -36,8 +38,6 @@ void BeamState::Refresh()
 
 		AlignByAxis();
 	}
-
-	m_pCurrentObstacle = OBS_INFO.m_pObstacle;
 }
 
 void BeamState::OnEnd()
@@ -138,13 +138,11 @@ bool BeamStandState::IsAlignToAxis()
 	GetDirectionByAxis(obsDir);
 	obsDir.y = 0.0f;
 	obsDir.Normalize();
-	Vector3 obsLeftAngled{ -obsDir.z, obsDir.y, obsDir.x };
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	Transform& charTF = pChar->GetRoot()->localTransform;
+	const Transform& TF = pChar->GetRoot()->localTransform;
 
-	const float DOT_DIR = obsDir.Dot(charTF.Forward());
-
+	const float DOT_DIR = obsDir.Dot(TF.Forward());
 	return fabs(DOT_DIR) >= 0.95f;
 }
 

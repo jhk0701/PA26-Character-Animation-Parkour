@@ -192,6 +192,7 @@
     <ClInclude Include="Content\CorrectRootMotion.h" />
     <ClInclude Include="Content\TestScene.h" />
     <ClInclude Include="Content\UI\UIDebugBlendClip.h" />
+    <ClInclude Include="Content\UI\UIDebugMarkerOption.h" />
     <ClInclude Include="Content\UI\UIDebugPerceptionResult.h" />
     <ClInclude Include="Content\UseGravity.h" />
     <ClInclude Include="Core\DebugLine.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="Content\CorrectRootMotion.cpp" />
     <ClCompile Include="Content\TestScene.cpp" />
     <ClCompile Include="Content\UI\UIDebugBlendClip.cpp" />
+    <ClCompile Include="Content\UI\UIDebugMarkerOption.cpp" />
     <ClCompile Include="Content\UI\UIDebugPerceptionResult.cpp" />
     <ClCompile Include="Content\UseGravity.cpp" />
     <ClCompile Include="Core\DebugMarkers.cpp" />

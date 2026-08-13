@@ -264,9 +264,6 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		// 현재 장애물과 다른 장애물 인식
 		m_curObstacleInfo.m_bIsNewObstacle = m_curObstacleInfo.m_pObstacle != _result.m_pFirstObstacle;
 
-#ifdef MG_DEBUG_LOG
-		MG_LOG_INFO("[Character::ProcessPerceptionResult] ObsName : {}", _result.m_pFirstObstacle->DebugName());
-#endif // MG_LOG_INFO
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
 		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
@@ -274,6 +271,8 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
 		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
 		m_curObstacleInfo.m_bDetectLedge = _result.m_bDetectLedge;
+
+		m_curObstacleInfo.m_obstacleHeight = _result.m_obstacleLedge - GetRoot()->localTransform.position.y;
 	}
 	else
 	{

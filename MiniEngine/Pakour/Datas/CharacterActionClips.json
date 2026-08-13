@@ -1150,7 +1150,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.3, 0.6 ],
-                    "endOffset": [ 0, -1.0, -0.75 ]
+                    "endOffset": [ 0, -1.0, -0.8 ]
                 },
                 {
                     "class": "CorrectRotationTowardObstacle",

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <directxtk/SimpleMath.h>
 
 #define WINDOW_STYLE WS_OVERLAPPEDWINDOW
@@ -16,6 +16,6 @@ protected:\
 
 enum 
 {
-	WINDOW_WIDTH	= 1280,
-	WINDOW_HEIGHT	= 720,
+	WINDOW_WIDTH	= 1440,
+	WINDOW_HEIGHT	= 960,
 };

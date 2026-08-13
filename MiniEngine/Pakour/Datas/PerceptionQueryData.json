@@ -169,8 +169,7 @@
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
                 "radius" : 0.25,
-                "height" : 1.0,
-                "heightMultiplier" : 1.0
+                "height" : 1.0
             },
             {
                 "id" : "Obstacle_Detected",
@@ -260,8 +259,7 @@
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.0,
                 "radius" : 0.5,
-                "height" : 1.0,
-                "heightMultiplier" : 1.5
+                "height" : 2.0
             },
         {
             "id" : "BeamStandState",
@@ -277,11 +275,12 @@
         },
             {
                 "id" : "Beam_DetectFoward",
-                "class" : "DetectObstacleSphereNode",
-                "startOffset" : [ 0.0, 1.0, 0.0 ],
+                "class" : "DetectObstacleCapsuleNode",
+                "startOffset" : [ 0.0, 1.0, 0.5 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
                 "distance" : 2.5,
-                "radius" : 0.5
+                "radius" : 1.0,
+                "height" : 2.0
             },
         {
             "id" : "HangingState",
@@ -305,7 +304,7 @@
                 "id" : "Hanging_Detect_TowardInput",
                 "class" : "DetectObstacleUsingInputNode",
                 "startOffset" : [ 0.0, 1.0, 0.0 ],
-                "distance" : 2.0,
+                "distance" : 2.5,
                 "radius" : 0.45
             },
             {

@@ -66,7 +66,7 @@
         {
             "id": "HeightCheck_High",
             "class": "ObstacleHeightCondition",
-            "value" : 1.49
+            "value" : 1.45
         },
         {
             "id": "HeightCheck_Low",
@@ -130,10 +130,10 @@
         },
 
         {
-            "id" : "IsCloserThan_1",
+            "id" : "IsCloserToGround",
             "class" : "ObstacleHitDistanceCondition",
             "isInverted" : true,
-            "value" : 1.0
+            "value" : 2.0
         },
 
         {
@@ -258,7 +258,7 @@
         {
             "id" : "PoleHanging_DownToGround",
             "class": "ConditionAnd",
-            "children" : [ "IsPoleHangingState", "IsInputDown", "IsCloserThan_1" ]
+            "children" : [ "IsPoleHangingState", "IsInputDown", "IsCloserToGround" ]
         },
 
         {
@@ -313,7 +313,7 @@
         {
             "id": "Hanging_DownToGround",
             "class": "ConditionAnd",
-            "children" : [ "IsHanging", "IsInputDown", "IsCloserThan_1" ]
+            "children" : [ "IsHanging", "IsInputDown", "IsCloserToGround" ]
         },
 
         {
