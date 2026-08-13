@@ -87,7 +87,7 @@ void PoleHangingState::OnStart()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(false); // 매달린 중에는 중력 적용 해제
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.2f);
-
+	pChar->ReserveIKDetectPole();
 
 	Refresh();
 }
@@ -96,6 +96,7 @@ void PoleHangingState::OnEnd()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetUseGravity(true); // 매달림 해제
+	pChar->ClearIKReserve();
 
 	ClearCurObstacle();
 }

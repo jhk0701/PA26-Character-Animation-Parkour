@@ -98,11 +98,13 @@ public:
 	LimbIKComponent::TaskResult IKDetectWall(uint8_t _ik);
 	void ReserveIKDetectBeamHanging();
 	LimbIKComponent::TaskResult IKDetectBeamHanging(uint8_t _ik);
+	void ReserveIKDetectPole();
+	LimbIKComponent::TaskResult IKDetectPole(uint8_t _ik);
+
 	void ClearIKReserve();
 
-	void SetIKPoleVector(uint8_t _ik, const Vector3& _newVec);
-
 	// 노티파이를 통해서 호출될 것
+	void SetIKPoleVector(uint8_t _ik, const Vector3& _newVec);
 	void IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset);
 	void IKSetFixedPoint(uint8_t _ik, const Vector3& _posOffset);
 
@@ -172,11 +174,19 @@ private:
 	float m_ikRayDistance = 0.5f; // 발의 아래, 벽면 등 레이로 체크할 거리
 	std::unordered_map<ELimbType, float> m_ikWallOffset
 	{
-		{ ELimbType::LeftArm, 0.05f},
-		{ ELimbType::RightArm, 0.05f},
-		{ ELimbType::LeftLeg, 0.15f},
-		{ ELimbType::RightLeg, 0.15f},
+		{ ELimbType::LeftArm,	0.05f },
+		{ ELimbType::RightArm,	0.05f },
+		{ ELimbType::LeftLeg,	0.15f },
+		{ ELimbType::RightLeg,	0.15f },
 	};
+	std::unordered_map<ELimbType, float> m_ikPoleOffset
+	{
+		{ ELimbType::LeftArm,	-0.1f },
+		{ ELimbType::RightArm,	0.1f },
+		{ ELimbType::LeftLeg,	-0.1f },
+		{ ELimbType::RightLeg,	0.1f} ,
+	};
+
 	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
 };
 

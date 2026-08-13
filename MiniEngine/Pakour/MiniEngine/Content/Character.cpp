@@ -496,6 +496,53 @@ LimbIKComponent::TaskResult Character::IKDetectBeamHanging(uint8_t _ik)
 	result.posAlpha = 1.0f;
 	
 	// MiniEngine::Debug::DrawPoint(hitResult.m_pos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
+	return result;
+}
+
+void Character::ReserveIKDetectPole()
+{
+	if (m_limbIKComp.expired())
+		return;
+
+	std::shared_ptr<LimbIKComponent> pLimbIK = m_limbIKComp.lock();
+	pLimbIK->SetPendingTask(ELimbType::LeftArm, [this]() { return IKDetectPole((uint8_t)ELimbType::LeftArm); });
+	pLimbIK->SetPendingTask(ELimbType::RightArm, [this]() { return IKDetectPole((uint8_t)ELimbType::RightArm); });
+	pLimbIK->SetPendingTask(ELimbType::LeftLeg, [this]() { return IKDetectPole((uint8_t)ELimbType::LeftLeg); });
+	pLimbIK->SetPendingTask(ELimbType::RightLeg, [this]() { return IKDetectPole((uint8_t)ELimbType::RightLeg); });
+}
+
+LimbIKComponent::TaskResult Character::IKDetectPole(uint8_t _ik)
+{
+	LimbIKComponent::TaskResult result;
+	result.posAlpha = 0.0f;
+	result.rotAlpha = 0.0f;
+
+	std::shared_ptr<SkeletalMeshComponent> pSkin = m_skinMeshComp.lock();
+	if (pSkin->GetAnim().lock()->IsActionClipPlaying())
+		return result;
+
+	IObstacle* pObs = GetCurObstacle();
+	if (pObs == nullptr || m_limbIKComp.expired())
+		return result;
+
+	std::shared_ptr<LimbIKComponent> pIKComp = m_limbIKComp.lock();
+
+	// ik 손, 발 위치 고정
+	// y축 제외, x,z에 대해서 고정
+	const int BONE_IDX = pSkin->GetMesh().lock()->GetHumanoidBones().Get(pIKComp->GetBinding((ELimbType)_ik).end);
+	if (BONE_IDX < 0)
+		return result;
+
+	Matrix endBoneW;
+	if (!pSkin->GetBoneWorldMatrix(BONE_IDX, endBoneW))
+		return result;
+
+	Vector3 originalPos = endBoneW.Translation();
+	pIKComp->SetOriginPosIK((ELimbType)_ik, originalPos);
+
+	Vector3 polePos = pObs->GetTransform().position;
+	result.position = Vector3(polePos.x, originalPos.y, polePos.z) + GetRoot()->localTransform.Right() * m_ikPoleOffset[(ELimbType)_ik];
+	result.posAlpha = 1.0f;
 
 	return result;
 }
