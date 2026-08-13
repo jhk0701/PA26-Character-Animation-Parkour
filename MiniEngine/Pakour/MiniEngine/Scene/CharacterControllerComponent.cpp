@@ -145,6 +145,8 @@ namespace MiniEngine
 		if (flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_UP) && m_verticalVelocity > 0.0f)
 			m_verticalVelocity = 0.0f; // 천장 등등 머리가 접촉한 경우, 상승 초기화
 
+		m_velocity = m_pendingMove.Length();
+
 		m_pendingMove = Vector3(0.0f);
 	}
 

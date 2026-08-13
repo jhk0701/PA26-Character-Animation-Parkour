@@ -32,6 +32,7 @@ void UIDebugPerceptionResult::DrawUI()
 		ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
 
 		ImGui::Text("Height : %f, Depth : %f", INFO.m_obstacleHeight, INFO.m_obstacleDepth);
+		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
 	}
 
 	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders)) 

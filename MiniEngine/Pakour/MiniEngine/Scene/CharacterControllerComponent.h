@@ -51,6 +51,8 @@ namespace MiniEngine
 
         void SetCheckFalling(bool _bCheckFalling);
 
+        float GetVelocity() const { return m_velocity; }
+
 #ifdef MG_DEBUG_LOG
         // 디버그용
         float GetFallingElapsed() const { return m_fallingElapsed; }
@@ -66,11 +68,12 @@ namespace MiniEngine
        
         uint32_t m_collisionMask = Physics::LayerMask::ALL;
         Vector3 m_pendingMove{ 0.0f, 0.0f, 0.0f };
-
+        
         bool    m_bUseGravity { true };
+        bool    m_grounded = false;
         float   m_gravity = -9.81f;
         float   m_verticalVelocity = 0.0f;
-        bool    m_grounded = false;
+        float   m_velocity = 0.0f;
 
         static constexpr float STICK_TO_GROUND_SPEED = 2.0f;
 

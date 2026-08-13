@@ -117,10 +117,12 @@ public:
 	float GetCharacterHalfHeight() const { return (m_capsuleHeight + m_capsuleRadius) * 0.5f + m_capsuleContactOffset; }
 	float GetCharacterHeight() const { return m_capsuleHeight + m_capsuleRadius + m_capsuleContactOffset; }
 
+	void SetUseGravity(bool _bUse);
 	void SetEnableCollisionObstacle(bool _bEnable);
 	bool IsFalling() const;
 	bool IsGrounded() const;
-	void SetUseGravity(bool _bUse);
+	
+	float GetVelocity() const;
 
 	const CharacterConfig& GetConfig() const;
 
@@ -145,7 +147,6 @@ private:
 	float m_lerpWeight{ 0.3f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 4.0f };
-	float m_currentVelocity{ 0.0f };
 
 	Vector3 m_prevForce;
 

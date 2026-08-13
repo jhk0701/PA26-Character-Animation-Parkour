@@ -565,6 +565,10 @@ bool Character::IsGrounded() const
 {
 	return  m_charCont.lock()->IsGrounded();
 }
+float Character::GetVelocity() const
+{
+	return m_charCont.lock()->GetVelocity();
+}
 void Character::SetUseGravity(bool _bUse)
 {
 	std::shared_ptr<CharacterControllerComponent> pCharCont = m_charCont.lock();
