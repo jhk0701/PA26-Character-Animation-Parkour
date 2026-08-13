@@ -51,8 +51,8 @@ namespace MiniEngine
 
         void SetCheckFalling(bool _bCheckFalling);
 
-#ifdef MG_DEBUG
-        // 디버그용 멤버 변수 getter
+#ifdef MG_DEBUG_LOG
+        // 디버그용
         float GetFallingElapsed() const { return m_fallingElapsed; }
 #endif // DEBUG
 

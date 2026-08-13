@@ -145,6 +145,7 @@ private:
 	float m_lerpWeight{ 0.3f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 4.0f };
+	float m_currentVelocity{ 0.0f };
 
 	Vector3 m_prevForce;
 
