@@ -165,13 +165,13 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 
 		desc.pos = Vector3(14.0f, 4.0f, 4.5f);
-		ObstacleFactory::Create(pScene, desc);
+		ObstacleFactory::Create(pScene, desc)->SetName("Protrude 1");
 
 		desc.pos = Vector3(15.0f, 5.0f, 4.5f);
-		ObstacleFactory::Create(pScene, desc);
+		ObstacleFactory::Create(pScene, desc)->SetName("Protrude 2");
 
 		desc.pos = Vector3(16.0f, 6.0f, 4.5f);
-		ObstacleFactory::Create(pScene, desc);
+		ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3");
 	}
 	{
 		Obstacle::ObstacleDesc desc;
@@ -464,53 +464,53 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 구간 1
 			desc.pos = OFFSET + Vector3(1.5f, 4.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P3");
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 1-1");
 
 			desc.pos = OFFSET + Vector3(1.9f, 6.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P4");
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 1-2");
 
 			desc.pos = OFFSET + Vector3(1.4f, 8.0f, -5.0f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.4f);
-			ObstacleFactory::Create(pScene, desc)->SetName("P5");
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 1-3");
 
 
 			// 구간 3
 			desc.pos = OFFSET + Vector3(19.0f, 7.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-1");
 
 			desc.pos = OFFSET + Vector3(21.0f, 6.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-2");
 
 			desc.pos = OFFSET + Vector3(23.0f, 7.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-3");
 
 			desc.pos = OFFSET + Vector3(19.0f, 5.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-4");
 
 			desc.pos = OFFSET + Vector3(21.0f, 4.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-5");
 
 			desc.pos = OFFSET + Vector3(23.0f, 5.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-6");
 
 			desc.pos = OFFSET + Vector3(19.0f, 3.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-7");
 
 			desc.pos = OFFSET + Vector3(21.0f, 2.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-8");
 
 			desc.pos = OFFSET + Vector3(23.0f, 3.0f, -12.55f);
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
-			ObstacleFactory::Create(pScene, desc);
+			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-9");
 
 			desc.priority = 0U;
 		}

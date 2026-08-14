@@ -54,9 +54,3 @@ bool InputHorizontalCondition::Evaluate(const TravelResult& _result, const Proce
     // 기준 값이 양수. 오른쪽을 향하는지 확인
     return GetValue() < pChar->GetInputDir().x;
 }
-
-bool DetectNewObstacle::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
-{
-    std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-    return pChar->GetCurObstacleInfo().m_bIsNewObstacle;
-}

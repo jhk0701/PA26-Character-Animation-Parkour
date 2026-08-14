@@ -5,6 +5,7 @@
 #include "Scene/Actor.h"
 
 #include "Physics/PhysicsWorld.h"
+#include "Core/DebugMarkers.h"
 
 using namespace MiniEngine::Physics;
 
@@ -41,14 +42,18 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		RaycastResult result;
 		if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 		{
-			// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#if MG_DEBUG_LOG
+			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#endif // MG_DEBUG_LOG
 			// 최소 한번 닿았음 근데, hit가 끊어짐 -> 최고점 도달 처리
 			if (bFirstTouched)
 				break; // 닿지 않음
 		}
 		else
 		{
-			// MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#if MG_DEBUG_LOG
+			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#endif // MG_DEBUG_LOG
 			if (!bFirstTouched)
 				bFirstTouched = true;
 		}
@@ -68,6 +73,10 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		param.m_dir = dir;
 		param.m_radius = CONFIG.ledgeDetectRadius;
 		param.m_maxDistance = CONFIG.minObstacleDetectDist;
+
+#if MG_DEBUG_LOG
+		MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::BLUE, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#endif // MG_DEBUG_LOG
 
 		RaycastResult ledgeResult;
 		if (_context.m_physics->SphereCast(param, ledgeResult, ToMask(Layer::ObstacleLedge))) 
@@ -103,6 +112,10 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 		param.m_origin = TOP + dir * (CONFIG.depthStep * i);
 		param.m_dir = Vector3(0.0f, -1.0f, 0.0f);
 		param.m_maxDistance = CONFIG.depthSearchDownDist;
+
+#if MG_DEBUG_LOG
+		MiniEngine::Debug::DrawLine(param.m_origin, param.m_origin + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::GREEN, 1.0f);
+#endif // MG_DEBUG_LOG
 
 		RaycastResult result;
 		if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)

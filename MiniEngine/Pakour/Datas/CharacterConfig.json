@@ -12,7 +12,7 @@
     "maxDepthStep": 3,
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
-    "ledgeDetectRadius" : 0.5,
+    "ledgeDetectRadius" : 0.25,
 
     "onHanging_SearchDist": 2.0,
     "onHanging_SearchFwdDist" : 0.5,

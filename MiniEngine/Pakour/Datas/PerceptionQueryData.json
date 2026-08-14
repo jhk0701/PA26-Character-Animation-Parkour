@@ -355,7 +355,7 @@
             {
                 "id" : "Hanging_Detect_TowardInput",
                 "class" : "DetectObstacleUsingInputNode",
-                "startOffset" : [ 0.0, 1.0, 0.0 ],
+                "startOffset" : [ 0.0, 1.5, 0.0 ],
                 "distance" : 2.5,
                 "radius" : 0.45,
                 "height" : 1.0
@@ -502,7 +502,7 @@
                             },
                                 {
                                     "id" : "Hanging_NotDetected_ClimbUp_CheckLedge",
-                                    "class" : "DetectLedgeNode",                                  
+                                    "class" : "DetectLedgeMultipleNode",                                  
                                     "startOffset" : [ 0.0, 1.5, 0.3 ],
                                     "direction" : [ 0.0, 1.0, 0.0 ],
                                     "distance" : 2.0,

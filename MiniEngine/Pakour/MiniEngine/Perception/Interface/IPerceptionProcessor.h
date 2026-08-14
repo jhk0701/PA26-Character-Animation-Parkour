@@ -20,7 +20,7 @@ namespace MiniEngine
 		float depthSearchDownDist{ 2.0f };
 		float depthLift{ 0.05f };		// 꼭대기 표면인 경우 방지를 위해 띄어두는 크기
 
-		float ledgeDetectRadius{ 0.5f };
+		float ledgeDetectRadius{ 0.25f };
 
 		uint8_t maxHeightStep{ 3 };		// 높이 측정 횟수
 		uint8_t maxDepthStep{ 2 };		// 깊이 측정 횟수

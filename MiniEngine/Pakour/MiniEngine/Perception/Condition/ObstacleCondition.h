@@ -48,4 +48,10 @@ namespace MiniEngine
 	protected:
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	};
+
+	class DetectNewObstacle : public ProcessCondition
+	{
+	protected:
+		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+	};
 }

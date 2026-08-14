@@ -2,8 +2,9 @@
 #include "Perception/Condition/ObstacleCondition.h"
 
 #include "Scene/Actor.h"
-#include "Perception/PerceptionComponent.h"
+#include "Perception/Interface/IPerceptionProcessor.h"
 #include "Perception/Interface/IObstacle.h"
+#include "Perception/PerceptionComponent.h"
 #include "Perception/Config/ObstacleConfig.h"
 
 #include "Core/Log.h"
@@ -72,6 +73,14 @@ namespace MiniEngine
 	{
 		// MG_LOG_INFO("[ObstacleHitDistanceCondition] GetValue : {:.2f}, HitDist : {:.2f}", GetValue(), _result.m_obstacleDistance);
 		return GetValue() < _result.m_obstacleDistance;
+	}
+
+
+	bool DetectNewObstacle::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	{
+
+		std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.pOwner);
+		return pProcessor->GetCurObstacleInfo().m_bIsNewObstacle;
 	}
 
 }

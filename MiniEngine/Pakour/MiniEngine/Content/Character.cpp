@@ -268,7 +268,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
 	if (_result.m_pFirstObstacle)
 	{
-		m_curObstacleInfo.m_bIsNewObstacle = m_curObstacleInfo.m_pObstacle != _result.m_pFirstObstacle;
+		m_curObstacleInfo.m_bIsNewObstacle = GetCurObstacle() != _result.m_pFirstObstacle;
 		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
 
 		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
