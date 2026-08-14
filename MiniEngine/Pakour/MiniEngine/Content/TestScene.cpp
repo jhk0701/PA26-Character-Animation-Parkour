@@ -712,11 +712,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 				(uint8_t)ETagEnvDetail::Pole
 			};
 			desc.color = Vector3(0.25f, 0.75f, 0.25f);
-			desc.priority = 0U;
+			desc.priority = 1U;
 
-			desc.pos = OFFSET + Vector3(-7.5f, 7.5f * 0.5f, 0.0f);
-			desc.scale = Vector3(0.1f, 7.5f, 0.1f);
+			desc.pos = OFFSET + Vector3(-12.95f, 3.5f, 8.5f);
+			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 1");
+
+			desc.pos = OFFSET + Vector3(-12.95f, 6.5f, 10.0f);
+			desc.scale = Vector3(0.1f, 6.0f, 0.1f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 2");
+			
+			desc.pos = OFFSET + Vector3(-12.95f, 3.5f, 11.5f);
+			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 3");
+
+			desc.pos = OFFSET + Vector3(-15.0f, 3.5f, 12.05f);
+			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 4");
 		}
 
 	}

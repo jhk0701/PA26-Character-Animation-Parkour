@@ -78,6 +78,8 @@ namespace Content::Config
 		Pole_MoveLeft_ToOther,
 		Pole_MoveRight_ToOther,
 
+		Pole_ToHanging_Up,
+		Pole_ToHanging_Down,
 		Pole_ToHanging_Left,
 		Pole_ToHanging_Right,
 

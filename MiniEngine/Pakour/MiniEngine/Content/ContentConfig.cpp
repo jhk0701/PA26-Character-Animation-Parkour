@@ -85,6 +85,8 @@ namespace Content::Config
 			{ "Pole_MoveLeft_ToOther",			ETagAct::Pole_MoveLeft_ToOther },
 			{ "Pole_MoveRight_ToOther",			ETagAct::Pole_MoveRight_ToOther },
 
+			{ "Pole_ToHanging_Up",				ETagAct::Pole_ToHanging_Up },
+			{ "Pole_ToHanging_Down",			ETagAct::Pole_ToHanging_Down },
 			{ "Pole_ToHanging_Left",			ETagAct::Pole_ToHanging_Left },
 			{ "Pole_ToHanging_Right",			ETagAct::Pole_ToHanging_Right },
 

@@ -137,6 +137,12 @@
             "class" : "DetectLedgeCondition"
         },
         {
+            "id" : "IsNotLedgeDetected",
+            "class" : "DetectLedgeCondition",
+            "isInverted" : true
+        },
+
+        {
             "id": "IsFront",
             "class": "ObstacleIsFrontCondition"
         },
@@ -305,6 +311,16 @@
             "children" : [ "IsHanging", "IsPole", "IsInputRight" ]
         },
 
+        {
+            "id" : "Pole_ToHanging_Up",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsDefault", "IsChanged", "IsInputUp", "IsNotLedgeDetected" ]
+        },
+        {
+            "id" : "Pole_ToHanging_Down",
+            "class" : "ConditionAnd",
+            "children" : [ "IsPoleHangingState", "IsDefault", "IsChanged", "IsInputDown" ]
+        },
         {
             "id" : "Pole_ToHanging_Left",
             "class" : "ConditionAnd",
@@ -540,6 +556,14 @@
             "conditionId" : "Hanging_ToPole_Right"
         },
 
+        {
+            "tagAct" : "Pole_ToHanging_Up",
+            "conditionId" : "Pole_ToHanging_Up"
+        },
+        {
+            "tagAct" : "Pole_ToHanging_Down",
+            "conditionId" : "Pole_ToHanging_Down"
+        },
         {
             "tagAct" : "Pole_ToHanging_Left",
             "conditionId" : "Pole_ToHanging_Left"
