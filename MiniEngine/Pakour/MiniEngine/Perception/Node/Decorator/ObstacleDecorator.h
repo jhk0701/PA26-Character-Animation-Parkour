@@ -21,4 +21,10 @@ namespace MiniEngine
 	protected:
 		bool Evaluate(const TravelContext& _context) const override;
 	};
+
+	class CompareDepthDecorator : public CompareWithValueDecorator<float>
+	{
+	protected:
+		bool Evaluate(const TravelContext& _context) const override;
+	};
 }

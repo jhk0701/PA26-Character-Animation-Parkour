@@ -25,4 +25,9 @@ namespace MiniEngine
 		const float FOOT_Y = _context.m_owner->GetRoot()->localTransform.position.y;
 		return Compare(_context.m_ledge - FOOT_Y);
 	}
+
+	bool CompareDepthDecorator::Evaluate(const TravelContext& _context) const
+	{
+		return Compare(_context.m_depth);
+	}
 }

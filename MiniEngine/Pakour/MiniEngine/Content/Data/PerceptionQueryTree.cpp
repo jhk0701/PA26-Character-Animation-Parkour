@@ -106,6 +106,17 @@ namespace
 					}
 				}
 			},
+			{ "CompareDepthDecorator",
+				{
+					[](const PerceptionDecoData& _data) ->std::shared_ptr<PerceptionDecorator>
+					{
+						std::shared_ptr<CompareDepthDecorator> pDeco = CreateDecoInstance<CompareDepthDecorator>(_data);
+						pDeco->SetComparer((ECompareType)_data.ComparerType);
+						pDeco->SetValue(_data.ValueFloat);
+						return pDeco;
+					}
+				}
+			},
 
 			// 콘텐츠 추가
 			{ "CharacterStateDecorator", 

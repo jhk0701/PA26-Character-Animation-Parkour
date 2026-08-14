@@ -79,6 +79,13 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 		ObstacleFactory::Create(pScene, desc);
 
+		desc.pos = Vector3(-3.0f, 0.5f, 0.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+		desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
 		// 2-2. valut complex
 		// celing 
 		desc.pos = Vector3(0.0f, 0.5f, -5.0f);
@@ -524,9 +531,17 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.color = Vector3(0.5f, 0.5f, 0.1f);
 
-			desc.pos = OFFSET + Vector3(-17.5f, 15.0f, -6.0f);
+			desc.pos = OFFSET + Vector3(-17.5f, 9.0f, -6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 1");
+
+			desc.pos = OFFSET + Vector3(-17.5f, 17.0f, 2.0f);
+			desc.scale = Vector3(3.0f, 2.0f, 0.3f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Vault High 1");
+
+			desc.pos = OFFSET + Vector3(-17.5f, 13.0f, -2.0f);
+			desc.scale = Vector3(3.0f, 2.0f, 3.0f);
+			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default Air Mantle");
 
 			desc.pos = OFFSET + Vector3(-17.5f, 15.0f, 6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
@@ -656,8 +671,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 4");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 4.0f, -5.0f);
-			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
-			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(5.0f, 0.2f, 0.2f);
+			desc.meshPos = Vector3(2.5f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 5");
 
@@ -678,7 +693,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(0.75f, 7.5f, 0.75f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1");
 
-			desc.pos = OFFSET + Vector3(-16.0f, 6.0f, 0.0f);
+			desc.pos = OFFSET + Vector3(-16.5f, 6.0f, 0.0f);
 			desc.scale = Vector3(3.0f, 0.25f, 3.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Plate");
 
@@ -710,8 +725,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 1");
 
 			desc.pos = OFFSET + Vector3(-15.0f, 7.5f, 0.0f);
-			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
-			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
+			desc.meshPos = Vector3(0.0f, 0.0f, 0.0f);
+			desc.scale = Vector3(10.0f, 0.2f, 0.2f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 2");
 			
@@ -721,12 +736,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f * 3.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 1 Branch 3");
 
-
-			desc.pos = OFFSET + Vector3(-7.5f, 8.5f, 5.0f);
-			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
-			desc.scale = Vector3(8.0f, 0.2f, 0.2f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
-			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 2 Branch 1");
 
 			desc.meshPos = Vector3(0.0f);
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
