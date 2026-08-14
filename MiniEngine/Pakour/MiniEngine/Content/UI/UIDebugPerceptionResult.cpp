@@ -12,8 +12,11 @@ void UIDebugPerceptionResult::Construct()
 	SetName("Perception Result");
 }
 
+#ifdef MG_DEBUG_LOG
+
 void UIDebugPerceptionResult::DrawUI()
 {
+
 	if (m_pChar.expired())
 		return;
 
@@ -21,7 +24,7 @@ void UIDebugPerceptionResult::DrawUI()
 
 	std::shared_ptr<Character> pChar = m_pChar.lock();
 	ImGui::Text("Character State : %s", pChar->GetStateName((uint8_t)pChar->GetState()));
-	
+
 	if (ImGui::CollapsingHeader("Perceptions"))
 	{
 		Actor* pCurObs = dynamic_cast<Actor*>(pChar->GetCurObstacle());
@@ -35,7 +38,7 @@ void UIDebugPerceptionResult::DrawUI()
 		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
 	}
 
-	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders)) 
+	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders))
 	{
 		if (ImGui::CollapsingHeader("Conditions"))
 		{
@@ -80,3 +83,8 @@ void UIDebugPerceptionResult::DrawUI()
 	}
 	ImGui::EndChild();
 }
+
+#else
+void UIDebugPerceptionResult::DrawUI() {}
+#endif // MG_DEBUG_LOG
+

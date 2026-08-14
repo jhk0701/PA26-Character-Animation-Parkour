@@ -88,13 +88,13 @@
             "comment" : "---------------장애물 깊이 조건---------------",
             "id": "IsDeeper",
             "class": "ObstacleDepthCondition",
-            "value" : 0.6
+            "value" : 0.51
         },
         {
             "id": "IsNotDeeper",
             "class": "ObstacleDepthCondition",
             "isInverted" : true,
-            "value" : 0.6
+            "value" : 0.51
         },
 
         {
@@ -439,7 +439,7 @@
             "id" : "Hanging_Protrude_MoveCommon",
             "comment" : "벽면에 돌출된 (유리한) 위치로 이동하는 경우",
             "class" : "ConditionAnd",
-            "children" : [ "IsHangingState", "IsProtrude", "IsChanged" ]
+            "children" : [ "IsHanging", "IsProtrude", "IsChanged" ]
         },
         {
             "id" : "Hanging_Protrude_MoveUp",

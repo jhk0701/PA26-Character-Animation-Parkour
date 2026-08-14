@@ -18,5 +18,5 @@ EPerceptionResult DetectObstacleUsingInputNode::InvokeTask(TravelContext& _conte
 
 	SetDirection(newDir);
 
-	return DetectObstacleSphereNode::InvokeTask(_context, _result);
+	return DetectObstacleCapsuleNode::InvokeTask(_context, _result);
 }

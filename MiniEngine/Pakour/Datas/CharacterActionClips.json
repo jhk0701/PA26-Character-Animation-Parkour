@@ -1405,22 +1405,19 @@
         {
             "tags": [ "Pole_AirToHang" ],
             "clip": 49,
-            "rootMotion": { "apply": true, "z" : false },
+            "rootMotion": { "apply": false },
             "comment": "In Air -> Pole Hanging",
             "notifies": [
                 {
                     "class": "TransitionState",
-                    "time": 0.1,
+                    "time": 0.0,
                     "state": "PoleHanging"
                 },
                 {
-                    "class": "CorrectRootMotion",
-                    "time": [ 0, 0.4 ],
-                    "properDistance": 0.5
-                },
-                {
-                    "class": "CorrectRotationTowardObstacle",
-                    "time": [ 0, 0.3 ]
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.0, 0.2 ],
+                    "endOffset": [ 0.0, 1.0, -0.41 ],
+                    "axisMask" : [true, false, true]
                 }
             ]
         },
@@ -1500,8 +1497,8 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.2, 0.75 ],
-                    "midOffset" : [ 0, 1.0, -0.5 ],
-                    "endOffset": [ 0, -1.5, -0.42 ]
+                    "midOffset" : [ 0, 0.5, -0.5 ],
+                    "endOffset": [ 0, -1.0, -0.42 ]
                 }
             ]
         },
@@ -1528,8 +1525,8 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.2, 0.75 ],
-                    "midOffset" : [ 0, 1.0, -0.5 ],
-                    "endOffset": [ 0, -1.5, -0.42 ]
+                    "midOffset" : [ 0, 0.5, -0.5 ],
+                    "endOffset": [ 0, -1.7, -0.42 ]
                 }
             ]
         },
@@ -1556,8 +1553,8 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.2, 0.75 ],
-                    "midOffset" : [ 0, 1.0, -0.5 ],
-                    "endOffset": [ 0, -1.5, -0.42 ]
+                    "midOffset" : [ 0, 0.5, -0.5 ],
+                    "endOffset": [ 0, -1.7, -0.42 ]
                 }
             ]
         },

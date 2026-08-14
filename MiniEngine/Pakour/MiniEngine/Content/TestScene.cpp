@@ -524,11 +524,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.color = Vector3(0.5f, 0.5f, 0.1f);
 
-			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, -6.0f);
+			desc.pos = OFFSET + Vector3(-17.5f, 15.0f, -6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 1");
 
-			desc.pos = OFFSET + Vector3(-18.5f, 15.0f, 6.0f);
+			desc.pos = OFFSET + Vector3(-17.5f, 15.0f, 6.0f);
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 2");
 
@@ -542,9 +542,34 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			{
 				// 돌출부 배치
-				desc.detailTags = { (uint8_t)ETagEnvDetail::Protrude };
+				desc.detailTags =
+				{
+					(uint8_t)ETagEnvDetail::Protrude,
+					(uint8_t)ETagAxis::X
+				};
+
 				desc.priority = 1U;
 				desc.color = Vector3(1.0f, 0.1f, 0.1f);
+
+				desc.pos = OFFSET + Vector3(-18.5f, 5.0f, 11.0f);
+				desc.scale = Vector3(0.2f, 0.1f, 0.7f);
+				ObstacleFactory::Create(pScene, desc)->SetName("Cliff Protrude 1");
+
+				desc.pos = OFFSET + Vector3(-18.5f, 6.0f, 14.0f);
+				desc.scale = Vector3(0.2f, 0.1f, 0.7f);
+				ObstacleFactory::Create(pScene, desc)->SetName("Cliff Protrude 2");
+
+				desc.pos = OFFSET + Vector3(-18.5f, 7.5f, 13.5f);
+				desc.scale = Vector3(0.2f, 0.1f, 0.7f);
+				ObstacleFactory::Create(pScene, desc)->SetName("Cliff Protrude 3");
+
+				desc.pos = OFFSET + Vector3(-18.5f, 9.0f, 14.0f);
+				desc.scale = Vector3(0.2f, 0.1f, 0.7f);
+				ObstacleFactory::Create(pScene, desc)->SetName("Cliff Protrude 4");
+
+				desc.pos = OFFSET + Vector3(-18.5f, 10.5f, 13.5f);
+				desc.scale = Vector3(0.2f, 0.1f, 0.7f);
+				ObstacleFactory::Create(pScene, desc)->SetName("Cliff Protrude 5");
 			}
 
 		}
@@ -633,13 +658,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-15.0f, 4.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
 			desc.meshPos = Vector3(2.0f, 0.0f, 0.0f);
-			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(100.0f), 0.0f, 0.0f);
+			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 5");
 
 			desc.priority = 0U;
 		}
 		{
-		
 			Obstacle::ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 			desc.detailTags =
@@ -709,7 +733,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.detailTags =
 			{
-				(uint8_t)ETagEnvDetail::Pole
+				(uint8_t)ETagEnvDetail::Pole,
+				(uint8_t)ETagAxis::X,
 			};
 			desc.color = Vector3(0.25f, 0.75f, 0.25f);
 			desc.priority = 1U;
@@ -721,16 +746,23 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-12.95f, 6.5f, 10.0f);
 			desc.scale = Vector3(0.1f, 6.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 2");
-			
+
 			desc.pos = OFFSET + Vector3(-12.95f, 3.5f, 11.5f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 3");
-
+			
+			desc.detailTags =
+			{
+				(uint8_t)ETagEnvDetail::Pole,
+				(uint8_t)ETagAxis::Z,
+			};
 			desc.pos = OFFSET + Vector3(-15.0f, 3.5f, 12.05f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 4");
 		}
+		{
 
+		}
 	}
 	{
 		// 캐릭터 생성
