@@ -258,7 +258,7 @@
         {
             "id" : "Hanging_MoveCommon",
             "class": "ConditionAnd",
-            "children" : ["IsHangingState", "IsDefault", "IsNotChanged"]
+            "children" : ["IsHangingState", "IsDefault" ]
         },
         {
             "id": "Hanging_MoveUp",

@@ -511,8 +511,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(3.0f, 3.0f, 8.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Default 1");
 
-			desc.pos = OFFSET + Vector3(-17.5f, 17.0f, 2.0f);
-			desc.scale = Vector3(3.0f, 2.0f, 0.3f);
+			desc.pos = OFFSET + Vector3(-17.5f, 17.0f, 2.25f);
+			desc.scale = Vector3(3.0f, 2.0f, 0.5f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Cliff Vault High 1");
 
 			desc.pos = OFFSET + Vector3(-17.5f, 13.0f, -2.0f);

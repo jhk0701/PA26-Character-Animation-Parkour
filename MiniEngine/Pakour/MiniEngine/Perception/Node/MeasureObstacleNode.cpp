@@ -63,7 +63,7 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		FOOT_Y + band * CONFIG.heightStep : 
 		FOOT_Y;
 
-	if (band > 0)
+	if (band > 0 && band < CONFIG.maxHeightStep)
 	{
 		SpherecastParam param;
 		param.m_startPos = Vector3(
