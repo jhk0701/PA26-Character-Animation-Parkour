@@ -60,26 +60,26 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 	}
 
 	_context.m_ledge = bFirstTouched ? 
-		FOOT_Y + band * CONFIG.heightStep : 
+		FOOT_Y + CONFIG.heightLift + band * CONFIG.heightStep :
 		FOOT_Y;
 
 	if (band > 0 && band < CONFIG.maxHeightStep)
 	{
 		SpherecastParam param;
 		param.m_startPos = Vector3(
-			PROBE_XZ.x, 
-			_context.m_ledge - CONFIG.heightRadius, 
+			PROBE_XZ.x,
+			_context.m_ledge - CONFIG.heightRadius,
 			PROBE_XZ.z);
 		param.m_dir = dir;
 		param.m_radius = CONFIG.ledgeDetectRadius;
 		param.m_maxDistance = CONFIG.minObstacleDetectDist;
 
 #if MG_DEBUG_LOG
-		MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::BLUE, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+		MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::BLUE, param.m_radius * 1.1f, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 #endif // MG_DEBUG_LOG
 
 		RaycastResult ledgeResult;
-		if (_context.m_physics->SphereCast(param, ledgeResult, ToMask(Layer::ObstacleLedge))) 
+		if (_context.m_physics->SphereCast(param, ledgeResult, ToMask(Layer::ObstacleLedge)))
 		{
 			_context.m_ledge = ledgeResult.m_pos.y;
 			_context.m_bDetectLedge = true;
@@ -128,6 +128,39 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 	}
 
 	_context.m_depth = depth;
+
+	return EPerceptionResult::Succeess;
+}
+
+
+/// 최종 관측 지점에서 한번 더 레이를 쏴서 여유 공간이 있는지 확인
+EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+{
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	if (!pProcessor)
+		return EPerceptionResult::Fail;
+
+	const Transform& TF = pProcessor->GetTransform();
+	const PerceptionConfig& CONFIG = pProcessor->GetPerceptionConfig();
+	const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
+
+	SpherecastParam param;
+	PerceptionNodeUtil::LocalizeDirection(TF, GetDirection(), param.m_dir);
+	param.m_radius = CONFIG.ledgeDetectRadius;
+	param.m_maxDistance = m_distance;
+	param.m_startPos = m_startOffset + Vector3(PROBE_XZ.x, _context.m_ledge, PROBE_XZ.z);
+	
+	param.m_startPos += -TF.Forward() * param.m_radius * 1.12f;
+
+#if MG_DEBUG_LOG
+	Vector3 endPos = param.m_startPos + param.m_dir * param.m_maxDistance;
+	MiniEngine::Debug::DrawLine(param.m_startPos, endPos, MiniEngine::DebugColor::GREEN, 1.0f);
+	MiniEngine::Debug::DrawPoint(endPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+#endif // MG_DEBUG_LOG
+
+	RaycastResult result;
+	if (_context.m_physics->SphereCast(param, result, ToMask(MiniEngine::Physics::Layer::Obstacle)))
+		return EPerceptionResult::Fail; // 여유 공간이 없음
 
 	return EPerceptionResult::Succeess;
 }

@@ -17,25 +17,25 @@
         "comment" : "---------------장애물 높이 기준---------------",
         "id" : "IsWall",
         "class" : "CompareHeightDecorator",
-        "comparer" : "Greater",
+        "comparer" : "GEqual",
         "val_float" : 3.0
     },    
     {
         "id" : "IsHigh",
         "class" : "CompareHeightDecorator",
-        "comparer" : "Greater",
+        "comparer" : "GEqual",
         "val_float" : 2.0
     },
     {
         "id" : "IsMid",
         "class" : "CompareHeightDecorator",
-        "comparer" : "Greater",
+        "comparer" : "GEqual",
         "val_float" : 1.0
     },
     {
         "id" : "IsLow",
         "class" : "CompareHeightDecorator",
-        "comparer" : "Greater",
+        "comparer" : "GEqual",
         "val_float" : 0.3
     },
 
@@ -149,6 +149,14 @@
         "class": "ReturnResultNode",
         "comment": "결과 리턴, Success 처리"
     },
+    {
+        "id": "CheckRoom_Height",
+        "class": "CheckRoomNode",
+        "comment": "측정 후, 공간이 오를 만한지 체크",
+        "startOffset" : [ 0.0, 0.5, 0.0 ],
+        "direction" : [ 0.0, 1.0, 0.0],
+        "distance" : 1.8
+    },
     
     {
         "id" : "Root",
@@ -208,6 +216,7 @@
                         "children" : [
                             "Measure_Height_Forward",
                             "Check_Height",
+                            "CheckRoom_Height",
                             "Return"
                         ]
                     },
@@ -373,7 +382,7 @@
                 "class" : "DetectObstacleUsingInputNode",
                 "startOffset" : [ 0.0, 1.5, 0.0 ],
                 "distance" : 2.0,
-                "radius" : 0.45,
+                "radius" : 0.4,
                 "height" : 1.0
             },
             {
@@ -513,6 +522,7 @@
                                 "class" : "SequenceNode",
                                 "children" : [
                                     "Hanging_NotDetected_ClimbUp_CheckLedge",
+                                    "CheckRoom_Height",
                                     "Return"
                                 ]
                             },

@@ -205,6 +205,18 @@ namespace
 					}, 0
 				} 
 			},
+			{ "CheckRoomNode",
+				{
+					[](const PerceptionNodeData& _node) -> std::shared_ptr<PerceptionNode>
+					{
+						std::shared_ptr<CheckRoomNode> p = std::make_shared<CheckRoomNode>();
+						p->SetDirection(_node.Direction);
+						p->SetDistance(_node.Distance);
+						p->SetStartOffset(_node.StartOffset);
+						return p;
+					}, 0
+				}
+			},
 			{ "ProcessBeamNode",			{ CreateNode<ProcessBeamNode>(),			0 } },
 			{ "ProcessProtrudeNode",		{ CreateNode<ProcessProtrudeNode>(),		0 } },
 			{ "ProcessPoleNode",			
