@@ -250,9 +250,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 0.1f, 0.1f);
 		ObstacleFactory::Create(pScene, desc)->SetName(BAR_NAME.c_str());
 
+		desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Default;
 		desc.pos = Vector3(3.0f, 2.5f, 31.0f);
 		desc.scale = Vector3(3.0f, 5.0f, 5.0f);
-
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
@@ -712,7 +712,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 3");
 			
 			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Pole;
-			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::Z;
 			desc.pos = OFFSET + Vector3(-15.0f, 3.5f, 12.05f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 4");

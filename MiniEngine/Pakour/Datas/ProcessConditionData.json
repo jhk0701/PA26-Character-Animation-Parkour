@@ -431,7 +431,7 @@
         {
             "id": "BeamHanging_ToLanding",
             "class": "ConditionAnd",
-            "children" : [ "IsBeamHangingState", "IsDefault", "IsLowerThan_CharacterMid" ]
+            "children" : [ "IsBeamHangingState", "IsDefault", "IsNotLowerThan_CharacterMid" ]
         },
 
         {

@@ -175,10 +175,10 @@
             {
                 "id" : "Landing_DetectFoward",
                 "class" : "DetectObstacleCapsuleNode",
-                "startOffset" : [ 0.0, 1.5, 0.0 ],
+                "startOffset" : [ 0.0, 1.2, 0.0 ],
                 "distance" : 2.5,
                 "radius" : 0.25,
-                "height" : 1.0
+                "height" : 1.5
             },
             {
                 "id" : "Landing_Check_ObstacleDetected",
