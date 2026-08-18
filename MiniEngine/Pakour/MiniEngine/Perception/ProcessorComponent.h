@@ -3,11 +3,12 @@
 
 namespace MiniEngine
 {
+	class IPerceptionProcessor;
 	struct TravelResult;
 
 	struct ProcessContext
 	{
-		std::shared_ptr<Actor> pOwner;
+		std::shared_ptr<IPerceptionProcessor> pOwner;
 	};
 
 #pragma region Process Condition

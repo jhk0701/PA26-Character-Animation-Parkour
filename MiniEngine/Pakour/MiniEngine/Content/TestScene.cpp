@@ -310,7 +310,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(0.5f, 1.0f, 5.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
-
 		{
 			// 구간 2
 			desc.pos = OFFSET + Vector3(25.0f, 3.0f, 5.0f);

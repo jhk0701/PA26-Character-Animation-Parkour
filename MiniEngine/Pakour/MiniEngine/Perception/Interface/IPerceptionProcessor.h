@@ -4,6 +4,7 @@
 namespace MiniEngine
 {
 	class IObstacle;
+	struct Transform;
 
 	struct PerceptionConfig
 	{
@@ -48,5 +49,6 @@ namespace MiniEngine
 		virtual const PerceptionConfig& GetPerceptionConfig() const = 0;
 		virtual PerceptedObstacleInfo& GetCurObstacleInfo() = 0;
 		virtual IObstacle* GetCurObstacle() const = 0;
+		virtual const Transform& GetTransform() const = 0;
 	};
 }

@@ -12,9 +12,9 @@
 
 namespace 
 {
-    std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::Actor> _actor)
+    std::shared_ptr<Character> ToChar(std::shared_ptr<MiniEngine::IPerceptionProcessor> _pOwner)
     {
-        return std::dynamic_pointer_cast<Character>(_actor);
+        return std::dynamic_pointer_cast<Character>(_pOwner);
     }
 }
 

@@ -30,10 +30,15 @@ namespace MiniEngine
 		return type == GetValue();
 	}
 
+	bool PreviousObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	{
+		return false;
+	}
+
 	bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
-		const float DIFF = _result.m_obstacleLedge - _context.pOwner->GetRoot()->localTransform.position.y;
+		const float DIFF = _result.m_obstacleLedge - _context.pOwner->GetTransform().position.y;
 		return GetValue() <= DIFF;
 		
 		// return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
@@ -49,7 +54,7 @@ namespace MiniEngine
 
 	bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		const Transform& TF = _context.pOwner->GetRoot()->localTransform;
+		const Transform& TF = _context.pOwner->GetTransform();
 
 		Vector3 point = _result.m_firstObstacleHitPos;
 		point.y = 0.0f;

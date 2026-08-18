@@ -661,6 +661,11 @@ std::weak_ptr<Animator> Character::GetAnim() const
 {
 	return m_skinMeshComp.lock()->GetAnim();
 }
+const Transform& Character::GetTransform() const
+{
+	return GetRoot()->localTransform;
+}
+
 void Character::SetAnimBaseTrackInputAxis(const Vector2& _input)
 {
 	GetAnim().lock()->SetBaseTrackInputAxis(_input);

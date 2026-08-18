@@ -128,10 +128,12 @@ public:
 
 	const CharacterConfig& GetConfig() const;
 
+	// IPerceptionProcessor을(를) 통해 상속됨
 	// 지형 인식
 	const PerceptionConfig& GetPerceptionConfig() const override;
 	PerceptedObstacleInfo& GetCurObstacleInfo() override { return m_curObstacleInfo; };
 	IObstacle* GetCurObstacle() const override;
+	const Transform& GetTransform() const override;
 
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);
@@ -187,6 +189,7 @@ private:
 		{ ELimbType::RightLeg,	0.1f} ,
 	};
 
-	float m_maxSlopeDeg = 170.0f; // 급경사 등 발이 뒤집히지 않게하는 최대 각도
+	float m_maxSlopeDeg = 170.0f;
+	// 급경사 등 발이 뒤집히지 않게하는 최대 각도
 };
 

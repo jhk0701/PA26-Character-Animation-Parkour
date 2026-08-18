@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Perception/ProcessorComponent.h"
+#include "Perception/Interface/IPerceptionProcessor.h"
+#include "Scene/Actor.h"
 #include "Core/Log.h"
 
 namespace MiniEngine 
@@ -83,11 +85,25 @@ namespace MiniEngine
 
 	bool ProcessorComponent::ProcessResult(const TravelResult& _inTravelResult, uint8_t& _outResult) const
 	{
-		for (const std::shared_ptr<ProcessCondition>& pCond : m_conditions)
-			pCond->Reset();
+		if (owner.expired())
+		{
+			MG_LOG_WARN("[ProcessorComponent::ProcessResult] Owner is expired");
+			return false;
+		}
+
+		std::shared_ptr<Actor> pOwner = owner.lock();
 
 		ProcessContext context;
-		context.pOwner = owner.lock();
+		context.pOwner = std::dynamic_pointer_cast<IPerceptionProcessor>(pOwner);
+
+		if (context.pOwner == nullptr)
+		{
+			MG_LOG_WARN("[ProcessorComponent::ProcessResult] Owner is not implement 'IPerceptionProcessor'");
+			return false;
+		}
+
+		for (const std::shared_ptr<ProcessCondition>& pCond : m_conditions)
+			pCond->Reset();
 
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
 		{
