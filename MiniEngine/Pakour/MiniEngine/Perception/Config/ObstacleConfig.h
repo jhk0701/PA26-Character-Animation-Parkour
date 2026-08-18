@@ -2,8 +2,9 @@
 
 namespace MiniEngine 
 {
-	inline constexpr uint8_t TAG_ENV_DETAIL = 0;
-	inline constexpr uint8_t TAG_SUB_INFO = 1;
+	inline constexpr uint8_t TAG_ENV_DETAIL		= 0;
+	inline constexpr uint8_t TAG_SUB_INFO		= 1;
+	inline constexpr uint8_t TAG_PRIORITY		= 2;
 
 	enum class ETagEnvDetail : uint8_t
 	{

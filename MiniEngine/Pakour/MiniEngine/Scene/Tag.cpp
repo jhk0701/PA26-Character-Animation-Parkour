@@ -5,6 +5,17 @@ namespace MiniEngine
 {
 	Tag::Tag() { m_tags.reserve(MAX_LAYER_CNT); }
 
+	void Tag::SetTag(const uint8_t _idx, const uint8_t _tag)
+	{
+		if (m_tags.size() < _idx) 
+		{
+			for (uint8_t i = 0; i < _idx - m_tags.size() + 1; ++i)
+				*this += 0;
+		}
+
+		m_tags[_idx] = _tag;
+	}
+
 	bool Tag::Has(const uint8_t _tag) const
 	{
 		for (const uint8_t t : m_tags)

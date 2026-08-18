@@ -42,7 +42,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 	// 강체 바닥
 	{
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.color = Vector3(0.5f, 0.5f, 0.5f);
 		desc.pos = Vector3(0.0f, -0.25f, 0.0f);
@@ -55,7 +55,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		pGround->SetName("Ground");
 	}
 	{
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -174,7 +174,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3");
 	}
 	{
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -207,7 +207,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = {
 			(uint8_t)ETagEnvDetail::Beam,
@@ -273,7 +273,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -292,7 +292,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		// 복합 지형 2.
 		const Vector3 OFFSET(15.0f, 0.0f, 20.0f);
 
-		Obstacle::ObstacleDesc desc;
+		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -519,7 +519,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		const Vector3 OFFSET(-10.0f, 0.0f, 0.0f);
 		{
 			// 절벽
-			Obstacle::ObstacleDesc desc;
+			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 			desc.detailTags = { 0U };
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
@@ -590,7 +590,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		}
 		{
 			// 나무 등 기둥
-			Obstacle::ObstacleDesc desc;
+			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 
 			desc.detailTags = 
@@ -623,7 +623,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		}
 		{
 			// 비정형 나무 
-			Obstacle::ObstacleDesc desc;
+			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 			desc.detailTags =
 			{
@@ -679,7 +679,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.priority = 0U;
 		}
 		{
-			Obstacle::ObstacleDesc desc;
+			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 			desc.detailTags =
 			{

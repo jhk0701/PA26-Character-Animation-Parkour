@@ -47,7 +47,9 @@ namespace MiniEngine
         void OnSpawned(std::weak_ptr<Scene> _scene);
         std::shared_ptr<Scene> GetScene() const { return m_scene.lock(); };
 
-        Tag& GetTag() { return m_tag; }
+        const Tag& GetTag() const { return m_tag; }
+        Tag& AddTag(const uint8_t _tag) { return m_tag += _tag; }
+        void SetTag(const uint8_t _idx, const uint8_t _tag) { m_tag.SetTag(_idx, _tag); }
 
         // Tick 관련 설정
         void SetTickConfig(bool _bUseFixedTick, bool _bUseTick, bool _bUseLateTick);

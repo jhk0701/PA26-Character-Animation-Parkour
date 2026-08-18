@@ -12,6 +12,7 @@ namespace MiniEngine
 	public:
 		Tag();
 
+		void SetTag(const uint8_t _idx, const uint8_t _tag);
 		bool Has(const uint8_t _tag) const;
 		bool GetTagAt(const uint8_t _idx, uint8_t& _outTag) const;
 		bool Match(const uint8_t _idx, const uint8_t _tag) const;
