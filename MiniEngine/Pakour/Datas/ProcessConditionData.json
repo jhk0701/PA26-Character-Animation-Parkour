@@ -7,7 +7,7 @@
         },
 
         {
-            "comment" : "---------------장애물 유형 조건---------------",
+            "comment" : "---------------이번에 발견한 장애물의 유형 조건---------------",
             "id": "IsDefault",
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Default"
@@ -31,6 +31,14 @@
             "id": "IsDirect",
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Direct"
+        },
+
+        
+        {
+            "comment" : "---------------가장 최근에 발견하여 현재 처리 중인 장애물의 유형 조건---------------",
+            "id": "LastIsProtrude",
+            "class": "LastObstacleTypeCondition",
+            "targetObstacleType" : "Protrude"
         },
 
         {
@@ -476,7 +484,7 @@
             "id" : "IsProtrude_ToHanging",
             "comment" : "돌출부에서 다시 일반 벽면으로 이동하는 경우",
             "class" : "ConditionAnd",
-            "children" : [ "IsHangingState", "IsDefault", "IsChanged" ]
+            "children" : [ "LastIsProtrude", "IsHangingState", "IsDefault", "IsChanged" ]
         },
         {
             "id" : "IsProtrude_ToHanging_MoveUp",

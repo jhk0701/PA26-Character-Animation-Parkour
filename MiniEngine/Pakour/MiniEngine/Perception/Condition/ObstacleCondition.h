@@ -17,7 +17,7 @@ namespace MiniEngine
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	};
 
-	class PreviousObstacleTypeCondition : public CompareWithValueCondition<uint8_t>
+	class LastObstacleTypeCondition : public CompareWithValueCondition<uint8_t>
 	{
 	protected:
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;

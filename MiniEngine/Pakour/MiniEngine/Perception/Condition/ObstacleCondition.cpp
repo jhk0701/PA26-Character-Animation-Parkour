@@ -30,9 +30,17 @@ namespace MiniEngine
 		return type == GetValue();
 	}
 
-	bool PreviousObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool LastObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		return false;
+		IObstacle* pCurObstacle = _context.pOwner->GetCurObstacle();
+		if (!pCurObstacle)
+			return false;
+
+		uint8_t type = 0U;
+		if (pCurObstacle->TryGetTag(TAG_ENV_DETAIL, type) == false)
+			return false;
+
+		return type == GetValue();
 	}
 
 	bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

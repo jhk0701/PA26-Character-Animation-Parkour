@@ -325,7 +325,7 @@
                 "class" : "DetectObstacleCapsuleNode",
                 "startOffset" : [ 0.0, 1.0, 0.0 ],
                 "direction" : [ 0.0, 0.0, 1.0 ],
-                "distance" : 1.0,
+                "distance" : 1.2,
                 "radius" : 0.5,
                 "height" : 1.0
             },

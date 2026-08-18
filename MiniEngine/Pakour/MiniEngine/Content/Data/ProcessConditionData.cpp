@@ -79,6 +79,16 @@ namespace
 					}
 				}
 			},
+			{ "LastObstacleTypeCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<LastObstacleTypeCondition> pCond = Create<LastObstacleTypeCondition>(_data);
+						pCond->SetValue(_data.TargetObstacleType);
+						return pCond;
+					}
+				}
+			},
 			{ "ObstacleHeightCondition", 
 				{ 
 					[](const ConditionSchema& _data) 
