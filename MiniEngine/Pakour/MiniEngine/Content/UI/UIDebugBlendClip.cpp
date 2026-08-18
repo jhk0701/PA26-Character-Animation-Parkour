@@ -12,6 +12,7 @@ using namespace MiniEngine;
 void UIDebugBlendClip::Construct()
 {
 	SetName("Debug Blend Space");
+	m_defaultSize = ImVec2(400.0f, 400.0f);
 }
 
 void UIDebugBlendClip::DrawUI()
@@ -19,7 +20,6 @@ void UIDebugBlendClip::DrawUI()
 	if (m_pChar.expired())
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(400.0f, 400.0f), ImGuiCond_FirstUseEver);
 
 	std::shared_ptr<Character> pChar = m_pChar.lock();
 	std::shared_ptr<Animator> pAnim = pChar->GetSkin().lock()->GetAnim().lock();

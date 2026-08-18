@@ -10,6 +10,7 @@ using namespace MiniEngine;
 void UIDebugPerceptionResult::Construct()
 {
 	SetName("Perception Result");
+	m_defaultSize = ImVec2(400.0f, 600.0f);
 }
 
 #ifdef MG_DEBUG_LOG
@@ -20,7 +21,6 @@ void UIDebugPerceptionResult::DrawUI()
 	if (m_pChar.expired())
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(400.0f, 600.0f), ImGuiCond_FirstUseEver);
 
 	std::shared_ptr<Character> pChar = m_pChar.lock();
 	ImGui::Text("Character State : %s", pChar->GetStateName((uint8_t)pChar->GetState()));

@@ -21,3 +21,4 @@ D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugLog
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugLog\Assets\pyramid.obj
 D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\DebugLog\MiniEngi.25EFF4BB.Up2Date
 D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\DebugLog\MiniEngine.vcxproj.CopyComplete
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugLog\Shaders\DebugLine.hlsl

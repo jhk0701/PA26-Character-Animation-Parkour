@@ -6,6 +6,10 @@
 #include "Manager/AssetManager.h"
 #include "Manager/SceneManager.h"
 #include "Manager/UIManager.h"
+#if defined(WITH_EDITOR)
+#include "Editor/UIBakePanel.h"
+#include "Editor/UIMiniEditPanel.h"
+#endif
 #include "Platform/Input.h" // Input 
 
 #include <fstream>
@@ -48,7 +52,6 @@ namespace
 GameCore::GameCore() { }
 GameCore::~GameCore()
 {
-    m_editor.Shutdown();
 }
 
 bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
@@ -67,10 +70,14 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
     DataManager::GetInstance()->Init();
     SceneManager::GetInstance()->Init(m_device.Get(), m_context.Get());
 
-    // 에디터 UI 초기화 (Editor 구성에서만 실제 동작).
-    m_editor.Initialize(_hWnd, m_device.Get(), m_context.Get());
-
     UIManager::GetInstance()->Init(_hWnd, m_device.Get(), m_context.Get());
+
+    // 에디터 패널은 Editor 구성에서만 등록한다. 등록을 막으면 AssimpBaker 의 비-Editor 스텁만
+    // 링크되므로 Debug/DebugLog/Release 는 assimp 를 참조하지 않는다(CLAUDE.md §4/§14.2).
+#if defined(WITH_EDITOR)
+    UIManager::GetInstance()->CreateUI<UIBakePanel>();
+    UIManager::GetInstance()->CreateUI<UIMiniEditPanel>();
+#endif
 
     MG_LOG_INFO("GameCore initialized ({}x{}) - static mesh (.mini) + Lambert", _iWidth, _iHeight);
 
@@ -182,15 +189,15 @@ void GameCore::BeginPlay()
 void GameCore::Update(float _dt)
 {
     SceneManager* pScnMgr = SceneManager::GetInstance();
-    
+
     pScnMgr->FixedUpdate(_dt); // 물리연산 처리용
 
-    InputManager::GetInstance()->Update(_dt); // 입력 처리
-
+    // 게임 입력 게이트: 에디터 패널의 InputText 등에 타이핑할 때 게임 입력으로 새지 않게 한다.
+    // Editor 구성에만 적용 — Debug/DebugLog/Release 의 게임플레이 입력은 건드리지 않는다.
 #if defined(WITH_EDITOR)
-    // 게임 입력 게이트: ImGui 패널 위 or 기즈모 조작/호버 중이면 카메라·피킹 차단.
-    const bool uiGate = m_editor.WantCaptureMouse() || m_editor.IsGizmoActive();
+    if (!UIManager::GetInstance()->WantCaptureKeyboard())
 #endif
+        InputManager::GetInstance()->Update(_dt); // 입력 처리
     
     // Actor/컴포넌트 Tick 전파.
     pScnMgr->Update(_dt);
@@ -217,7 +224,6 @@ void GameCore::Render()
     SceneManager::GetInstance()->Render(context); // Actor, 컴포넌트 Render 전파
 
     // ImGui 오버레이는 씬 위에 항상 그린다(메시가 없어도 UpdateGUI의 NewFrame을 마무리).
-    m_editor.Render();
     UIManager::GetInstance()->Render();
 
     RenderEnd();
@@ -235,8 +241,6 @@ void GameCore::UpdateGUI()
         view = camera->GetViewMatrix();
         proj = camera->GetProjectionMatrix();
     }
-
-    m_editor.BuildUI(*pScene.lock(), view, proj);
 
     UIManager::GetInstance()->BuildUI(*pScene.lock(), view, proj);
 }

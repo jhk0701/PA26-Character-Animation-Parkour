@@ -1340,7 +1340,7 @@ namespace MiniEngine
                         for (const float t : times)
                         {
                             BoneTRS trs;
-                            clip.SampleBoneTRSAtTick(ch.boneIndex, t, _skeleton, trs);
+                            clip.SampleTRS(ch.boneIndex, t, _skeleton, trs);
                             const Matrix local = Matrix::CreateScale(trs.scale)
                                 * Matrix::CreateFromQuaternion(trs.rot)
                                 * Matrix::CreateTranslation(trs.pos);

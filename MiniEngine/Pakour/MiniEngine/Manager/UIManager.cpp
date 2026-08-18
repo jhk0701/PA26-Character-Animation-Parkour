@@ -7,20 +7,6 @@
 #include <imgui_impl_dx11.h>
 #include <ImGuizmo.h>
 
-#if defined(WITH_EDITOR)
-
-namespace MiniEngine 
-{
-	UIManager() {}
-	~UIManager() {}
-
-	bool UIManager::Initialize(HWND _hWnd, ID3D11Device* _device, ID3D11DeviceContext* _context) { return false; }
-	void UIManager::Shutdown() { }
-	void UIManager::BuildUI(Scene& _world, const Matrix& _view, const Matrix& _proj) { }
-	void UIManager::Render() { }
-}
-
-#else
 
 // ImGui Win32 백엔드의 메시지 핸들러 전방 선언(공식 예제 관례 — 헤더가 export하지 않음).
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -96,6 +82,21 @@ namespace MiniEngine
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
 
+
+	bool UIManager::WantCaptureMouse() const
+	{
+		if (!m_initialized || ImGui::GetCurrentContext() == nullptr)
+			return false;
+		return ImGui::GetIO().WantCaptureMouse;
+	}
+
+	bool UIManager::WantCaptureKeyboard() const
+	{
+		if (!m_initialized || ImGui::GetCurrentContext() == nullptr)
+			return false;
+		return ImGui::GetIO().WantCaptureKeyboard;
+	}
+
 	LRESULT WndProcHandler(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
 	{
 		if (ImGui::GetCurrentContext() == nullptr)
@@ -104,4 +105,3 @@ namespace MiniEngine
 	}
 }
 
-#endif
