@@ -18,7 +18,6 @@ namespace MiniEngine
 			{ "Beam",		ETagEnvDetail::Beam },
 			{ "Protrude",	ETagEnvDetail::Protrude },
 			{ "Pole",		ETagEnvDetail::Pole },
-
 			{ "Direct",		ETagEnvDetail::Direct },
 		};
 

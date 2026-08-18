@@ -264,6 +264,17 @@
                             "class" : "ProcessPoleNode",
                             "height" : 3.0
                         },
+                    {
+                        "id" : "Process_Direct",
+                        "class" : "SequenceNode",
+                        "decos" : [ "IsDirect" ],
+                        "children" : [ "Extract_DirectData", "Return" ]
+                    },
+                        {
+                            "comment" : "Direct 지형 처리",
+                            "id" : "Extract_DirectData",
+                            "class" : "ProcessDirectNode"
+                        },
                 {
                     "id" : "Landing_Check_FowardDown_Seq",
                     "class" : "SequenceNode",

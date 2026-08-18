@@ -47,7 +47,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.color = Vector3(0.5f, 0.5f, 0.5f);
 		desc.pos = Vector3(0.0f, -0.25f, 0.0f);
 		desc.scale = Vector3(150.0f, 0.5f, 150.0f);
-		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Ground;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::None;
 
@@ -57,7 +56,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	{
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
-		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
@@ -159,10 +157,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleFactory::Create(pScene, desc);
 
 		// 벽면 돌출물 설치
-		desc.detailTags = { (uint8_t)ETagEnvDetail::Protrude };
 		desc.color += Vector3(0.3f, -0.2f, 0.0f);
 		desc.scale = Vector3(1.0f, 0.2f, 0.2f);
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Protrude;
 
 		desc.pos = Vector3(14.0f, 4.0f, 4.5f);
 		ObstacleFactory::Create(pScene, desc)->SetName("Protrude 1");
@@ -176,7 +174,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	{
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
-		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
@@ -209,12 +206,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 	{
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
-		desc.detailTags = {
-			(uint8_t)ETagEnvDetail::Beam,
-			(uint8_t)ETagAxis::X,
-		};
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
+		desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+		desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
 
 		// Foot Hold // 밟는 용도
 		const std::string FOOT_HOLD_NAME = "Foot Hold";
@@ -269,13 +264,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		desc.pos = Vector3(3.0f, 2.5f, 31.0f);
 		desc.scale = Vector3(3.0f, 5.0f, 5.0f);
-		desc.detailTags = { 0U };
+
 		ObstacleFactory::Create(pScene, desc);
 	}
 	{
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
-		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
@@ -294,7 +288,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
-		desc.detailTags = { 0U };
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		
@@ -368,10 +361,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		{
 			// 구간 1
 			// beam 배치
-			desc.detailTags = {
-				(uint8_t)ETagEnvDetail::Beam,
-				(uint8_t)ETagAxis::X,
-			};
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+
 			desc.color = Vector3(0.25f, 0.25f, 0.75f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
@@ -394,10 +386,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		{
 			// 구간 2
 			// beam 배치
-			desc.detailTags = {
-				(uint8_t)ETagEnvDetail::Beam,
-				(uint8_t)ETagAxis::X,
-			};
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
@@ -453,10 +444,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		{
 			// Protrude 배치
-			desc.detailTags = {
-				(uint8_t)ETagEnvDetail::Protrude,
-			};
-			desc.priority = 1U;
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Protrude;
+			desc.tagPriority = 1U;
+
 			desc.color = Vector3(0.75f, 0.25f, 0.25f);
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
@@ -512,7 +502,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(1.0f, 0.2f, 0.5f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Protrude 3-9");
 
-			desc.priority = 0U;
+			desc.tagPriority = 0U;
 		}
 	}
 	{
@@ -521,7 +511,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			// 절벽
 			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
-			desc.detailTags = { 0U };
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			// desc.ledgeOpt = Obstacle::ELedgeOption::Single;
 		
@@ -557,13 +546,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			{
 				// 돌출부 배치
-				desc.detailTags =
-				{
-					(uint8_t)ETagEnvDetail::Protrude,
-					(uint8_t)ETagAxis::X
-				};
-
-				desc.priority = 1U;
+				desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Protrude;
+				desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+				desc.tagPriority = 1U;
 				desc.color = Vector3(1.0f, 0.1f, 0.1f);
 
 				desc.pos = OFFSET + Vector3(-18.5f, 5.0f, 11.0f);
@@ -593,15 +578,13 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
 
-			desc.detailTags = 
-			{ 
-				(uint8_t)ETagEnvDetail::Pole,
-				(uint8_t)ETagAxis::X // 특정 축으로 매달리기
-			};
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Pole;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X; // 특정 축으로 매달리기
+			desc.tagPriority = 1U; // 한 단계 높은 우선순위
+
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
 			desc.meshPos = Vector3(0.0f);
-			desc.priority = 1U; // 한 단계 높은 우선순위
 
 			desc.pos = OFFSET + Vector3(-18.4f, 3.0f, 6.0f);
 			desc.scale = Vector3(0.1f, 6.0f, 0.1f);
@@ -618,20 +601,16 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-18.4f, 14.0f, 12.0f);
 			desc.scale = Vector3(0.1f, 14.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole 4");
-
-			desc.priority = 0U; // 우선순위 초기화
 		}
 		{
 			// 비정형 나무 
 			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Pole
-			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.75f, 0.25f);
-			desc.priority = 1U; // 한 단계 높은 우선순위
+
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Pole;
+			desc.tagPriority = 1U; // 한 단계 높은 우선순위
 
 			desc.pos = OFFSET + Vector3(-15.0f, 5.0f, -5.0f);
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
@@ -641,11 +620,8 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(0.1f, 10.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Pole Tree 2");
 
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Beam,
-				(uint8_t)ETagAxis::X
-			};
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
 
 			desc.pos = OFFSET + Vector3(-15.0f, 9.0f, -5.0f);
 			desc.scale = Vector3(4.0f, 0.2f, 0.2f);
@@ -675,19 +651,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.meshPos = Vector3(2.5f, 0.0f, 0.0f);
 			desc.rot = Quaternion::CreateFromYawPitchRoll(ToRadians(90.0f), 0.0f, 0.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Beam Branch 5");
-
-			desc.priority = 0U;
 		}
 		{
 			ObstacleDesc desc;
 			desc.pMesh = pCubeMesh;
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Default
-			};
 			desc.layer = MiniEngine::Physics::Layer::Obstacle;
 			desc.color = Vector3(0.75f, 0.25f, 0.25f);
-			desc.priority = 0U;
 
 			desc.pos = OFFSET + Vector3(-15.0f, 7.5f * 0.5f, 0.0f);
 			desc.scale = Vector3(0.75f, 7.5f, 0.75f);
@@ -713,11 +682,9 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(4.0f, 3.0f, 4.0f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Thick Tree 3 Cube");
 
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Beam,
-				(uint8_t)ETagAxis::X
-			};
+
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
 
 			desc.pos = OFFSET + Vector3(-15.0f, 7.5f, 0.0f);
 			desc.meshPos = Vector3(4.0f, 0.0f, 0.0f);
@@ -739,14 +706,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 			desc.meshPos = Vector3(0.0f);
 			desc.rot = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Pole,
-				(uint8_t)ETagAxis::X,
-			};
 			desc.color = Vector3(0.25f, 0.75f, 0.25f);
-			desc.priority = 1U;
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Pole;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+			desc.tagPriority = 1U;
 
 			desc.pos = OFFSET + Vector3(-12.95f, 3.5f, 8.5f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
@@ -760,17 +723,11 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 3");
 			
-			desc.detailTags =
-			{
-				(uint8_t)ETagEnvDetail::Pole,
-				(uint8_t)ETagAxis::Z,
-			};
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Pole;
+			desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
 			desc.pos = OFFSET + Vector3(-15.0f, 3.5f, 12.05f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 4");
-		}
-		{
-
 		}
 	}
 	{

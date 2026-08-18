@@ -4,6 +4,7 @@
 namespace MiniEngine
 {
 	class IObstacle;
+
 	struct PerceptionConfig
 	{
 		// 장애물 탐지 거리

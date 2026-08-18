@@ -11,11 +11,19 @@
 
 using namespace MiniEngine;
 
-void ObstacleBase::Construct(const ObstacleDesc& _desc)
+#ifdef MG_DEBUG_LOG
+const std::string& Obstacle::DebugName()
+{
+	return GetName();
+}
+#endif
+
+void Obstacle::Construct(const ObstacleDesc& _desc)
 {
 	if (_desc.pMesh == nullptr)
 		return;
 
+	SetName("Obstacle");
 	SetTickConfig(true, true, false);
 
 	const Vector3 HALF_EXTENT = _desc.scale * 0.5f;
@@ -40,28 +48,13 @@ void ObstacleBase::Construct(const ObstacleDesc& _desc)
 	AddTag(_desc.tagEnvDetail);
 	AddTag(_desc.tagEnvSubInfo);
 	AddTag(_desc.tagPriority);
-}
 
-#ifdef MG_DEBUG_LOG
-const std::string& ObstacleBase::DebugName()
-{
-	return GetName();
-}
-#endif
-
-void Obstacle::Construct(const ObstacleDesc& _desc)
-{
-	ObstacleBase::Construct(_desc);
-
-	SetName("Obstacle");
-
-	const Vector3 HALF_EXTENT = _desc.scale * 0.5f;
 	AddLedge(GetRoot(),
 		_desc.meshPos + Vector3(0.0f, HALF_EXTENT.y, 0.0f),
 		Vector3(HALF_EXTENT.x, 0.02f, HALF_EXTENT.z));
 }
 
-void ObstacleBase::AddLedge(
+void Obstacle::AddLedge(
 	std::shared_ptr<SceneComponent> _parent,
 	const Vector3& _localPos, 
 	const Vector3& _halfExtent)
@@ -131,14 +124,8 @@ uint8_t Obstacle::GetPriority() const
 
 void DirectingObstacle::Construct(const ObstacleDesc& _desc)
 {
-	ObstacleBase::Construct(_desc);
-
+	Obstacle::Construct(_desc);
 	SetName("Directing Obstacle");
-
-	const Vector3 HALF_EXTENT = _desc.scale * 0.5f;
-	AddLedge(GetRoot(),
-		_desc.meshPos + Vector3(0.0f, HALF_EXTENT.y, 0.0f),
-		Vector3(HALF_EXTENT.x, 0.02f, HALF_EXTENT.z));
 }
 
 float DirectingObstacle::GetNearestLedgeHeight(const Vector3& _pos) const
@@ -162,13 +149,29 @@ uint8_t DirectingObstacle::GetDirectTagAct() const
 }
 
 std::shared_ptr<Actor> ObstacleFactory::Create(
-	std::shared_ptr<Scene> _pScene, const ObstacleDesc& _desc)
+	std::shared_ptr<Scene> _pScene, 
+	const ObstacleDesc& _desc)
 {
 	if (_pScene == nullptr)
 		return nullptr;
 
 	std::shared_ptr<Obstacle> pObs = _pScene->SpawnActor<Obstacle>();
 	pObs->Construct(_desc);
+
+	return pObs;
+}
+
+std::shared_ptr<MiniEngine::Actor> ObstacleFactory::Create(
+	std::shared_ptr<MiniEngine::Scene> _pScene, 
+	const ObstacleDesc& _desc,
+	uint8_t _tagAct)
+{
+	if (_pScene == nullptr)
+		return nullptr;
+
+	std::shared_ptr<DirectingObstacle> pObs = _pScene->SpawnActor<DirectingObstacle>();
+	pObs->Construct(_desc);
+	pObs->SetDirectTagAct(_tagAct);
 
 	return pObs;
 }

@@ -24,12 +24,18 @@ struct ObstacleDesc
 	uint8_t tagPriority{ 0U };
 };
 
-/// 장애물 공통 사항
-class ObstacleBase : public MiniEngine::Actor 
+// 기본 장애물 구현
+class Obstacle : public MiniEngine::Actor, public MiniEngine::IObstacle
 {
 public:
-	virtual ~ObstacleBase() {};
+	virtual ~Obstacle() {};
 	virtual void Construct(const ObstacleDesc& _desc);
+
+	// IObstacle을(를) 통해 상속됨
+	virtual float GetNearestLedgeHeight(const MiniEngine::Vector3& _pos) const override;
+	bool TryGetTag(uint8_t _idx, uint8_t& _outTag) const override;
+	const MiniEngine::Transform& GetTransform() const override;
+	uint8_t GetPriority() const override;
 
 protected:
 	void AddLedge(
@@ -47,19 +53,6 @@ private:
 public:
 	virtual const std::string& DebugName() override;
 #endif
-};
-
-// 기본 장애물 구현
-class Obstacle : public ObstacleBase, public MiniEngine::IObstacle
-{
-public:
-	void Construct(const ObstacleDesc& _desc) override;
-
-	// IObstacle을(를) 통해 상속됨
-	virtual float GetNearestLedgeHeight(const MiniEngine::Vector3& _pos) const override;
-	bool TryGetTag(uint8_t _idx, uint8_t& _outTag) const override;
-	const MiniEngine::Transform& GetTransform() const override;
-	uint8_t GetPriority() const override;
 };
 
 // 연출용 장애물 구현
@@ -80,5 +73,11 @@ public:
 	static std::shared_ptr<MiniEngine::Actor> Create(
 		std::shared_ptr<MiniEngine::Scene> _pScene,
 		const ObstacleDesc& _desc
+	);
+
+	static std::shared_ptr<MiniEngine::Actor> Create(
+		std::shared_ptr<MiniEngine::Scene> _pScene,
+		const ObstacleDesc& _desc,
+		uint8_t _tagAct
 	);
 };

@@ -7,9 +7,10 @@ namespace MiniEngine
 
 	void Tag::SetTag(const uint8_t _idx, const uint8_t _tag)
 	{
+		const uint8_t CNT = _idx - m_tags.size() + 1;
 		if (m_tags.size() < _idx) 
 		{
-			for (uint8_t i = 0; i < _idx - m_tags.size() + 1; ++i)
+			for (uint8_t i = 0; i < CNT; ++i)
 				*this += 0;
 		}
 

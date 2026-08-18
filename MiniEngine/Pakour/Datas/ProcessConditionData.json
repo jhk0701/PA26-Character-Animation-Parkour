@@ -177,7 +177,7 @@
         {
             "id": "DirectCondition",
             "class": "ConditionAnd",
-            "children" : [ "IsDirect" ]
+            "children" : [ "IsLandingState", "IsDirect" ]
         },
         {
             "id": "CanActiveDefaultPakour",

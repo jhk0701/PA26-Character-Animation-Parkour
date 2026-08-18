@@ -25,7 +25,7 @@ namespace MiniEngine
 		Pole,		
 
 		// 필요 시, 연출을 위한 용도. 
-		// sub info에 원하는 액션을 기입
+		// sub info 이후에 원하는 액션을 기입
 		Direct,		
 
 		End

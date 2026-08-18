@@ -217,6 +217,7 @@ namespace
 					}, 0 
 				} 	
 			},
+			{ "ProcessDirectNode",			{ CreateNode<ProcessDirectNode>(),			0 } },
 
 			// 콘텐츠
 			{ "DetectObstacleUsingInputNode",	{ CreateDetectNode<DetectObstacleUsingInputNode>(), 0} },
