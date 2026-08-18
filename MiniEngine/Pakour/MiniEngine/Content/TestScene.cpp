@@ -111,18 +111,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
 		ObstacleFactory::Create(pScene, desc);
 
-		// 좁은 창틀형
-		desc.pos = Vector3(-15.0f, 0.5f, -10.0f);
-		desc.scale = Vector3(4.0f, 1.0f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
-
-		desc.pos = Vector3(-16.5f, 1.8f, -10.0f);
-		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
-		
-		desc.pos = Vector3(-14.0f, 1.8f, -10.0f);
-		desc.scale = Vector3(1.2f, 2.0f, 0.5f);
-		ObstacleFactory::Create(pScene, desc);
 
 		// 3. mantle -> vault
 		desc.pos = Vector3(5.0f, 0.5f, 5.0f);
@@ -728,6 +716,56 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(-15.0f, 3.5f, 12.05f);
 			desc.scale = Vector3(0.1f, 7.0f, 0.1f);
 			ObstacleFactory::Create(pScene, desc)->SetName("Middle Pole 4");
+		}
+		{
+			const Vector3 OFFSET = Vector3(-15.0f, 0.0f, -8.0f);
+			ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+
+			// 좁은 창틀형
+			desc.pos = OFFSET + Vector3(0.0f, 0.5f, 0.0f);
+			desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(-1.5f, 1.5f, 0.0f);
+			desc.scale = Vector3(1.0f, 1.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(1.5f, 1.5f, 0.0f);
+			desc.scale = Vector3(1.0f, 1.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+		}
+		{
+			const Vector3 OFFSET = Vector3(-15.0f, 0.0f, -13.0f);
+
+			ObstacleDesc desc;
+			desc.pMesh = pCubeMesh;
+			desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			desc.tagPriority = 0U;
+
+			// 좁은 창틀형
+			desc.pos = OFFSET + Vector3(0.0f, 0.5f, 0.0f);
+			desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(-1.5f, 2.0f, 0.0f);
+			desc.scale = Vector3(1.0f, 2.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			desc.pos = OFFSET + Vector3(1.5f, 2.0f, 0.0f);
+			desc.scale = Vector3(1.0f, 2.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
+
+			// desc.tagEnvSubInfo = ()
+			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Direct;
+			desc.tagPriority = 1U;
+			desc.color = Vector3(0.75f, 0.25f, 0.25f);
+
+			desc.pos = OFFSET + Vector3(0.0f, 2.0f, 0.0f);
+			desc.scale = Vector3(2.0f, 0.1f, 0.1f);
+			ObstacleFactory::Create(pScene, desc, (uint8_t)Content::Config::ETagAct::Direct_Vault_UnderBar)
+				->SetName("Directing Under Bar");
 		}
 	}
 	{

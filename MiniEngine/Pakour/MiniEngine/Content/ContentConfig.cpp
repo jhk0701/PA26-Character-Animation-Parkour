@@ -91,6 +91,8 @@ namespace Content::Config
 			{ "Pole_ToHanging_Down",			ETagAct::Pole_ToHanging_Down },
 			{ "Pole_ToHanging_Left",			ETagAct::Pole_ToHanging_Left },
 			{ "Pole_ToHanging_Right",			ETagAct::Pole_ToHanging_Right },
+
+			{ "Direct_Vault_UnderBar",			ETagAct::Direct_Vault_UnderBar },
 		};
 
 		// ETagAct 추가 시, 값 검사

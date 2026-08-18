@@ -175,7 +175,7 @@
             {
                 "id" : "Landing_DetectFoward",
                 "class" : "DetectObstacleCapsuleNode",
-                "startOffset" : [ 0.0, 1.0, 0.0 ],
+                "startOffset" : [ 0.0, 1.5, 0.0 ],
                 "distance" : 2.5,
                 "radius" : 0.25,
                 "height" : 1.0
@@ -197,7 +197,8 @@
                         "Process_Default", 
                         "Process_Beam", 
                         "Process_Protrude", 
-                        "Process_Pole"
+                        "Process_Pole",
+                        "Process_Direct"
                     ]
                 },
                     {

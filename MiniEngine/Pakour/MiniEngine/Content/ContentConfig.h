@@ -85,6 +85,8 @@ namespace Content::Config
 		Pole_ToHanging_Left,
 		Pole_ToHanging_Right,
 
+		Direct_Vault_UnderBar,
+
 		End
 	};
 

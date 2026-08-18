@@ -297,7 +297,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 	if (processResult == (uint8_t)ETagAct::Reserved_Direct)
 	{
 		IDirectable* directable = dynamic_cast<IDirectable*>(m_curObstacleInfo.m_pObstacle);
-		if (directable == false)
+		if (directable == nullptr)
 		{
 			MG_LOG_WARN("[Character::ProcessPerceptionResult] Result is {}, but Obstacle is not directable", processResult);
 			return;

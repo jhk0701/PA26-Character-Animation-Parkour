@@ -52,6 +52,8 @@ namespace MiniEngine
 		_context.m_ledge = _context.m_pFirstObstacle->GetTransform().position.y;
 		_context.m_bDetectLedge = true;
 
+		// MG_LOG_INFO("[ProcessDirectNode::InvokeTask] hit pos : {:.2f}, {:.2f}, {:.2f}", _context.m_firstObstacleHitPos.x, _context.m_ledge, _context.m_firstObstacleHitPos.z);
+
 		return EPerceptionResult::Succeess;
 	}
 

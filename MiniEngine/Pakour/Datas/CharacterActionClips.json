@@ -1703,6 +1703,33 @@
                     "endOffset": [ 0, -1.85, -0.75 ]
                 }
             ]
+        },
+        {
+            "tags": [ "Direct_Vault_UnderBar" ],
+            "clip": 57,
+            "rootMotion":  { "apply": true },
+            "notifies":
+            [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0.8,
+                    "enable": true
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0.0, 0.3 ]
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.0, 0.3 ],
+                    "endOffset": [ 0, -1.4, -0.6 ]
+                }
+            ]
         }
 
     ]
