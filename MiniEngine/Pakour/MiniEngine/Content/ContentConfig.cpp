@@ -14,6 +14,8 @@ namespace Content::Config
 		// ETagAct 매핑
 		constexpr TagActName TAG_ACT_NAMES[] =
 		{
+			{ "Reserved_Direct",			ETagAct::Reserved_Direct },
+
 			{ "Landing",					ETagAct::Landing },
 			{ "Jump",						ETagAct::Jump },
 			{ "JumpFront",					ETagAct::JumpFront },
@@ -89,8 +91,6 @@ namespace Content::Config
 			{ "Pole_ToHanging_Down",			ETagAct::Pole_ToHanging_Down },
 			{ "Pole_ToHanging_Left",			ETagAct::Pole_ToHanging_Left },
 			{ "Pole_ToHanging_Right",			ETagAct::Pole_ToHanging_Right },
-
-			{ "Test",						ETagAct::Test },
 		};
 
 		// ETagAct 추가 시, 값 검사

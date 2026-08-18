@@ -7,12 +7,25 @@ namespace MiniEngine
 
 	enum class ETagEnvDetail : uint8_t
 	{
-		Default,	// 기본적인 일반지형
-		Beam,		// 발판, 봉과 같이 변의 한쪽이 좁고 긴 경우
-		Protrude,	// 벽면 등의 돌출부
-		Pole,		// 얇은 기둥, 파이프, 둘레가 좁은 나무 등
+		// 기본적인 일반지형
+		// 이 지형에 대해서 레이캐스트를 사용한 높이, 깊이를 측정함
+		Default,	
 
-		Customize,	// 일부 특수 처리를 위한 용도 -> sub info에 원하는 액션을 기입
+		// 발판, 봉과 같이 변의 한쪽이 좁고 긴 지형
+		// sub info로 ETagAxis::X, Z를 사용
+		Beam,		
+		
+		// 벽면 등의 돌출부
+		Protrude,	
+
+		// 얇은 기둥, 파이프, 둘레가 좁은 나무 등을 오르는 장애물 유형
+		// sub info로 ETagAxis::X, Z를 사용하면, 해당 축 방향으로만 매달림. 
+		// 없으면 최초 히트된 노멀에 대해 매달림
+		Pole,		
+
+		// 필요 시, 연출을 위한 용도. 
+		// sub info에 원하는 액션을 기입
+		Direct,		
 
 		End
 	};

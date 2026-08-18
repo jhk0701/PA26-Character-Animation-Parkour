@@ -5,7 +5,9 @@ namespace Content::Config
 {
 	enum class ETagAct : uint8_t
 	{
-		Landing, // 착지
+		Reserved_Direct,	// 연출용 행위를 위한 고정 예약
+
+		Landing,	// 착지
 		Jump,
 		JumpFront,
 		JumpFromWall, // 점프에서 탈출
@@ -83,7 +85,6 @@ namespace Content::Config
 		Pole_ToHanging_Left,
 		Pole_ToHanging_Right,
 
-		Test,
 		End
 	};
 

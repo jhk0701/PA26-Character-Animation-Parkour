@@ -27,6 +27,11 @@
             "class": "ObstacleTypeCondition",
             "targetObstacleType" : "Pole"
         },
+        {
+            "id": "IsDirect",
+            "class": "ObstacleTypeCondition",
+            "targetObstacleType" : "Direct"
+        },
 
         {
             "comment" : "---------------캐릭터 상태 조건---------------",
@@ -169,6 +174,11 @@
             "isInverted" : true
         },
 
+        {
+            "id": "DirectCondition",
+            "class": "ConditionAnd",
+            "children" : [ "IsDirect" ]
+        },
         {
             "id": "CanActiveDefaultPakour",
             "class": "ConditionOr",
@@ -471,6 +481,11 @@
     
     "comment_processDatas" : "순서대로 순회하면 조건을 탐색하므로 맨 앞에 조건이 많은 사항을 둘 것. 모든 사항을 다 헤아릴 순 없음 -> 자연스럽게 느슨한 조건으로 수렴되도록 처리",
     "processDatas" : [
+        {
+            "tagAct" : "Reserved_Direct",
+            "conditionId" : "DirectCondition"
+        },
+
         {
             "tagAct" : "Protrude_HangingMoveUp",
             "conditionId" : "Hanging_Protrude_MoveUp"

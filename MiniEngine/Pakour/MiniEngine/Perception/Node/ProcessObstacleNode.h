@@ -24,4 +24,10 @@ namespace MiniEngine
 	private:
 		float m_heightLimit{ 2.0f };
 	};
+
+	class ProcessDirectNode : public TaskNode 
+	{
+	public:
+		EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	};
 }

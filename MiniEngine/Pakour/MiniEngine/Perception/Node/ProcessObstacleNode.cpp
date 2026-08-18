@@ -42,7 +42,15 @@ namespace MiniEngine
 			_context.m_bDetectLedge = true;
 		}
 
-		MG_LOG_INFO("[ProcessPoleNode::InvokeTask] hit pos : {:.2f}, {:.2f}, {:.2f}", _context.m_firstObstacleHitPos.x, _context.m_ledge, _context.m_firstObstacleHitPos.z);
+		// MG_LOG_INFO("[ProcessPoleNode::InvokeTask] hit pos : {:.2f}, {:.2f}, {:.2f}", _context.m_firstObstacleHitPos.x, _context.m_ledge, _context.m_firstObstacleHitPos.z);
+
+		return EPerceptionResult::Succeess;
+	}
+
+	EPerceptionResult ProcessDirectNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+	{
+		_context.m_ledge = _context.m_pFirstObstacle->GetTransform().position.y;
+		_context.m_bDetectLedge = true;
 
 		return EPerceptionResult::Succeess;
 	}
