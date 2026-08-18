@@ -61,7 +61,7 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 
 	_context.m_ledge = bFirstTouched ? 
 		FOOT_Y + CONFIG.heightLift + band * CONFIG.heightStep :
-		FOOT_Y;
+		FOOT_Y + CONFIG.heightLift;
 
 	if (band > 0 && band < CONFIG.maxHeightStep)
 	{
@@ -141,12 +141,11 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResul
 		return EPerceptionResult::Fail;
 
 	const Transform& TF = pProcessor->GetTransform();
-	const PerceptionConfig& CONFIG = pProcessor->GetPerceptionConfig();
 	const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
 
 	SpherecastParam param;
 	PerceptionNodeUtil::LocalizeDirection(TF, GetDirection(), param.m_dir);
-	param.m_radius = CONFIG.ledgeDetectRadius;
+	param.m_radius = m_radius;
 	param.m_maxDistance = m_distance;
 	param.m_startPos = m_startOffset + Vector3(PROBE_XZ.x, _context.m_ledge, PROBE_XZ.z);
 	

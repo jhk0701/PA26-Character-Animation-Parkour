@@ -213,6 +213,7 @@ namespace
 						p->SetDirection(_node.Direction);
 						p->SetDistance(_node.Distance);
 						p->SetStartOffset(_node.StartOffset);
+						p->SetRadius(_node.Radius);
 						return p;
 					}, 0
 				}

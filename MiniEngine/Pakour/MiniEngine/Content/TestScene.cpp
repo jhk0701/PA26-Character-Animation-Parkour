@@ -748,12 +748,12 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(-1.5f, 2.0f, 0.0f);
-			desc.scale = Vector3(1.0f, 2.0f, 0.5f);
+			desc.pos = OFFSET + Vector3(-1.5f, 1.5f, 0.0f);
+			desc.scale = Vector3(1.0f, 1.5f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(1.5f, 2.0f, 0.0f);
-			desc.scale = Vector3(1.0f, 2.0f, 0.5f);
+			desc.pos = OFFSET + Vector3(1.5f, 1.5f, 0.0f);
+			desc.scale = Vector3(1.0f, 1.5f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Direct;

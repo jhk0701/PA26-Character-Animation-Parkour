@@ -35,8 +35,10 @@ public:
 
 	void SetStartOffset(const Vector3& _offset) { m_startOffset = _offset; }
 	void SetDistance(const float _dist) { m_distance = _dist; }
+	void SetRadius(const float _radius) { m_radius = _radius; }
 
 private:
 	Vector3 m_startOffset;
 	float m_distance{ 1.0f };
+	float m_radius{ 0.25f };
 };
