@@ -106,7 +106,8 @@ void PoleHangingState::AlignToNormal()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t subInfo = 0;
-	if (pChar->GetCurObstacleInfo().m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfo) == false)
+	if (pChar->GetCurObstacleInfo().m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfo) == false ||
+		subInfo == (uint8_t)ETagAxis::NONE)
 	{
 		AlignDefault();
 		return;
@@ -156,9 +157,19 @@ void PoleHangingState::AlighAxis(uint8_t _axis)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	const Transform& OBS_TF = pChar->GetCurObstacle()->GetTransform();
-	Vector3 dir = 
-		(ETagAxis)_axis == ETagAxis::X ? 
-		OBS_TF.Right() : OBS_TF.Forward();
+
+	Vector3 dir(0.0f);
+	switch ((ETagAxis)_axis)
+	{
+	case ETagAxis::X:
+		dir = OBS_TF.Right();
+		break;
+	case ETagAxis::Z:
+		dir = OBS_TF.Forward();
+		break;
+	default:
+		break;
+	}
 
 	const Vector3& CHAR_FWD = pChar->GetRoot()->localTransform.Forward();
 	float dot = dir.Dot(CHAR_FWD);

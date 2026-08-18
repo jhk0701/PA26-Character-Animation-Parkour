@@ -431,6 +431,23 @@
             "class": "ConditionOr",
             "children" : [ "BeamStand_ToHanging", "BeamHanging_ToHanging" ]
         },
+
+        {
+            "id" : "BeamStand_ToPoleHang",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamStandState", "IsPole" ]
+        },
+        {
+            "id" : "BeamHanging_ToPoleHang",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeamHangingState", "IsPole" ]
+        },
+        {
+            "id": "Beam_ToPoleHanging",
+            "class": "ConditionOr",
+            "children" : [ "BeamStand_ToPoleHang", "BeamHanging_ToPoleHang" ]
+        },        
+
         {
             "id": "BeamStand_ToLanding",
             "class": "ConditionAnd",
@@ -572,6 +589,10 @@
             "conditionId" : "Landing_To_PoleHang"
         },
         {
+            "tagAct" : "Pole_IdleToHang",
+            "conditionId" : "Beam_ToPoleHanging"
+        },
+        {
             "tagAct" : "Pole_AirToHang",
             "comment" : "Pole이지만 높이가 부족한 경우 처리",        
             "conditionId" : "Landing_Pole_Fallback"
@@ -580,6 +601,7 @@
             "tagAct" : "Pole_AirToHang",
             "conditionId" : "InAir_ToPoleHanging"
         }, 
+
         {
             "tagAct" : "Pole_HangingMoveUp",
             "conditionId" : "PoleHanging_MoveUp"

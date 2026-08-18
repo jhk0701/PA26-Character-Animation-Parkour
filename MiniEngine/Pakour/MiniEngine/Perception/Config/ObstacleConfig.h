@@ -35,6 +35,7 @@ namespace MiniEngine
 	// Beam 지형물의 경우 어느 축으로 길게 뻗었는지 : 로컬 기준
 	enum class ETagAxis : uint8_t
 	{
+		NONE,
 		X, // Transform에서 Right
 		Y, // Transform에서 Up
 		Z  // Transform에서 Forward
