@@ -757,7 +757,6 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(1.0f, 2.0f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
 
-			// desc.tagEnvSubInfo = ()
 			desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Direct;
 			desc.tagPriority = 1U;
 			desc.color = Vector3(0.75f, 0.25f, 0.25f);

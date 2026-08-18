@@ -248,29 +248,29 @@
         },
 
         {
-            "id" : "Hanging_MoveCommonCondition",
+            "id" : "Hanging_MoveCommon",
             "class": "ConditionAnd",
             "children" : ["IsHangingState", "IsDefault", "IsNotChanged"]
         },
         {
             "id": "Hanging_MoveUp",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_MoveCommonCondition", "IsInputUp" ]
+            "children" : [ "Hanging_MoveCommon", "IsInputUp" ]
         },
         {
             "id": "Hanging_MoveDown",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_MoveCommonCondition", "IsInputDown" ]
+            "children" : [ "Hanging_MoveCommon", "IsInputDown" ]
         },
         {
             "id": "Hanging_MoveLeft",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_MoveCommonCondition", "IsInputLeft" ]
+            "children" : [ "Hanging_MoveCommon", "IsInputLeft" ]
         },
         {
             "id": "Hanging_MoveRight",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_MoveCommonCondition", "IsInputRight" ]
+            "children" : [ "Hanging_MoveCommon", "IsInputRight" ]
         },
         
         {
@@ -446,30 +446,57 @@
         },
 
         {
-            "id" : "Hanging_Protrude_MoveCommon",
+            "id" : "IsProtrude_MoveCommon",
             "comment" : "벽면에 돌출된 (유리한) 위치로 이동하는 경우",
             "class" : "ConditionAnd",
             "children" : [ "IsHanging", "IsProtrude", "IsChanged" ]
         },
         {
-            "id" : "Hanging_Protrude_MoveUp",
+            "id" : "IsProtrude_MoveUp",
             "class" : "ConditionAnd",
-            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputUp" ]
+            "children" : [ "IsProtrude_MoveCommon", "IsInputUp" ]
         },
         {
-            "id" : "Hanging_Protrude_MoveDown",
+            "id" : "IsProtrude_MoveDown",
             "class" : "ConditionAnd",
-            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputDown" ]
+            "children" : [ "IsProtrude_MoveCommon", "IsInputDown" ]
         },
         {
-            "id" : "Hanging_Protrude_MoveLeft",
+            "id" : "IsProtrude_MoveLeft",
             "class" : "ConditionAnd",
-            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputLeft" ]
+            "children" : [ "IsProtrude_MoveCommon", "IsInputLeft" ]
         },
         {
-            "id" : "Hanging_Protrude_MoveRight",
+            "id" : "IsProtrude_MoveRight",
             "class" : "ConditionAnd",
-            "children" : [ "Hanging_Protrude_MoveCommon", "IsInputRight" ]
+            "children" : [ "IsProtrude_MoveCommon", "IsInputRight" ]
+        },
+
+        {
+            "id" : "IsProtrude_ToHanging",
+            "comment" : "돌출부에서 다시 일반 벽면으로 이동하는 경우",
+            "class" : "ConditionAnd",
+            "children" : [ "IsHangingState", "IsDefault", "IsChanged" ]
+        },
+        {
+            "id" : "IsProtrude_ToHanging_MoveUp",
+            "class" : "ConditionAnd",
+            "children" : [ "IsProtrude_ToHanging", "IsInputUp" ]
+        },
+        {
+            "id" : "IsProtrude_ToHanging_MoveDown",
+            "class" : "ConditionAnd",
+            "children" : [ "IsProtrude_ToHanging", "IsInputDown" ]
+        },
+        {
+            "id" : "IsProtrude_ToHanging_MoveLeft",
+            "class" : "ConditionAnd",
+            "children" : [ "IsProtrude_ToHanging", "IsInputLeft" ]
+        },
+        {
+            "id" : "IsProtrude_ToHanging_MoveRight",
+            "class" : "ConditionAnd",
+            "children" : [ "IsProtrude_ToHanging", "IsInputRight" ]
         },
 
         {
@@ -487,20 +514,20 @@
         },
 
         {
-            "tagAct" : "Protrude_HangingMoveUp",
-            "conditionId" : "Hanging_Protrude_MoveUp"
+            "tagAct" : "Protrude_MoveUp",
+            "conditionId" : "IsProtrude_MoveUp"
         },
         {
-            "tagAct" : "Protrude_HangingMoveDown",
-            "conditionId" : "Hanging_Protrude_MoveDown"
+            "tagAct" : "Protrude_MoveDown",
+            "conditionId" : "IsProtrude_MoveDown"
         },
         {
-            "tagAct" : "Protrude_HangingMoveLeft",
-            "conditionId" : "Hanging_Protrude_MoveLeft"
+            "tagAct" : "Protrude_MoveLeft",
+            "conditionId" : "IsProtrude_MoveLeft"
         },
         {
-            "tagAct" : "Protrude_HangingMoveRight",
-            "conditionId" : "Hanging_Protrude_MoveRight"
+            "tagAct" : "Protrude_MoveRight",
+            "conditionId" : "IsProtrude_MoveRight"
         },
         {
             "tagAct" : "Protrude_InAirMoveToPoint",
@@ -657,6 +684,23 @@
         {
             "tagAct" : "Wall_RunToHang",
             "conditionId" : "Landing_Wall_IdleToHang"
+        },
+
+        {
+            "tagAct" : "Protrude_ToHangingMoveUp",
+            "conditionId" : "IsProtrude_ToHanging_MoveUp"
+        },
+        {
+            "tagAct" : "Protrude_ToHangingMoveDown",
+            "conditionId" : "IsProtrude_ToHanging_MoveDown"
+        },
+        {
+            "tagAct" : "Protrude_ToHangingMoveLeft",
+            "conditionId" : "IsProtrude_ToHanging_MoveLeft"
+        },
+        {
+            "tagAct" : "Protrude_ToHangingMoveRight",
+            "conditionId" : "IsProtrude_ToHanging_MoveRight"
         },
 
         {

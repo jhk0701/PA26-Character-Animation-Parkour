@@ -62,13 +62,18 @@ namespace Content::Config
 		Beam_HangingMoveLeft,
 		Beam_HangingMoveRight,
 
-		Protrude_HangingMoveUp,
-		Protrude_HangingMoveDown,
-		Protrude_HangingMoveLeft,
-		Protrude_HangingMoveRight,
+		Protrude_MoveUp,
+		Protrude_MoveDown,
+		Protrude_MoveLeft,
+		Protrude_MoveRight,
 
 		Protrude_InAirMoveToPoint,
 		Protrude_LandingMoveToPoint,
+
+		Protrude_ToHangingMoveUp,
+		Protrude_ToHangingMoveDown,
+		Protrude_ToHangingMoveLeft,
+		Protrude_ToHangingMoveRight,
 
 		Pole_IdleToHang,
 		Pole_AirToHang,

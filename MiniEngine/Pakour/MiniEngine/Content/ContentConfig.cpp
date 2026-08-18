@@ -69,13 +69,18 @@ namespace Content::Config
 			{ "Beam_HangingMoveLeft",		ETagAct::Beam_HangingMoveLeft },
 			{ "Beam_HangingMoveRight",		ETagAct::Beam_HangingMoveRight },
 
-			{ "Protrude_HangingMoveUp",			ETagAct::Protrude_HangingMoveUp },
-			{ "Protrude_HangingMoveDown",		ETagAct::Protrude_HangingMoveDown },
-			{ "Protrude_HangingMoveLeft",		ETagAct::Protrude_HangingMoveLeft },
-			{ "Protrude_HangingMoveRight",		ETagAct::Protrude_HangingMoveRight },
+			{ "Protrude_MoveUp",			ETagAct::Protrude_MoveUp },
+			{ "Protrude_MoveDown",			ETagAct::Protrude_MoveDown },
+			{ "Protrude_MoveLeft",			ETagAct::Protrude_MoveLeft },
+			{ "Protrude_MoveRight",			ETagAct::Protrude_MoveRight },
 
 			{ "Protrude_InAirMoveToPoint",		ETagAct::Protrude_InAirMoveToPoint },
 			{ "Protrude_LandingMoveToPoint",	ETagAct::Protrude_LandingMoveToPoint },
+
+			{ "Protrude_ToHangingMoveUp",		ETagAct::Protrude_ToHangingMoveUp },
+			{ "Protrude_ToHangingMoveDown",		ETagAct::Protrude_ToHangingMoveDown },
+			{ "Protrude_ToHangingMoveLeft",		ETagAct::Protrude_ToHangingMoveLeft },
+			{ "Protrude_ToHangingMoveRight",	ETagAct::Protrude_ToHangingMoveRight },
 
 			{ "Pole_IdleToHang",				ETagAct::Pole_IdleToHang },
 			{ "Pole_AirToHang",					ETagAct::Pole_AirToHang },
