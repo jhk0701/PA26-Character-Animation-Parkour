@@ -114,13 +114,13 @@
             "comment" : "---------------캐릭터 높이에 대한 장애물 높이 비교---------------",
             "id": "IsLowerThan_CharacterMid",
             "class": "CharacterHeightCondition",
-            "value" : 0.8
+            "value" : 1.0
         },
         {
             "id": "IsNotLowerThan_CharacterMid",
             "class": "CharacterHeightCondition",
             "isInverted" : true,
-            "value" : 0.8
+            "value" : 1.0
         },
 
         {
@@ -456,7 +456,7 @@
         {
             "id": "BeamHanging_ToLanding",
             "class": "ConditionAnd",
-            "children" : [ "IsBeamHangingState", "IsDefault", "IsNotLowerThan_CharacterMid" ]
+            "children" : [ "IsBeamHangingState", "IsDefault", "IsLowerThan_CharacterMid" ]
         },
 
         {

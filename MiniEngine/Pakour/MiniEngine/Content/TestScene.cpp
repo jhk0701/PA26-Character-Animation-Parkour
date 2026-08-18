@@ -303,10 +303,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(15.0f, 10.0f, 5.0f);
-			desc.scale = Vector3(6.0f, 6.0f, 5.0f);
+			desc.scale = Vector3(6.0f, 5.0f, 5.0f);
 			ObstacleFactory::Create(pScene, desc);
 
-			desc.pos = OFFSET + Vector3(18.0f, 13.5f, 5.0f);
+			desc.pos = OFFSET + Vector3(17.25f, 13.0f, 5.0f);
 			desc.scale = Vector3(0.5f, 1.0f, 5.0f);
 			ObstacleFactory::Create(pScene, desc);
 		}
