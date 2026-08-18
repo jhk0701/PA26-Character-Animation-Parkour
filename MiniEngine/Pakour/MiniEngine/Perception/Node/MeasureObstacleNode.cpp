@@ -148,8 +148,6 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResul
 	param.m_radius = m_radius;
 	param.m_maxDistance = m_distance;
 	param.m_startPos = m_startOffset + Vector3(PROBE_XZ.x, _context.m_ledge, PROBE_XZ.z);
-	
-	param.m_startPos += -TF.Forward() * param.m_radius * 1.12f;
 
 #if MG_DEBUG_LOG
 	Vector3 endPos = param.m_startPos + param.m_dir * param.m_maxDistance;

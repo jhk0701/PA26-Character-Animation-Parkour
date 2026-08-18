@@ -38,6 +38,13 @@
         "comparer" : "GEqual",
         "val_float" : 0.3
     },
+    {
+        "comment" : "---------------장애물 깊이 기준---------------",
+        "id" : "IsMantlable",
+        "class" : "CompareDepthDecorator",
+        "comparer" : "Greater",
+        "val_float" : 0.5
+    },
 
     {
         "comment" : "---------------장애물 유형 확인---------------",
@@ -150,9 +157,10 @@
         "comment": "결과 리턴, Success 처리"
     },
     {
+        "comment": "측정 후, 공간이 오를만한지 체크",
         "id": "CheckRoom_Height",
         "class": "CheckRoomNode",
-        "comment": "측정 후, 공간이 오를만한지 체크",
+        "decos" : [ "IsMantlable" ],
         "radius" : 0.25,
         "startOffset" : [ 0.0, 0.3, 0.0 ],
         "direction" : [ 0.0, 1.0, 0.0],
@@ -239,18 +247,11 @@
                                 "decos" : [ "IsWall" ]
                             },
                             {
-                                "id" : "Not_WallHeight",
-                                "class" : "SequenceNode",
-                                "children" : [
-                                    "CheckRoom_Height",
-                                    "Measure_Depth_Forward"
-                                ]
+                                "id" : "Measure_Depth_Forward",
+                                "class" : "MeasureObstacleDepthNode",
+                                "direction" : [ 0.0, 0.0, 1.0 ]
                             },
-                                {
-                                    "id" : "Measure_Depth_Forward",
-                                    "class" : "MeasureObstacleDepthNode",
-                                    "direction" : [ 0.0, 0.0, 1.0 ]
-                                },
+                                
                     {
                         "id" : "Process_Beam",
                         "class" : "SequenceNode",
