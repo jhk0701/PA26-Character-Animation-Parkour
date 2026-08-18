@@ -18,10 +18,5 @@ void CharacterConfigData::Load(const json& _data)
 	Config.depthLift					= _data["depthLift"];
 	Config.ledgeDetectRadius			= _data["ledgeDetectRadius"];
 
-	Config.onHangingSearchDist			= _data["onHanging_SearchDist"];
-	Config.onHangingSearchFwdDist		= _data["onHanging_SearchFwdDist"];
-	Config.onHangingSearchRadius		= _data["onHanging_SearchRadius"];
-	Config.onHangingMovableRange		= _data["onHanging_MovableRange"];
-
 	Config.onLandingFallingCheckDist	= _data["onLanding_FallingCheckDist"];
 }
