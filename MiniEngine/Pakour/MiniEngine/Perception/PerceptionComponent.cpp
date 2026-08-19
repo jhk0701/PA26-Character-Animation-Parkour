@@ -15,6 +15,7 @@ namespace MiniEngine
 		m_obstacleDistance = 0.0f;
 		m_obstacleLedge = 0.0f;
 		m_obstacleDepth = 0.0f;
+		m_roomHeight = FLT_MAX;
 		m_bDetectLedge = false;
 	}
 
@@ -58,7 +59,7 @@ namespace MiniEngine
 		{
 			// 1. 자식에 달린 조건 확인 -> false라면 중단
 			// 2. 자식 노드들 실행 -> 하나라도 fail이라면 중단
-			// Sequece 인데 Deco를 달았다면, 조건 불일치 시 종료 요청으로 간주
+			// Sequence 인데 Deco를 달았다면, 조건 불일치 시 종료 요청으로 간주
 			if (child->Evaluate(_context) == false  ||
 				child->Execute(_context, _result) == EPerceptionResult::Fail)
 				return EPerceptionResult::Fail;
@@ -77,10 +78,12 @@ namespace MiniEngine
 				continue;
 
 			// 2. 자식 실행 결과 하나라도 Success 라면 종료
+			// 자식 실행 결과가 fail이라면 다음 자식 실행 시도
 			if (child->Execute(_context, _result) == EPerceptionResult::Succeess)
 				return  EPerceptionResult::Succeess;
 		}
 
+		// 모든 자식이 fail인 경우
 		return EPerceptionResult::Fail;
 	}
 
@@ -88,11 +91,10 @@ namespace MiniEngine
 
 	EPerceptionResult PerceptionComponent::Travel(const Vector3& _dir)
 	{
+		m_result.Reset();
+
 		if (IsInitialized() == false)
-		{
-			m_result.Reset();
 			return EPerceptionResult::Fail;
-		}
 
 		TravelContext context;
 		context.m_owner = owner.lock();

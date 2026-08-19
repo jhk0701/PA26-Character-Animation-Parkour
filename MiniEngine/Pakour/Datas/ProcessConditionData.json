@@ -124,6 +124,13 @@
         },
 
         {
+            "comment" : "---------------여유 공간 크기 비교---------------",
+            "id" : "IsEnough_Room",
+            "class" : "CheckRoomCondition",
+            "value" : 2.0
+        },
+
+        {
             "comment" : "---------------입력 조건---------------",
             "id": "IsInputUp",
             "class": "InputVerticalCondition",
@@ -226,12 +233,12 @@
         {
             "id": "Landing_MantleHigh",
             "class": "ConditionAnd",
-            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_High", "IsDeeper", "IsEnough_Room" ]
         },
         {
             "id": "Landing_MantleLowMid",
             "class": "ConditionAnd",
-            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsDeeper" ]
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsDeeper", "IsEnough_Room" ]
         },
 
         {
@@ -247,7 +254,7 @@
         {
             "id": "InAir_ToMantleAttach",
             "class": "ConditionAnd",
-            "children" : [ "IsInAirState", "IsDefault", "IsLedgeDetected", "IsDeeper" ]
+            "children" : [ "IsInAirState", "IsDefault", "IsLedgeDetected", "IsDeeper", "IsEnough_Room" ]
         },
         {
             "id": "InAir_ToVaultAttach",
@@ -353,13 +360,13 @@
         {
             "id": "Hanging_Mantle_Top",
             "class": "ConditionAnd",
-            "children" : [ "IsHanging", "IsInputUp", "IsFront", "IsLedgeDetected" ]
+            "children" : [ "IsHanging", "IsInputUp", "IsFront", "IsLedgeDetected", "IsEnough_Room" ]
         },
         {
             "id": "Hanging_Mantle_OnMiddleObs",
             "comment": "벽면 중간에 있는 장애물에 올라간 경우. 이런 장애물의 경우 잡을 것이 뒤에 있으므로 IsBehind 조건 추가",
             "class": "ConditionAnd",
-            "children" : [ "IsHanging", "IsInputUp", "IsBehind", "IsLedgeDetected" ]
+            "children" : [ "IsHanging", "IsInputUp", "IsBehind", "IsLedgeDetected", "IsEnough_Room" ]
         },
         {
             "id": "Hanging_DownToGround",
@@ -387,7 +394,7 @@
         {
             "id": "Hanging_MantleHigh_OnSide",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsDeeper", "IsLedgeDetected" ]
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_High", "IsDeeper", "IsEnough_Room", "IsLedgeDetected" ]
         },
         {
             "id": "Hanging_VaultHigh_OnSide",
@@ -397,7 +404,7 @@
         {
             "id": "Hanging_MantleLowMid_OnSide",
             "class": "ConditionAnd",
-            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Low", "IsDeeper", "IsLedgeDetected" ]
+            "children" : [ "Hanging_ObstacleOnSide", "HeightCheck_Low", "IsDeeper", "IsEnough_Room", "IsLedgeDetected" ]
         },
         {
             "id": "Hanging_VaultLowMid_OnSide",

@@ -60,4 +60,11 @@ namespace MiniEngine
 	protected:
 		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
 	};
+
+	// 여유 측정 후, 비교
+	class CheckRoomCondition : public CompareWithValueCondition<float> 
+	{
+	protected:
+		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+	};
 }

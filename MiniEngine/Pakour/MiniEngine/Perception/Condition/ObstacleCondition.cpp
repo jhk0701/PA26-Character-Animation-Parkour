@@ -88,12 +88,14 @@ namespace MiniEngine
 		return GetValue() < _result.m_obstacleDistance;
 	}
 
-
 	bool DetectNewObstacle::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-
 		std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.pOwner);
 		return pProcessor->GetCurObstacleInfo().m_bIsNewObstacle;
 	}
 
+	bool CheckRoomCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	{
+		return GetValue() < _result.m_roomHeight;
+	}
 }

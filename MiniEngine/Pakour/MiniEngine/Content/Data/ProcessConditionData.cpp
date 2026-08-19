@@ -123,6 +123,16 @@ namespace
 					}
 				}
 			},
+			{ "CheckRoomCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<CheckRoomCondition> pCond = Create<CheckRoomCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
 			{ "InputVerticalCondition",
 				{
 					[](const ConditionSchema& _data)

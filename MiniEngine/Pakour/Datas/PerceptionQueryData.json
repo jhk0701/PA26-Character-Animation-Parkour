@@ -40,9 +40,9 @@
     },
     {
         "comment" : "---------------장애물 깊이 기준---------------",
-        "id" : "IsMantlable",
+        "id" : "IsVaultable",
         "class" : "CompareDepthDecorator",
-        "comparer" : "Greater",
+        "comparer" : "LEqual",
         "val_float" : 0.5
     },
 
@@ -158,13 +158,17 @@
     },
     {
         "comment": "측정 후, 공간이 오를만한지 체크",
-        "id": "CheckRoom_Height",
+        "id": "Check_Room",
         "class": "CheckRoomNode",
-        "decos" : [ "IsMantlable" ],
         "radius" : 0.25,
-        "startOffset" : [ 0.0, 0.3, 0.0 ],
+        "startOffset" : [ 0.0, 0.5, 0.0 ],
         "direction" : [ 0.0, 1.0, 0.0],
-        "distance" : 1.5
+        "distance" : 1.0
+    },
+    {
+        "id" : "Return_IfVault",
+        "class" : "ReturnResultNode",
+        "decos" : [ "IsVaultable" ]
     },
     
     {
@@ -238,7 +242,7 @@
                             "class" : "SelectorNode",
                             "children" : [ 
                                 "Wall_Detected", 
-                                "Measure_Depth_Forward" 
+                                "Check_Depth_Seq" 
                             ]
                         },
                             {
@@ -247,16 +251,34 @@
                                 "decos" : [ "IsWall" ]
                             },
                             {
+                                "id" : "Check_Depth_Seq",
+                                "class" : "SequenceNode",
+                                "children" : [
+                                    "Measure_Depth_Forward",
+                                    "Check_Depth"
+                                ]
+                            },
+                            {
                                 "id" : "Measure_Depth_Forward",
                                 "class" : "MeasureObstacleDepthNode",
                                 "direction" : [ 0.0, 0.0, 1.0 ]
                             },
-                                
+                                {
+                                    "id" : "Check_Depth",
+                                    "class" : "SelectorNode",
+                                    "children" : [
+                                        "Return_IfVault",
+                                        "Check_Room"
+                                    ]
+                                },
                     {
                         "id" : "Process_Beam",
                         "class" : "SequenceNode",
                         "decos" : [ "IsBeam" ],
-                        "children" : [ "Extract_BeamData", "Return" ]
+                        "children" : [ 
+                            "Extract_BeamData", 
+                            "Return" 
+                        ]
                     },
                         {
                             "comment" : "Beam 지형에 대한 높이 처리",
@@ -267,7 +289,10 @@
                         "id" : "Process_Protrude",
                         "class" : "SequenceNode",
                         "decos" : [ "IsProtrude" ],
-                        "children" : [ "Extract_ProtrudeData", "Return" ]
+                        "children" : [ 
+                            "Extract_ProtrudeData", 
+                            "Return" 
+                        ]
                     },
                         {
                             "comment" : "Protrude 지형에 대한 높이 처리",
@@ -278,7 +303,10 @@
                         "id" : "Process_Pole",
                         "class" : "SequenceNode",
                         "decos" : [ "IsPole" ],
-                        "children" : [ "Extract_PoleData", "Return" ]
+                        "children" : [ 
+                            "Extract_PoleData", 
+                            "Return" 
+                        ]
                     },
                         {
                             "comment" : "Pole 지형에 대한 높이 처리",
@@ -290,7 +318,10 @@
                         "id" : "Process_Direct",
                         "class" : "SequenceNode",
                         "decos" : [ "IsDirect" ],
-                        "children" : [ "Extract_DirectData", "Return" ]
+                        "children" : [ 
+                            "Extract_DirectData", 
+                            "Return" 
+                        ]
                     },
                         {
                             "comment" : "Direct 지형 처리",
@@ -339,7 +370,10 @@
             "id" : "InAirState",
             "class" : "SequenceNode",
             "decos" : [ "IsInAirState" ],
-            "children" : [ "InAir_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ 
+                "InAir_DetectFoward", 
+                "Obstacle_Detected" 
+            ]
         },
             {
                 "id" : "InAir_DetectFoward",
@@ -354,13 +388,19 @@
             "id" : "BeamStandState",
             "class" : "SequenceNode",
             "decos" : [ "IsBeamStandState" ],
-            "children" : [ "Beam_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ 
+                "Beam_DetectFoward", 
+                "Obstacle_Detected" 
+            ]
         },
         {
             "id" : "BeamHangingState",
             "class" : "SequenceNode",
             "decos" : [ "IsBeamHangingState" ],
-            "children" : [ "Beam_DetectFoward", "Obstacle_Detected" ]
+            "children" : [ 
+                "Beam_DetectFoward", 
+                "Obstacle_Detected" 
+            ]
         },
             {
                 "id" : "Beam_DetectFoward",
@@ -392,9 +432,9 @@
             {
                 "id" : "Hanging_Detect_TowardInput",
                 "class" : "DetectObstacleUsingInputNode",
-                "startOffset" : [ 0.0, 1.5, 0.0 ],
+                "startOffset" : [ 0.0, 1.5, 0.1 ],
                 "distance" : 2.0,
-                "radius" : 0.4,
+                "radius" : 0.35,
                 "height" : 1.0
             },
             {
@@ -433,7 +473,11 @@
                             "id" : "Hanging_Process_Default_Up",
                             "class" : "SequenceNode",
                             "decos" : [ "IsInputUp" ],
-                            "children" : [ "Hanging_Process_Default_Up_Detect_Ledge", "Return" ]
+                            "children" : [ 
+                                "Hanging_Process_Default_Up_Detect_Ledge",
+                                "Check_Room",
+                                "Return" 
+                            ]
                         },
                             {
                                 "id" : "Hanging_Process_Default_Up_Detect_Ledge",
@@ -441,7 +485,7 @@
                                 "startOffset" : [ 0.0, 1.5, -0.75 ],
                                 "direction" : [ 0.0, 1.0, 0.0 ],
                                 "distance" : 1.0,
-                                "radius" : 0.5
+                                "radius" : 0.35
                             },
                         {
                             "id" : "Hanging_Process_Default_Down",
@@ -455,6 +499,7 @@
                             "children" : [ 
                                 "Hanging_Process_Default_Right_MeasureHeight",  
                                 "Hanging_Process_Default_Right_MeasureDepth",
+                                "Check_Room",
                                 "Return"
                             ]
                         },
@@ -475,6 +520,7 @@
                             "children" : [
                                 "Hanging_Process_Default_Left_MeasureHeight",
                                 "Hanging_Process_Default_Left_MeasureDepth",
+                                "Check_Room",
                                 "Return"
                             ]
                         },
@@ -534,6 +580,7 @@
                                 "class" : "SequenceNode",
                                 "children" : [
                                     "Hanging_NotDetected_ClimbUp_CheckLedge",
+                                    "Check_Room",
                                     "Return"
                                 ]
                             },

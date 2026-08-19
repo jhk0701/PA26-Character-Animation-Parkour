@@ -1360,7 +1360,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 2.2,
+                    "time": 2.0,
                     "enable": true
                 },
                 {
@@ -1535,7 +1535,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 1.8,
+                    "time": 1.9,
                     "enable": true
                 },
                 {
@@ -1679,7 +1679,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1707,7 +1707,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1735,7 +1735,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1763,7 +1763,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1792,7 +1792,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1820,7 +1820,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1848,7 +1848,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {
@@ -1876,7 +1876,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.9,
+                    "time": 0.8,
                     "enable": true
                 },
                 {

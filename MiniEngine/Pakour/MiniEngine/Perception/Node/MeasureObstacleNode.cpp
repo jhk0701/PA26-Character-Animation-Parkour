@@ -6,6 +6,7 @@
 
 #include "Physics/PhysicsWorld.h"
 #include "Core/DebugMarkers.h"
+#include "Core/Log.h"
 
 using namespace MiniEngine::Physics;
 
@@ -157,7 +158,11 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResul
 
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(MiniEngine::Physics::Layer::Obstacle)))
-		return EPerceptionResult::Fail; // 여유 공간이 없음
+	{
+		MG_LOG_INFO("[CheckRoomNode::InvokeTask] Not Enough Room");
+		_result.m_roomHeight = result.m_pos.y - param.m_startPos.y + m_startOffset.y;
+	}
 
+	_result.m_roomHeight = FLT_MAX;
 	return EPerceptionResult::Succeess;
 }

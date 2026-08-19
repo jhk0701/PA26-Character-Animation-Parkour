@@ -27,13 +27,14 @@ namespace MiniEngine
 
 	struct TravelResult 
 	{
-		IObstacle* m_pFirstObstacle{ nullptr };	// 장애물 객체의 포인터
-		Vector3 m_firstObstacleHitPos;			// 접촉 위치
-		Vector3 m_firstObstacleHitNrm;			// 접촉 표면 노멀 벡터
-		float m_obstacleDistance{ 0.0f };		// 캐릭터와 거리
-		float m_obstacleLedge{ 0.0f };			// 모서리 (최종 높이)
-		float m_obstacleDepth{ 0.0f };			// 깊이
-		bool m_bDetectLedge{ false };			// 모서리 탐지 여부
+		IObstacle* m_pFirstObstacle{ nullptr };	// 장애물 객체의 포인터 8
+		Vector3 m_firstObstacleHitPos;			// 접촉 위치 12
+		Vector3 m_firstObstacleHitNrm;			// 접촉 표면 노멀 벡터 12
+		float m_obstacleDistance{ 0.0f };		// 캐릭터와 거리 4
+		float m_obstacleLedge{ 0.0f };			// 모서리 (최종 높이) 4
+		float m_obstacleDepth{ 0.0f };			// 깊이 4
+		float m_roomHeight{ 0.0f };				// 여유 공간
+		bool m_bDetectLedge{ false };			// 모서리 탐지 여부 1
 
 		void Reset();
 	};
