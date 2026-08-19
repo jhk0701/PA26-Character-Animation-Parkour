@@ -17,14 +17,14 @@ namespace Content::Config
 			{ "Reserved_Direct",			ETagAct::Reserved_Direct },
 
 			{ "Landing",					ETagAct::Landing },
-			{ "LandingLight",				ETagAct::LandingLight },
-			{ "LandingFront",				ETagAct::LandingFront },
-			{ "LandingRoll",				ETagAct::LandingRoll },
 
 			{ "Jump",						ETagAct::Jump },
 			{ "JumpFront",					ETagAct::JumpFront },
 			{ "JumpFromWall",				ETagAct::JumpFromWall },
+
 			{ "FallingToLand",				ETagAct::FallingToLand },
+			{ "FallingToLandFront",			ETagAct::FallingToLandFront },
+			{ "FallingToLandRoll",			ETagAct::FallingToLandRoll },
 
 			{ "VaultLow",					ETagAct::VaultLow },
 			{ "Vault",						ETagAct::Vault },

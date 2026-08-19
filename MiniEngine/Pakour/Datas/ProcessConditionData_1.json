@@ -6,6 +6,16 @@
             "id": "ObstacleIsDetected",
             "class": "ObstacleDetectedCondition"
         },
+        {
+            "id" : "FallingFor_1s",
+            "class" : "CharacterFallingTimeCondition",
+            "value" : 1.0
+        },
+        {
+            "id" : "FallingFor_0_5s",
+            "class" : "CharacterFallingTimeCondition",
+            "value" : 0.5
+        },
 
         {
             "id": "IsBeam",
@@ -19,6 +29,16 @@
             "children" : [ "ObstacleIsDetected", "IsBeam" ]
         },
         {
+            "id" : "Landing_FromHigh",
+            "class" : "ConditionAnd",
+            "children" : [ "ObstacleIsDetected", "FallingFor_1s" ]
+        },
+        {
+            "id" : "Landing_FromMid",
+            "class" : "ConditionAnd",
+            "children" : [ "ObstacleIsDetected", "FallingFor_0_5s" ]
+        },
+        {
             "id" : "Landing_Fallback",
             "class" : "ConditionAnd",
             "children" : [ "ObstacleIsDetected" ]
@@ -30,6 +50,15 @@
         {
             "tagAct" : "BeamStand",
             "conditionId" : "Landing_OnBeam"
+        },
+
+        {
+            "tagAct" : "FallingToLandRoll",
+            "conditionId" : "Landing_FromHigh"
+        },
+        {
+            "tagAct" : "FallingToLandFront",
+            "conditionId" : "Landing_FromMid"
         },
         {
             "tagAct" : "FallingToLand",

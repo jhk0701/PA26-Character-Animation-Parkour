@@ -481,8 +481,18 @@
         },
         {
             "tags": [ "FallingToLand" ],
-            "clip": 11,
-            "rootMotion": { "apply": true, "y" : false }
+            "clip": 59,
+            "rootMotion": { "apply": true }
+        },
+        {
+            "tags": [ "FallingToLandFront" ],
+            "clip": 60,
+            "rootMotion": { "apply": true }
+        },
+        {
+            "tags": [ "FallingToLandRoll" ],
+            "clip": 61,
+            "rootMotion": { "apply": true }
         },
         {
             "tags": [ "Wall_IdleToHang" ],
