@@ -33,7 +33,6 @@
             "targetObstacleType" : "Direct"
         },
 
-        
         {
             "comment" : "---------------가장 최근에 발견하여 현재 처리 중인 장애물의 유형 조건---------------",
             "id": "LastIsProtrude",
@@ -303,11 +302,6 @@
             "class": "ConditionAnd",
             "children" : [ "PoleHanging_MoveCommonCondition", "IsInputDown" ]
         },
-        {
-            "id" : "PoleHanging_DownToGround",
-            "class": "ConditionAnd",
-            "children" : [ "IsPoleHangingState", "IsInputDown", "IsCloserToGround" ]
-        },
 
         {
             "id": "IsHanging",
@@ -371,7 +365,7 @@
         {
             "id": "Hanging_DownToGround",
             "class": "ConditionAnd",
-            "children" : [ "IsHanging", "IsInputDown", "IsCloserToGround" ]
+            "children" : [ "IsHanging", "IsInputDown", "IsCloserToGround", "ObstacleIsDetected", "IsChanged" ]
         },
 
         {
@@ -619,6 +613,11 @@
         }, 
         
         {
+            "tagAct" : "Wall_HangToIdle",
+            "conditionId" : "Hanging_DownToGround"
+        },
+        
+        {
             "tagAct" : "Pole_MoveUp_ToOther",
             "conditionId" : "Hanging_ToPole_Up"
         },
@@ -681,10 +680,6 @@
         {
             "tagAct" : "Wall_HangingMoveDown",
             "conditionId" : "Hanging_MoveDown"
-        },
-        {
-            "tagAct" : "Wall_HangToIdle",
-            "conditionId" : "Hanging_DownToGround"
         },
 
         {

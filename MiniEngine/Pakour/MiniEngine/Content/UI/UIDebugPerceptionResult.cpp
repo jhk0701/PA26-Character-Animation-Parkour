@@ -34,7 +34,13 @@ void UIDebugPerceptionResult::DrawUI()
 		Actor* pPerceptedObs = dynamic_cast<Actor*>(INFO.m_pObstacle);
 		ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
 
-		ImGui::Text("Height : %.3f, Depth : %.3f, Room : %.3f", INFO.m_obstacleHeight, INFO.m_obstacleDepth, INFO.m_obstacleRoom);
+		ImGui::Text("Height : %.3f, Depth : %.3f, Dist : %.3f", INFO.m_obstacleHeight, INFO.m_obstacleDepth, INFO.m_obstacleDistance);
+
+		if (fabs(INFO.m_obstacleRoom - FLT_MAX) < 1e-4f)
+			ImGui::Text("Room : FLT_MAX");
+		else 
+			ImGui::Text("Room : %.3f", INFO.m_obstacleRoom);
+
 		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
 	}
 
