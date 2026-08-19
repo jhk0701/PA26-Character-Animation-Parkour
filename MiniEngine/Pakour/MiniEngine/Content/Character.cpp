@@ -634,6 +634,7 @@ void Character::SetUseGravity(bool _bUse)
 
 void Character::Jump()
 {
+	MG_LOG_INFO("[Character::Jump]");
 	m_charCont.lock()->Jump(m_jumpSpeed);
 }
 

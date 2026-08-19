@@ -1,4 +1,5 @@
 {
+    "comment_desc" : "캐릭터가 일반적인 상황 지형 탐색 후, 결과를 처리할 때 사용할 데이터",
     "comment_conditions" : "조건 객체 데이터 모음집",
     "conditions" : [
         {

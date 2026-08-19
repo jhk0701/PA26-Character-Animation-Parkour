@@ -17,8 +17,4 @@ public:
 
 private:
 	void ProcessContiniousMovement(float _dt);
-	void CheckDown();
-
-	void DefaultFallback();
-	void WriteCurrentObstacleInfo(IObstacle* _pObstacle, const MiniEngine::Physics::RaycastResult& _hitResult);
 };
