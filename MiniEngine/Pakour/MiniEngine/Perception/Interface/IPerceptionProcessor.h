@@ -32,11 +32,14 @@ namespace MiniEngine
 	{
 		IObstacle* m_pObstacle{ nullptr };
 		bool m_bIsNewObstacle{ true };
+
+		// Travel Result와 중복 -> 정리 필요
 		bool m_bDetectLedge{ false };
 		float m_obstacleDistance{ 0.0f };
 		float m_obstacleLedge{ 0.0f }; // 모서리 위치
 		float m_obstacleDepth{ 0.0f };
 		float m_obstacleHeight{ 0.0f }; // 모서리 위치 - 현재 y 위치
+		float m_obstacleRoom{ 0.0f };
 		Vector3 m_obstacleHitPos{ 0.0f };
 		Vector3 m_obstacleHitNrm{ 0.0f };
 

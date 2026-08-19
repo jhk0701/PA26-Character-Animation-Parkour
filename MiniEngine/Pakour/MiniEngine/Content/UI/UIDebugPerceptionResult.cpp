@@ -34,7 +34,7 @@ void UIDebugPerceptionResult::DrawUI()
 		Actor* pPerceptedObs = dynamic_cast<Actor*>(INFO.m_pObstacle);
 		ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
 
-		ImGui::Text("Height : %f, Depth : %f", INFO.m_obstacleHeight, INFO.m_obstacleDepth);
+		ImGui::Text("Height : %.3f, Depth : %.3f, Room : %.3f", INFO.m_obstacleHeight, INFO.m_obstacleDepth, INFO.m_obstacleRoom);
 		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
 	}
 

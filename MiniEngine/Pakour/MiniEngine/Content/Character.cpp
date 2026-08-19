@@ -280,6 +280,7 @@ void Character::ProcessPerceptionResult(const TravelResult& _result)
 
 		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
 		m_curObstacleInfo.m_obstacleHeight = _result.m_obstacleLedge - GetRoot()->localTransform.position.y;
+		m_curObstacleInfo.m_obstacleRoom = _result.m_roomHeight;
 	}
 	else
 	{

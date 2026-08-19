@@ -159,10 +159,9 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResul
 	RaycastResult result;
 	if (_context.m_physics->SphereCast(param, result, ToMask(MiniEngine::Physics::Layer::Obstacle)))
 	{
-		MG_LOG_INFO("[CheckRoomNode::InvokeTask] Not Enough Room");
 		_result.m_roomHeight = result.m_pos.y - param.m_startPos.y + m_startOffset.y;
+		MG_LOG_INFO("[CheckRoomNode::InvokeTask] Not Enough Room : {}", _result.m_roomHeight);
 	}
-
-	_result.m_roomHeight = FLT_MAX;
+	
 	return EPerceptionResult::Succeess;
 }
