@@ -58,7 +58,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void OnBeforeSortComponent() override;
-	// void Tick(float _dt) override;
+	virtual void Tick(float _dt) override;
 	// void LateTick(float _dt) override;
 
 	void LoadData();
@@ -91,8 +91,12 @@ public:
 	float GetMoveSpeed() const { return m_moveSpeed; }
 	float GetInputLerpWeight() const { return std::clamp(m_lerpWeight, 0.0f, 1.0f); }
 	Vector2& InputLerp() { return m_lerpInputDir; }
+
 	void SetForce(const Vector3& _force) { m_prevForce = _force; }
 	const Vector3& GetPrevForce() const { return m_prevForce; }
+
+	void UpdateVelocity(float _dt);
+	float GetVelocity() const;
 
 	// 애니메이션
 	void SetAnimBaseTrackInputAxis(const Vector2& _input);
@@ -133,8 +137,6 @@ public:
 	void SetEnableCollisionObstacle(bool _bEnable);
 	bool IsFalling() const;
 	bool IsGrounded() const;
-	
-	float GetVelocity() const;
 
 	const CharacterConfig& GetConfig() const;
 
@@ -165,6 +167,9 @@ private:
 	float m_lerpWeight{ 0.3f };
 	float m_moveSpeed{ 6.0f };
 	float m_jumpSpeed{ 4.0f };
+
+	float m_velocity{ 0.0f };
+	float m_maxVelocity{ 10.0f };
 
 	Vector3 m_prevForce;
 	float m_fallingTime{ 0.0f };

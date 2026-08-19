@@ -31,6 +31,12 @@ bool CharacterHeightCondition::Evaluate(const PerceptResult& _result, const Proc
     return _result.obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
 }
 
+bool CharacterVelocityCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
+{
+    std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
+    return GetValue() < pChar->GetVelocity();
+}
+
 bool CharacterFallingTimeCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);

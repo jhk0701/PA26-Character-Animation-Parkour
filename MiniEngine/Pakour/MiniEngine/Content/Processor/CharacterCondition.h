@@ -16,6 +16,12 @@ protected:
 	bool Evaluate(const PerceptResult& _result, const ProcessContext& _context) const override;
 };
 
+class CharacterVelocityCondition : public CompareWithValueCondition<float>
+{
+protected:
+	bool Evaluate(const PerceptResult& _result, const ProcessContext& _context) const override;
+};
+
 class CharacterFallingTimeCondition : public CompareWithValueCondition<float> 
 {
 protected:

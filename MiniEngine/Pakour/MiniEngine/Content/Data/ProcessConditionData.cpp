@@ -69,6 +69,16 @@ namespace
 					}
 				}
 			},
+			{ "CharacterVelocityCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<CharacterVelocityCondition> pCond = Create<CharacterVelocityCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
 			{ "CharacterFallingTimeCondition",
 				{
 					[](const ConditionSchema& _data)

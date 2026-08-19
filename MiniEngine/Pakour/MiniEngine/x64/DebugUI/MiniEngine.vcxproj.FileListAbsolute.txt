@@ -10,3 +10,10 @@ D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\Skinne
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Assets\pyramid.obj
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\DebugLine.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\DebugUI\MiniEngine.vcxproj.CopyComplete
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\Triangle.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\SceneColor.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\StaticMeshLambert.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\SkinnedMeshLambert.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\DebugLine.hlsl
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\Build\x64\DebugUI\Assets\pyramid.obj
+D:\work\pa\PA26-Character-Animation-Parkour\MiniEngine\Pakour\MiniEngine\x64\DebugUI\MiniEngi.25EFF4BB.Up2Date

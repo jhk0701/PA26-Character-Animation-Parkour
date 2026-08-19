@@ -186,6 +186,13 @@ void Character::OnBeforeSortComponent()
 	// 이후 Rendering될 것
 }
 
+void Character::Tick(float _dt)
+{
+	Pawn::Tick(_dt);
+
+	UpdateVelocity(_dt);
+}
+
 void Character::BeginPlay()
 {
 	Pawn::BeginPlay();
@@ -621,9 +628,20 @@ bool Character::IsGrounded() const
 {
 	return  m_charCont.lock()->IsGrounded();
 }
+void Character::UpdateVelocity(float _dt)
+{
+	if (m_lerpInputDir.LengthSquared() < 1e-4f)
+	{
+		m_velocity = 0.0f;
+		return;
+	}
+
+	m_velocity += m_moveSpeed * _dt;
+	m_velocity = std::clamp(m_velocity, 0.0f, m_maxVelocity);
+}
 float Character::GetVelocity() const
 {
-	return 0.0f;
+	return m_velocity;
 }
 void Character::SetUseGravity(bool _bUse)
 {
