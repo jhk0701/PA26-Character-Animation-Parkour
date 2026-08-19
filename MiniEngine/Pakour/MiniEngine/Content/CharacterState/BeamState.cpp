@@ -29,10 +29,10 @@ void BeamState::Refresh()
 	const PerceptedObstacleInfo& OBS_INFO = pChar->GetCurObstacleInfo();
 	assert(OBS_INFO.IsValid());
 
-	m_pCurrentObstacle = OBS_INFO.m_pObstacle;
+	m_pCurrentObstacle = OBS_INFO.perceptResult.pObstacle;
 
 	uint8_t subInfoTag;
-	if (OBS_INFO.m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfoTag))
+	if (OBS_INFO.perceptResult.pObstacle->TryGetTag(TAG_SUB_INFO, subInfoTag))
 	{
 		m_curAxis = (ETagAxis)subInfoTag;
 
@@ -90,8 +90,8 @@ void BeamState::AdjustPositionToObstacleInfo()
 	PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
 	
 	const Vector3& POS = pChar->GetRoot()->localTransform.position;
-	obsInfo.m_obstacleHitPos.x = POS.x;
-	obsInfo.m_obstacleHitPos.z = POS.z;
+	obsInfo.perceptResult.obstacleHitPos.x = POS.x;
+	obsInfo.perceptResult.obstacleHitPos.z = POS.z;
 }
 
 // Beam Stand
@@ -231,10 +231,10 @@ void BeamStandState::AdjustRotationToObstacleInfo()
 	PerceptedObstacleInfo& obsInfo = pChar->GetCurObstacleInfo();
 
 	Vector3 fwd = pChar->GetRoot()->localTransform.Forward();
-	float d = fwd.Dot(obsInfo.m_obstacleHitNrm);
+	float d = fwd.Dot(obsInfo.perceptResult.obstacleHitNrm);
 	if (d > 0.0f && std::fabs(d) > 0.95f)
 	{
-		obsInfo.m_obstacleHitNrm *= -1.0f;
+		obsInfo.perceptResult.obstacleHitNrm *= -1.0f;
 	}
 }
 

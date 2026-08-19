@@ -259,37 +259,22 @@ bool Character::TryPerception(const Vector3& _dir)
 		return false;
 	}
 
-	ProcessPerceptionResult(pPercept->GetResult()); // 탐색 결과 확인
+	ProcessPerceptionResult(); // 탐색 결과 확인
 
 	return true;
 }
 
-void Character::ProcessPerceptionResult(const PerceptResult& _result)
+void Character::ProcessPerceptionResult()
 {
-	if (_result.pObstacle)
+	
+	if (m_perception.lock()->TryGetPerceptedInfo(m_curObstacleInfo, GetCurObstacle()) == false)
 	{
-		m_curObstacleInfo.m_bIsNewObstacle = GetCurObstacle() != _result.pObstacle;
-		m_curObstacleInfo.m_pObstacle = _result.pObstacle;
-
-		m_curObstacleInfo.m_obstacleHitPos = _result.obstacleHitPos;
-		m_curObstacleInfo.m_obstacleHitNrm = _result.obstacleHitNrm;
-		m_curObstacleInfo.m_obstacleDistance = _result.obstacleDistance;
-
-		m_curObstacleInfo.m_obstacleLedge = _result.obstacleLedge;
-		m_curObstacleInfo.m_bDetectLedge = _result.bDetectLedge;
-
-		m_curObstacleInfo.m_obstacleDepth = _result.obstacleDepth;
-		m_curObstacleInfo.m_obstacleHeight = _result.obstacleLedge - GetRoot()->localTransform.position.y;
-		m_curObstacleInfo.m_obstacleRoom = _result.roomHeight;
-	}
-	else
-	{
-		m_curObstacleInfo.m_pObstacle = nullptr;
+		m_curObstacleInfo.perceptResult.pObstacle = nullptr;
 		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
 	}
 
 	uint8_t processResult = 0;
-	if (m_processor.lock()->ProcessResult(_result, processResult) == false)
+	if (m_processor.lock()->ProcessResult(m_curObstacleInfo.perceptResult, processResult) == false)
 	{
 		MG_LOG_WARN("[Character::ProcessPerceptionResult] Result try to process, but no matched result exists :: {}", processResult);
 		return;
@@ -297,7 +282,7 @@ void Character::ProcessPerceptionResult(const PerceptResult& _result)
 
 	if (processResult == (uint8_t)ETagAct::Reserved_Direct)
 	{
-		IDirectable* directable = dynamic_cast<IDirectable*>(m_curObstacleInfo.m_pObstacle);
+		IDirectable* directable = dynamic_cast<IDirectable*>(m_curObstacleInfo.perceptResult.pObstacle);
 		if (directable == nullptr)
 		{
 			MG_LOG_WARN("[Character::ProcessPerceptionResult] Result is {}, but Obstacle is not directable", processResult);
@@ -579,8 +564,8 @@ void Character::IKDetectObstacle(uint8_t _ik, const Vector3& _posOffset)
 	if (!m_curObstacleInfo.IsValid())
 		return;
 
-	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
-	targetPos.y = m_curObstacleInfo.m_obstacleLedge;
+	Vector3 targetPos = m_curObstacleInfo.perceptResult.obstacleHitPos;
+	targetPos.y = m_curObstacleInfo.perceptResult.obstacleLedge;
 	targetPos += _posOffset;
 
 	// MiniEngine::Debug::DrawPoint(targetPos, MiniEngine::DebugColor::YELLOW, 0.05f, MiniEngine::Debug::EMarkerShape::Sphere, 0.01f);
@@ -593,7 +578,7 @@ void Character::IKSetFixedPoint(uint8_t _ik, const Vector3& _posOffset)
 	if (!m_curObstacleInfo.IsValid())
 		return;
 
-	Vector3 targetPos = m_curObstacleInfo.m_obstacleHitPos;
+	Vector3 targetPos = m_curObstacleInfo.perceptResult.obstacleHitPos;
 	targetPos.y = GetRoot()->localTransform.position.y + GetCapsuleHalfHeight(); // contact offset은 무시
 	targetPos += _posOffset;
 

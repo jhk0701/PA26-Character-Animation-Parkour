@@ -26,7 +26,7 @@ void HangingState::OnStart()
 	pChar->SetIKPoleVector((uint8_t)ELimbType::LeftArm,		Vector3(-1.0f, -1.0f, -0.5f));
 	pChar->SetIKPoleVector((uint8_t)ELimbType::RightArm,	Vector3(1.0f, -1.0f, -0.5f));
 
-	m_pCurrentObstacle = pChar->GetCurObstacleInfo().m_pObstacle;
+	m_pCurrentObstacle = pChar->GetCurObstacleInfo().perceptResult.pObstacle;
 	AlignToNormal();
 }
 
@@ -50,7 +50,7 @@ void HangingState::Refresh()
 	CharacterState::Refresh();
 
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	m_pCurrentObstacle = pChar->GetCurObstacleInfo().m_pObstacle;
+	m_pCurrentObstacle = pChar->GetCurObstacleInfo().perceptResult.pObstacle;
 	
 	uint8_t tag = 0;
 	m_pCurrentObstacle->TryGetTag(TAG_ENV_DETAIL, tag);
@@ -70,7 +70,7 @@ void HangingState::AlignToNormal()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
-	Vector3 nrm = -pChar->GetCurObstacleInfo().m_obstacleHitNrm;
+	Vector3 nrm = -pChar->GetCurObstacleInfo().perceptResult.obstacleHitNrm;
 	nrm.y = 0.0f;
 	nrm.Normalize();
 	
@@ -106,7 +106,7 @@ void PoleHangingState::AlignToNormal()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 
 	uint8_t subInfo = 0;
-	if (pChar->GetCurObstacleInfo().m_pObstacle->TryGetTag(TAG_SUB_INFO, subInfo) == false ||
+	if (pChar->GetCurObstacleInfo().perceptResult.pObstacle->TryGetTag(TAG_SUB_INFO, subInfo) == false ||
 		subInfo == (uint8_t)ETagAxis::NONE)
 	{
 		AlignDefault();
@@ -122,7 +122,7 @@ void PoleHangingState::AlignDefault()
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	const Vector3 CHAR_FWD = pChar->GetRoot()->localTransform.Forward();
 	const PerceptedObstacleInfo& CUR_OBS = pChar->GetCurObstacleInfo();
-	const Transform& OBS_TF = CUR_OBS.m_pObstacle->GetTransform();
+	const Transform& OBS_TF = CUR_OBS.perceptResult.pObstacle->GetTransform();
 
 	const std::vector<Vector3> DIR
 	{

@@ -126,12 +126,13 @@ void InAirState::WriteCurrentObstacleInfo(IObstacle* _pObstacle, const MiniEngin
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	PerceptedObstacleInfo& info = pChar->GetCurObstacleInfo();
 
-	info.m_pObstacle = _pObstacle;
-	info.m_bIsNewObstacle = true;
-	info.m_obstacleDistance = _hitResult.m_distance;
-	info.m_obstacleDepth = 0.0f;
-	info.m_obstacleHeight = 0.0f;
-	info.m_obstacleHitNrm = _hitResult.m_nrm;
-	info.m_obstacleHitPos = _hitResult.m_pos;
-	info.m_obstacleLedge = info.m_obstacleHitPos.y;
+	info.bIsNewObstacle = true;
+	info.obstacleHeight = 0.0f;
+
+	info.perceptResult.pObstacle = _pObstacle;
+	info.perceptResult.obstacleDistance = _hitResult.m_distance;
+	info.perceptResult.obstacleDepth = 0.0f;
+	info.perceptResult.obstacleHitNrm = _hitResult.m_nrm;
+	info.perceptResult.obstacleHitPos = _hitResult.m_pos;
+	info.perceptResult.obstacleLedge = _hitResult.m_pos.y;
 }

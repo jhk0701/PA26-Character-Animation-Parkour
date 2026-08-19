@@ -93,5 +93,20 @@ namespace MiniEngine
 		return m_queryTree->Execute(context, m_result);
 	}
 
+	bool PerceptionComponent::TryGetPerceptedInfo(PerceptedObstacleInfo& _out, const IObstacle* _prevObstacle /*= nullptr*/) const
+	{
+		if (!m_result.pObstacle)
+			return false;
+
+		_out.bIsNewObstacle = _prevObstacle ? 
+			_prevObstacle != m_result.pObstacle : 
+			true;
+		
+		_out.obstacleHeight = m_result.obstacleLedge - owner.lock()->GetRoot()->localTransform.position.y;
+		_out.perceptResult = m_result;
+
+		return true;
+	}
+
 
 }

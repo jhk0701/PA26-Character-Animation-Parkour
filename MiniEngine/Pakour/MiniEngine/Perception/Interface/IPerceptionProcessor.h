@@ -39,7 +39,7 @@ namespace MiniEngine
 		float roomHeight{ 0.0f };			// 여유 공간
 		bool bDetectLedge{ false };			// 모서리 탐지 여부 1
 
-		void Reset() 
+		void Reset()
 		{
 			pObstacle = nullptr;
 			obstacleHitPos = Vector3(0.0f);
@@ -54,20 +54,11 @@ namespace MiniEngine
 
 	struct PerceptedObstacleInfo
 	{
-		bool m_bIsNewObstacle{ true };
-		IObstacle* m_pObstacle{ nullptr };
+		bool bIsNewObstacle{ true };
+		float obstacleHeight{ 0.0f }; // 모서리 위치 - 현재 y 위치
+		PerceptResult perceptResult;
 
-		// Travel Result와 중복 -> 정리 필요
-		bool m_bDetectLedge{ false };
-		float m_obstacleDistance{ 0.0f };
-		float m_obstacleLedge{ 0.0f }; // 모서리 위치
-		float m_obstacleDepth{ 0.0f };
-		float m_obstacleHeight{ 0.0f }; // 모서리 위치 - 현재 y 위치
-		float m_obstacleRoom{ 0.0f };
-		Vector3 m_obstacleHitPos{ 0.0f };
-		Vector3 m_obstacleHitNrm{ 0.0f };
-
-		bool IsValid() const { return m_pObstacle != nullptr; }
+		bool IsValid() const { return perceptResult.pObstacle != nullptr; }
 	};
 
 	class IPerceptionProcessor

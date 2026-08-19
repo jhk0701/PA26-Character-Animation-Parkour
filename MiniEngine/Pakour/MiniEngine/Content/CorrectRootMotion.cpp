@@ -33,8 +33,8 @@ void CorrectRootMotion::Activate(float _dt, AnimNotifyParam& _param)
 	const PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
 	// 캐릭터와 장애물의 적정거리 보정
-	Vector3 obsPos = OBS_INFO.m_obstacleHitPos;
-	obsPos.y = OBS_INFO.m_obstacleLedge;
+	Vector3 obsPos = OBS_INFO.perceptResult.obstacleHitPos;
+	obsPos.y = OBS_INFO.perceptResult.obstacleLedge;
 
 	Vector3 charPos = m_startPos;
 	
@@ -106,8 +106,8 @@ void BezierCorrectRootMotion::OnStart(AnimNotifyParam& _param)
 
 	const PerceptedObstacleInfo& OBS_INFO = m_pChar->GetCurObstacleInfo();
 
-	m_endPoint = OBS_INFO.m_obstacleHitPos;
-	m_endPoint.y = OBS_INFO.m_obstacleLedge;
+	m_endPoint = OBS_INFO.perceptResult.obstacleHitPos;
+	m_endPoint.y = OBS_INFO.perceptResult.obstacleLedge;
 
 	Vector3 endOffset(0.0f);
 	endOffset += TF.Right() * m_endOffset.x;

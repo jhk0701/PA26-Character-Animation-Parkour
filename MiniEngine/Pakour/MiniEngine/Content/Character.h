@@ -57,7 +57,7 @@ public:
 
 	bool TryPerception();
 	bool TryPerception(const Vector3& _dir);
-	void ProcessPerceptionResult(const PerceptResult& _result);
+	void ProcessPerceptionResult();
 
 	void Jump();
 	void InputJump();
@@ -128,8 +128,8 @@ public:
 
 	const CharacterConfig& GetConfig() const;
 
-	// IPerceptionProcessor을(를) 통해 상속됨
 	// 지형 인식
+	// IPerceptionProcessor을(를) 통해 상속됨
 	const PerceptionConfig& GetPerceptionConfig() const override;
 	PerceptedObstacleInfo& GetCurObstacleInfo() override { return m_curObstacleInfo; };
 	IObstacle* GetCurObstacle() const override;

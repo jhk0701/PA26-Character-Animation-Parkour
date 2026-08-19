@@ -31,15 +31,15 @@ void UIDebugPerceptionResult::DrawUI()
 		ImGui::Text("Current Obs Name : %s", pCurObs != nullptr ? pCurObs->GetName().c_str() : "NULL");
 
 		const PerceptedObstacleInfo& INFO = pChar->GetCurObstacleInfo();
-		Actor* pPerceptedObs = dynamic_cast<Actor*>(INFO.m_pObstacle);
+		Actor* pPerceptedObs = dynamic_cast<Actor*>(INFO.perceptResult.pObstacle);
 		ImGui::Text("Percepted Obs Name : %s", pPerceptedObs != nullptr ? pPerceptedObs->GetName().c_str() : "NULL");
 
-		ImGui::Text("Height : %.3f, Depth : %.3f, Dist : %.3f", INFO.m_obstacleHeight, INFO.m_obstacleDepth, INFO.m_obstacleDistance);
+		ImGui::Text("Height : %.3f, Depth : %.3f, Dist : %.3f", INFO.obstacleHeight, INFO.perceptResult.obstacleDepth, INFO.perceptResult.obstacleDistance);
 
-		if (fabs(INFO.m_obstacleRoom - FLT_MAX) < 1e-4f)
+		if (fabs(INFO.perceptResult.roomHeight - FLT_MAX) < 1e-4f)
 			ImGui::Text("Room : FLT_MAX");
 		else 
-			ImGui::Text("Room : %.3f", INFO.m_obstacleRoom);
+			ImGui::Text("Room : %.3f", INFO.perceptResult.roomHeight);
 
 		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
 	}

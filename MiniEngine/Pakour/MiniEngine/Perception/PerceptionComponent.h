@@ -111,11 +111,12 @@ namespace MiniEngine
 		bool IsInitialized() const { return m_queryTree != nullptr; };
 
 		EPerceptionResult Travel(const Vector3& _dir); // 탐색
-		const PerceptResult& GetResult() const { return m_result; }
+		bool TryGetPerceptedInfo(PerceptedObstacleInfo& _out, const IObstacle* _prevObstacle = nullptr) const; // 결과 가공 후 전달
 
 	private:
 		std::shared_ptr<PerceptionNode> m_queryTree;
 
-		PerceptResult m_result; // 가장 마지막으로 인식한 결과물
+		// 가장 마지막으로 인식한 결과물
+		PerceptResult m_result; 
 	};
 }

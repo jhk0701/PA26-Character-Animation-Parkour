@@ -62,7 +62,7 @@ void CorrectRotationTowardObstacle::OnStart(AnimNotifyParam& _param)
 	const Transform& TF = m_pChar->GetRoot()->localTransform;
 	m_startRotation = TF.rotation;
 
-	IObstacle* pObs = m_pChar->GetCurObstacleInfo().m_pObstacle;
+	IObstacle* pObs = m_pChar->GetCurObstacleInfo().perceptResult.pObstacle;
 	if (!pObs)
 		return;
 
@@ -70,7 +70,7 @@ void CorrectRotationTowardObstacle::OnStart(AnimNotifyParam& _param)
 
 	// 일반 지형물 
 	// 부딪힌 노멀 기준으로 정렬
-	Vector3 nrm = -m_pChar->GetCurObstacleInfo().m_obstacleHitNrm;
+	Vector3 nrm = -m_pChar->GetCurObstacleInfo().perceptResult.obstacleHitNrm;
 	nrm.y = 0.0f;
 	nrm.Normalize();
 
