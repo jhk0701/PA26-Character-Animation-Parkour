@@ -69,6 +69,16 @@ namespace
 					}
 				}
 			},
+			{ "CharacterFallingTimeCondition",
+				{
+					[](const ConditionSchema& _data)
+					{
+						std::shared_ptr<CharacterFallingTimeCondition> pCond = Create<CharacterFallingTimeCondition>(_data);
+						pCond->SetValue(_data.Value);
+						return pCond;
+					}
+				}
+			},
 			{ "ObstacleTypeCondition", 
 				{ 
 					[](const ConditionSchema& _data) 

@@ -8,6 +8,10 @@ namespace Content::Config
 		Reserved_Direct = (uint8_t)MiniEngine::ETagActReserve::Direct_Reserve,
 
 		Landing = (uint8_t)MiniEngine::ETagActReserve::CONTINUE,	// 착지
+		LandingLight,
+		LandingFront,
+		LandingRoll,
+
 		Jump,
 		JumpFront,
 		JumpFromWall, // 점프에서 탈출

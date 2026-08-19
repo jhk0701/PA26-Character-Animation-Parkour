@@ -17,6 +17,10 @@ namespace Content::Config
 			{ "Reserved_Direct",			ETagAct::Reserved_Direct },
 
 			{ "Landing",					ETagAct::Landing },
+			{ "LandingLight",				ETagAct::LandingLight },
+			{ "LandingFront",				ETagAct::LandingFront },
+			{ "LandingRoll",				ETagAct::LandingRoll },
+
 			{ "Jump",						ETagAct::Jump },
 			{ "JumpFront",					ETagAct::JumpFront },
 			{ "JumpFromWall",				ETagAct::JumpFromWall },
