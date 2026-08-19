@@ -26,6 +26,14 @@ struct CharacterConfig;
 class Character : public Pawn, public IPerceptionProcessor
 {
 public:
+	enum class EPerceptType : uint8_t 
+	{
+		Normal,
+		OnLand,
+
+		END
+	};
+
 	enum class EState : uint8_t
 	{
 		Landing,

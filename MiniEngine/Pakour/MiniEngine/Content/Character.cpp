@@ -205,23 +205,35 @@ void Character::LoadData()
 
 	m_pConfig = pConfig;
 
-	// 지형 인식 트리
-	std::shared_ptr<PerceptionQueryData> pQueryData;
-	if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(L"PerceptionQueryData.json", pQueryData) == false || 
-		pQueryData->IsValid() == false)
+	std::vector<std::shared_ptr<PerceptionNode>> pQueryTrees;
+	pQueryTrees.reserve((uint8_t)EPerceptType::END);
+
+	for (uint8_t i = 0; i < (uint8_t)EPerceptType::END; ++i)
 	{
-		MG_LOG_ERROR("[Character::LoadData] PerceptionQueryData.json load failed. perception disabled.");
-		return;
+		std::wstring fileName = L"PerceptionQueryData_";
+		fileName.append(std::to_wstring(i));
+		fileName.append(L".json");
+		
+		// 지형 인식 트리
+		std::shared_ptr<PerceptionQueryData> pQueryData;
+		if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(fileName, pQueryData) == false ||
+			pQueryData->IsValid() == false)
+		{
+			MG_LOG_ERROR("[Character::LoadData] PerceptionQueryData.json load failed. perception disabled.");
+			return;
+		}
+
+		std::shared_ptr<PerceptionNode> pTree = pQueryData->ConstructTree();
+		if (pTree == nullptr)
+		{
+			MG_LOG_ERROR("[Character::LoadData] failed to construct query tree. perception disabled.");
+			return;
+		}
+
+		pQueryTrees.push_back(pTree);
 	}
 
-	std::shared_ptr<PerceptionNode> pQueryTree = pQueryData->ConstructTree();
-	if (pQueryTree == nullptr)
-	{
-		MG_LOG_ERROR("[Character::LoadData] failed to construct query tree. perception disabled.");
-		return;
-	}
-
-	m_perception.lock()->SetQueryTree(std::move(pQueryTree));
+	m_perception.lock()->Init(std::move(pQueryTrees));
 
 	std::vector<std::shared_ptr<ProcessCondition>> conditions;
 	std::vector<std::shared_ptr<ProcessData>> processDatas;
@@ -250,7 +262,7 @@ bool Character::TryPerception(const Vector3& _dir)
 		return false; // 이미 행동 중이라면 탐색하지 않도록
 
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	EPerceptionResult perceptResult = pPercept->Travel(_dir); // 탐색 개시
+	EPerceptionResult perceptResult = pPercept->Travel((uint8_t)EPerceptType::Normal, _dir); // 탐색 개시
 
 	if (perceptResult != EPerceptionResult::Succeess)
 	{

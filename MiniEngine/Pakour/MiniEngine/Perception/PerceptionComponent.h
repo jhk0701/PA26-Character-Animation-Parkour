@@ -107,14 +107,14 @@ namespace MiniEngine
 	class PerceptionComponent : public Component
 	{
 	public:
-		void SetQueryTree(std::shared_ptr<PerceptionNode>&& _newTree) { m_queryTree = _newTree; };
-		bool IsInitialized() const { return m_queryTree != nullptr; };
+		void Init(std::vector<std::shared_ptr<PerceptionNode>>&& _queries) { m_queries = std::move(_queries); }
+		bool IsInitialized() const { return m_queries.empty() == false; };
 
-		EPerceptionResult Travel(const Vector3& _dir); // 탐색
+		EPerceptionResult Travel(uint8_t _idx, const Vector3& _dir); // 탐색
 		bool TryGetPerceptedInfo(PerceptedObstacleInfo& _out, const IObstacle* _prevObstacle = nullptr); // 결과 가공 후 전달
 
 	private:
-		std::shared_ptr<PerceptionNode> m_queryTree;
+		std::vector<std::shared_ptr<PerceptionNode>> m_queries;
 
 		// 가장 마지막으로 인식한 결과물
 		PerceptResult m_result; 

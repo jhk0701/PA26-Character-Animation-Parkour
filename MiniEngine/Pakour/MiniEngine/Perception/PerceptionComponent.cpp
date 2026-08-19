@@ -77,12 +77,12 @@ namespace MiniEngine
 
 #pragma endregion
 
-	EPerceptionResult PerceptionComponent::Travel(const Vector3& _dir)
+	EPerceptionResult PerceptionComponent::Travel(uint8_t _idx, const Vector3& _dir)
 	{
-		m_result.Reset();
-
-		if (IsInitialized() == false)
+		if (IsInitialized() == false || m_queries.size() <= _idx)
 			return EPerceptionResult::Fail;
+		
+		m_result.Reset();
 
 		TravelContext context;
 		context.owner = owner.lock();
@@ -90,7 +90,7 @@ namespace MiniEngine
 		context.direction = _dir;
 		context.intermediate.Reset();
 
-		return m_queryTree->Execute(context, m_result);
+		return m_queries[_idx]->Execute(context, m_result);
 	}
 
 	bool PerceptionComponent::TryGetPerceptedInfo(
