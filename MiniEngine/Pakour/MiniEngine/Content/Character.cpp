@@ -260,17 +260,16 @@ bool Character::TryPerception(const Vector3& _dir)
 	}
 
 	ProcessPerceptionResult(); // 탐색 결과 확인
-
 	return true;
 }
 
 void Character::ProcessPerceptionResult()
 {
-	
 	if (m_perception.lock()->TryGetPerceptedInfo(m_curObstacleInfo, GetCurObstacle()) == false)
 	{
 		m_curObstacleInfo.perceptResult.pObstacle = nullptr;
-		MG_LOG_WARN("[Character] Travel Result returned but Cur Obstacle is null");
+		MG_LOG_WARN("[Character::ProcessPerceptionResult] Percept Result returned but Cur Obstacle is null");
+		return;
 	}
 
 	uint8_t processResult = 0;
@@ -283,6 +282,8 @@ void Character::ProcessPerceptionResult()
 	// 액션 수행
 	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))
 		PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
+	else 
+		MG_LOG_WARN("[Character::ProcessPerceptionResult] no action matched with {}}", processResult);
 }
 
 void Character::InitCollisionLayer()

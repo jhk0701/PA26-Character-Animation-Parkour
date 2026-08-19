@@ -11,7 +11,7 @@
 
 using namespace MiniEngine;
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 const std::string& Obstacle::DebugName()
 {
 	return GetName();

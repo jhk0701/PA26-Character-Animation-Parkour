@@ -74,7 +74,7 @@ void HangingState::AlignToNormal()
 	nrm.y = 0.0f;
 	nrm.Normalize();
 	
-	MG_LOG_INFO("[HangingState::AlignToNormal] : ({:.2f}, {:.2f}, {:.2f})", nrm.x, nrm.y, nrm.z);
+	// MG_LOG_INFO("[HangingState::AlignToNormal] : ({:.2f}, {:.2f}, {:.2f})", nrm.x, nrm.y, nrm.z);
 
 	Quaternion rot;
 	if (TryYawRotateToward(nrm, rot))

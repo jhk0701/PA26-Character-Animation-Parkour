@@ -66,10 +66,10 @@ public:
 	std::weak_ptr<SkeletalMeshComponent> GetSkin() const { return m_skinMeshComp; }
 	std::weak_ptr<CharacterControllerComponent> GetController() const { return m_charCont; }
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 	std::weak_ptr<PerceptionComponent> GetPerception() const { return m_perception; }
 	std::weak_ptr<ProcessorComponent> GetProcessor() const { return m_processor; }
-#endif // MG_DEBUG_LOG
+#endif // MG_DEBUG_UI
 
 	// State
 	void SetState(EState _state) { m_state = _state; }

@@ -36,7 +36,7 @@ namespace MiniEngine
 		float obstacleDistance{ 0.0f };		// 캐릭터와 거리 4
 		float obstacleLedge{ 0.0f };		// 모서리 (최종 높이) 4
 		float obstacleDepth{ 0.0f };		// 깊이 4
-		float roomHeight{ 0.0f };			// 여유 공간
+		float roomHeight{ 0.0f };			// 여유 공간 높이 4
 		bool bDetectLedge{ false };			// 모서리 탐지 여부 1
 
 		void Reset()

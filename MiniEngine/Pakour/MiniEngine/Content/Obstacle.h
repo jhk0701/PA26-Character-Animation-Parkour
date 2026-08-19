@@ -49,7 +49,7 @@ protected:
 private:
 	std::vector<std::weak_ptr<MiniEngine::SceneComponent>> m_pLedges;
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 public:
 	virtual const std::string& DebugName() override;
 #endif

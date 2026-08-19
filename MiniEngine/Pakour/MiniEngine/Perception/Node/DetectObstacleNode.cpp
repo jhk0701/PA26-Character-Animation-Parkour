@@ -89,7 +89,7 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	else
 		param.m_dir = _context.direction;
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
 	MiniEngine::Debug::DrawLine(param.m_startPos, debugEnd, MiniEngine::DebugColor::YELLOW, 1.0f);
 	Vector3 debugPointLow = debugEnd - Vector3(0.0f, param.m_halfHeight, 0.0f);
@@ -137,7 +137,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	else
 		param.m_dir = _context.direction;
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // 0
 
@@ -163,7 +163,7 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, PerceptRe
 
 	ApplyOwnerTransform(_context.owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // 0
 
@@ -188,7 +188,7 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, P
 	RaycastMultipleResult result;
 	bool bIsHit = _context.physics->SphereCastMultiple(param, result, ToMask(Layer::ObstacleLedge));
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // 0
 
@@ -223,7 +223,7 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, P
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // 0
 
@@ -256,7 +256,7 @@ EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, PerceptRe
 	// Owner 트랜스폼 기준 적용
 	ApplyOwnerTransform(TF, param.m_startPos, param.m_dir);
 
-#if MG_DEBUG_LOG || MG_DEBUG
+#if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // MG
 

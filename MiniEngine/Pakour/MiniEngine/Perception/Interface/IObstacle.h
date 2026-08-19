@@ -11,9 +11,9 @@ namespace MiniEngine
 		virtual const Transform& GetTransform() const = 0;
 		virtual uint8_t GetPriority() const = 0;
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 		virtual const std::string& DebugName() = 0;
-#endif // MG_DEBUG_LOG
+#endif // MG_DEBUG_UI
 	};
 
 	class IDirectable

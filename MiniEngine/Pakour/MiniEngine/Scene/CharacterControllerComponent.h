@@ -53,10 +53,10 @@ namespace MiniEngine
 
         float GetVelocity() const { return m_velocity; }
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
         // 디버그용
         float GetFallingElapsed() const { return m_fallingElapsed; }
-#endif // DEBUG
+#endif // MG_DEBUG_UI
 
     private:
         void CheckParented(const std::shared_ptr<SceneComponent>& _target);

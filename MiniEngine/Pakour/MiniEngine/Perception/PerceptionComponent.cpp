@@ -95,7 +95,7 @@ namespace MiniEngine
 
 	bool PerceptionComponent::TryGetPerceptedInfo(
 		PerceptedObstacleInfo& _out, 
-		const IObstacle* _prevObstacle /*= nullptr*/) const
+		const IObstacle* _prevObstacle /*= nullptr*/)
 	{
 		if (!m_result.pObstacle)
 			return false;
@@ -105,10 +105,9 @@ namespace MiniEngine
 			true;
 		
 		_out.obstacleHeight = m_result.obstacleLedge - owner.lock()->GetRoot()->localTransform.position.y;
-		_out.perceptResult = m_result;
+		_out.perceptResult = std::move(m_result);
 
 		return true;
 	}
-
 
 }

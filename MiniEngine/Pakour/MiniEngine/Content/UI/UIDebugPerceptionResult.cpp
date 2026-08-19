@@ -12,7 +12,7 @@ void UIDebugPerceptionResult::Construct()
 	SetName("Perception Result");
 }
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 
 void UIDebugPerceptionResult::DrawUI()
 {
@@ -92,5 +92,5 @@ void UIDebugPerceptionResult::DrawUI()
 
 #else
 void UIDebugPerceptionResult::DrawUI() {}
-#endif // MG_DEBUG_LOG
+#endif // MG_DEBUG_UI
 

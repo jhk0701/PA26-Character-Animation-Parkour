@@ -27,14 +27,14 @@ namespace MiniEngine
 
 		const bool GetResult() const { return m_bProcessResult; }
 
-#ifdef MG_DEBUG_LOG // 디버그용
+#ifdef MG_DEBUG_UI // 디버그용
 	public:
 		void SetName(const std::string& _name)  { m_name = _name; }; 
 		const std::string& GetName() const { return m_name; }
 
 	private:
 		std::string m_name;
-#endif // MG_DEBUG
+#endif // MG_DEBUG_UI
 
 	protected:
 		// 자식에서 세부 구현
@@ -80,7 +80,7 @@ namespace MiniEngine
 		uint8_t m_result;
 		std::weak_ptr<ProcessCondition> m_pCondition;
 
-#ifdef MG_DEBUG_LOG // 디버그용
+#ifdef MG_DEBUG_UI // 디버그용
 	public:
 		void SetName(const std::string& _name) { m_name = _name; };
 		const std::string& GetName() const { return m_name; }
@@ -89,7 +89,7 @@ namespace MiniEngine
 
 	private:
 		std::string m_name;
-#endif // MG_DEBUG
+#endif // MG_DEBUG_UI
 	};
 
 #pragma endregion

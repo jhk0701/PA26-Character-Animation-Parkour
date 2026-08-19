@@ -778,7 +778,7 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 
 		pCont->Possess(pChar);
 
-#ifdef MG_DEBUG_LOG
+#ifdef MG_DEBUG_UI
 		std::shared_ptr<UIDebugPerceptionResult> uiPerceptionResult = UIManager::GetInstance()->CreateUI<UIDebugPerceptionResult>().lock();
 		uiPerceptionResult->SetCharacter(pChar);
 

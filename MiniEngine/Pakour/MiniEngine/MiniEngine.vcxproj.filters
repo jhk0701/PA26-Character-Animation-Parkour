@@ -358,9 +358,6 @@
     <ClInclude Include="Content\CharacterIKNotify.h">
       <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
-    <ClInclude Include="Core\EngineConfig.h">
-      <Filter>Engine\02.Core</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Data\CharacterConfigData.h">
       <Filter>Content\05.Data</Filter>
     </ClInclude>
@@ -638,9 +635,6 @@
     </ClCompile>
     <ClCompile Include="Content\CharacterIKNotify.cpp">
       <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\EngineConfig.cpp">
-      <Filter>Engine\02.Core</Filter>
     </ClCompile>
     <ClCompile Include="Content\Data\CharacterConfigData.cpp">
       <Filter>Content\05.Data</Filter>
