@@ -208,15 +208,18 @@ void Character::LoadData()
 	std::vector<std::shared_ptr<PerceptionNode>> pQueryTrees;
 	pQueryTrees.reserve((uint8_t)EPerceptType::END);
 
+	std::vector<ProcessSet> processSets;
+	processSets.reserve((uint8_t)EPerceptType::END);
+
 	for (uint8_t i = 0; i < (uint8_t)EPerceptType::END; ++i)
 	{
-		std::wstring fileName = L"PerceptionQueryData_";
-		fileName.append(std::to_wstring(i));
-		fileName.append(L".json");
+		std::wstring queryTreefileName = L"PerceptionQueryData_";
+		queryTreefileName.append(std::to_wstring(i));
+		queryTreefileName.append(L".json");
 		
 		// 지형 인식 트리
 		std::shared_ptr<PerceptionQueryData> pQueryData;
-		if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(fileName, pQueryData) == false ||
+		if (DataManager::GetInstance()->TryGetDataAsset<PerceptionQueryData>(queryTreefileName, pQueryData) == false ||
 			pQueryData->IsValid() == false)
 		{
 			MG_LOG_ERROR("[Character::LoadData] PerceptionQueryData.json load failed. perception disabled.");
@@ -231,38 +234,43 @@ void Character::LoadData()
 		}
 
 		pQueryTrees.push_back(pTree);
+
+		std::wstring processDataFileName = L"ProcessConditionData_";
+		processDataFileName.append(std::to_wstring(i));
+		processDataFileName.append(L".json");
+
+		ProcessSet processSet;
+		std::shared_ptr<ProcessConditionData> pProcessCondition;
+		if (DataManager::GetInstance()->TryGetDataAsset<ProcessConditionData>(processDataFileName, pProcessCondition) == false ||
+			pProcessCondition->IsValid() == false)
+		{
+			MG_LOG_ERROR("[Character::LoadData] ProcessConditionData.json load failed. perception disabled.");
+			return;
+		}
+		pProcessCondition->ConstructData(processSet.conditions, processSet.processDatas);
+
+		// MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
+		processSets.push_back(std::move(processSet));
 	}
 
 	m_perception.lock()->Init(std::move(pQueryTrees));
-
-	std::vector<std::shared_ptr<ProcessCondition>> conditions;
-	std::vector<std::shared_ptr<ProcessData>> processDatas;
-	std::shared_ptr<ProcessConditionData> pProcessCondition;
-	if (DataManager::GetInstance()->TryGetDataAsset<ProcessConditionData>(L"ProcessConditionData.json", pProcessCondition) == false ||
-		pProcessCondition->IsValid() == false) 
-	{
-		MG_LOG_ERROR("[Character::LoadData] ProcessConditionData.json load failed. perception disabled.");
-		return;
-	}
-	pProcessCondition->ConstructData(conditions, processDatas);
-
-	// MG_LOG_INFO("[Character::LoadData] {} processData is loaded.", processDatas.size());
-
-	m_processor.lock()->Init(std::move(conditions), std::move(processDatas));
+	m_processor.lock()->Init(std::move(processSets));
 }
 
 bool Character::TryPerception()
 {
-	return TryPerception(GetRoot()->localTransform.Forward());
+	return TryPerception((uint8_t)EPerceptType::Normal, GetRoot()->localTransform.Forward());
 }
 
-bool Character::TryPerception(const Vector3& _dir)
+bool Character::TryPerception(uint8_t _idx, const Vector3& _dir)
 {
 	if (GetAnim().lock()->IsActionClipPlaying((uint8_t)EActionPriority::Override))
 		return false; // 이미 행동 중이라면 탐색하지 않도록
 
+	m_curPerceptType = (EPerceptType)_idx;
+
 	std::shared_ptr<PerceptionComponent> pPercept = m_perception.lock();
-	EPerceptionResult perceptResult = pPercept->Travel((uint8_t)EPerceptType::Normal, _dir); // 탐색 개시
+	EPerceptionResult perceptResult = pPercept->Travel(_idx, _dir); // 탐색 개시
 
 	if (perceptResult != EPerceptionResult::Succeess)
 	{
@@ -271,11 +279,11 @@ bool Character::TryPerception(const Vector3& _dir)
 		return false;
 	}
 
-	ProcessPerceptionResult(); // 탐색 결과 확인
+	ProcessPerceptionResult(_idx); // 탐색 결과 확인
 	return true;
 }
 
-void Character::ProcessPerceptionResult()
+void Character::ProcessPerceptionResult(uint8_t _idx)
 {
 	if (m_perception.lock()->TryGetPerceptedInfo(m_curObstacleInfo, GetCurObstacle()) == false)
 	{
@@ -285,7 +293,7 @@ void Character::ProcessPerceptionResult()
 	}
 
 	uint8_t processResult = 0;
-	if (m_processor.lock()->ProcessResult(m_curObstacleInfo.perceptResult, processResult) == false)
+	if (m_processor.lock()->ProcessResult(_idx, m_curObstacleInfo.perceptResult, processResult) == false)
 	{
 		MG_LOG_WARN("[Character::ProcessPerceptionResult] Result try to process, but no matched result exists :: {}", processResult);
 		return;

@@ -46,7 +46,21 @@ void InAirState::CheckState()
 		pChar->IsFalling())
 		return;
 
-	CheckDown(); // 아래쪽 장애물 확인 절차
+
+	CheckDown();
+
+	return;
+
+	{
+		pChar->TryPerception((uint8_t)Character::EPerceptType::OnLand, Vector3(0.0f, -1.0f, 0.0f));
+
+		pChar->SetState(Character::EState::Landing);
+		const uint8_t STATE = (uint8_t)pChar->GetState();
+
+		// 각각의 State에서 OnStart 시, 실행해 줄 것
+		// pChar->TranstionBaseTrack(STATE, 0.25f);
+		GetMachine()->Transition(STATE);
+	}
 }
 
 void InAirState::ProcessContiniousMovement(float _dt)

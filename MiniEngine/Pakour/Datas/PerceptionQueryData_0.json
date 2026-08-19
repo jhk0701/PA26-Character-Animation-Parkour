@@ -1,4 +1,5 @@
 {
+  "comment_desc" : "캐릭터가 지형 탐색하는 기본형태 트리",
   "root": "Root",
 
   "comment_deco" : "노드에 붙일 데코레이터 선언",

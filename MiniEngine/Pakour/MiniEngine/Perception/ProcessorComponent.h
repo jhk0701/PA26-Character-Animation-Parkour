@@ -94,22 +94,30 @@ namespace MiniEngine
 
 #pragma endregion
 
+	struct ProcessSet
+	{
+		std::vector<std::shared_ptr<ProcessCondition>> conditions;
+		std::vector<std::shared_ptr<ProcessData>> processDatas;
+	};
+
 	class ProcessorComponent : public Component
 	{
 	public:
-		bool ProcessResult(const PerceptResult& _inTravelResult, uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
-		void Init(std::vector<std::shared_ptr<ProcessCondition>>&& _conds, std::vector<std::shared_ptr<ProcessData>>&& _datas)
+		bool ProcessResult(
+			uint8_t _idx,
+			const PerceptResult& _inTravelResult, 
+			uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
+
+		void Init(std::vector<ProcessSet>&& _processSets)
 		{
-			m_conditions = std::move(_conds);
-			m_processDatas = std::move(_datas);
+			m_processSets = std::move(_processSets);
 		};
 
-		const std::vector<std::shared_ptr<ProcessCondition>>& GetConditions() const { return m_conditions; };
-		const std::vector<std::shared_ptr<ProcessData>>& GetProcessDatas() const { return m_processDatas; };
+		const std::vector<std::shared_ptr<ProcessCondition>>& GetConditions(uint8_t _idx) const { return m_processSets[_idx].conditions; };
+		const std::vector<std::shared_ptr<ProcessData>>& GetProcessDatas(uint8_t _idx) const { return m_processSets[_idx].processDatas; };
 
 	private:
 		// 각 객체의 소유권은 컴포넌트에서 관리
-		std::vector<std::shared_ptr<ProcessCondition>> m_conditions;
-		std::vector<std::shared_ptr<ProcessData>> m_processDatas;
+		std::vector<ProcessSet> m_processSets;
 	};
 }

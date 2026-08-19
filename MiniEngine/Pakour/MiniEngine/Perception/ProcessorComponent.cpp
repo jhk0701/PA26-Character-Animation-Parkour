@@ -86,7 +86,7 @@ namespace MiniEngine
 
 #pragma endregion
 
-	bool ProcessorComponent::ProcessResult(const PerceptResult& _inTravelResult, uint8_t& _outResult) const
+	bool ProcessorComponent::ProcessResult(uint8_t _idx, const PerceptResult& _inTravelResult, uint8_t& _outResult) const
 	{
 		if (owner.expired())
 		{
@@ -105,11 +105,17 @@ namespace MiniEngine
 			return false;
 		}
 
-		for (const std::shared_ptr<ProcessCondition>& pCond : m_conditions)
+		if (m_processSets.size() <= _idx)
+		{
+			MG_LOG_WARN("[ProcessorComponent::ProcessResult] {} is out of processSets ({})", _idx, m_processSets.size());
+			return false;
+		}
+
+		for (const std::shared_ptr<ProcessCondition>& pCond : m_processSets[_idx].conditions)
 			pCond->Reset();
 
 		bool bSuccess = false;
-		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
+		for (const std::shared_ptr<ProcessData>& pProcess : m_processSets[_idx].processDatas)
 		{
 			if (pProcess->TryQuery(_inTravelResult, context, _outResult))
 			{

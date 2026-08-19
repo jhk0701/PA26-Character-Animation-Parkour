@@ -48,7 +48,7 @@ void UIDebugPerceptionResult::DrawUI()
 	{
 		if (ImGui::CollapsingHeader("Conditions"))
 		{
-			const std::vector<std::shared_ptr<ProcessCondition>>& conditions = pChar->GetProcessor().lock()->GetConditions();
+			const std::vector<std::shared_ptr<ProcessCondition>>& conditions = pChar->GetProcessor().lock()->GetConditions(pChar->GetCurPerceptType());
 			ImGui::Text("Conditions (%d)", conditions.size());
 
 			if (ImGui::BeginListBox("##Condition List", ImVec2(350, 600)))
@@ -68,7 +68,7 @@ void UIDebugPerceptionResult::DrawUI()
 
 		if (ImGui::CollapsingHeader("Process Data"))
 		{
-			const std::vector<std::shared_ptr<ProcessData>>& processDatas = pChar->GetProcessor().lock()->GetProcessDatas();
+			const std::vector<std::shared_ptr<ProcessData>>& processDatas = pChar->GetProcessor().lock()->GetProcessDatas(pChar->GetCurPerceptType());
 			ImGui::Text("Process Datas (%d)", processDatas.size());
 			if (ImGui::BeginListBox("##Process Datas List", ImVec2(350, 600)))
 			{

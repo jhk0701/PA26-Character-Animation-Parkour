@@ -79,7 +79,9 @@ namespace MiniEngine
 
 	EPerceptionResult PerceptionComponent::Travel(uint8_t _idx, const Vector3& _dir)
 	{
-		if (IsInitialized() == false || m_queries.size() <= _idx)
+		if (IsInitialized() == false || 
+			m_queries.size() <= _idx || 
+			m_queries[_idx] == nullptr)
 			return EPerceptionResult::Fail;
 		
 		m_result.Reset();

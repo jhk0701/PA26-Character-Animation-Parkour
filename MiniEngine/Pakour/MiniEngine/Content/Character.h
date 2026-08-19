@@ -64,8 +64,8 @@ public:
 	void LoadData();
 
 	bool TryPerception();
-	bool TryPerception(const Vector3& _dir);
-	void ProcessPerceptionResult();
+	bool TryPerception(uint8_t _idx, const Vector3& _dir);
+	void ProcessPerceptionResult(uint8_t _idx);
 
 	void Jump();
 	void InputJump();
@@ -77,6 +77,8 @@ public:
 #ifdef MG_DEBUG_UI
 	std::weak_ptr<PerceptionComponent> GetPerception() const { return m_perception; }
 	std::weak_ptr<ProcessorComponent> GetProcessor() const { return m_processor; }
+
+	uint8_t GetCurPerceptType() const { return (uint8_t)m_curPerceptType; }
 #endif // MG_DEBUG_UI
 
 	// State
@@ -175,6 +177,7 @@ private:
 
 	std::weak_ptr<CharacterConfigData> m_pConfig;
 
+	EPerceptType m_curPerceptType{ EPerceptType::Normal };
 	PerceptedObstacleInfo m_curObstacleInfo;
 	std::weak_ptr<PerceptionComponent> m_perception;
 	std::weak_ptr<ProcessorComponent> m_processor;
