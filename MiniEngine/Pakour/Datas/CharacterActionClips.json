@@ -602,7 +602,7 @@
                 },
                 {
                     "class": "EnableCollisionObstacle",
-                    "time": 0.01,
+                    "time": 0.0,
                     "enable": false
                 },
                 {
@@ -618,7 +618,7 @@
                 {
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.1, 0.6 ],
-                    "midOffset": [ 0, 0, -0.5 ],
+                    "midOffset": [ 0, 0.5, -0.5 ],
                     "endOffset": [ 0, 0, 0.25 ]
                 },
                 {
@@ -1923,7 +1923,7 @@
         {
             "tags": [ "Direct_Vault_UnderBar" ],
             "clip": 57,
-            "rootMotion":  { "apply": true },
+            "rootMotion":  { "apply" : true },
             "notifies":
             [
                 {

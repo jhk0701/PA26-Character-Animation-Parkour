@@ -148,6 +148,10 @@ public:
 	// 상태머신
 	void TransitionStateMachine(uint8_t _state);
 
+	void InitFallingTime() { m_fallingTime = 0.0f; }
+	void AddFallingTime(float _dt) { m_fallingTime += _dt; }
+	float GetFallingTime() const { return m_fallingTime; }
+
 private:
 	void InitCollisionLayer();
 
@@ -163,6 +167,7 @@ private:
 	float m_jumpSpeed{ 4.0f };
 
 	Vector3 m_prevForce;
+	float m_fallingTime{ 0.0f };
 
 	float m_capsuleRadius{ 0.25f };
 	float m_capsuleHeight{ 1.6f };

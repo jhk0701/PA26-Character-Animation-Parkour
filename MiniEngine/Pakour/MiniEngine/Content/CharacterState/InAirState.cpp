@@ -14,16 +14,20 @@ void InAirState::OnStart()
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->TranstionBaseTrack(static_cast<uint8_t>(pChar->GetState()), 0.25f);
+	pChar->InitFallingTime();
 }
 
 void InAirState::OnEnd() 
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
 	pChar->SetForce(Vector3(0.0f));
+	pChar->InitFallingTime();
 }
 
 void InAirState::Tick(float _dt)
 {
+	GetMachine()->GetCharacter()->AddFallingTime(_dt);
+
 	ProcessContiniousMovement(_dt);
 
 	CheckState();
@@ -38,6 +42,7 @@ void InAirState::CheckState()
 	// 공중 + 떨어지는 상황
 	// 바닥 감지 필요
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
+
 	if (pChar->IsGrounded() == false)
 		return;
 
@@ -53,7 +58,7 @@ void InAirState::CheckState()
 void InAirState::ProcessContiniousMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-
+	
 	Vector3 decayMovement = Vector3::Lerp(pChar->GetPrevForce(), Vector3(0.0f), 0.75f * _dt);
 	pChar->SetForce(decayMovement);
 	pChar->AddMovementInput(decayMovement * _dt);

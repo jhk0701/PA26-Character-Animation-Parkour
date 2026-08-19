@@ -41,7 +41,7 @@ void UIDebugPerceptionResult::DrawUI()
 		else 
 			ImGui::Text("Room : %.3f", INFO.perceptResult.roomHeight);
 
-		ImGui::Text("Character Velocity : %.2f", pChar->GetVelocity());
+		ImGui::Text("Character Falling Time(sec) : %.2f", pChar->GetFallingTime());
 	}
 
 	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders))
