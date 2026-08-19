@@ -1,12 +1,24 @@
 #include "pch.h"
 #include "Content/UseGravity.h"
 #include "Content/Character.h"
+#include "Scene/CharacterControllerComponent.h"
 
-void UseGravity::Activate(MiniEngine::AnimNotifyParam& _param)
+void UseGravityNotifyState::OnStart(MiniEngine::AnimNotifyParam& _param)
 {
-	if (!_param.m_pActor)
-		return;
+	AnimNotifyState::OnStart(_param);
 
-	Character* pChar = dynamic_cast<Character*>(_param.m_pActor);
-	pChar->SetUseGravity(m_bUseGravity);
+	if (Character* pChar = dynamic_cast<Character*>(_param.m_pActor)) 
+	{
+		pChar->GetController().lock()->SetUseGravityForRootMotion(true);
+	}
+}
+
+void UseGravityNotifyState::OnEnd(MiniEngine::AnimNotifyParam& _param)
+{
+	AnimNotifyState::OnEnd(_param);
+
+	if (Character* pChar = dynamic_cast<Character*>(_param.m_pActor))
+	{
+		pChar->GetController().lock()->SetUseGravityForRootMotion(false);
+	}
 }

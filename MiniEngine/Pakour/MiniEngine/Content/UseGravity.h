@@ -1,12 +1,10 @@
 #pragma once
 #include "Animation/AnimNotify.h"
 
-class UseGravity : public MiniEngine::AnimNotify
+class UseGravityNotifyState : public MiniEngine::AnimNotifyState
 {
-public:
-	void Activate(MiniEngine::AnimNotifyParam& _param) override;
-	void SetUseGravity(bool _bUse) { m_bUseGravity = _bUse; }
-
-private:
-	bool m_bUseGravity{ true };
+protected:
+	void OnStart(MiniEngine::AnimNotifyParam& _param) override;
+	void Activate(float _dt, MiniEngine::AnimNotifyParam& _param) override {};
+	void OnEnd(MiniEngine::AnimNotifyParam& _param) override;
 };

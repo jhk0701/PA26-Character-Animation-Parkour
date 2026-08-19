@@ -50,8 +50,7 @@ namespace MiniEngine
         void SetUseGravity(bool _bUse);
 
         void SetCheckFalling(bool _bCheckFalling);
-
-        float GetVelocity() const { return m_velocity; }
+        void SetUseGravityForRootMotion(bool _bUse) { m_bUseGravityForRootMotion = _bUse; };
 
 #ifdef MG_DEBUG_UI
         // 디버그용
@@ -70,10 +69,11 @@ namespace MiniEngine
         Vector3 m_pendingMove{ 0.0f, 0.0f, 0.0f };
         
         bool    m_bUseGravity { true };
+        bool    m_bUseGravityForRootMotion { false };
+
         bool    m_grounded = false;
         float   m_gravity = -9.81f;
         float   m_verticalVelocity = 0.0f;
-        float   m_velocity = 0.0f;
 
         static constexpr float STICK_TO_GROUND_SPEED = 2.0f;
 

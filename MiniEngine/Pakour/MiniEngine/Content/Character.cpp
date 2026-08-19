@@ -623,7 +623,7 @@ bool Character::IsGrounded() const
 }
 float Character::GetVelocity() const
 {
-	return m_charCont.lock()->GetVelocity();
+	return 0.0f;
 }
 void Character::SetUseGravity(bool _bUse)
 {

@@ -22,6 +22,7 @@
 #include "Content/CorrectRotation.h"
 #include "Content/CharacterIKNotify.h"
 #include "Content/AddMovementNotify.h"
+#include "Content/UseGravity.h"
 
 #include <functional>
 
@@ -46,6 +47,14 @@ namespace
 					pNotify->SetTime(_data.TimeStart);
 					return pNotify;
 				} 
+			},
+			{ "UseGravityNotifyState",
+				[](const AnimNotifyData& _data)
+				{
+					std::shared_ptr<UseGravityNotifyState> pNotify = std::make_shared<UseGravityNotifyState>();
+					pNotify->SetTime(_data.TimeStart, _data.TimeEnd);
+					return pNotify;
+				}
 			},
 			{ "EnableCollisionObstacle",
 				[](const AnimNotifyData& _data)

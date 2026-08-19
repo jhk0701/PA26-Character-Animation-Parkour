@@ -8,3 +8,5 @@ D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\SceneC
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\StaticMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\SkinnedMeshLambert.hlsl
 D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Assets\pyramid.obj
+D:\Project\CharacterAnimation\MiniEngine\Pakour\Build\x64\DebugUI\Shaders\DebugLine.hlsl
+D:\Project\CharacterAnimation\MiniEngine\Pakour\MiniEngine\x64\DebugUI\MiniEngine.vcxproj.CopyComplete

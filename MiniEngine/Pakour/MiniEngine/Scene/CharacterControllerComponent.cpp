@@ -130,7 +130,8 @@ namespace MiniEngine
 
 		// 이동
 		Vector3 disp = m_pendingMove;
-		if (bRootMotionApplied == false)
+
+		if (bRootMotionApplied == false || m_bUseGravityForRootMotion)
 			disp += Vector3(0.0f, m_verticalVelocity * _dt, 0.0f);
 
 		const physx::PxFilterData filterData(m_collisionMask, 0, 0, 0);
@@ -144,8 +145,6 @@ namespace MiniEngine
 
 		if (flags.isSet(physx::PxControllerCollisionFlag::eCOLLISION_UP) && m_verticalVelocity > 0.0f)
 			m_verticalVelocity = 0.0f; // 천장 등등 머리가 접촉한 경우, 상승 초기화
-
-		m_velocity = m_pendingMove.Length();
 
 		m_pendingMove = Vector3(0.0f);
 	}
