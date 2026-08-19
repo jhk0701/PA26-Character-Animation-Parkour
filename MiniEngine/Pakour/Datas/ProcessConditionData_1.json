@@ -7,12 +7,12 @@
             "class": "ObstacleDetectedCondition"
         },
         {
-            "id" : "FallingFor_1s",
+            "id" : "Falling_Long",
             "class" : "CharacterFallingTimeCondition",
-            "value" : 1.0
+            "value" : 0.7
         },
         {
-            "id" : "FallingFor_0_5s",
+            "id" : "Falling_Mid",
             "class" : "CharacterFallingTimeCondition",
             "value" : 0.5
         },
@@ -31,12 +31,12 @@
         {
             "id" : "Landing_FromHigh",
             "class" : "ConditionAnd",
-            "children" : [ "ObstacleIsDetected", "FallingFor_1s" ]
+            "children" : [ "ObstacleIsDetected", "Falling_Long" ]
         },
         {
             "id" : "Landing_FromMid",
             "class" : "ConditionAnd",
-            "children" : [ "ObstacleIsDetected", "FallingFor_0_5s" ]
+            "children" : [ "ObstacleIsDetected", "Falling_Mid" ]
         },
         {
             "id" : "Landing_Fallback",
