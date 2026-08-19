@@ -9,14 +9,14 @@ namespace MiniEngine
 {
 	void TravelResult::Reset()
 	{
-		m_pFirstObstacle = nullptr;
-		m_firstObstacleHitPos = Vector3(0.0f);
-		m_firstObstacleHitNrm = Vector3(0.0f);
-		m_obstacleDistance = 0.0f;
-		m_obstacleLedge = 0.0f;
-		m_obstacleDepth = 0.0f;
-		m_roomHeight = FLT_MAX;
-		m_bDetectLedge = false;
+		pObstacle = nullptr;
+		obstacleHitPos = Vector3(0.0f);
+		obstacleHitNrm = Vector3(0.0f);
+		obstacleDistance = 0.0f;
+		obstacleLedge = 0.0f;
+		obstacleDepth = 0.0f;
+		roomHeight = FLT_MAX;
+		bDetectLedge = false;
 	}
 
 #pragma region Perception Nodes
@@ -97,9 +97,10 @@ namespace MiniEngine
 			return EPerceptionResult::Fail;
 
 		TravelContext context;
-		context.m_owner = owner.lock();
-		context.m_physics = context.m_owner->GetScene()->GetPhysics().lock();
-		context.m_direction = _dir;
+		context.owner = owner.lock();
+		context.physics = context.owner->GetScene()->GetPhysics().lock();
+		context.direction = _dir;
+		context.intermediate.Reset();
 
 		return m_queryTree->Execute(context, m_result);
 	}

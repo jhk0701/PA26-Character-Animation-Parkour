@@ -9,34 +9,27 @@ namespace MiniEngine
 	namespace Physics { class PhysicsWorld; }
 	class Actor;
 
-	struct TravelContext 
-	{
-		std::shared_ptr<Actor> m_owner;
-		std::shared_ptr<Physics::PhysicsWorld> m_physics;
-		Vector3 m_direction;
-
-		// TODO : 중복된 사항 -> 정리 후 제거할 것
-		IObstacle* m_pFirstObstacle{ nullptr };
-		Vector3 m_firstObstacleHitPos;
-		Vector3 m_firstObstacleHitNrm;
-		float m_distance{ 0.0f };
-		float m_ledge{ 0.0f };
-		float m_depth{ 0.0f };
-		bool m_bDetectLedge{ false };
-	};
-
 	struct TravelResult 
 	{
-		IObstacle* m_pFirstObstacle{ nullptr };	// 장애물 객체의 포인터 8
-		Vector3 m_firstObstacleHitPos;			// 접촉 위치 12
-		Vector3 m_firstObstacleHitNrm;			// 접촉 표면 노멀 벡터 12
-		float m_obstacleDistance{ 0.0f };		// 캐릭터와 거리 4
-		float m_obstacleLedge{ 0.0f };			// 모서리 (최종 높이) 4
-		float m_obstacleDepth{ 0.0f };			// 깊이 4
-		float m_roomHeight{ 0.0f };				// 여유 공간
-		bool m_bDetectLedge{ false };			// 모서리 탐지 여부 1
+		IObstacle* pObstacle{ nullptr };	// 장애물 객체의 포인터 8
+		Vector3 obstacleHitPos;				// 접촉 위치 12
+		Vector3 obstacleHitNrm;				// 접촉 표면 노멀 벡터 12
+		float obstacleDistance{ 0.0f };		// 캐릭터와 거리 4
+		float obstacleLedge{ 0.0f };		// 모서리 (최종 높이) 4
+		float obstacleDepth{ 0.0f };		// 깊이 4
+		float roomHeight{ 0.0f };			// 여유 공간
+		bool bDetectLedge{ false };			// 모서리 탐지 여부 1
 
 		void Reset();
+	};
+
+	struct TravelContext
+	{
+		std::shared_ptr<Actor> owner;
+		std::shared_ptr<Physics::PhysicsWorld> physics;
+		Vector3 direction;
+
+		TravelResult intermediate;
 	};
 
 	enum class EPerceptionResult : uint8_t

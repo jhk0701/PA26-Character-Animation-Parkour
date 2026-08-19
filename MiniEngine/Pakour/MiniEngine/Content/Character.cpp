@@ -266,21 +266,21 @@ bool Character::TryPerception(const Vector3& _dir)
 
 void Character::ProcessPerceptionResult(const TravelResult& _result)
 {
-	if (_result.m_pFirstObstacle)
+	if (_result.pObstacle)
 	{
-		m_curObstacleInfo.m_bIsNewObstacle = GetCurObstacle() != _result.m_pFirstObstacle;
-		m_curObstacleInfo.m_pObstacle = _result.m_pFirstObstacle;
+		m_curObstacleInfo.m_bIsNewObstacle = GetCurObstacle() != _result.pObstacle;
+		m_curObstacleInfo.m_pObstacle = _result.pObstacle;
 
-		m_curObstacleInfo.m_obstacleHitPos = _result.m_firstObstacleHitPos;
-		m_curObstacleInfo.m_obstacleHitNrm = _result.m_firstObstacleHitNrm;
-		m_curObstacleInfo.m_obstacleDistance = _result.m_obstacleDistance;
+		m_curObstacleInfo.m_obstacleHitPos = _result.obstacleHitPos;
+		m_curObstacleInfo.m_obstacleHitNrm = _result.obstacleHitNrm;
+		m_curObstacleInfo.m_obstacleDistance = _result.obstacleDistance;
 
-		m_curObstacleInfo.m_obstacleLedge = _result.m_obstacleLedge;
-		m_curObstacleInfo.m_bDetectLedge = _result.m_bDetectLedge;
+		m_curObstacleInfo.m_obstacleLedge = _result.obstacleLedge;
+		m_curObstacleInfo.m_bDetectLedge = _result.bDetectLedge;
 
-		m_curObstacleInfo.m_obstacleDepth = _result.m_obstacleDepth;
-		m_curObstacleInfo.m_obstacleHeight = _result.m_obstacleLedge - GetRoot()->localTransform.position.y;
-		m_curObstacleInfo.m_obstacleRoom = _result.m_roomHeight;
+		m_curObstacleInfo.m_obstacleDepth = _result.obstacleDepth;
+		m_curObstacleInfo.m_obstacleHeight = _result.obstacleLedge - GetRoot()->localTransform.position.y;
+		m_curObstacleInfo.m_obstacleRoom = _result.roomHeight;
 	}
 	else
 	{

@@ -28,7 +28,7 @@ bool CharacterHeightCondition::Evaluate(const TravelResult& _result, const Proce
 {
     // 인식한 지형의 모서리 높이가 캐릭터의 현재 높이 + 지정한 값만큼의 높이보다 낮은지 확인
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
-    return _result.m_obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
+    return _result.obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
 }
 
 bool InputVerticalCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const

@@ -16,7 +16,7 @@ namespace
 
 bool CharacterStateDecorator::Evaluate(const TravelContext& _context) const
 {
-    std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+    std::shared_ptr<Character> pChar = ToChar(_context.owner);
     if (!pChar)
         return false;
 
@@ -25,7 +25,7 @@ bool CharacterStateDecorator::Evaluate(const TravelContext& _context) const
 
 bool InputVerticalDecorator::Evaluate(const TravelContext& _context) const
 {
-    std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+    std::shared_ptr<Character> pChar = ToChar(_context.owner);
     if (!pChar)
         return false;
 
@@ -34,7 +34,7 @@ bool InputVerticalDecorator::Evaluate(const TravelContext& _context) const
 
 bool InputHorizontalDecorator::Evaluate(const TravelContext& _context) const
 {
-    std::shared_ptr<Character> pChar = ToChar(_context.m_owner);
+    std::shared_ptr<Character> pChar = ToChar(_context.owner);
     if (!pChar)
         return false;
 

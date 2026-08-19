@@ -15,11 +15,11 @@ namespace PerceptionNodeUtil
 	template<typename THit>
 	void FillFromResult(MiniEngine::TravelContext& _context, const THit& _result)
 	{
-		_context.m_pFirstObstacle = ToIObstacle(_result.GetActor());
-		_context.m_firstObstacleHitPos = _result.m_pos;
-		_context.m_firstObstacleHitNrm = _result.m_nrm;
-		_context.m_distance = _result.m_distance;
-		_context.m_ledge = _result.m_pos.y;
+		_context.intermediate.pObstacle = ToIObstacle(_result.GetActor());
+		_context.intermediate.obstacleHitPos = _result.m_pos;
+		_context.intermediate.obstacleHitNrm = _result.m_nrm;
+		_context.intermediate.obstacleDistance = _result.m_distance;
+		_context.intermediate.obstacleLedge = _result.m_pos.y;
 	}
 
 	void LocalizePosition(const MiniEngine::Transform& _inTf, const MiniEngine::Vector3& _inOffset, MiniEngine::Vector3& _outResult);

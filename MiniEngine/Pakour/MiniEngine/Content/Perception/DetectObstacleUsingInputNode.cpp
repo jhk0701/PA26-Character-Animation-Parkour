@@ -4,7 +4,7 @@
 
 EPerceptionResult DetectObstacleUsingInputNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	std::shared_ptr<Character> pChar = std::dynamic_pointer_cast<Character>(_context.m_owner);
+	std::shared_ptr<Character> pChar = std::dynamic_pointer_cast<Character>(_context.owner);
 	if (pChar == nullptr)
 		return EPerceptionResult::Fail;
 

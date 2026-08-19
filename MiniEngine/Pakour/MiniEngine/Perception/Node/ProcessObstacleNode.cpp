@@ -8,38 +8,42 @@ namespace MiniEngine
 {
 	EPerceptionResult ProcessBeamNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 	{
-		_context.m_ledge = _context.m_pFirstObstacle->GetNearestLedgeHeight(_context.m_firstObstacleHitPos);
-		_context.m_bDetectLedge = true;
+		TravelResult& intermediate = _context.intermediate;
+		intermediate.obstacleLedge = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
+		intermediate.bDetectLedge = true;
 
 		return EPerceptionResult::Succeess;
 	}
 
 	EPerceptionResult ProcessProtrudeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 	{
-		_context.m_firstObstacleHitPos = _context.m_pFirstObstacle->GetTransform().position;
+		TravelResult& intermediate = _context.intermediate;
+		intermediate.obstacleHitPos = intermediate.pObstacle->GetTransform().position;
 
-		_context.m_ledge = _context.m_pFirstObstacle->GetNearestLedgeHeight(_context.m_firstObstacleHitPos);
-		_context.m_bDetectLedge = true;
+		intermediate.obstacleLedge = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
+		intermediate.bDetectLedge = true;
 
 		return EPerceptionResult::Succeess;
 	}
 
 	EPerceptionResult ProcessPoleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 	{
-		const float LEDGE = _context.m_pFirstObstacle->GetNearestLedgeHeight(_context.m_firstObstacleHitPos);
-		const float CHAR_Y = _context.m_owner->GetRoot()->localTransform.position.y;
+		TravelResult& intermediate = _context.intermediate;
+
+		const float LEDGE = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
+		const float CHAR_Y = _context.owner->GetRoot()->localTransform.position.y;
 		const float DIFF = LEDGE - CHAR_Y;
 
-		const Vector3 OBS_POS = _context.m_pFirstObstacle->GetTransform().position;
-		_context.m_firstObstacleHitPos.x = OBS_POS.x;
-		_context.m_firstObstacleHitPos.z = OBS_POS.z;
+		const Vector3 OBS_POS = intermediate.pObstacle->GetTransform().position;
+		intermediate.obstacleHitPos.x = OBS_POS.x;
+		intermediate.obstacleHitPos.z = OBS_POS.z;
 
 		if (DIFF >= m_heightLimit)
-			_context.m_ledge = CHAR_Y + m_heightLimit;
+			intermediate.obstacleLedge = CHAR_Y + m_heightLimit;
 		else
 		{
-			_context.m_ledge = LEDGE;
-			_context.m_bDetectLedge = true;
+			intermediate.obstacleLedge = LEDGE;
+			intermediate.bDetectLedge = true;
 		}
 
 		// MG_LOG_INFO("[ProcessPoleNode::InvokeTask] hit pos : {:.2f}, {:.2f}, {:.2f}", _context.m_firstObstacleHitPos.x, _context.m_ledge, _context.m_firstObstacleHitPos.z);
@@ -49,8 +53,10 @@ namespace MiniEngine
 
 	EPerceptionResult ProcessDirectNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 	{
-		_context.m_ledge = _context.m_pFirstObstacle->GetTransform().position.y;
-		_context.m_bDetectLedge = true;
+		TravelResult& intermediate = _context.intermediate;
+
+		intermediate.obstacleLedge = intermediate.pObstacle->GetTransform().position.y;
+		intermediate.bDetectLedge = true;
 
 		// MG_LOG_INFO("[ProcessDirectNode::InvokeTask] hit pos : {:.2f}, {:.2f}, {:.2f}", _context.m_firstObstacleHitPos.x, _context.m_ledge, _context.m_firstObstacleHitPos.z);
 

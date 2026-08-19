@@ -12,15 +12,15 @@ using namespace MiniEngine::Physics;
 
 EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
 
-	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
+	const Transform& TF = _context.owner->GetRoot()->localTransform;
 	const float FOOT_Y = TF.position.y;
 
 	const PerceptionConfig& CONFIG = pProcessor->GetPerceptionConfig();
-	const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
+	const Vector3& PROBE_XZ = _context.intermediate.obstacleHitPos;
 	
 	Vector3 dir(0.0f);
 	PerceptionNodeUtil::LocalizeDirection(TF, GetDirection(), dir);
@@ -41,7 +41,7 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		param.m_maxDistance = CONFIG.heightSearchtDist;
 
 		RaycastResult result;
-		if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
+		if (_context.physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 		{
 #if MG_DEBUG_LOG
 			MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::RED, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
@@ -60,16 +60,16 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		}
 	}
 
-	_context.m_ledge = bFirstTouched ? 
+	_context.intermediate.obstacleLedge = bFirstTouched ? 
 		FOOT_Y + CONFIG.heightLift + band * CONFIG.heightStep :
 		FOOT_Y + CONFIG.heightLift;
 
-	if (band > 0 && band < CONFIG.maxHeightStep)
+	if (band > 0 && band <= CONFIG.maxHeightStep)
 	{
 		SpherecastParam param;
 		param.m_startPos = Vector3(
 			PROBE_XZ.x,
-			_context.m_ledge - CONFIG.heightRadius,
+			_context.intermediate.obstacleLedge - CONFIG.heightRadius,
 			PROBE_XZ.z);
 		param.m_dir = dir;
 		param.m_radius = CONFIG.ledgeDetectRadius;
@@ -80,10 +80,10 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 #endif // MG_DEBUG_LOG
 
 		RaycastResult ledgeResult;
-		if (_context.m_physics->SphereCast(param, ledgeResult, ToMask(Layer::ObstacleLedge)))
+		if (_context.physics->SphereCast(param, ledgeResult, ToMask(Layer::ObstacleLedge)))
 		{
-			_context.m_ledge = ledgeResult.m_pos.y;
-			_context.m_bDetectLedge = true;
+			_context.intermediate.obstacleLedge = ledgeResult.m_pos.y;
+			_context.intermediate.bDetectLedge = true;
 		}
 	}
 
@@ -92,19 +92,19 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 
 EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
 
 	const PerceptionConfig& CONFIG = pProcessor->GetPerceptionConfig();
 	const Vector3 TOP(
-		_context.m_firstObstacleHitPos.x,
-		_context.m_ledge + CONFIG.depthLift,
-		_context.m_firstObstacleHitPos.z
+		_context.intermediate.obstacleHitPos.x,
+		_context.intermediate.obstacleLedge + CONFIG.depthLift,
+		_context.intermediate.obstacleHitPos.z
 	);
 	
 	Vector3 dir(0.0f);
-	PerceptionNodeUtil::LocalizeDirection(_context.m_owner->GetRoot()->localTransform, GetDirection(), dir);
+	PerceptionNodeUtil::LocalizeDirection(_context.owner->GetRoot()->localTransform, GetDirection(), dir);
 
 	float depth = 0.0f;
 	for (uint8_t i = 1; i <= CONFIG.maxDepthStep; ++i)
@@ -119,16 +119,16 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 #endif // MG_DEBUG_LOG
 
 		RaycastResult result;
-		if (_context.m_physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
+		if (_context.physics->Raycast(param, result, ToMask(Layer::Obstacle)) == false)
 			break; // 못 딛는 구간
 
-		if (PerceptionNodeUtil::ToIObstacle(result.GetActor()) != _context.m_pFirstObstacle)
+		if (PerceptionNodeUtil::ToIObstacle(result.GetActor()) != _context.intermediate.pObstacle)
 			break;
 
 		depth = CONFIG.depthStep * i;
 	}
 
-	_context.m_depth = depth;
+	_context.intermediate.obstacleDepth = depth;
 
 	return EPerceptionResult::Succeess;
 }
@@ -137,18 +137,18 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 /// 최종 관측 지점에서 한번 더 레이를 쏴서 여유 공간이 있는지 확인
 EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
 
 	const Transform& TF = pProcessor->GetTransform();
-	const Vector3& PROBE_XZ = _context.m_firstObstacleHitPos;
+	const Vector3& PROBE_XZ = _context.intermediate.obstacleHitPos;
 
 	SpherecastParam param;
 	PerceptionNodeUtil::LocalizeDirection(TF, GetDirection(), param.m_dir);
 	param.m_radius = m_radius;
 	param.m_maxDistance = m_distance;
-	param.m_startPos = m_startOffset + Vector3(PROBE_XZ.x, _context.m_ledge, PROBE_XZ.z);
+	param.m_startPos = m_startOffset + Vector3(PROBE_XZ.x, _context.intermediate.obstacleLedge, PROBE_XZ.z);
 
 #if MG_DEBUG_LOG
 	Vector3 endPos = param.m_startPos + param.m_dir * param.m_maxDistance;
@@ -157,10 +157,10 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResul
 #endif // MG_DEBUG_LOG
 
 	RaycastResult result;
-	if (_context.m_physics->SphereCast(param, result, ToMask(MiniEngine::Physics::Layer::Obstacle)))
+	if (_context.physics->SphereCast(param, result, ToMask(MiniEngine::Physics::Layer::Obstacle)))
 	{
-		_result.m_roomHeight = result.m_pos.y - param.m_startPos.y + m_startOffset.y;
-		MG_LOG_INFO("[CheckRoomNode::InvokeTask] Not Enough Room : {}", _result.m_roomHeight);
+		_context.intermediate.roomHeight = result.m_pos.y - param.m_startPos.y + m_startOffset.y;
+		MG_LOG_INFO("[CheckRoomNode::InvokeTask] Not Enough Room : {}", _context.intermediate.roomHeight);
 	}
 	
 	return EPerceptionResult::Succeess;

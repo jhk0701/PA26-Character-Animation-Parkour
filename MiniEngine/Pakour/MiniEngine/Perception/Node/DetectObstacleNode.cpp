@@ -67,8 +67,8 @@ void DetectNode::ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outP
 
 EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	const Transform& TF = _context.owner->GetRoot()->localTransform;
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
@@ -87,7 +87,7 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	if (GetDirection().LengthSquared() > 1e-4f)
 		LocalizeDirection(TF, GetDirection(), param.m_dir);
 	else
-		param.m_dir = _context.m_direction;
+		param.m_dir = _context.direction;
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	Vector3 debugEnd = param.m_startPos + param.m_dir * param.m_maxDistance;
@@ -102,7 +102,7 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
-	if (_context.m_physics->CapsuleCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)
+	if (_context.physics->CapsuleCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)
 		return EPerceptionResult::Succeess;
 
 	// 2. 우선순위 + 거리에 따른 정렬
@@ -116,8 +116,8 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 
 EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	const Transform& TF = _context.owner->GetRoot()->localTransform;
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
@@ -135,7 +135,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	if (GetDirection().LengthSquared() > 1e-4f)
 		LocalizeDirection(TF, GetDirection(), param.m_dir);
 	else
-		param.m_dir = _context.m_direction;
+		param.m_dir = _context.direction;
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
@@ -143,7 +143,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
-	if (_context.m_physics->SphereCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)
+	if (_context.physics->SphereCastMultiple(param, hits, ToMask(Layer::Obstacle)) == false)
 		return EPerceptionResult::Succeess;
 
 	// 2. 우선순위 + 거리에 따른 정렬
@@ -161,17 +161,17 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
 
-	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
+	ApplyOwnerTransform(_context.owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
 #endif // 0
 
 	RaycastResult result;
-	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
+	if (_context.physics->SphereCast(param, result, ToMask(Layer::ObstacleLedge)))
 	{
 		FillFromResult(_context, result);
-		_context.m_bDetectLedge = true;
+		_context.intermediate.bDetectLedge = true;
 	}
 
 	return EPerceptionResult::Succeess;
@@ -183,10 +183,10 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 	param.m_radius = GetRadius();
 	param.m_maxDistance = GetDistance();
 
-	ApplyOwnerTransform(_context.m_owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
+	ApplyOwnerTransform(_context.owner->GetRoot()->localTransform, param.m_startPos, param.m_dir);
 
 	RaycastMultipleResult result;
-	bool bIsHit = _context.m_physics->SphereCastMultiple(param, result, ToMask(Layer::ObstacleLedge));
+	bool bIsHit = _context.physics->SphereCastMultiple(param, result, ToMask(Layer::ObstacleLedge));
 
 #if MG_DEBUG_LOG || MG_DEBUG
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
@@ -202,15 +202,15 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 	RaycastResult firstResult;
 	firstResult.FillFromHitResult(result.m_bIsHit, result.m_hitResults.front());
 	FillFromResult(_context, firstResult);
-	_context.m_bDetectLedge = true;
+	_context.intermediate.bDetectLedge = true;
 
 	return EPerceptionResult::Succeess;
 }
 
 EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	const Transform& TF = _context.owner->GetRoot()->localTransform;
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
@@ -228,9 +228,9 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, T
 #endif // 0
 
 	RaycastResult result;
-	if (_context.m_physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
+	if (_context.physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 	{
-		_context.m_pFirstObstacle = nullptr;
+		_context.intermediate.pObstacle = nullptr;
 		return EPerceptionResult::Succeess;
 	}
 
@@ -242,8 +242,8 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, T
 
 EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, TravelResult& _result)
 {
-	const Transform& TF = _context.m_owner->GetRoot()->localTransform;
-	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.m_owner);
+	const Transform& TF = _context.owner->GetRoot()->localTransform;
+	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 
 	if (!pProcessor)
 		return EPerceptionResult::Fail;
@@ -261,9 +261,9 @@ EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, TravelRes
 #endif // MG
 
 	RaycastResult result;
-	if (_context.m_physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)
+	if (_context.physics->SphereCast(param, result, Layer::Obstacle | Layer::Ground) == false)
 	{
-		_context.m_pFirstObstacle = nullptr;
+		_context.intermediate.pObstacle = nullptr;
 		return EPerceptionResult::Succeess;
 	}
 

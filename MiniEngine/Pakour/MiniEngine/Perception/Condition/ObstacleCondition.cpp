@@ -13,16 +13,16 @@ namespace MiniEngine
 {
 	bool ObstacleDetectedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		return _result.m_pFirstObstacle != nullptr;
+		return _result.pObstacle != nullptr;
 	}
 
 	bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		if (!_result.m_pFirstObstacle)
+		if (!_result.pObstacle)
 			return false;
 
 		uint8_t type = 0;
-		if (_result.m_pFirstObstacle->TryGetTag(TAG_ENV_DETAIL, type) == false)
+		if (_result.pObstacle->TryGetTag(TAG_ENV_DETAIL, type) == false)
 			return false;
 
 		// MG_LOG_INFO("[ObstacleTypeCondition] Result : {}", type == m_targetType ? "true" : "false");
@@ -46,7 +46,7 @@ namespace MiniEngine
 	bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
-		const float DIFF = _result.m_obstacleLedge - _context.pOwner->GetTransform().position.y;
+		const float DIFF = _result.obstacleLedge - _context.pOwner->GetTransform().position.y;
 		return GetValue() <= DIFF;
 		
 		// return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
@@ -57,14 +57,14 @@ namespace MiniEngine
 		// MG_LOG_INFO("[ObstacleDepthCondition] Compare {:.2f}, {:.2f} :: {}", GetValue(), _result.m_obstacleDepth, GetValue() <= _result.m_obstacleDepth ? "true" : "false");
 
 		// 측정한 깊이가 기준 깊이보다 깊음
-		return GetValue() <= _result.m_obstacleDepth;
+		return GetValue() <= _result.obstacleDepth;
 	}
 
 	bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		const Transform& TF = _context.pOwner->GetTransform();
 
-		Vector3 point = _result.m_firstObstacleHitPos;
+		Vector3 point = _result.obstacleHitPos;
 		point.y = 0.0f;
 		Vector3 charPos = TF.position;
 		charPos.y = 0.0f;
@@ -79,13 +79,13 @@ namespace MiniEngine
 	bool DetectLedgeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		// MG_LOG_INFO("[DetectLedgeCondition] Check : {}", _result.m_bDetectLedge);
-		return _result.m_bDetectLedge;
+		return _result.bDetectLedge;
 	}
 
 	bool ObstacleHitDistanceCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
 		// MG_LOG_INFO("[ObstacleHitDistanceCondition] GetValue : {:.2f}, HitDist : {:.2f}", GetValue(), _result.m_obstacleDistance);
-		return GetValue() < _result.m_obstacleDistance;
+		return GetValue() < _result.obstacleDistance;
 	}
 
 	bool DetectNewObstacle::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
@@ -96,6 +96,6 @@ namespace MiniEngine
 
 	bool CheckRoomCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
 	{
-		return GetValue() < _result.m_roomHeight;
+		return GetValue() < _result.roomHeight;
 	}
 }
