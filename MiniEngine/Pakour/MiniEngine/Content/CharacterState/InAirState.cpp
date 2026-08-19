@@ -38,13 +38,8 @@ void InAirState::CheckState()
 	// 공중 + 떨어지는 상황
 	// 바닥 감지 필요
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	if (pChar->IsGrounded() == false && pChar->IsFalling())
+	if (pChar->IsGrounded() == false)
 		return;
-
-#ifdef MG_DEBUG_UI
-	bool bIsGrounded = pChar->IsGrounded();
-	bool bIsFalling = pChar->IsFalling();
-#endif // DEBUG
 
 	pChar->TryPerception((uint8_t)Character::EPerceptType::OnLand, Vector3(0.0f, -1.0f, 0.0f));
 	pChar->SetState(Character::EState::Landing);
