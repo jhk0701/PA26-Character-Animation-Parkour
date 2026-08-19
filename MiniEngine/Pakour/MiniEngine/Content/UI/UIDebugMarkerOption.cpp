@@ -6,6 +6,7 @@
 void UIDebugMarkerOption::Construct()
 {
 	SetName("Debugger Drawer Toggle");
+	m_defaultSize = ImVec2(200.0f, 100.0f);
 }
 
 void UIDebugMarkerOption::DrawUI()
@@ -13,7 +14,6 @@ void UIDebugMarkerOption::DrawUI()
 	if (m_pScene.expired())
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(200.0f, 100.0f), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Checkbox("Apply Physics Drawer", &m_bApplyPhysic)) 
 		m_pScene.lock()->ApplyPhysicsDebug(m_bApplyPhysic);

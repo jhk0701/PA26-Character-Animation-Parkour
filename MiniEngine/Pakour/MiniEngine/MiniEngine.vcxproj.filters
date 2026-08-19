@@ -178,10 +178,19 @@
     <ClInclude Include="Asset\MiniLoader.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\EditorUI.h">
+    <ClInclude Include="Editor\AssimpBaker.h">
       <Filter>Engine\04.Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\AssimpBaker.h">
+    <ClInclude Include="Editor\EditorPathUtil.h">
+      <Filter>Engine\04.Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\EditorScene.h">
+      <Filter>Engine\04.Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\UIBakePanel.h">
+      <Filter>Engine\04.Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\UIMiniEditPanel.h">
       <Filter>Engine\04.Editor</Filter>
     </ClInclude>
     <ClInclude Include="Asset\Skeleton.h">
@@ -468,10 +477,16 @@
     <ClCompile Include="Asset\MiniLoader.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\EditorUI.cpp">
+    <ClCompile Include="Editor\AssimpBaker.cpp">
       <Filter>Engine\04.Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\AssimpBaker.cpp">
+    <ClCompile Include="Editor\EditorScene.cpp">
+      <Filter>Engine\04.Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\UIBakePanel.cpp">
+      <Filter>Engine\04.Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\UIMiniEditPanel.cpp">
       <Filter>Engine\04.Editor</Filter>
     </ClCompile>
     <ClCompile Include="Asset\AnimClip.cpp">
@@ -738,6 +753,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\SkinnedMeshLambert.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\DebugLine.hlsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Assets\pyramid.obj">

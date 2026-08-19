@@ -251,8 +251,11 @@
     <ClInclude Include="Asset\AnimClip.h" />
     <ClInclude Include="Asset\SkinnedMesh.h" />
     <ClInclude Include="Asset\MiniLoader.h" />
-    <ClInclude Include="Editor\EditorUI.h" />
     <ClInclude Include="Editor\AssimpBaker.h" />
+    <ClInclude Include="Editor\EditorPathUtil.h" />
+    <ClInclude Include="Editor\EditorScene.h" />
+    <ClInclude Include="Editor\UIBakePanel.h" />
+    <ClInclude Include="Editor\UIMiniEditPanel.h" />
     <ClInclude Include="UI\UIBase.h" />
   </ItemGroup>
   <ItemGroup>
@@ -345,8 +348,10 @@
     <ClCompile Include="Asset\AnimClip.cpp" />
     <ClCompile Include="Asset\SkinnedMesh.cpp" />
     <ClCompile Include="Asset\MiniLoader.cpp" />
-    <ClCompile Include="Editor\EditorUI.cpp" />
     <ClCompile Include="Editor\AssimpBaker.cpp" />
+    <ClCompile Include="Editor\EditorScene.cpp" />
+    <ClCompile Include="Editor\UIBakePanel.cpp" />
+    <ClCompile Include="Editor\UIMiniEditPanel.cpp" />
     <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +370,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\SkinnedMeshLambert.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\DebugLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\Assets\pyramid.obj">

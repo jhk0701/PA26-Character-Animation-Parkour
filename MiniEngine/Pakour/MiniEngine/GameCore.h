@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "DirectXBase.h"
-#include "Editor/EditorUI.h"
 
 // 테스트용 전방선언
 namespace MiniEngine { class CameraComponent; }
@@ -26,9 +25,6 @@ public:
 private:
 	// Lambert 셰이더 + 상수버퍼 생성.
 	bool InitRenderResources();
-
-	// 에디터 UI
-	MiniEngine::Editor::EditorUI				m_editor;
 
 	// 렌더 리소스
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_vertexShader;
