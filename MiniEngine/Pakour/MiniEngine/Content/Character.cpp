@@ -264,7 +264,7 @@ bool Character::TryPerception(const Vector3& _dir)
 	return true;
 }
 
-void Character::ProcessPerceptionResult(const TravelResult& _result)
+void Character::ProcessPerceptionResult(const PerceptResult& _result)
 {
 	if (_result.pObstacle)
 	{

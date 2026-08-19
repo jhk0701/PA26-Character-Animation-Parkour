@@ -27,11 +27,35 @@ namespace MiniEngine
 		uint8_t maxHeightStep{ 3 };		// 높이 측정 횟수
 		uint8_t maxDepthStep{ 2 };		// 깊이 측정 횟수
 	};
+	
+	struct PerceptResult
+	{
+		IObstacle* pObstacle{ nullptr };	// 장애물 객체의 포인터 8
+		Vector3 obstacleHitPos;				// 접촉 위치 12
+		Vector3 obstacleHitNrm;				// 접촉 표면 노멀 벡터 12
+		float obstacleDistance{ 0.0f };		// 캐릭터와 거리 4
+		float obstacleLedge{ 0.0f };		// 모서리 (최종 높이) 4
+		float obstacleDepth{ 0.0f };		// 깊이 4
+		float roomHeight{ 0.0f };			// 여유 공간
+		bool bDetectLedge{ false };			// 모서리 탐지 여부 1
+
+		void Reset() 
+		{
+			pObstacle = nullptr;
+			obstacleHitPos = Vector3(0.0f);
+			obstacleHitNrm = Vector3(0.0f);
+			obstacleDistance = 0.0f;
+			obstacleLedge = 0.0f;
+			obstacleDepth = 0.0f;
+			roomHeight = FLT_MAX;
+			bDetectLedge = false;
+		}
+	};
 
 	struct PerceptedObstacleInfo
 	{
-		IObstacle* m_pObstacle{ nullptr };
 		bool m_bIsNewObstacle{ true };
+		IObstacle* m_pObstacle{ nullptr };
 
 		// Travel Result와 중복 -> 정리 필요
 		bool m_bDetectLedge{ false };

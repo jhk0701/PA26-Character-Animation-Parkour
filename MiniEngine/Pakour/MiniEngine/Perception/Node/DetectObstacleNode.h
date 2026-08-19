@@ -5,6 +5,8 @@ namespace MiniEngine
 { 
 	class IObstacle; 
 	class IPerceptionProcessor;
+
+	struct PerceptResult;
 }
 namespace MiniEngine::Physics 
 { 
@@ -48,7 +50,7 @@ class DetectObstacleCapsuleNode : public DetectNode
 {
 public:
 	virtual ~DetectObstacleCapsuleNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 
 	void SetCapsuleHeight(const float _h) { m_capsuleHeight = _h; }
 private:
@@ -59,33 +61,33 @@ class DetectObstacleSphereNode : public DetectNode
 {
 public:
 	virtual ~DetectObstacleSphereNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 class DetectLedgeNode : public DetectNode
 {
 public:
 	virtual ~DetectLedgeNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 class DetectLedgeMultipleNode : public DetectNode
 {
 public:
 	virtual ~DetectLedgeMultipleNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 class CheckObstacleSphereNode : public DetectNode
 {
 public:
 	virtual ~CheckObstacleSphereNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 class DetectFloorNode : public DetectNode
 {
 public:
 	virtual ~DetectFloorNode() {};
-	virtual EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	virtual EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };

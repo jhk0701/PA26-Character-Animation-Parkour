@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "CharacterCondition.h"
 
-#include "Perception/PerceptionComponent.h"
 #include "Perception/Interface/IObstacle.h"
+#include "Perception/Interface/IPerceptionProcessor.h"
 
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
@@ -18,20 +18,20 @@ namespace
     }
 }
 
-bool CharacterStateCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+bool CharacterStateCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
     return (uint8_t)pChar->GetState() == GetValue();
 }
 
-bool CharacterHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+bool CharacterHeightCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 {
     // 인식한 지형의 모서리 높이가 캐릭터의 현재 높이 + 지정한 값만큼의 높이보다 낮은지 확인
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
     return _result.obstacleLedge < pChar->GetRoot()->localTransform.position.y + GetValue();
 }
 
-bool InputVerticalCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+bool InputVerticalCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
 
@@ -43,7 +43,7 @@ bool InputVerticalCondition::Evaluate(const TravelResult& _result, const Process
     return GetValue() < pChar->GetInputDir().y;
 }
 
-bool InputHorizontalCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+bool InputHorizontalCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 {
     std::shared_ptr<Character> pChar = ToChar(_context.pOwner);
 

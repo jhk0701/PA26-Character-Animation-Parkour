@@ -18,20 +18,20 @@ private:
 class MeasureObstacleHeightNode : public MeasureObstacleNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 class MeasureObstacleDepthNode : public MeasureObstacleNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };
 
 // 여유 공간이 있는지 확인용도
 class CheckRoomNode : public MeasureObstacleNode
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 
 	void SetStartOffset(const Vector3& _offset) { m_startOffset = _offset; }
 	void SetDistance(const float _dist) { m_distance = _dist; }

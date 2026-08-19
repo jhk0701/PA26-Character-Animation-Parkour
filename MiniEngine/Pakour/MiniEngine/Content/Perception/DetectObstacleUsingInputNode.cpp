@@ -2,7 +2,7 @@
 #include "Content/Perception/DetectObstacleUsingInputNode.h"
 #include "Content/Character.h"
 
-EPerceptionResult DetectObstacleUsingInputNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectObstacleUsingInputNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	std::shared_ptr<Character> pChar = std::dynamic_pointer_cast<Character>(_context.owner);
 	if (pChar == nullptr)

@@ -10,7 +10,7 @@
 
 using namespace MiniEngine::Physics;
 
-EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)
@@ -90,7 +90,7 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)
@@ -135,7 +135,7 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 
 
 /// 최종 관측 지점에서 한번 더 레이를 쏴서 여유 공간이 있는지 확인
-EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
 	if (!pProcessor)

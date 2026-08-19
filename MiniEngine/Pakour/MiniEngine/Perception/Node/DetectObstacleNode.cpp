@@ -65,7 +65,7 @@ void DetectNode::ApplyOwnerTransform(const Transform& _inOwnerTf, Vector3& _outP
 	LocalizeDirection(_inOwnerTf, GetDirection(), _outDir);
 }
 
-EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	const Transform& TF = _context.owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
@@ -114,7 +114,7 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	const Transform& TF = _context.owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
@@ -155,7 +155,7 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	SpherecastParam param;
 	param.m_radius = GetRadius();
@@ -177,7 +177,7 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, TravelRes
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	SpherecastParam param;
 	param.m_radius = GetRadius();
@@ -207,7 +207,7 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, T
 	return EPerceptionResult::Succeess;
 }
 
-EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	const Transform& TF = _context.owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);
@@ -240,7 +240,7 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, T
 }
 
 
-EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 {
 	const Transform& TF = _context.owner->GetRoot()->localTransform;
 	std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.owner);

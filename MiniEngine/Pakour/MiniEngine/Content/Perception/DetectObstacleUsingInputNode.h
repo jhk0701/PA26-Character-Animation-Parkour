@@ -6,5 +6,5 @@ using namespace MiniEngine;
 class DetectObstacleUsingInputNode : public DetectObstacleCapsuleNode 
 {
 public:
-	EPerceptionResult InvokeTask(TravelContext& _context, TravelResult& _result) override;
+	EPerceptionResult InvokeTask(TravelContext& _context, PerceptResult& _result) override;
 };

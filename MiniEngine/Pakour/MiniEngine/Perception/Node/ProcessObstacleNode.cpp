@@ -6,18 +6,18 @@
 
 namespace MiniEngine
 {
-	EPerceptionResult ProcessBeamNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult ProcessBeamNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 	{
-		TravelResult& intermediate = _context.intermediate;
+		PerceptResult& intermediate = _context.intermediate;
 		intermediate.obstacleLedge = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
 		intermediate.bDetectLedge = true;
 
 		return EPerceptionResult::Succeess;
 	}
 
-	EPerceptionResult ProcessProtrudeNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult ProcessProtrudeNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 	{
-		TravelResult& intermediate = _context.intermediate;
+		PerceptResult& intermediate = _context.intermediate;
 		intermediate.obstacleHitPos = intermediate.pObstacle->GetTransform().position;
 
 		intermediate.obstacleLedge = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
@@ -26,9 +26,9 @@ namespace MiniEngine
 		return EPerceptionResult::Succeess;
 	}
 
-	EPerceptionResult ProcessPoleNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult ProcessPoleNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 	{
-		TravelResult& intermediate = _context.intermediate;
+		PerceptResult& intermediate = _context.intermediate;
 
 		const float LEDGE = intermediate.pObstacle->GetNearestLedgeHeight(intermediate.obstacleHitPos);
 		const float CHAR_Y = _context.owner->GetRoot()->localTransform.position.y;
@@ -51,9 +51,9 @@ namespace MiniEngine
 		return EPerceptionResult::Succeess;
 	}
 
-	EPerceptionResult ProcessDirectNode::InvokeTask(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult ProcessDirectNode::InvokeTask(TravelContext& _context, PerceptResult& _result)
 	{
-		TravelResult& intermediate = _context.intermediate;
+		PerceptResult& intermediate = _context.intermediate;
 
 		intermediate.obstacleLedge = intermediate.pObstacle->GetTransform().position.y;
 		intermediate.bDetectLedge = true;

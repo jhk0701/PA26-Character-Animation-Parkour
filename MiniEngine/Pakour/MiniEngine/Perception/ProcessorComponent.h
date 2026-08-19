@@ -4,7 +4,7 @@
 namespace MiniEngine
 {
 	class IPerceptionProcessor;
-	struct TravelResult;
+	struct PerceptResult;
 
 	struct ProcessContext
 	{
@@ -19,7 +19,7 @@ namespace MiniEngine
 	{
 	public:
 		virtual ~ProcessCondition() {};
-		bool Process(const TravelResult& _result, const ProcessContext& _context);
+		bool Process(const PerceptResult& _result, const ProcessContext& _context);
 
 		// 결과 반전 처리 -> 조건문에서 ! 와 동일
 		void Invert(bool _bIsInvert) { m_bIsInvert = _bIsInvert; }
@@ -38,7 +38,7 @@ namespace MiniEngine
 
 	protected:
 		// 자식에서 세부 구현
-		virtual bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const = 0;
+		virtual bool Evaluate(const PerceptResult& _result, const ProcessContext& _context) const = 0;
 
 	private:
 		bool m_bIsInvert{ false };		// 반전 여부
@@ -59,14 +59,14 @@ namespace MiniEngine
 	class ConditionAnd : public CompositeCondition
 	{
 	protected:
-		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+		bool Evaluate(const PerceptResult& _result, const ProcessContext& _context) const override;
 	};
 
 	// 자식 조건 중 1개만 만족하면 true. 이후 조건은 return
 	class ConditionOr : public CompositeCondition
 	{
 	protected:
-		bool Evaluate(const TravelResult& _result, const ProcessContext& _context) const override;
+		bool Evaluate(const PerceptResult& _result, const ProcessContext& _context) const override;
 	};
 
 	// 조건 모음
@@ -74,7 +74,7 @@ namespace MiniEngine
 	{
 	public:
 		void Init(uint8_t _result, std::shared_ptr<ProcessCondition> _pCondition);
-		bool TryQuery(const TravelResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const;
+		bool TryQuery(const PerceptResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const;
 
 	private:
 		uint8_t m_result;
@@ -97,7 +97,7 @@ namespace MiniEngine
 	class ProcessorComponent : public Component
 	{
 	public:
-		bool ProcessResult(const TravelResult& _inTravelResult, uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
+		bool ProcessResult(const PerceptResult& _inTravelResult, uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
 		void Init(std::vector<std::shared_ptr<ProcessCondition>>&& _conds, std::vector<std::shared_ptr<ProcessData>>&& _datas)
 		{
 			m_conditions = std::move(_conds);

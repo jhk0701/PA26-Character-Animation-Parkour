@@ -7,18 +7,6 @@ using namespace MiniEngine::Physics;
 
 namespace MiniEngine 
 {
-	void TravelResult::Reset()
-	{
-		pObstacle = nullptr;
-		obstacleHitPos = Vector3(0.0f);
-		obstacleHitNrm = Vector3(0.0f);
-		obstacleDistance = 0.0f;
-		obstacleLedge = 0.0f;
-		obstacleDepth = 0.0f;
-		roomHeight = FLT_MAX;
-		bDetectLedge = false;
-	}
-
 #pragma region Perception Nodes
 
 	bool PerceptionDecorator::Process(const TravelContext& _context)
@@ -47,12 +35,12 @@ namespace MiniEngine
 		return true;
 	}
 
-	EPerceptionResult TaskNode::Execute(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult TaskNode::Execute(TravelContext& _context, PerceptResult& _result)
 	{
 		return InvokeTask(_context, _result);
 	}
 
-	EPerceptionResult SequenceNode::Execute(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult SequenceNode::Execute(TravelContext& _context, PerceptResult& _result)
 	{
 		const std::vector<std::shared_ptr<PerceptionNode>>& children = GetChildren();
 		for (const std::shared_ptr<PerceptionNode>& child : children)
@@ -68,7 +56,7 @@ namespace MiniEngine
 		return EPerceptionResult::Succeess;
 	}
 
-	EPerceptionResult SelectorNode::Execute(TravelContext& _context, TravelResult& _result)
+	EPerceptionResult SelectorNode::Execute(TravelContext& _context, PerceptResult& _result)
 	{
 		const std::vector<std::shared_ptr<PerceptionNode>>& children = GetChildren();
 		for (const std::shared_ptr<PerceptionNode>& child : children)

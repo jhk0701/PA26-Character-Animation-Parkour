@@ -9,7 +9,7 @@ namespace MiniEngine
 #pragma region Process Nodes 인지 결과 처리용
 
 	bool ProcessCondition::Process(
-		const TravelResult& _result, 
+		const PerceptResult& _result,
 		const ProcessContext& _context
 	)
 	{
@@ -33,7 +33,7 @@ namespace MiniEngine
 		m_children = std::move(_children);
 	}
 
-	bool ConditionAnd::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ConditionAnd::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
@@ -46,7 +46,7 @@ namespace MiniEngine
 		return true;
 	}
 
-	bool ConditionOr::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ConditionOr::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		for (const std::weak_ptr<ProcessCondition>& pCond : m_children)
 		{
@@ -65,7 +65,7 @@ namespace MiniEngine
 		m_pCondition = _pCondition;
 	}
 
-	bool ProcessData::TryQuery(const TravelResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const
+	bool ProcessData::TryQuery(const PerceptResult& _inResult, const ProcessContext& _inContext, uint8_t& _outResult) const
 	{
 		if (m_pCondition.expired())
 		{
@@ -83,7 +83,7 @@ namespace MiniEngine
 
 #pragma endregion
 
-	bool ProcessorComponent::ProcessResult(const TravelResult& _inTravelResult, uint8_t& _outResult) const
+	bool ProcessorComponent::ProcessResult(const PerceptResult& _inTravelResult, uint8_t& _outResult) const
 	{
 		if (owner.expired())
 		{

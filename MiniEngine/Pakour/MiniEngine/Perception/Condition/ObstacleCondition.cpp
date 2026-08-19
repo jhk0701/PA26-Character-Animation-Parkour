@@ -11,12 +11,12 @@
 
 namespace MiniEngine 
 {
-	bool ObstacleDetectedCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleDetectedCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		return _result.pObstacle != nullptr;
 	}
 
-	bool ObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleTypeCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		if (!_result.pObstacle)
 			return false;
@@ -30,7 +30,7 @@ namespace MiniEngine
 		return type == GetValue();
 	}
 
-	bool LastObstacleTypeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool LastObstacleTypeCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		IObstacle* pCurObstacle = _context.pOwner->GetCurObstacle();
 		if (!pCurObstacle)
@@ -43,7 +43,7 @@ namespace MiniEngine
 		return type == GetValue();
 	}
 
-	bool ObstacleHeightCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleHeightCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		// 측정한 모서리 높이가 캐릭터의 발 위치 + 기준 높이보다 높다
 		const float DIFF = _result.obstacleLedge - _context.pOwner->GetTransform().position.y;
@@ -52,7 +52,7 @@ namespace MiniEngine
 		// return (GetValue() + _context.pOwner->GetRoot()->localTransform.position.y) <= _result.m_obstacleLedge;
 	}
 
-	bool ObstacleDepthCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleDepthCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		// MG_LOG_INFO("[ObstacleDepthCondition] Compare {:.2f}, {:.2f} :: {}", GetValue(), _result.m_obstacleDepth, GetValue() <= _result.m_obstacleDepth ? "true" : "false");
 
@@ -60,7 +60,7 @@ namespace MiniEngine
 		return GetValue() <= _result.obstacleDepth;
 	}
 
-	bool ObstacleIsFrontCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleIsFrontCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		const Transform& TF = _context.pOwner->GetTransform();
 
@@ -76,25 +76,25 @@ namespace MiniEngine
 		return dir.Dot(charFwd) > 0.0f;
 	}
 
-	bool DetectLedgeCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool DetectLedgeCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		// MG_LOG_INFO("[DetectLedgeCondition] Check : {}", _result.m_bDetectLedge);
 		return _result.bDetectLedge;
 	}
 
-	bool ObstacleHitDistanceCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool ObstacleHitDistanceCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		// MG_LOG_INFO("[ObstacleHitDistanceCondition] GetValue : {:.2f}, HitDist : {:.2f}", GetValue(), _result.m_obstacleDistance);
 		return GetValue() < _result.obstacleDistance;
 	}
 
-	bool DetectNewObstacle::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool DetectNewObstacle::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		std::shared_ptr<IPerceptionProcessor> pProcessor = std::dynamic_pointer_cast<IPerceptionProcessor>(_context.pOwner);
 		return pProcessor->GetCurObstacleInfo().m_bIsNewObstacle;
 	}
 
-	bool CheckRoomCondition::Evaluate(const TravelResult& _result, const ProcessContext& _context) const
+	bool CheckRoomCondition::Evaluate(const PerceptResult& _result, const ProcessContext& _context) const
 	{
 		return GetValue() < _result.roomHeight;
 	}
