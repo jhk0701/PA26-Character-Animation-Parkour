@@ -93,7 +93,9 @@ namespace MiniEngine
 		return m_queryTree->Execute(context, m_result);
 	}
 
-	bool PerceptionComponent::TryGetPerceptedInfo(PerceptedObstacleInfo& _out, const IObstacle* _prevObstacle /*= nullptr*/) const
+	bool PerceptionComponent::TryGetPerceptedInfo(
+		PerceptedObstacleInfo& _out, 
+		const IObstacle* _prevObstacle /*= nullptr*/) const
 	{
 		if (!m_result.pObstacle)
 			return false;

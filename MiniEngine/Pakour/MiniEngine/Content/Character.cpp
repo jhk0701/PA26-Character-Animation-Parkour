@@ -280,18 +280,6 @@ void Character::ProcessPerceptionResult()
 		return;
 	}
 
-	if (processResult == (uint8_t)ETagAct::Reserved_Direct)
-	{
-		IDirectable* directable = dynamic_cast<IDirectable*>(m_curObstacleInfo.perceptResult.pObstacle);
-		if (directable == nullptr)
-		{
-			MG_LOG_WARN("[Character::ProcessPerceptionResult] Result is {}, but Obstacle is not directable", processResult);
-			return;
-		}
-
-		processResult = directable->GetDirectTagAct();
-	}
-
 	// 액션 수행
 	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))
 		PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);

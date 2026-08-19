@@ -213,6 +213,7 @@
     <ClInclude Include="Perception\Condition\InheritCondition.h" />
     <ClInclude Include="Perception\Condition\ObstacleCondition.h" />
     <ClInclude Include="Perception\Config\ObstacleConfig.h" />
+    <ClInclude Include="Perception\Config\TagConfig.h" />
     <ClInclude Include="Perception\Interface\IObstacle.h" />
     <ClInclude Include="Perception\Interface\IPerceptionProcessor.h" />
     <ClInclude Include="Perception\Node\Decorator\InheritDecorator.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="Perception\Condition\InheritCondition.cpp" />
     <ClCompile Include="Perception\Condition\ObstacleCondition.cpp" />
     <ClCompile Include="Perception\Config\ObstacleConfig.cpp" />
+    <ClCompile Include="Perception\Config\TagConfig.cpp" />
     <ClCompile Include="Perception\Node\Decorator\InheritDecorator.cpp" />
     <ClCompile Include="Perception\Node\Decorator\ObstacleDecorator.cpp" />
     <ClCompile Include="Perception\Node\DetectObstacleNode.cpp" />

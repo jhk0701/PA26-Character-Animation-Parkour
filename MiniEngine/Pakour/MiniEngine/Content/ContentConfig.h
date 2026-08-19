@@ -1,13 +1,13 @@
 #pragma once
-#include "Core/EngineConfig.h"
+#include "Perception/Config/TagConfig.h"
 
 namespace Content::Config
 {
 	enum class ETagAct : uint8_t
 	{
-		Reserved_Direct,	// 연출용 행위를 위한 고정 예약
+		Reserved_Direct = (uint8_t)MiniEngine::ETagActReserve::Direct_Reserve,
 
-		Landing,	// 착지
+		Landing = (uint8_t)MiniEngine::ETagActReserve::CONTINUE,	// 착지
 		Jump,
 		JumpFront,
 		JumpFromWall, // 점프에서 탈출

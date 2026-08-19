@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Perception/ProcessorComponent.h"
 #include "Perception/Interface/IPerceptionProcessor.h"
+#include "Perception/Interface/IObstacle.h"
+#include "Perception/Config/TagConfig.h"
+
 #include "Scene/Actor.h"
 #include "Core/Log.h"
 
@@ -105,13 +108,32 @@ namespace MiniEngine
 		for (const std::shared_ptr<ProcessCondition>& pCond : m_conditions)
 			pCond->Reset();
 
+		bool bSuccess = false;
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processDatas)
 		{
 			if (pProcess->TryQuery(_inTravelResult, context, _outResult))
-				return true; // true 인 것이 있다면 바로 반환
+			{
+				bSuccess = true;
+				break;
+			}
 		}
 
-		return false;
+		if (bSuccess && 
+			_outResult == (uint8_t)ETagActReserve::Direct_Reserve)
+		{
+			// 연출용 예약값으로 결과가 나온 경우
+			// 해당 연출용 객체로부터 값을 받아오기
+			IDirectable* directable = dynamic_cast<IDirectable*>(_inTravelResult.pObstacle);
+			if (directable == nullptr)
+			{
+				MG_LOG_WARN("[ProcessorComponent::ProcessResult] Result is {}, but Obstacle is not directable", _outResult);
+				return false;
+			}
+
+			_outResult = directable->GetDirectTagAct();
+		}
+
+		return bSuccess;
 	}
 
 }
