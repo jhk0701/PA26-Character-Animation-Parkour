@@ -96,11 +96,11 @@
     </Link>
     <PostBuildEvent>
       <Message>Copy Datas</Message>
-      <Command>if not exist "$(OutDir)\Datas\" (
-    mkdir "$(OutDir)\Datas\"
-)
+      <Command>if not exist "$(OutDir)\Datas\" ( mkdir "$(OutDir)\Datas\" )
+if not exist "$(OutDir)\Assets\" ( mkdir "$(OutDir)\Assets\" )
 
-XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y
+XCOPY $(SolutionDir)\Assets\*.* $(OutDir)\Assets\*.* /E /H /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugUI|x64'">
@@ -122,11 +122,11 @@ XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
     </Link>
     <PostBuildEvent>
       <Message>Copy Datas</Message>
-      <Command>if not exist "$(OutDir)\Datas\" (
-    mkdir "$(OutDir)\Datas\"
-)
+      <Command>if not exist "$(OutDir)\Datas\" ( mkdir "$(OutDir)\Datas\" )
+if not exist "$(OutDir)\Assets\" ( mkdir "$(OutDir)\Assets\" )
 
-XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y
+XCOPY $(SolutionDir)\Assets\*.* $(OutDir)\Assets\*.* /E /H /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">
@@ -148,11 +148,11 @@ XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
     </Link>
     <PostBuildEvent>
       <Message>Copy Datas</Message>
-      <Command>if not exist "$(OutDir)\Datas\" (
-    mkdir "$(OutDir)\Datas\"
-)
+      <Command>if not exist "$(OutDir)\Datas\" ( mkdir "$(OutDir)\Datas\" )
+if not exist "$(OutDir)\Assets\" ( mkdir "$(OutDir)\Assets\" )
 
-XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y
+XCOPY $(SolutionDir)\Assets\*.* $(OutDir)\Assets\*.* /E /H /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,11 +178,11 @@ XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
     </Link>
     <PostBuildEvent>
       <Message>Copy Datas</Message>
-      <Command>if not exist "$(OutDir)\Datas\" (
-    mkdir "$(OutDir)\Datas\"
-)
+      <Command>if not exist "$(OutDir)\Datas\" ( mkdir "$(OutDir)\Datas\" )
+if not exist "$(OutDir)\Assets\" ( mkdir "$(OutDir)\Assets\" )
 
-XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y
+XCOPY $(SolutionDir)\Assets\*.* $(OutDir)\Assets\*.* /E /H /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -406,10 +406,6 @@ XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\DebugLine.hlsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Assets\pyramid.obj">
-      <Link>Assets\pyramid.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

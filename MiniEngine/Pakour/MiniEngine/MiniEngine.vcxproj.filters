@@ -761,8 +761,5 @@
     <None Include="Shaders\DebugLine.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Assets\pyramid.obj">
-      <Filter>Engine\03.Asset</Filter>
-    </None>
   </ItemGroup>
 </Project>
