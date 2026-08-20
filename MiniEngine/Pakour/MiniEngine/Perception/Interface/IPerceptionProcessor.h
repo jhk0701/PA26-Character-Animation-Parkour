@@ -69,4 +69,10 @@ namespace MiniEngine
 		virtual IObstacle* GetCurObstacle() const = 0;
 		virtual const Transform& GetTransform() const = 0;
 	};
+
+#ifdef MG_DEBUG_UI
+	void AddRaycastUsageCnt();
+	void ResetRaycastUsageCnt();
+	int GetRaycastUsageCnt();
+#endif // DEBUG
 }

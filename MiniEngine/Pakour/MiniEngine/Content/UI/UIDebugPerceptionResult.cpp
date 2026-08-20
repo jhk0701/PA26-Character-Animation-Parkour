@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Content/UI/UIDebugPerceptionResult.h"
 
+#include "Perception/Interface/IPerceptionProcessor.h"
 #include "Perception/PerceptionComponent.h"
 #include "Perception/ProcessorComponent.h"
 #include "Content/Character.h"
@@ -43,6 +44,7 @@ void UIDebugPerceptionResult::DrawUI()
 
 		ImGui::Text("Velocity : %.2f", pChar->GetVelocity());
 		ImGui::Text("Falling Time(sec) : %.2f", pChar->GetFallingTime());
+		ImGui::Text("Raycast Usage : %d", GetRaycastUsageCnt());
 	}
 
 	if (ImGui::BeginChild("Processor Results", ImVec2(400, 600), ImGuiChildFlags_Borders))

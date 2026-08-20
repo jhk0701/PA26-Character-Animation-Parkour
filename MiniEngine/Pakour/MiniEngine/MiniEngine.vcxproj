@@ -320,6 +320,7 @@
     <ClCompile Include="Perception\Condition\ObstacleCondition.cpp" />
     <ClCompile Include="Perception\Config\ObstacleConfig.cpp" />
     <ClCompile Include="Perception\Config\TagConfig.cpp" />
+    <ClCompile Include="Perception\Interface\IPerceptionProcessor.cpp" />
     <ClCompile Include="Perception\Node\Decorator\InheritDecorator.cpp" />
     <ClCompile Include="Perception\Node\Decorator\ObstacleDecorator.cpp" />
     <ClCompile Include="Perception\Node\DetectObstacleNode.cpp" />

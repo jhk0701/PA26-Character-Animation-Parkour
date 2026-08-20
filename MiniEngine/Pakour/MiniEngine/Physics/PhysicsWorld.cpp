@@ -3,6 +3,7 @@
 #include "Core/Log.h"
 #include <physx/PxPhysicsAPI.h>
 
+
 using namespace physx;
 
 namespace MiniEngine::Physics 
@@ -298,6 +299,7 @@ namespace MiniEngine::Physics
 		}
 
 		RecordQueryLine(_inParam.m_origin, _inParam.m_dir, _inParam.m_maxDistance, bIsHit, _outResult);
+
 		return bIsHit;
 	}
 

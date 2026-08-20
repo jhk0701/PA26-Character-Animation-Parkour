@@ -726,6 +726,9 @@
     <ClCompile Include="Perception\Config\TagConfig.cpp">
       <Filter>Engine\07.Object\Component\Perception\Config</Filter>
     </ClCompile>
+    <ClCompile Include="Perception\Interface\IPerceptionProcessor.cpp">
+      <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Mecro.hlsli">

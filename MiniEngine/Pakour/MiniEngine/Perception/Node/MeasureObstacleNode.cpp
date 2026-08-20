@@ -40,6 +40,10 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 		param.m_dir = dir;
 		param.m_maxDistance = CONFIG.heightSearchtDist;
 
+#if MG_DEBUG_UI
+		AddRaycastUsageCnt();
+#endif
+
 		RaycastResult result;
 		if (_context.physics->SphereCast(param, result, ToMask(Layer::Obstacle)) == false)
 		{
@@ -77,6 +81,8 @@ EPerceptionResult MeasureObstacleHeightNode::InvokeTask(TravelContext& _context,
 
 #if MG_DEBUG_UI
 		MiniEngine::Debug::DrawPoint(param.m_startPos, MiniEngine::DebugColor::BLUE, param.m_radius * 1.1f, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+		
+		AddRaycastUsageCnt();
 #endif // MG_DEBUG_UI
 
 		RaycastResult ledgeResult;
@@ -116,6 +122,8 @@ EPerceptionResult MeasureObstacleDepthNode::InvokeTask(TravelContext& _context, 
 
 #if MG_DEBUG_UI
 		MiniEngine::Debug::DrawLine(param.m_origin, param.m_origin + param.m_dir * param.m_maxDistance, MiniEngine::DebugColor::GREEN, 1.0f);
+		
+		AddRaycastUsageCnt();
 #endif // MG_DEBUG_UI
 
 		RaycastResult result;
@@ -154,6 +162,8 @@ EPerceptionResult CheckRoomNode::InvokeTask(TravelContext& _context, PerceptResu
 	Vector3 endPos = param.m_startPos + param.m_dir * param.m_maxDistance;
 	MiniEngine::Debug::DrawLine(param.m_startPos, endPos, MiniEngine::DebugColor::GREEN, 1.0f);
 	MiniEngine::Debug::DrawPoint(endPos, MiniEngine::DebugColor::GREEN, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+
+	AddRaycastUsageCnt();
 #endif 
 
 	RaycastResult result;

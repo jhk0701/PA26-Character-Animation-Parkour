@@ -3,6 +3,10 @@
 #include "Scene/Scene.h"
 #include "Physics/PhysicsWorld.h"
 
+#ifdef MG_DEBUG_UI
+#include "Perception/Interface/IPerceptionProcessor.h"
+#endif // MG_DEBUG_UI
+
 using namespace MiniEngine::Physics;
 
 namespace MiniEngine 
@@ -85,6 +89,10 @@ namespace MiniEngine
 			return EPerceptionResult::Fail;
 		
 		m_result.Reset();
+
+#ifdef MG_DEBUG_UI
+		ResetRaycastUsageCnt();
+#endif // MG_DEBUG_UI
 
 		TravelContext context;
 		context.owner = owner.lock();

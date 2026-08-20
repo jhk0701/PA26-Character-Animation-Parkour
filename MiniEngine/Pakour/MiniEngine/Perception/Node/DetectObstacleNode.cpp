@@ -12,6 +12,7 @@
 using namespace MiniEngine::Physics;
 using namespace PerceptionNodeUtil;
 
+
 namespace 
 {
 	void DebugRay(const Vector3& _start, const Vector3& _end, float _radius, float _duration = 1.0f)
@@ -97,8 +98,9 @@ EPerceptionResult DetectObstacleCapsuleNode::InvokeTask(TravelContext& _context,
 	MiniEngine::Debug::DrawLine(debugPointLow, debugPointHigh, MiniEngine::DebugColor::YELLOW, 1.0f);
 	MiniEngine::Debug::DrawPoint(debugPointLow, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
 	MiniEngine::Debug::DrawPoint(debugPointHigh, MiniEngine::DebugColor::YELLOW, param.m_radius, MiniEngine::Debug::EMarkerShape::Sphere, 1.0f);
+	
+	AddRaycastUsageCnt();
 #endif // 0
-
 
 	// 1. 특정 방향에 장애물 유무 확인
 	RaycastMultipleResult hits;
@@ -139,6 +141,8 @@ EPerceptionResult DetectObstacleSphereNode::InvokeTask(TravelContext& _context, 
 
 #if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
+	AddRaycastUsageCnt();
 #endif // 0
 
 	// 1. 특정 방향에 장애물 유무 확인
@@ -165,6 +169,8 @@ EPerceptionResult DetectLedgeNode::InvokeTask(TravelContext& _context, PerceptRe
 
 #if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
+	AddRaycastUsageCnt();
 #endif // 0
 
 	RaycastResult result;
@@ -190,6 +196,8 @@ EPerceptionResult DetectLedgeMultipleNode::InvokeTask(TravelContext& _context, P
 
 #if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
+	AddRaycastUsageCnt();
 #endif // 0
 
 	if (bIsHit == false)
@@ -225,6 +233,8 @@ EPerceptionResult CheckObstacleSphereNode::InvokeTask(TravelContext& _context, P
 
 #if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
+	AddRaycastUsageCnt();
 #endif // 0
 
 	RaycastResult result;
@@ -258,6 +268,8 @@ EPerceptionResult DetectFloorNode::InvokeTask(TravelContext& _context, PerceptRe
 
 #if MG_DEBUG_UI
 	DebugRay(param.m_startPos, param.m_startPos + param.m_dir * param.m_maxDistance, param.m_radius);
+
+	AddRaycastUsageCnt();
 #endif // MG
 
 	RaycastResult result;
