@@ -4,7 +4,6 @@
 using namespace MiniEngine;
 
 // 원본 모델(.fbx/.gltf/.obj) → .mini 베이크 패널.
-// Editor 구성에서만 GameCore 가 등록한다(등록만 막으면 assimp 는 링크되지 않는다 — CLAUDE.md §4/§14.2).
 class UIBakePanel : public UIBase
 {
 public:

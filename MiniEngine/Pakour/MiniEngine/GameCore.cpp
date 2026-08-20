@@ -72,8 +72,6 @@ bool GameCore::Init(HWND _hWnd, int _iWidth, int _iHeight)
 
     UIManager::GetInstance()->Init(_hWnd, m_device.Get(), m_context.Get());
 
-    // 에디터 패널은 Editor 구성에서만 등록한다. 등록을 막으면 AssimpBaker 의 비-Editor 스텁만
-    // 링크되므로 Debug/DebugLog/Release 는 assimp 를 참조하지 않는다(CLAUDE.md §4/§14.2).
 #if defined(WITH_EDITOR)
     UIManager::GetInstance()->CreateUI<UIBakePanel>();
     UIManager::GetInstance()->CreateUI<UIMiniEditPanel>();

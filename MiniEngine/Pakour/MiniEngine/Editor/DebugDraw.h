@@ -7,7 +7,6 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 // 디버그 라인 렌더러. **Debug/Editor 구성에서만 실제로 동작**하며 Release(MG_RELEASE)에서는
-// 전부 no-op 으로 컴파일된다(D3D 리소스/셰이더 미참조). Core/Log.h 와 동일한 격리 관용구. (§4)
 #if !defined(MG_RELEASE)
 
 #include <d3d11.h>
