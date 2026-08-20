@@ -1621,9 +1621,7 @@
             ]
         },
         {
-            "tags": [
-                "Beam_HangingMoveDown"
-            ],
+            "tags": [ "Beam_HangingMoveDown" ],
             "clip": 34,
             "comment": "Beam Hang -> In Air",
             "notifies": [
@@ -1631,6 +1629,60 @@
                     "class": "TransitionState",
                     "time": 0.1,
                     "state": "InAir"
+                }
+            ]
+        },
+        {
+            "tags": [ "Beam_HangingJump" ],
+            "clip": 62,
+            "comment": "Beam Hanging Jump (vault beam)",
+            "notifies": [
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 0,
+                    "enable": false
+                },
+                {
+                    "class": "EnableCollisionObstacle",
+                    "time": 1.1,
+                    "enable": true
+                },
+                {
+                    "class": "CorrectRotationTowardObstacle",
+                    "time": [ 0, 0.3 ]
+                },
+                {
+                    "class": "BezierCorrectRootMotion",
+                    "time": [ 0.0, 0.3 ],
+                    "endOffset": [ 0, -2.0, -0.25 ]
+                },
+                {
+                    "class": "CheckIsFallingNotify",
+                    "time": 1.1
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 1.0 ],
+                    "limb": "LeftArm",
+                    "offset": [ -0.2, 0, 0.0 ]
+                },
+                {
+                    "class": "CharacterIKInvoker",
+                    "time": [ 0.1, 1.0 ],
+                    "limb": "RightArm",
+                    "offset": [ 0.2, 0, 0.0 ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.1, 0.25 ],
+                    "fromTo": [ 0.0, 1.0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
+                },
+                {
+                    "class": "CharacterIKEnabler",
+                    "time": [ 0.8, 0.9 ],
+                    "fromTo": [ 1.0, 0.0 ],
+                    "limbs": [ "LeftArm", "RightArm" ]
                 }
             ]
         },
@@ -1989,6 +2041,10 @@
                     "class": "BezierCorrectRootMotion",
                     "time": [ 0.0, 0.3 ],
                     "endOffset": [ 0, -1.3, -0.65 ]
+                },
+                {
+                    "class": "CheckIsFallingNotify",
+                    "time": 0.8
                 }
             ]
         },

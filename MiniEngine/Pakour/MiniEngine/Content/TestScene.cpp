@@ -263,6 +263,32 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		ObstacleDesc desc;
 		desc.pMesh = pCubeMesh;
 		desc.layer = MiniEngine::Physics::Layer::Obstacle;
+
+		const Vector3 OFFSET(0.0f, 0.0f, 30.0f);
+
+		desc.pos = OFFSET + Vector3(-5.0f, 3.0f, 0.0f);
+		desc.scale = Vector3(0.5f, 6.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(-7.0f, 0.5f, 4.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.pos = OFFSET + Vector3(-7.0f, 0.5f, -4.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 5.0f);
+		ObstacleFactory::Create(pScene, desc);
+
+		desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Beam;
+		desc.tagEnvSubInfo = (uint8_t)ETagAxis::X;
+
+		desc.pos = OFFSET + Vector3(-7.0f, 3.0f, 0.0);
+		desc.scale = Vector3(4.0f, 0.1f, 0.1f);
+		ObstacleFactory::Create(pScene, desc);
+	}
+	{
+		ObstacleDesc desc;
+		desc.pMesh = pCubeMesh;
+		desc.layer = MiniEngine::Physics::Layer::Obstacle;
 		// desc.ledgeOpt = Obstacle::ELedgeOption::All;
 
 		// 공중 큐브

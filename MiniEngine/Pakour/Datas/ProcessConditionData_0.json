@@ -436,6 +436,11 @@
             "class": "ConditionAnd",
             "children" : [ "IsBeam", "IsNotLowerThan_CharacterMid" ]
         },
+        {
+            "id": "IsBeamHangingJump",
+            "class": "ConditionAnd",
+            "children" : [ "IsBeam", "IsNotLowerThan_CharacterMid", "IsFasterThan" ]
+        },
 
         {
             "id": "BeamStand_ToHanging",
@@ -599,6 +604,11 @@
         {
             "tagAct" : "Beam_IdleToStand",
             "conditionId" : "ToBeamStand"
+        },
+
+        {
+            "tagAct" : "Beam_HangingJump",
+            "conditionId" : "IsBeamHangingJump"
         },
         {
             "tagAct" : "Beam_IdleToHang",
