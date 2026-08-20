@@ -86,7 +86,7 @@ namespace MiniEngine
 
 #pragma endregion
 
-	bool ProcessorComponent::ProcessResult(uint8_t _idx, const PerceptResult& _inTravelResult, uint8_t& _outResult) const
+	bool ProcessorComponent::ProcessResult(uint8_t _idx, const PerceptResult& _inPerceptResult, uint8_t& _outResult) const
 	{
 		if (owner.expired())
 		{
@@ -117,7 +117,7 @@ namespace MiniEngine
 		bool bSuccess = false;
 		for (const std::shared_ptr<ProcessData>& pProcess : m_processSets[_idx].processDatas)
 		{
-			if (pProcess->TryQuery(_inTravelResult, context, _outResult))
+			if (pProcess->TryQuery(_inPerceptResult, context, _outResult))
 			{
 				bSuccess = true;
 				break;
@@ -129,7 +129,7 @@ namespace MiniEngine
 		{
 			// 연출용 예약값으로 결과가 나온 경우
 			// 해당 연출용 객체로부터 값을 받아오기
-			IDirectable* directable = dynamic_cast<IDirectable*>(_inTravelResult.pObstacle);
+			IDirectable* directable = dynamic_cast<IDirectable*>(_inPerceptResult.pObstacle);
 			if (directable == nullptr)
 			{
 				MG_LOG_WARN("[ProcessorComponent::ProcessResult] Result is {}, but Obstacle is not directable", _outResult);

@@ -7,7 +7,7 @@ namespace MiniEngine
 	private:
 		enum 
 		{
-			MAX_LAYER_CNT	= 8,
+			INIT_RESERVE_CNT	= 5,
 		};
 	public:
 		Tag();

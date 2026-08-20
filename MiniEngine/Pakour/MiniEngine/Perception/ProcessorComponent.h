@@ -105,7 +105,7 @@ namespace MiniEngine
 	public:
 		bool ProcessResult(
 			uint8_t _idx,
-			const PerceptResult& _inTravelResult, 
+			const PerceptResult& _inPerceptResult, 
 			uint8_t& _outResult) const; // 탐색 결과를 주어진 조건 데이터에 맞게 처리
 
 		void Init(std::vector<ProcessSet>&& _processSets)

@@ -31,6 +31,7 @@ namespace Content::Config
 			{ "VaultMid",					ETagAct::VaultMid },
 			{ "VaultHigh",					ETagAct::VaultHigh },
 			{ "VaultAirToAttach",			ETagAct::VaultAirToAttach },
+			{ "VaultDeep",					ETagAct::VaultDeep },
 
 			{ "MantleLow",					ETagAct::MantleLow },
 			{ "Mantle",						ETagAct::Mantle },
@@ -61,8 +62,10 @@ namespace Content::Config
 			{ "Beam_StandRotateLeft",		ETagAct::Beam_StandRotateLeft },
 			{ "Beam_StandRotateRight",		ETagAct::Beam_StandRotateRight },
 			{ "Beam_StandMoveDown",			ETagAct::Beam_StandMoveDown },
+
 			{ "Beam_StandToVault",			ETagAct::Beam_StandToVault },
 			{ "Beam_StandToMantle",			ETagAct::Beam_StandToMantle },
+			{ "Beam_HangingJump",			ETagAct::Beam_HangingJump },
 
 			{ "Beam_IdleToHang",			ETagAct::Beam_IdleToHang },
 			{ "BeamHanging",				ETagAct::BeamHanging },
@@ -102,6 +105,7 @@ namespace Content::Config
 			{ "Pole_ToHanging_Right",			ETagAct::Pole_ToHanging_Right },
 
 			{ "Direct_Vault_UnderBar",			ETagAct::Direct_Vault_UnderBar },
+			{ "Direct_Run_Sliding",				ETagAct::Direct_Run_Sliding },
 		};
 
 		// ETagAct 추가 시, 값 검사

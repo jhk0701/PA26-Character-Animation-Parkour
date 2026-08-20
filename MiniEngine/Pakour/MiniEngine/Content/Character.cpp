@@ -310,7 +310,7 @@ void Character::ProcessPerceptionResult(uint8_t _idx)
 	if (std::shared_ptr<ActionClip> pAction = GetActions(processResult))
 		PlayActionClip(pAction, 0.2f, (uint8_t)EActionPriority::Override);
 	else 
-		MG_LOG_WARN("[Character::ProcessPerceptionResult] no action matched with {}}", processResult);
+		MG_LOG_WARN("[Character::ProcessPerceptionResult] no action matched with {}", processResult);
 }
 
 void Character::InitCollisionLayer()

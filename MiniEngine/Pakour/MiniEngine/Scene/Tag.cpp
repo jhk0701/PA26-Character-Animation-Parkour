@@ -3,7 +3,7 @@
 
 namespace MiniEngine 
 {
-	Tag::Tag() { m_tags.reserve(MAX_LAYER_CNT); }
+	Tag::Tag() { m_tags.reserve(INIT_RESERVE_CNT); }
 
 	void Tag::SetTag(const uint8_t _idx, const uint8_t _tag)
 	{

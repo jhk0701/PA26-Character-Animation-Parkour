@@ -22,7 +22,8 @@ namespace Content::Config
 		VaultMid,
 		VaultHigh,
 		VaultAirToAttach, // 공중에서 잡는 경우
-
+		VaultDeep,
+		
 		Mantle, // 높은 장애물, 기어 올라가야하는 경우
 		MantleLow = Mantle, // 오르기
 		MantleMid,
@@ -34,7 +35,7 @@ namespace Content::Config
 		Wall_IdleToHang = Wall,		// 매달리기 시작 : 일반적인 idle -> Hanging
 		Wall_RunToHang,				// 매달리기 시작 : 테스트 : 뛰다가 벽에 매달리는 경우
 		Wall_AirToHang,				// 매달리기 시작 : 낙하 중 매달리는 경우
-		Wall_HangToIdle,		// 매달리기에서 내려옴
+		Wall_HangToIdle,			// 매달리기에서 내려옴
 		Wall_HangToMantle,			// 매달린 상태에서 꼭대기에 오름
 		Wall_HangToMantleOnObs,		// 매달린 상태에서 중간에 있는 장애물에 오름
 		Wall_HangToMantleOnSide,	// 매달린 상태에서 측면 장애물로 이동
@@ -51,6 +52,7 @@ namespace Content::Config
 		Beam_IdleToStand = BeamStand,
 		Beam_StandToVault,
 		Beam_StandToMantle,
+		Beam_HangingJump,
 
 		Beam_StandToIdle,
 		Beam_StandRotateLeft,
@@ -95,6 +97,7 @@ namespace Content::Config
 		Pole_ToHanging_Right,
 
 		Direct_Vault_UnderBar,
+		Direct_Run_Sliding,
 
 		End
 	};

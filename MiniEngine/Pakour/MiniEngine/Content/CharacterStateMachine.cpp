@@ -16,9 +16,6 @@ using namespace Content::Config;
 void CharacterState::ProcessMovement(float _dt)
 {
 	std::shared_ptr<Character> pChar = GetMachine()->GetCharacter();
-	if (pChar->IsActionClipPlaying())
-		return;
-
 	const Vector2& INPUT_DIR = pChar->GetInputDir();
 
 	Vector2& inputLerp = pChar->InputLerp();
@@ -26,6 +23,9 @@ void CharacterState::ProcessMovement(float _dt)
 
 	if (INPUT_DIR.x != 0 || INPUT_DIR.y != 0)
 		inputLerp.Normalize();
+
+	if (pChar->IsActionClipPlaying())
+		return;
 
 	const float DELTA_SPD = _dt * pChar->GetMoveSpeed();
 	const Transform& CONT_TF = pChar->GetControllerActor()->GetRoot()->localTransform;

@@ -9,7 +9,7 @@
     "heightLift": 0.2,
 
     "depthStep": 0.5,
-    "maxDepthStep": 3,
+    "maxDepthStep": 5,
     "depthSearchDownDist": 2.0,
     "depthLift": 0.05,
     "ledgeDetectRadius" : 0.25,

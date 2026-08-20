@@ -109,6 +109,19 @@
             "isInverted" : true,
             "value" : 0.51
         },
+        {
+            "id": "IsNotDeeperThan_2",
+            "class": "ObstacleDepthCondition",
+            "isInverted" : true,
+            "value" : 2.0
+        },
+
+        {
+            "comment" : "---------------캐릭터 속도 조건---------------",
+            "id": "IsFasterThan",
+            "class": "CharacterVelocityCondition",
+            "value" : 5.0
+        },
 
         {
             "comment" : "---------------캐릭터 높이에 대한 장애물 높이 비교---------------",
@@ -176,7 +189,7 @@
             "id" : "IsCloserToGround",
             "class" : "ObstacleHitDistanceCondition",
             "isInverted" : true,
-            "value" : 2.0
+            "value" : 2.01
         },
 
         {
@@ -230,6 +243,12 @@
             "class": "ConditionAnd",
             "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsNotDeeper" ]
         },
+        {
+            "id": "Landing_VaultDeep",
+            "class": "ConditionAnd",
+            "children" : [ "CanActiveDefaultPakour", "IsDefault", "HeightCheck_Low", "IsDeeper", "IsNotDeeperThan_2", "IsFasterThan" ]
+        },
+
         {
             "id": "Landing_MantleHigh",
             "class": "ConditionAnd",
@@ -751,6 +770,11 @@
         {
             "tagAct" : "MantleHigh",
             "conditionId" : "Landing_MantleHigh"
+        },
+
+        {
+            "tagAct" : "VaultDeep",
+            "conditionId" : "Landing_VaultDeep"
         },
         {
             "tagAct" : "MantleMid",

@@ -111,6 +111,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 		desc.scale = Vector3(4.0f, 1.0f, 3.0f);
 		ObstacleFactory::Create(pScene, desc);
 
+		// mid size
+		desc.pos = Vector3(-5.0f, 0.5f, -10.0f);
+		desc.scale = Vector3(4.0f, 1.0f, 1.5f);
+		ObstacleFactory::Create(pScene, desc);
 
 		// 3. mantle -> vault
 		desc.pos = Vector3(5.0f, 0.5f, 5.0f);
@@ -747,6 +751,10 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.pos = OFFSET + Vector3(0.0f, 0.5f, 0.0f);
 			desc.scale = Vector3(4.0f, 1.0f, 0.5f);
 			ObstacleFactory::Create(pScene, desc);
+			
+			desc.pos = OFFSET + Vector3(0.0f, 2.5f, 0.0f);
+			desc.scale = Vector3(4.0f, 1.0f, 0.5f);
+			ObstacleFactory::Create(pScene, desc);
 
 			desc.pos = OFFSET + Vector3(-1.5f, 1.5f, 0.0f);
 			desc.scale = Vector3(1.0f, 1.5f, 0.5f);
@@ -764,6 +772,33 @@ void TestScene::Construct(ID3D11Device* _device, ID3D11DeviceContext* _context)
 			desc.scale = Vector3(2.0f, 0.1f, 0.1f);
 			ObstacleFactory::Create(pScene, desc, (uint8_t)Content::Config::ETagAct::Direct_Vault_UnderBar)
 				->SetName("Directing Under Bar");
+		}
+		{
+			// const Vector3 OFFSET = Vector3(-15.0f, 0.0f, -20.0f);
+
+			//ObstacleDesc desc;
+			//desc.pMesh = pCubeMesh;
+			//desc.layer = MiniEngine::Physics::Layer::Obstacle;
+			//desc.tagPriority = 0U;
+
+			//desc.pos = OFFSET + Vector3(0.0f, 3.0f, 0.0f);
+			//desc.scale = Vector3(3.0f, 4.0f, 2.0f);
+			//ObstacleFactory::Create(pScene, desc);
+
+			//desc.tagEnvDetail = (uint8_t)ETagEnvDetail::Direct;
+			//desc.tagPriority = 1U;
+			//desc.color = Vector3(0.75f, 0.25f, 0.25f);
+
+			//// 슬라이딩용
+			//desc.pos = OFFSET + Vector3(0.0f, 1.25f, 0.3f);
+			//desc.scale = Vector3(2.9f, 0.5f, 0.5f);
+			//ObstacleFactory::Create(pScene, desc, (uint8_t)Content::Config::ETagAct::Direct_Run_Sliding)
+			//	->SetName("Directing Sliding");
+
+			//desc.pos = OFFSET + Vector3(0.0f, 1.25f, -0.3f);
+			//desc.scale = Vector3(2.9f, 0.5f, 0.5f);
+			//ObstacleFactory::Create(pScene, desc, (uint8_t)Content::Config::ETagAct::Direct_Run_Sliding)
+			//	->SetName("Directing Sliding");
 		}
 	}
 	{
