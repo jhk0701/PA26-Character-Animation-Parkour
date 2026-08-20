@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/AddMovementNotify.h"
+#include "Content/AnimNotify/AddMovementNotify.h"
 #include "Content/Character.h"
 
 void AddMovementNotify::Activate(AnimNotifyParam& _param)

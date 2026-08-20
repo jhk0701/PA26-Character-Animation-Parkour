@@ -5,7 +5,7 @@
 #include "Animation/IK/LimbIKComponent.h"
 #include "Content/ContentConfig.h"
 #include "Content/Character.h"
-#include "Content/CorrectRootMotion.h"
+#include "Content/AnimNotify/CorrectRootMotion.h"
 
 using namespace MiniEngine;
 using namespace Content::Config;

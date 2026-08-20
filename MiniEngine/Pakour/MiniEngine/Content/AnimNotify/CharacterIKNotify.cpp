@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Content/CharacterIKNotify.h"
-#include "Character.h"
+#include "Content/AnimNotify/CharacterIKNotify.h"
+#include "Content/Character.h"
 
 #include "Core/Log.h"
 

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/JumpTiming.h"
+#include "Content/AnimNotify/JumpTiming.h"
 #include "Content/Character.h"
 
 void JumpTiming::Activate(MiniEngine::AnimNotifyParam& _param)

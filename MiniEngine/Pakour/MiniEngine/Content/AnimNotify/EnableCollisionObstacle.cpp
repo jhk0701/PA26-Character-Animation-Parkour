@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Content/EnableCollisionObstacle.h"
+#include "Content/AnimNotify/EnableCollisionObstacle.h"
 #include "Content/Character.h"
 
 void EnableCollisionObstacle::Activate(MiniEngine::AnimNotifyParam& _param)

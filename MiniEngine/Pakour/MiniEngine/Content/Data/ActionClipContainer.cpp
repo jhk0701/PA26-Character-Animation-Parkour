@@ -15,14 +15,14 @@
 #include "Content/Character.h"
 
 // 노티파이
-#include "Content/JumpTiming.h"
-#include "Content/EnableCollisionObstacle.h"
-#include "Content/TransitionState.h"
-#include "Content/CorrectRootMotion.h"
-#include "Content/CorrectRotation.h"
-#include "Content/CharacterIKNotify.h"
-#include "Content/AddMovementNotify.h"
-#include "Content/UseGravity.h"
+#include "Content/AnimNotify/JumpTiming.h"
+#include "Content/AnimNotify/EnableCollisionObstacle.h"
+#include "Content/AnimNotify/TransitionState.h"
+#include "Content/AnimNotify/CorrectRootMotion.h"
+#include "Content/AnimNotify/CorrectRotation.h"
+#include "Content/AnimNotify/CharacterIKNotify.h"
+#include "Content/AnimNotify/AddMovementNotify.h"
+#include "Content/AnimNotify/UseGravity.h"
 
 #include <functional>
 

@@ -295,18 +295,6 @@
     <ClInclude Include="Animation\AnimStateMachine.h">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Content\EnableCollisionObstacle.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\JumpTiming.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\TransitionState.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\CorrectRootMotion.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
     <ClInclude Include="Asset\DataAsset.h">
       <Filter>Engine\03.Asset</Filter>
     </ClInclude>
@@ -334,9 +322,6 @@
     <ClInclude Include="Content\CharacterState\BeamState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
-    <ClInclude Include="Content\UseGravity.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
     <ClInclude Include="Content\CharacterState\RotateFixState.h">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClInclude>
@@ -352,9 +337,6 @@
     <ClInclude Include="Content\Obstacle.h">
       <Filter>Content\03.Object\Obstacle</Filter>
     </ClInclude>
-    <ClInclude Include="Content\CorrectRotation.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClInclude>
     <ClInclude Include="Core\DebugMarkers.h">
       <Filter>Engine\02.Core</Filter>
     </ClInclude>
@@ -363,9 +345,6 @@
     </ClInclude>
     <ClInclude Include="Animation\IK\LimbIKComponent.h">
       <Filter>Engine\07.Object\Animation\IK</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\CharacterIKNotify.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
     <ClInclude Include="Content\Data\CharacterConfigData.h">
       <Filter>Content\05.Data</Filter>
@@ -384,9 +363,6 @@
     </ClInclude>
     <ClInclude Include="Content\Processor\CharacterCondition.h">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\AddMovementNotify.h">
-      <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
     <ClInclude Include="Perception\PerceptionComponent.h">
       <Filter>Engine\07.Object\Component\Perception</Filter>
@@ -447,6 +423,30 @@
     </ClInclude>
     <ClInclude Include="Perception\Config\TagConfig.h">
       <Filter>Engine\07.Object\Component\Perception\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\AddMovementNotify.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\CharacterIKNotify.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\CorrectRootMotion.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\CorrectRotation.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\EnableCollisionObstacle.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\JumpTiming.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\TransitionState.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\AnimNotify\UseGravity.h">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -579,18 +579,6 @@
     <ClCompile Include="Animation\AnimStateMachine.cpp">
       <Filter>Engine\07.Object\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Content\EnableCollisionObstacle.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\JumpTiming.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\TransitionState.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\CorrectRootMotion.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
     <ClCompile Include="Asset\DataAsset.cpp">
       <Filter>Engine\03.Asset</Filter>
     </ClCompile>
@@ -618,9 +606,6 @@
     <ClCompile Include="Content\CharacterState\BeamState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
-    <ClCompile Include="Content\UseGravity.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
     <ClCompile Include="Content\CharacterState\RotateFixState.cpp">
       <Filter>Content\03.Object\Component\CharacterState</Filter>
     </ClCompile>
@@ -636,9 +621,6 @@
     <ClCompile Include="Content\Obstacle.cpp">
       <Filter>Content\03.Object\Obstacle</Filter>
     </ClCompile>
-    <ClCompile Include="Content\CorrectRotation.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
-    </ClCompile>
     <ClCompile Include="Core\DebugMarkers.cpp">
       <Filter>Engine\02.Core</Filter>
     </ClCompile>
@@ -647,9 +629,6 @@
     </ClCompile>
     <ClCompile Include="Animation\IK\LimbIKComponent.cpp">
       <Filter>Engine\07.Object\Animation\IK</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\CharacterIKNotify.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
     <ClCompile Include="Content\Data\CharacterConfigData.cpp">
       <Filter>Content\05.Data</Filter>
@@ -668,9 +647,6 @@
     </ClCompile>
     <ClCompile Include="Content\Processor\CharacterCondition.cpp">
       <Filter>Content\03.Object\Component\ProcessorCondition</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\AddMovementNotify.cpp">
-      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
     <ClCompile Include="Perception\PerceptionComponent.cpp">
       <Filter>Engine\07.Object\Component\Perception</Filter>
@@ -728,6 +704,30 @@
     </ClCompile>
     <ClCompile Include="Perception\Interface\IPerceptionProcessor.cpp">
       <Filter>Engine\07.Object\Component\Perception\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\AddMovementNotify.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\CharacterIKNotify.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\CorrectRootMotion.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\CorrectRotation.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\EnableCollisionObstacle.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\JumpTiming.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\TransitionState.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\AnimNotify\UseGravity.cpp">
+      <Filter>Content\04.Animation\Nofity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
