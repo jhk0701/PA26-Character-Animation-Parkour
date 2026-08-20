@@ -94,6 +94,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Message>Copy Datas</Message>
+      <Command>if not exist "$(OutDir)\Datas\" (
+    mkdir "$(OutDir)\Datas\"
+)
+
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugUI|x64'">
     <ClCompile>
@@ -112,6 +120,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Message>Copy Datas</Message>
+      <Command>if not exist "$(OutDir)\Datas\" (
+    mkdir "$(OutDir)\Datas\"
+)
+
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">
     <ClCompile>
@@ -130,6 +146,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Message>Copy Datas</Message>
+      <Command>if not exist "$(OutDir)\Datas\" (
+    mkdir "$(OutDir)\Datas\"
+)
+
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -152,6 +176,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Message>Copy Datas</Message>
+      <Command>if not exist "$(OutDir)\Datas\" (
+    mkdir "$(OutDir)\Datas\"
+)
+
+XCOPY $(SolutionDir)\Datas\*.* $(OutDir)\Datas\*.* /E /H /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation\ActionClip.h" />
