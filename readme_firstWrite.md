@@ -2,18 +2,20 @@
 * 진행 기간 : `2026.06.30 ~ 2026.08.20`
 * 개발 인원 : 1명
 * 툴 및 언어 : Visual Studio, C++, Blender 3D
-* 기술 스택 : DirectX 11 · PhysX 5 · Dear ImGui · Assimp · C++17 (MSVC, x64)
+* 기술 스택 : DirectX 11, PhysX5, ImGui, Assimp, C++17
 
 ## 프로젝트 개요
-파쿠르 캐릭터 애니메이션 시스템 연구를 위해 DirectX11과 PhysX를 기반으로 자체 미니 엔진을 직접 구축하고, 그 위에 파쿠르 지형 인식 및 모션 선택 시스템을 구현한 프로젝트입니다.
+파쿠르 캐릭터 애니메이션 시스템 연구를 위해 DirectX11과 PhysX를 기반으로 자체 미니 엔진을 직접 구축하고, 
+지형 인식 및 모션 선택 시스템으로 파쿠르 애니메이션을 구현한 프로젝트입니다.
 
-연구의 핵심은 3D 환경에서 캐릭터로 하여금 여러 유형의 지형을 인식하는 방법과
+연구는 3D 환경에서 캐릭터로 하여금 여러 유형의 지형을 인식하는 방법과
 캐릭터의 상태에 따라 어떤 모션을 재생할 것인지 선택하는 과정을 구현하는 것을 중점으로 진행했습니다.
 
-이를 위해 단순 레이캐스트 방식 대신 Behavior Tree 방식을 응용한 동적 레이캐스트 구조를 설계했습니다.
+이를 위해 단순 레이캐스트 방식 대신 BehaviorTree 방식을 응용한 동적 레이캐스트 구조를 설계했습니다.
 
 ### 엔진 기반
-파쿠르 시스템을 얹기 위한 토대도 구현했습니다. 상세는 [기타 › 엔진 기반 상세](#엔진-기반-상세)에 정리했습니다.
+파쿠르 시스템을 얹기 위한 토대도 구현했습니다.<br/>
+상세는 [기타 › 엔진 기반 상세](#엔진-기반-상세)에 정리했습니다.
 
 | 영역 | 내용 |
 |---|---|
@@ -34,8 +36,6 @@
        5) 디버그 패널을 켠 화면 (인식 결과 · 레이캐스트 사용 횟수가 보이면 설득력이 큽니다)
 -->
 `(준비 중)`
-
-미리보기 — 복합 지형(빔) 구간
 
 ![데모 미리보기](etc/gif/w8/example_beam.gif)
 
@@ -70,10 +70,10 @@ flowchart TD
 
 세 단계에 필요한 구성 데이터는 각각 **JSON 데이터**에서 로드됩니다.
 
-| 단계 | 데이터 파일 | 규모 |
-|---|---|---|
-| 측정 | `Datas/PerceptionQueryData_0.json`, `_1.json` | 노드 72개 + 데코레이터 22개 / 노드 3개 |
-| 분류 | `Datas/ProcessConditionData_0.json`, `_1.json` | 조건 100개·룰 55개 / 조건 8개·룰 4개 |
+| 단계 | 데이터 파일 | 규모 | 상세 |
+|---|---|---|---|
+| 측정 | `Datas/PerceptionQueryData_0.json`, `~_1.json` | 노드 72개 + 데코레이터 22개 / 노드 3개 | `PerceptionQueryData_0.json` : 기본 측정 방식,<br/> `PerceptionQueryData_1.json` : 낙하 시 측정 |
+| 결과 처리 | `Datas/ProcessConditionData_0.json`, `~_1.json` | 조건 100개·룰 55개 / 조건 8개·룰 4개 | `ProcessConditionData_0.json` : 기본 측정 후 결과 처리,<br/> `ProcessConditionData_1.json` : 낙하 시 측정 후 결과 처리 |
 | 출력 | `Datas/CharacterActionClips.json` | 로코모션 6 + 액션 61 |
 | 튜닝 | `Datas/CharacterConfig.json` | 측정 파라미터 13개 |
 
@@ -429,7 +429,7 @@ static_assert(IsEveryTagActNamed(), "TAG_ACT_NAMES 가 ETagAct 와 불일치");
 
 ### 문제
 현재 사용하는 파쿠르 클립은 **특정 크기의 장애물**을 전제로 제작되어 있습니다.<br/>
-Mixamo의 Vault 모션은 정확한 위치, 거리에서 시작해야 자연스럽습니다.
+Mixamo의 Vault 모션은 정확한 위치, 거리에서 시작해야 자연스러웠습니다.
 
 그런데 실제 레벨의 장애물은 높이도 거리도 제각각일 것입니다.<br/>
 루트모션을 그대로 재생하면
@@ -439,8 +439,12 @@ Mixamo의 Vault 모션은 정확한 위치, 거리에서 시작해야 자연스�
 - 높이가 다르면 → 발이 윗면에 안 닿거나 파묻힘
 
 ### 1차 해결 : 선형 보정
-클립 재생 중 일정 구간 동안 캐릭터를 **루트모션에 적절한 지점으로 Lerp** 하는 노티파이를 만들었습니다.
+클립 재생 중 일정 구간 동안 캐릭터를 **루트모션에 적절한 지점으로 Lerp** 하는 노티파이를 만들었습니다.<br/>
+![animnotifystate](/etc/img/animnotifystate.png)
+
 인식 시스템 호출을 통해서 장애물의 위치, 모서리의 높이 등의 측정 결과값을 이용하여 모션을 보정했습니다.
+
+![linear](/etc/img/linear_correction.png)
 
 ```cpp
 // Content/AnimNotify/CorrectRootMotion.cpp
@@ -458,17 +462,18 @@ Vector3 lerpedPos = Vector3::Lerp(charPos, properPoint, w);
 ![루트모션 보정 근거리](etc/gif/w3/correctRootMotion_close.gif)
 ![루트모션 보정 원거리](etc/gif/w3/correctRootMotion_far.gif)
 
-### 2차 해결 : 베지어 보정
-선형 보정으로는 안 되는 상황이 있었습니다.
-Vault의 경우 적절히 넘어가는 것을 자연스럽게 보여줄 수 있었습니다.
+### 2차 해결 : 베지어 곡선 보정
+선형 보정으로는 안 되는 상황이 있었습니다.<br/>
+Vault의 경우 적절히 넘어가는 것을 자연스럽게 보여줄 수 있었습니다.<br/>
 하지만 어딘가에 오르거나(Mantle) 다른 곳에 매달려야하는(Hanging) 경우는 캐릭터가 액션 중 정확한 위치로 이동해야 했습니다.
 
 이때 선형 보간을 사용하여 시작점과 끝점을 직선으로 이으면 몸이 장애물 모서리를 **관통**합니다.
 실제 동작은 위로 솟았다가 내려오는 **호**를 그려야 합니다.
 
 그래서 정확한 위치로 이동할 필요가 있을 때의 루트모션 보정은 2차 베지어 곡선 방식으로 바꿨습니다. 
-시작점은 현재 위치, 끝점은 인식된 모서리, 
-중간 제어점으로 호의 모양을 만듭니다.
+시작점은 현재 위치, 끝점은 인식된 모서리, 중간 제어점으로 곡선 모양을 만듭니다.
+
+![bezier_correction](/etc/img/bezier_correction.png)
 
 ```cpp
 // Content/AnimNotify/CorrectRootMotion.cpp
@@ -606,7 +611,7 @@ IKEnabler            ├ 0→1 ┤                        ├ 1→0 ┤
 | | `Scene/` | Actor · Component · SceneComponent · Transform · 카메라 · 메시/강체/CCT 컴포넌트 |
 | | `Physics/` | PhysX 월드, 충돌 레이어 |
 | | `Animation/` | Animator · 상태머신 · 블렌드 · 액션 클립 · 노티파이 · 사지 IK |
-| | `Perception/` | **인식 노드 · 데코레이터 · 처리 조건** (이 프로젝트의 핵심) |
+| | `Perception/` | **인식 노드 · 데코레이터 · 처리 조건** (파쿠르 시스템 주요 클래스) |
 | | `Editor/` | Assimp 베이커, 클립 편집 패널 |
 | Content | `Content/` | Character · 상태머신 · 장애물 · 테스트 씬 · 데이터 애셋 · 파쿠르 노티파이 |
 
@@ -736,5 +741,3 @@ msbuild MiniEngine.sln /p:Configuration=DebugUI /p:Platform=x64
 
 산출물은 `MiniEngine\Pakour\Build\x64\<Configuration>\` 에 생성되며,
 빌드 후 이벤트가 `Datas\` 와 `Assets\` 를 출력 폴더로 복사합니다.
-
-> `Datas\*.json` 을 수정한 경우 재빌드(또는 `IncludeData.bat` 실행)해야 출력 폴더에 반영됩니다.
