@@ -27,7 +27,7 @@
 | 도구 | ImGui 에디터(베이킹 · 클립 편집) + 인게임 디버그 패널 전용 빌드 구성 |
 
 ### 시연 영상 링크
-[![유튜브 영상](https://youtu.be/gJBwXp-Pabs/0.jpg)](https://youtu.be/gJBwXp-Pabs)
+[![유튜브 영상](https://img.youtube.com/vi/gJBwXp-Pabs/0.jpg)](https://youtu.be/gJBwXp-Pabs)
 
 ![데모 미리보기](etc/gif/w8/example_beam.gif)
 
